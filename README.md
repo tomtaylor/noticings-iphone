@@ -1,9 +1,9 @@
 Noticings Uploader iPhone app
 =============================
 
-This is the source code for the Noticings Uploader iPhone app, which is available in the app store at the following link:
+This is the source code for the Noticings Uploader iPhone app, which is [available in the App Store][1].
 
-http://itunes.apple.com/gb/app/noticings-uploader/id339183497?mt=8
+[1]:http://itunes.apple.com/gb/app/noticings-uploader/id339183497?mt=8
 
 Getting started
 ---------------
