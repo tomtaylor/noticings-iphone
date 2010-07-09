@@ -24,9 +24,9 @@ Contributors
 Thanks
 ------
 
-Thanks to lukhnos for [ObjectiveFlickr][1] which is awesome. ObjectiveFlickr is licensed under the MIT license.
+Thanks to lukhnos for [ObjectiveFlickr][2] which is awesome. ObjectiveFlickr is licensed under the MIT license.
 
-[1]: http://github.com/lukhnos/objectiveflickr
+[2]: http://github.com/lukhnos/objectiveflickr
 
 License
 -------
