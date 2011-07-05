@@ -13,9 +13,11 @@
 
 SYNTHESIZE_SINGLETON_FOR_CLASS(StreamManager);
 
+extern const NSUInteger kMaxDiskCacheSize;
+
 @synthesize photos;
 @synthesize inProgress;
-@synthesize imageCache;
+@synthesize cacheDir;
 
 - (id)init;
 {
@@ -23,7 +25,21 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(StreamManager);
     if (self) {
         self.photos = [NSMutableArray arrayWithCapacity:50];
         self.inProgress = NO;
-        self.imageCache = [NSMutableDictionary dictionaryWithCapacity:50];
+
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+        self.cacheDir = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"imageCache"];
+
+        if (![[NSFileManager defaultManager] fileExistsAtPath:self.cacheDir]) {
+            /* create a new cache directory */
+            if (![[NSFileManager defaultManager] createDirectoryAtPath:self.cacheDir
+                                           withIntermediateDirectories:YES
+                                                            attributes:nil
+                                                                 error:nil]) {
+                NSLog(@"cna't create cache folder");
+            }
+        }
+
+    
     }
     
     return self;
@@ -51,15 +67,68 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(StreamManager);
     [[self flickrRequest] callAPIMethodWithGET:@"flickr.photos.getContactsPhotos" arguments:args];
 }
 
+
+
+
+#pragma mark image cache
+
+
+-(NSString*) sha256:(NSString *)clear{
+    const char *s=[clear cStringUsingEncoding:NSASCIIStringEncoding];
+    NSData *keyData=[NSData dataWithBytes:s length:strlen(s)];
+    
+    uint8_t digest[CC_SHA256_DIGEST_LENGTH]={0};
+    CC_SHA256(keyData.bytes, keyData.length, digest);
+    NSData *out=[NSData dataWithBytes:digest length:CC_SHA256_DIGEST_LENGTH];
+    NSString *hash=[out description];
+    hash = [hash stringByReplacingOccurrencesOfString:@" " withString:@""];
+    hash = [hash stringByReplacingOccurrencesOfString:@"<" withString:@""];
+    hash = [hash stringByReplacingOccurrencesOfString:@">" withString:@""];
+    return hash;
+}
+
+-(NSString*) urlToFilename:(NSURL*)url;
+{
+    NSString *hash = [self sha256:[url absoluteString]];
+    NSString *file = [[self.cacheDir stringByAppendingPathComponent:hash] stringByAppendingPathExtension:@"jpg"];
+    NSLog(@"filename is %@", file);
+    return file;
+}
+
+
 - (UIImage *) imageForURL:(NSURL*)url;
 {
-    return [self.imageCache valueForKey:[url absoluteString]];
+    NSString *filename = [self urlToFilename:url];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:filename]) {
+        return nil;
+    }
+    return [UIImage imageWithContentsOfFile:filename];
 }
 
 - (void) cacheImage:(UIImage *)image forURL:(NSURL*)url;
 {
-    [self.imageCache setValue:image forKey:[url absoluteString]];
+    NSString *filename = [self urlToFilename:url];
+    
+    NSData *imageData = UIImageJPEGRepresentation(image, 0.9);
+    if (![imageData writeToFile:filename atomically:TRUE]) {
+        NSLog(@"error writing to cache");
+    }
 }
+
+- (void) clearCacheForURL:(NSURL*)url;
+{
+    
+}
+
+- (void) clearCache;
+{
+    
+}
+
+
+
+
+
 
 // TODO - stolen from the uploader. refactor into base class?
 - (OFFlickrAPIRequest *)flickrRequest;
@@ -113,7 +182,6 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(StreamManager);
 - (void)dealloc
 {
     self.photos = nil;
-    self.imageCache = nil;
     [flickrRequest release];
     [super dealloc];
 }

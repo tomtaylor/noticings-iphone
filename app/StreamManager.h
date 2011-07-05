@@ -18,7 +18,7 @@
     NSMutableArray *photos;
 	BOOL inProgress;
     
-    NSMutableDictionary *imageCache;
+    NSString * cacheDir;
 }
 
 +(StreamManager *)sharedStreamManager;
@@ -28,6 +28,8 @@
 - (OFFlickrAPIRequest *)flickrRequest;
 - (UIImage *) imageForURL:(NSURL*)url;
 - (void) cacheImage:(UIImage *)image forURL:(NSURL*)url;
+- (void) clearCacheForURL:(NSURL*)url;
+- (void) clearCache;
 
 // interface
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didCompleteWithResponse:(NSDictionary *)inResponseDictionary;
@@ -35,6 +37,7 @@
 
 @property (retain) NSMutableArray* photos;
 @property (nonatomic) BOOL inProgress;
-@property (retain) NSMutableDictionary* imageCache;
+
+@property (retain) NSString *cacheDir;
 
 @end
