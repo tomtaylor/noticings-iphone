@@ -2,6 +2,8 @@
 app/build/*
 *.pbxuser
 *.mode1v3
+app/Noticings.xcodeproj/project.xcworkspace/xcuserdata/*
+app/Noticings.xcodeproj/xcuserdata/*
 
 # old skool
 .svn

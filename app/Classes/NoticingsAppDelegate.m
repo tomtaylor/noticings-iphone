@@ -29,7 +29,7 @@ BOOL gLogging = FALSE;
 	uploadQueueManager = [UploadQueueManager sharedUploadQueueManager];
 	[uploadQueueManager restoreQueuedUploads];
 
-	queueTab = [tabBarController.tabBar.items objectAtIndex:1];
+	queueTab = [tabBarController.tabBar.items objectAtIndex:2];
 	int count = [[UploadQueueManager sharedUploadQueueManager].photoUploads count];
 	
 	if (count > 0) {

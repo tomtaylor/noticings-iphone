@@ -53,6 +53,10 @@
 		E2D6365E10984DF60073D598 /* 19-gear.png in Resources */ = {isa = PBXBuildFile; fileRef = E2D6365B10984DF60073D598 /* 19-gear.png */; };
 		E2F553B310850EB200FE67C7 /* PhotoMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F553B110850EB200FE67C7 /* PhotoMapViewController.m */; };
 		E2F553B410850EB200FE67C7 /* PhotoMapViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2F553B210850EB200FE67C7 /* PhotoMapViewController.xib */; };
+		E6218ADB13C35D7C0021CB80 /* StreamPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = E6218AD613C35D7C0021CB80 /* StreamPhoto.m */; };
+		E6218ADC13C35D7C0021CB80 /* StreamPhotoViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E6218AD813C35D7C0021CB80 /* StreamPhotoViewCell.m */; };
+		E6218ADD13C35D7C0021CB80 /* StreamViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E6218ADA13C35D7C0021CB80 /* StreamViewController.m */; };
+		E6218ADF13C35D950021CB80 /* 40-inbox.png in Resources */ = {isa = PBXBuildFile; fileRef = E6218ADE13C35D950021CB80 /* 40-inbox.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -148,6 +152,13 @@
 		E2F553B010850EB200FE67C7 /* PhotoMapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoMapViewController.h; sourceTree = "<group>"; };
 		E2F553B110850EB200FE67C7 /* PhotoMapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoMapViewController.m; sourceTree = "<group>"; };
 		E2F553B210850EB200FE67C7 /* PhotoMapViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = PhotoMapViewController.xib; path = Classes/PhotoMapViewController.xib; sourceTree = "<group>"; };
+		E6218AD513C35D7C0021CB80 /* StreamPhoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StreamPhoto.h; path = Classes/StreamPhoto.h; sourceTree = "<group>"; };
+		E6218AD613C35D7C0021CB80 /* StreamPhoto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StreamPhoto.m; path = Classes/StreamPhoto.m; sourceTree = "<group>"; };
+		E6218AD713C35D7C0021CB80 /* StreamPhotoViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StreamPhotoViewCell.h; path = Classes/StreamPhotoViewCell.h; sourceTree = "<group>"; };
+		E6218AD813C35D7C0021CB80 /* StreamPhotoViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StreamPhotoViewCell.m; path = Classes/StreamPhotoViewCell.m; sourceTree = "<group>"; };
+		E6218AD913C35D7C0021CB80 /* StreamViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StreamViewController.h; path = Classes/StreamViewController.h; sourceTree = "<group>"; };
+		E6218ADA13C35D7C0021CB80 /* StreamViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StreamViewController.m; path = Classes/StreamViewController.m; sourceTree = "<group>"; };
+		E6218ADE13C35D950021CB80 /* 40-inbox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "40-inbox.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -229,6 +240,7 @@
 				E269437210A0398600253D6C /* Entitlements.plist */,
 				E27C7D82108B270E0083E392 /* ObjectiveFlickr.xcodeproj */,
 				E2AC983D107FAE68007A570A /* Third Party */,
+				E6218AD413C35D6D0021CB80 /* Stream */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
@@ -257,6 +269,7 @@
 				E21EEF9D1098C60300E8B313 /* Default.png */,
 				E22800ED11C91D5F00758E75 /* Default@2x.png */,
 				E2D6365910984DF60073D598 /* 56-cloud.png */,
+				E6218ADE13C35D950021CB80 /* 40-inbox.png */,
 				E2D6365A10984DF60073D598 /* 42-photos.png */,
 				E2D6365B10984DF60073D598 /* 19-gear.png */,
 				E211FAC610960D6200ABAE72 /* FlickrAuthenticationViewController.xib */,
@@ -302,6 +315,19 @@
 				E27C7E12108B9B2D0083E392 /* SynthesizeSingleton.h */,
 			);
 			name = "Third Party";
+			sourceTree = "<group>";
+		};
+		E6218AD413C35D6D0021CB80 /* Stream */ = {
+			isa = PBXGroup;
+			children = (
+				E6218AD513C35D7C0021CB80 /* StreamPhoto.h */,
+				E6218AD613C35D7C0021CB80 /* StreamPhoto.m */,
+				E6218AD713C35D7C0021CB80 /* StreamPhotoViewCell.h */,
+				E6218AD813C35D7C0021CB80 /* StreamPhotoViewCell.m */,
+				E6218AD913C35D7C0021CB80 /* StreamViewController.h */,
+				E6218ADA13C35D7C0021CB80 /* StreamViewController.m */,
+			);
+			name = Stream;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -395,6 +421,7 @@
 				E2A6C4EB11CA4A810065E27A /* Settings.bundle in Resources */,
 				E2493586137356850066EE38 /* PhotoPreviewViewController.xib in Resources */,
 				E201C92313753FFD00FA5AFD /* PhotoSaveViewController.xib in Resources */,
+				E6218ADF13C35D950021CB80 /* 40-inbox.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -423,6 +450,9 @@
 				E2493571137343D40066EE38 /* ImageScrollView.m in Sources */,
 				E2493585137356850066EE38 /* PhotoPreviewViewController.m in Sources */,
 				E201C92213753FFD00FA5AFD /* PhotoSaveViewController.m in Sources */,
+				E6218ADB13C35D7C0021CB80 /* StreamPhoto.m in Sources */,
+				E6218ADC13C35D7C0021CB80 /* StreamPhotoViewCell.m in Sources */,
+				E6218ADD13C35D7C0021CB80 /* StreamViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
