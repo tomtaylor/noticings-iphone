@@ -9,7 +9,11 @@
 
 #import "RemoteImageView.h"
 
+#import "StreamManager.h"
+
 @implementation RemoteImageView
+
+@synthesize url;
 
 -(id)initWithFrame:(CGRect)frame;
 {
@@ -22,9 +26,20 @@
 }
 
 
-- (void)loadURL:(NSURL*)url;
+- (void)loadURL:(NSURL*)loadUrl;
 {
-    NSLog(@"Loading image from %@",url);
+    StreamManager *manager = [StreamManager sharedStreamManager];
+    UIImage *image = [manager imageForURL:loadUrl];
+    if (image) {
+        NSLog(@"using cached image from manager.");
+        self.image = image;
+        self.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1];
+        [self setNeedsLayout];
+        return;
+    }
+        
+    NSLog(@"Loading image from %@",loadUrl);
+    self.url = loadUrl;
 
     // if we've been told to stop and load something else, make sure the old thing is dead.
     if (connection!=nil) {
@@ -44,7 +59,7 @@
 
     // TODO - cache images based on url in DB or something. Till then, use a very
     // aggressive cache policy. Image URLs don't change.
-    NSURLRequest* request = [NSURLRequest requestWithURL:url
+    NSURLRequest* request = [NSURLRequest requestWithURL:loadUrl
                                              cachePolicy:NSURLRequestReturnCacheDataElseLoad
                                          timeoutInterval:60.0];
     connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
@@ -68,15 +83,20 @@
     
     // TODO - http://stackoverflow.com/questions/603907/uiimage-resize-then-crop/605385#605385
     self.image = [UIImage imageWithData:data];
-    self.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1];
-    [self setNeedsLayout];
+
+    StreamManager *manager = [StreamManager sharedStreamManager];
+    [manager cacheImage:self.image forURL:self.url];
 
     [data release];
     data=nil;
+
+    self.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1];
+    [self setNeedsLayout];
 }
 
 - (void)dealloc
 {
+    self.url = nil;
     [connection release];
     [data release];
     [super dealloc];

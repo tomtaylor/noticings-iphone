@@ -13,9 +13,12 @@
 @private
     NSURLConnection* connection;
     NSMutableData* data;
+    NSURL *url;
 }
 
 -(id)initWithFrame:(CGRect)frame;
 - (void)loadURL:(NSURL*)url;
+
+@property (retain) NSURL* url;
 
 @end

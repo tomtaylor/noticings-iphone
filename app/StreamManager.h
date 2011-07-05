@@ -17,6 +17,8 @@
 	OFFlickrAPIRequest *flickrRequest;
     NSMutableArray *photos;
 	BOOL inProgress;
+    
+    NSMutableDictionary *imageCache;
 }
 
 +(StreamManager *)sharedStreamManager;
@@ -24,6 +26,8 @@
 - (void)refresh;
 
 - (OFFlickrAPIRequest *)flickrRequest;
+- (UIImage *) imageForURL:(NSURL*)url;
+- (void) cacheImage:(UIImage *)image forURL:(NSURL*)url;
 
 // interface
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didCompleteWithResponse:(NSDictionary *)inResponseDictionary;
@@ -31,5 +35,6 @@
 
 @property (retain) NSMutableArray* photos;
 @property (nonatomic) BOOL inProgress;
+@property (retain) NSMutableDictionary* imageCache;
 
 @end

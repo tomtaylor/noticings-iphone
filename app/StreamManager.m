@@ -15,14 +15,15 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(StreamManager);
 
 @synthesize photos;
 @synthesize inProgress;
+@synthesize imageCache;
 
-- (id)init
+- (id)init;
 {
     self = [super init];
     if (self) {
-        // Initialization code here.
         self.photos = [NSMutableArray arrayWithCapacity:50];
         self.inProgress = NO;
+        self.imageCache = [NSMutableDictionary dictionaryWithCapacity:50];
     }
     
     return self;
@@ -50,7 +51,15 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(StreamManager);
     [[self flickrRequest] callAPIMethodWithGET:@"flickr.photos.getContactsPhotos" arguments:args];
 }
 
+- (UIImage *) imageForURL:(NSURL*)url;
+{
+    return [self.imageCache valueForKey:[url absoluteString]];
+}
 
+- (void) cacheImage:(UIImage *)image forURL:(NSURL*)url;
+{
+    [self.imageCache setValue:image forKey:[url absoluteString]];
+}
 
 // TODO - stolen from the uploader. refactor into base class?
 - (OFFlickrAPIRequest *)flickrRequest;
@@ -103,6 +112,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(StreamManager);
 - (void)dealloc
 {
     self.photos = nil;
+    self.imageCache = nil;
     [flickrRequest release];
     [super dealloc];
 }
