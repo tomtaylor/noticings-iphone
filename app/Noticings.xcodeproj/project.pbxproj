@@ -58,6 +58,7 @@
 		E6218ADD13C35D7C0021CB80 /* StreamViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E6218ADA13C35D7C0021CB80 /* StreamViewController.m */; };
 		E6218ADF13C35D950021CB80 /* 40-inbox.png in Resources */ = {isa = PBXBuildFile; fileRef = E6218ADE13C35D950021CB80 /* 40-inbox.png */; };
 		E67305D313C388C2005CEC62 /* RemoteImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = E67305D213C388C2005CEC62 /* RemoteImageView.m */; };
+		E6AE4A9B13C3A1FD00702DA3 /* StreamManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E6AE4A9A13C3A1FD00702DA3 /* StreamManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -162,6 +163,8 @@
 		E6218ADE13C35D950021CB80 /* 40-inbox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "40-inbox.png"; sourceTree = "<group>"; };
 		E67305D113C388C2005CEC62 /* RemoteImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteImageView.h; sourceTree = "<group>"; };
 		E67305D213C388C2005CEC62 /* RemoteImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RemoteImageView.m; sourceTree = "<group>"; };
+		E6AE4A9913C3A1FD00702DA3 /* StreamManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamManager.h; sourceTree = "<group>"; };
+		E6AE4A9A13C3A1FD00702DA3 /* StreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StreamManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -331,6 +334,8 @@
 				E6218AD813C35D7C0021CB80 /* StreamPhotoViewCell.m */,
 				E6218AD913C35D7C0021CB80 /* StreamViewController.h */,
 				E6218ADA13C35D7C0021CB80 /* StreamViewController.m */,
+				E6AE4A9913C3A1FD00702DA3 /* StreamManager.h */,
+				E6AE4A9A13C3A1FD00702DA3 /* StreamManager.m */,
 			);
 			name = Stream;
 			sourceTree = "<group>";
@@ -459,6 +464,7 @@
 				E6218ADC13C35D7C0021CB80 /* StreamPhotoViewCell.m in Sources */,
 				E6218ADD13C35D7C0021CB80 /* StreamViewController.m in Sources */,
 				E67305D313C388C2005CEC62 /* RemoteImageView.m in Sources */,
+				E6AE4A9B13C3A1FD00702DA3 /* StreamManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

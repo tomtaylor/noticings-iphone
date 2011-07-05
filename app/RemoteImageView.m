@@ -24,7 +24,7 @@
 
 - (void)loadURL:(NSURL*)url;
 {
-    NSLog(@"%@ Loading image from %@",self,url);
+    NSLog(@"Loading image from %@",url);
 
     // if we've been told to stop and load something else, make sure the old thing is dead.
     if (connection!=nil) {
@@ -39,6 +39,7 @@
     
     // TODO - better 'loading' state.
     self.image = nil;
+    self.backgroundColor = [UIColor colorWithWhite:0.8 alpha:1];
     [self setNeedsLayout];
 
     // TODO - cache images based on url in DB or something. Till then, use a very
@@ -53,7 +54,6 @@
 
 - (void)connection:(NSURLConnection *)theConnection didReceiveData:(NSData *)incrementalData
 {
-    NSLog(@"%@ received data", self);
     if (data == nil) {
         data = [[NSMutableData alloc] initWithCapacity:2048];
     }
@@ -62,14 +62,13 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection*)theConnection
 {
-    NSLog(@"%@ Finished loading image", self);
-
+    NSLog(@"Load complete");
     [connection release];
     connection=nil;
     
     // TODO - http://stackoverflow.com/questions/603907/uiimage-resize-then-crop/605385#605385
     self.image = [UIImage imageWithData:data];
-
+    self.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1];
     [self setNeedsLayout];
 
     [data release];
@@ -78,7 +77,6 @@
 
 - (void)dealloc
 {
-    NSLog(@"%@ dealloc", self);
     [connection release];
     [data release];
     [super dealloc];
