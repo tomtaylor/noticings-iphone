@@ -43,7 +43,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(StreamManager);
     NSString *extras = @"date_upload,date_taken,owner_name,icon_server,geo,path_alias";
     
     NSDictionary *args = [NSDictionary dictionaryWithObjectsAndKeys:
-                          @"6", @"count",
+                          @"50", @"count",
                           extras, @"extras",
                           @"1", @"include_self",
                           nil];
