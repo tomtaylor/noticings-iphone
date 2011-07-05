@@ -10,17 +10,45 @@
 #import "Photo.h"
 #import "PhotoUpload.h"
 #import "PhotoDetailViewController.h"
+#import "PhotoPreviewViewController.h"
+#import "PhotoSaveViewController.h"
+#import <ImageIO/ImageIO.h>
+
+@interface PhotosViewController (Private)
+
+- (NSDictionary *)gpsDictionaryForCurrentLocation;
+
+@end
 
 @implementation PhotosViewController
 
+@synthesize currentLocation;
 
 #pragma mark -
 #pragma mark View lifecycle
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    locationManager = [[CLLocationManager alloc] init];
+    locationManager.delegate = self;
+    locationManager.desiredAccuracy = kCLLocationAccuracyBest;
 	
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(assetsLibraryChanged:) name:ALAssetsLibraryChangedNotification object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self 
+                                             selector:@selector(assetsLibraryChanged:) 
+                                                 name:ALAssetsLibraryChangedNotification 
+                                               object:nil];
+    
+    BOOL isCameraAvailable = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera];
+    
+    if (isCameraAvailable) {
+        cameraButton = [[UIBarButtonItem alloc] 
+                        initWithBarButtonSystemItem:UIBarButtonSystemItemCamera
+                        target:self
+                        action:@selector(cameraButtonPressed:)];
+        
+        [[self navigationItem] setRightBarButtonItem:cameraButton];
+    }
 	
 	[self loadPhotos];
 
@@ -92,6 +120,16 @@
     [self loadPhotos];
 }
 
+- (void)cameraButtonPressed:(id)sender {
+    [locationManager startUpdatingLocation];
+    UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
+    imagePicker.delegate = self;
+    imagePicker.allowsEditing = NO;
+    imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
+    imagePicker.cameraCaptureMode = UIImagePickerControllerCameraCaptureModePhoto;
+    [self.navigationController presentModalViewController:imagePicker animated:YES];
+    [imagePicker release];
+}
 
 #pragma mark -
 #pragma mark Table view data source
@@ -180,16 +218,152 @@
 #pragma mark -
 #pragma mark Table view delegate
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-	PhotoDetailViewController *photoDetailViewController = [[PhotoDetailViewController alloc] initWithStyle:UITableViewStyleGrouped];
-	Photo *selectedPhoto = [photos objectAtIndex:indexPath.row];
-	PhotoUpload *photoUpload = [[PhotoUpload alloc] initWithPhoto:selectedPhoto];
-	photoDetailViewController.photoUpload = photoUpload;
-	[self.navigationController pushViewController:photoDetailViewController animated:YES];
-	[photoUpload release];
-	[photoDetailViewController release];
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {    
+    Photo *selectedPhoto = [photos objectAtIndex:indexPath.row];
+    [self displayPreviewForPhoto:selectedPhoto];
 }
 
+#pragma mark -
+#pragma mark UIImagePickerViewControllerDelegate
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
+{
+    [self.navigationController dismissModalViewControllerAnimated:NO];
+    PhotoSaveViewController *saveViewController = [[PhotoSaveViewController alloc] init];
+    [self.navigationController presentModalViewController:saveViewController animated:NO];
+    [saveViewController release];
+    
+    [locationManager stopUpdatingLocation];
+    UIImage *originalImage = [info objectForKey:UIImagePickerControllerOriginalImage];
+    NSDictionary *metadata = [info objectForKey:UIImagePickerControllerMediaMetadata];
+    
+    NSDictionary *gpsMetadata = [self gpsDictionaryForCurrentLocation];
+    [metadata setValue:gpsMetadata forKey:(NSString *)kCGImagePropertyGPSDictionary];
+    
+    CGImageRef cgImage = [originalImage CGImage];
+    
+    [assetsLibrary 
+     writeImageToSavedPhotosAlbum:cgImage
+     metadata:metadata 
+     completionBlock:^(NSURL *assetURL, NSError *error) {
+         if (error) {
+             NSLog(@"Error: %@", error);
+         } else {
+            [assetsLibrary assetForURL:assetURL 
+                           resultBlock:^(ALAsset *asset) {
+                               NSLog(@"Found asset");
+                               Photo *photo = [[Photo alloc] initWithAsset:asset];
+                               PhotoUpload *photoUpload = [[PhotoUpload alloc] initWithPhoto:photo];
+                               [photo release];
+                               
+                               PhotoDetailViewController *photoDetailViewController = [[PhotoDetailViewController alloc] initWithStyle:UITableViewStyleGrouped];
+                               
+                               photoDetailViewController.photoUpload = photoUpload;
+                               
+                               
+                               [self.navigationController dismissModalViewControllerAnimated:YES];
+                               [self.navigationController pushViewController:photoDetailViewController animated:NO];
+                               
+                               
+                               [photoUpload release];
+                               [photoDetailViewController release];
+                           }
+                          failureBlock:^(NSError *error) {
+                              NSLog(@"Error: %@", error);
+                          }
+             ];
+         }
+     }];
+}
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+{
+    [locationManager stopUpdatingLocation];
+    [picker dismissModalViewControllerAnimated:YES];
+}
+
+- (NSDictionary *)gpsDictionaryForCurrentLocation {
+    NSMutableDictionary *gps = [NSMutableDictionary dictionary];
+    
+    // GPS tag version
+    [gps setObject:@"2.2.0.0" forKey:(NSString *)kCGImagePropertyGPSVersion];
+    
+    // Time and date must be provided as strings, not as an NSDate object
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"HH:mm:ss.SSSSSS"];
+    [formatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
+    [gps setObject:[formatter stringFromDate:self.currentLocation.timestamp] forKey:(NSString *)kCGImagePropertyGPSTimeStamp];
+    [formatter setDateFormat:@"yyyy:MM:dd"];
+    [gps setObject:[formatter stringFromDate:self.currentLocation.timestamp] forKey:(NSString *)kCGImagePropertyGPSDateStamp];
+    [formatter release];
+    
+    // Latitude
+    CGFloat latitude = self.currentLocation.coordinate.latitude;
+    if (latitude < 0) {
+        latitude = -latitude;
+        [gps setObject:@"S" forKey:(NSString *)kCGImagePropertyGPSLatitudeRef];
+    } else {
+        [gps setObject:@"N" forKey:(NSString *)kCGImagePropertyGPSLatitudeRef];
+    }
+    [gps setObject:[NSNumber numberWithFloat:latitude] forKey:(NSString *)kCGImagePropertyGPSLatitude];
+    
+    // Longitude
+    CGFloat longitude = self.currentLocation.coordinate.longitude;
+    if (longitude < 0) {
+        longitude = -longitude;
+        [gps setObject:@"W" forKey:(NSString *)kCGImagePropertyGPSLongitudeRef];
+    } else {
+        [gps setObject:@"E" forKey:(NSString *)kCGImagePropertyGPSLongitudeRef];
+    }
+    [gps setObject:[NSNumber numberWithFloat:longitude] forKey:(NSString *)kCGImagePropertyGPSLongitude];
+    
+    // Altitude
+    CGFloat altitude = self.currentLocation.altitude;
+    if (!isnan(altitude)) {
+        if (altitude < 0) {
+            altitude = -altitude;
+            [gps setObject:@"1" forKey:(NSString *)kCGImagePropertyGPSAltitudeRef];
+        } else {
+            [gps setObject:@"0" forKey:(NSString *)kCGImagePropertyGPSAltitudeRef];
+        }
+        [gps setObject:[NSNumber numberWithFloat:altitude] forKey:(NSString *)kCGImagePropertyGPSAltitude];
+    }
+    
+    // Speed, must be converted from m/s to km/h
+    if (self.currentLocation.speed >= 0) {
+        [gps setObject:@"K" forKey:(NSString *)kCGImagePropertyGPSSpeedRef];
+        [gps setObject:[NSNumber numberWithFloat:self.currentLocation.speed*3.6] forKey:(NSString *)kCGImagePropertyGPSSpeed];
+    }
+    
+    // Heading
+    if (self.currentLocation.course >= 0) {
+        [gps setObject:@"T" forKey:(NSString *)kCGImagePropertyGPSTrackRef];
+        [gps setObject:[NSNumber numberWithFloat:self.currentLocation.course] forKey:(NSString *)kCGImagePropertyGPSTrack];
+    }
+    
+    return gps;
+}
+         
+- (void)displayPreviewForPhoto:(Photo *)photo {
+    PhotoPreviewViewController *previewViewController = [[PhotoPreviewViewController alloc] init];
+    previewViewController.photo = photo;
+    previewViewController.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:previewViewController animated:YES];
+    [previewViewController release];
+}
+
+#pragma mark -
+#pragma mark CLLocationManagerDelegate
+
+- (void)locationManager:(CLLocationManager *)manager 
+    didUpdateToLocation:(CLLocation *)newLocation 
+           fromLocation:(CLLocation *)oldLocation
+{
+    if (abs([newLocation.timestamp timeIntervalSinceDate: [NSDate date]]) < 300) {
+		self.currentLocation = newLocation;
+		NSLog(@"Location updated to: %@", newLocation);
+	}
+}
 
 #pragma mark -
 #pragma mark Memory management
@@ -202,7 +376,9 @@
 - (void)dealloc {
 	[timestampFormatter release];
 	[assetsLibrary release];
-	[photos release];	
+	[photos release];
+    [locationManager release];
+    [currentLocation release];
     [super dealloc];
 }
 
