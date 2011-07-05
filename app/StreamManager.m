@@ -102,6 +102,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(StreamManager);
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didFailWithError:(NSError *)inError
 {
     NSLog(@"failed flickr request!");
+    self.inProgress = NO;
 }
 
 

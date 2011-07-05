@@ -14,6 +14,8 @@
     RemoteImageView *avatarView;
     RemoteImageView *photoView;
     UITextView *usernameView;
+    UITextView *placeView;
+    UITextView *timeagoView;
 }
 
 -(id)initWithBounds:(CGRect)bounds;
@@ -22,5 +24,7 @@
 @property (nonatomic, retain) RemoteImageView *photoView;
 @property (nonatomic, retain) RemoteImageView *avatarView;
 @property (nonatomic, retain) UITextView *usernameView;
+@property (nonatomic, retain) UITextView *placeView;
+@property (nonatomic, retain) UITextView *timeagoView;
 
 @end

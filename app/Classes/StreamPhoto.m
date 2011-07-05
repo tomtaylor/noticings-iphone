@@ -11,7 +11,6 @@
 #import "FlickrAPIKeys.h"
 #import "ObjectiveFlickr.h"
 
-
 @implementation StreamPhoto
 
 @synthesize details;
@@ -31,6 +30,11 @@
 }
 
 - (NSString*)ownername;
+{
+    return [self.details valueForKeyPath:@"ownername"];
+}
+
+- (NSString*)placename;
 {
     return [self.details valueForKeyPath:@"ownername"];
 }
@@ -55,6 +59,34 @@
         avatarUrl = @"http://www.flickr.com/images/buddyicon.jpg";
     }
     return [NSURL URLWithString:avatarUrl];
+}
+
+- (NSString*) ago;
+{
+    NSTimeInterval epoch = [[NSDate date] timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970; // yeah.
+    NSString *uploaded = [self.details objectForKey:@"dateupload"];
+    if (!uploaded) {
+        return @"";
+    }
+    int ago = epoch - [uploaded doubleValue]; // woooo overflow bug. I hope your friends upload at least once every 2*32 seconds!
+    
+    NSLog(@"epoch is %f and the photo was uploaded at %@", epoch, uploaded);
+    
+    int seconds = ago % 60;
+    int minutes = (ago / 60) % 60;
+    int hours = (ago / (60*60)) % 24;
+    int days = (ago / (24*60*60));
+    
+    if (days) {
+        return [NSString stringWithFormat:@"%dd", days];
+    }
+    if (hours) {
+        return [NSString stringWithFormat:@"%dh", hours];
+    }
+    if (minutes) {
+        return [NSString stringWithFormat:@"%dm", minutes];
+    }
+    return [NSString stringWithFormat:@"%ds", seconds];
 }
 
 

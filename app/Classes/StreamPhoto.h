@@ -19,7 +19,7 @@
     
     UIImage *image;
     UIImage *avatar;
-
+    
 }
 
 - (id)initWithDictionary:(NSDictionary*)dict;
@@ -29,6 +29,8 @@
 // method/properties that extract information from datails dict.
 @property (readonly) NSString* title;
 @property (readonly) NSString* ownername;
+@property (readonly) NSString* ago;
+@property (readonly) NSString* placename;
 @property (readonly) NSURL* avatarURL;
 @property (readonly) NSURL* imageURL;
 
