@@ -19,6 +19,7 @@
 	BOOL inProgress;
     
     NSString * cacheDir;
+    NSMutableDictionary *imageCache;
 }
 
 +(StreamManager *)sharedStreamManager;
@@ -39,5 +40,6 @@
 @property (nonatomic) BOOL inProgress;
 
 @property (retain) NSString *cacheDir;
+@property (retain) NSMutableDictionary *imageCache;
 
 @end

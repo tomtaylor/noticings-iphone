@@ -31,7 +31,6 @@
     StreamManager *manager = [StreamManager sharedStreamManager];
     UIImage *image = [manager imageForURL:loadUrl];
     if (image) {
-        NSLog(@"using cached image from manager.");
         self.image = image;
         self.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1];
         [self setNeedsLayout];
@@ -77,7 +76,6 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection*)theConnection
 {
-    NSLog(@"Load complete");
     [connection release];
     connection=nil;
     

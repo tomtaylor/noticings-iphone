@@ -70,8 +70,6 @@
     }
     int ago = epoch - [uploaded doubleValue]; // woooo overflow bug. I hope your friends upload at least once every 2*32 seconds!
     
-    NSLog(@"epoch is %f and the photo was uploaded at %@", epoch, uploaded);
-    
     int seconds = ago % 60;
     int minutes = (ago / 60) % 60;
     int hours = (ago / (60*60)) % 24;

@@ -18,6 +18,7 @@ extern const NSUInteger kMaxDiskCacheSize;
 @synthesize photos;
 @synthesize inProgress;
 @synthesize cacheDir;
+@synthesize imageCache;
 
 - (id)init;
 {
@@ -26,16 +27,19 @@ extern const NSUInteger kMaxDiskCacheSize;
         self.photos = [NSMutableArray arrayWithCapacity:50];
         self.inProgress = NO;
 
+        
+        self.imageCache = [NSMutableDictionary dictionaryWithCapacity:50];
+
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
         self.cacheDir = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"imageCache"];
 
+        // create cache directory if it doesn't exist already.
         if (![[NSFileManager defaultManager] fileExistsAtPath:self.cacheDir]) {
-            /* create a new cache directory */
             if (![[NSFileManager defaultManager] createDirectoryAtPath:self.cacheDir
                                            withIntermediateDirectories:YES
                                                             attributes:nil
                                                                  error:nil]) {
-                NSLog(@"cna't create cache folder");
+                NSLog(@"can't create cache folder");
             }
         }
 
@@ -91,7 +95,6 @@ extern const NSUInteger kMaxDiskCacheSize;
 {
     NSString *hash = [self sha256:[url absoluteString]];
     NSString *file = [[self.cacheDir stringByAppendingPathComponent:hash] stringByAppendingPathExtension:@"jpg"];
-    NSLog(@"filename is %@", file);
     return file;
 }
 
@@ -99,16 +102,33 @@ extern const NSUInteger kMaxDiskCacheSize;
 - (UIImage *) imageForURL:(NSURL*)url;
 {
     NSString *filename = [self urlToFilename:url];
-    if (![[NSFileManager defaultManager] fileExistsAtPath:filename]) {
-        return nil;
+    
+    // look in in-memory cache first, we're storing the processed image, it's _way_ faster.
+    UIImage *inMemory = [self.imageCache objectForKey:filename];
+    if (inMemory) {
+        return inMemory;
     }
-    return [UIImage imageWithContentsOfFile:filename];
+    
+    // now look on disk for image.
+    if ([[NSFileManager defaultManager] fileExistsAtPath:filename]) {
+        inMemory = [UIImage imageWithContentsOfFile:filename];
+        // copy to the in-memory cache
+        [self.imageCache setObject:inMemory forKey:filename];
+        return inMemory;
+    }
+
+    // not in cache
+    return nil;
 }
 
 - (void) cacheImage:(UIImage *)image forURL:(NSURL*)url;
 {
     NSString *filename = [self urlToFilename:url];
     
+    // store in in-memory cache
+    [self.imageCache setObject:image forKey:filename];
+    
+    // and store on disk
     NSData *imageData = UIImageJPEGRepresentation(image, 0.9);
     if (![imageData writeToFile:filename atomically:TRUE]) {
         NSLog(@"error writing to cache");
@@ -182,6 +202,8 @@ extern const NSUInteger kMaxDiskCacheSize;
 - (void)dealloc
 {
     self.photos = nil;
+    self.imageCache = nil;
+    self.cacheDir = nil;
     [flickrRequest release];
     [super dealloc];
 }
