@@ -8,17 +8,19 @@
 
 #import <Foundation/Foundation.h>
 #import "StreamPhoto.h"
+#import "RemoteImageView.h"
 
 @interface StreamPhotoViewCell : UITableViewCell {
-    UIImageView *avatarView;
+    RemoteImageView *avatarView;
+    RemoteImageView *photoView;
     UITextView *usernameView;
-    UIImageView *imageView;
 }
 
+-(id)initWithBounds:(CGRect)bounds;
 -(void) populateFromPhoto:(StreamPhoto*)photo;
 
-@property (nonatomic, retain) UIImageView *imageView;
-@property (nonatomic, retain) UIImageView *avatarView;
+@property (nonatomic, retain) RemoteImageView *photoView;
+@property (nonatomic, retain) RemoteImageView *avatarView;
 @property (nonatomic, retain) UITextView *usernameView;
 
 @end

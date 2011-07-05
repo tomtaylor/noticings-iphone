@@ -11,18 +11,18 @@
 #import "FlickrAPIKeys.h"
 #import "ObjectiveFlickr.h"
 
+
 @implementation StreamPhotoViewCell
 
-@synthesize imageView;
+@synthesize photoView;
 @synthesize avatarView;
 @synthesize usernameView;
 
-- (id)init;
+-(id)initWithBounds:(CGRect)bounds;
 {
-    self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+    NSLog(@"Initting cell");
+    self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"streamCell"];
     if (!self) return nil;
-    
-    CGRect bounds = [[self contentView] bounds];
     
     float padding = 5;
     float avatarsize = 32;
@@ -30,22 +30,16 @@
     float imagesize = bounds.size.width - padding * 2;
 
     CGRect avatarRect = CGRectMake(padding, padding, avatarsize, avatarsize);
-    self.avatarView = [[[UIImageView alloc] initWithFrame:avatarRect] autorelease];
-    self.avatarView.backgroundColor = [UIColor colorWithWhite:0.8 alpha:1];
+    self.avatarView = [[[RemoteImageView alloc] initWithFrame:avatarRect] autorelease];
     [[self contentView] addSubview:avatarView];
 
     CGRect imageRect = CGRectMake(padding, padding + avatarsize + padding, imagesize, imagesize);
-    self.imageView = [[[UIImageView alloc] initWithFrame:imageRect] autorelease];
-    self.imageView.backgroundColor = [UIColor colorWithWhite:0.8 alpha:1];
-
-    // TODO - http://stackoverflow.com/questions/603907/uiimage-resize-then-crop/605385#605385
-    self.imageView.contentMode = UIViewContentModeScaleAspectFit;
-
-    [[self contentView] addSubview:imageView];
+    self.photoView = [[[RemoteImageView alloc] initWithFrame:imageRect] autorelease];
+    [[self contentView] addSubview:photoView];
     
     CGRect usernameRect = CGRectMake(padding + avatarsize + padding, padding, imagesize, avatarsize);
     self.usernameView = [[[UITextView alloc] initWithFrame:usernameRect] autorelease];
-    self.usernameView.text = @"username here";
+    self.usernameView.text = @"";
     self.usernameView.font = [UIFont systemFontOfSize:12];
     [self.contentView addSubview:usernameView];
 
@@ -55,11 +49,9 @@
 -(void) populateFromPhoto:(StreamPhoto*)photo;
 {
     self.usernameView.text = photo.ownername;
-    self.imageView.image = [UIImage imageWithData:photo.imageData];
-    self.avatarView.image = [UIImage imageWithData:photo.avatarData];
+    [self.photoView loadURL:photo.imageURL];
+    [self.avatarView loadURL:photo.avatarURL];
 }
-
-
 
 - (void)dealloc {
     [super dealloc];

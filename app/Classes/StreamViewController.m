@@ -82,7 +82,6 @@
         StreamPhoto *sp = [[StreamPhoto alloc] initWithDictionary:photo];
         NSLog(@"got photo %@", sp.title);
         [self.photos addObject:sp];
-        [sp loadImageData];
         [sp release];
     }
     [self.tableView reloadData];
@@ -114,26 +113,25 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
 	if (self.photos.count == 0) {
-		UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewStylePlain reuseIdentifier:nil];
+		UITableViewCell *cell = [[[UITableViewCell alloc] initWithStyle:UITableViewStylePlain reuseIdentifier:nil] autorelease];
 		cell.textLabel.textAlignment = UITextAlignmentCenter;
 		cell.textLabel.text = @"No photos from your contacts";
 		cell.textLabel.textColor = [UIColor grayColor];
 		cell.textLabel.font = [UIFont systemFontOfSize:14];
 		cell.selectionStyle = UITableViewCellSelectionStyleNone;
-		return [cell autorelease];
+		return cell;
 
 	} else {
-
-        StreamPhoto *photo = [self.photos objectAtIndex:indexPath.row];
-
         StreamPhotoViewCell *cell = (StreamPhotoViewCell*)[tableView dequeueReusableCellWithIdentifier:@"streamCell"];
         if (cell == nil) {
-            cell = [[StreamPhotoViewCell alloc] init];
+            CGRect bounds = self.view.bounds;
+            cell = [[[StreamPhotoViewCell alloc] initWithBounds:bounds] autorelease];
         } 
         
+        StreamPhoto *photo = [self.photos objectAtIndex:indexPath.row];
         [cell populateFromPhoto:photo];
         
-        return [cell autorelease];
+        return cell;
 	}
 	
 }

@@ -17,16 +17,19 @@
     NSData *avatarData;
     NSData *imageData;
     
+    UIImage *image;
+    UIImage *avatar;
+
 }
 
 - (id)initWithDictionary:(NSDictionary*)dict;
-- (void) loadImageData;
-
-@property (readonly) NSString* title;
-@property (readonly) NSString* ownername;
 
 @property (retain) NSDictionary *details;
-@property (retain) NSData *imageData;
-@property (retain) NSData *avatarData;
+
+// method/properties that extract information from datails dict.
+@property (readonly) NSString* title;
+@property (readonly) NSString* ownername;
+@property (readonly) NSURL* avatarURL;
+@property (readonly) NSURL* imageURL;
 
 @end
