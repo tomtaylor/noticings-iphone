@@ -31,7 +31,8 @@
 - (void) cacheImage:(UIImage *)image forURL:(NSURL*)url;
 - (void) clearCacheForURL:(NSURL*)url;
 - (void) clearCache;
-
+- (void) flushMemoryCache;
+   
 // interface
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didCompleteWithResponse:(NSDictionary *)inResponseDictionary;
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didFailWithError:(NSError *)inError;

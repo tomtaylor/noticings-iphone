@@ -31,9 +31,7 @@
     StreamManager *manager = [StreamManager sharedStreamManager];
     UIImage *image = [manager imageForURL:loadUrl];
     if (image) {
-        self.image = image;
-        self.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1];
-        [self setNeedsLayout];
+        [self setImage:image withAnimation:NO];
         return;
     }
         
@@ -79,16 +77,36 @@
     [connection release];
     connection=nil;
     
-    // TODO - http://stackoverflow.com/questions/603907/uiimage-resize-then-crop/605385#605385
-    self.image = [UIImage imageWithData:data];
-
     StreamManager *manager = [StreamManager sharedStreamManager];
-    [manager cacheImage:self.image forURL:self.url];
+    
+    UIImage *theImage = [UIImage imageWithData:data];
+    [manager cacheImage:theImage forURL:self.url];
+    [self setImage:theImage withAnimation:YES];
 
     [data release];
     data=nil;
 
+}
+
+- (void)setImage:(UIImage*)theImage withAnimation:(BOOL)animate;
+{
+    
+    // only animate if there's actually an image.
+    if (theImage && animate) {
+        self.alpha = 0;
+        [UIView beginAnimations:nil context:nil];
+        [UIView setAnimationDuration:1.0];
+    }
+    
+    // TODO - http://stackoverflow.com/questions/603907/uiimage-resize-then-crop/605385#605385
+    self.image = theImage;
+    self.alpha = 1;
     self.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1];
+    
+    if (theImage && animate) {
+        [UIView commitAnimations];
+    }
+    
     [self setNeedsLayout];
 }
 

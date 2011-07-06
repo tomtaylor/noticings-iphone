@@ -28,7 +28,7 @@ extern const NSUInteger kMaxDiskCacheSize;
         self.inProgress = NO;
 
         
-        self.imageCache = [NSMutableDictionary dictionaryWithCapacity:50];
+        self.imageCache = [NSMutableDictionary dictionary];
 
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
         self.cacheDir = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"imageCache"];
@@ -145,6 +145,11 @@ extern const NSUInteger kMaxDiskCacheSize;
     
 }
 
+- (void) flushMemoryCache;
+{
+    NSLog(@"flushing in-memory cache");
+    [self.imageCache removeAllObjects];
+}
 
 
 

@@ -18,6 +18,7 @@
 
 -(id)initWithFrame:(CGRect)frame;
 - (void)loadURL:(NSURL*)url;
+- (void)setImage:(UIImage*)theImage withAnimation:(BOOL)animate;
 
 @property (retain) NSURL* url;
 
