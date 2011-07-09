@@ -19,53 +19,105 @@
 @synthesize usernameView;
 @synthesize timeagoView;
 @synthesize placeView;
+@synthesize titleView;
+@synthesize descView;
+
+#define TITLE_FONT_SIZE 14
+
+-(UILabel*) addLabelWithFrame:(CGRect)frame fontSize:(int)size bold:(BOOL)bold color:(UIColor*)color;
+{
+    UILabel* label = [[UILabel alloc] initWithFrame:frame];
+    label.textAlignment = UITextAlignmentLeft;
+    if (bold) {
+        label.font = [UIFont boldSystemFontOfSize:size];
+    } else {
+        label.font = [UIFont systemFontOfSize:size];
+    }
+    label.contentMode = UIViewContentModeTopLeft;
+    label.textColor = color;
+    label.lineBreakMode = UILineBreakModeWordWrap;
+    label.minimumFontSize = size;
+    label.numberOfLines = 0;
+
+    [self.contentView addSubview:label];
+    [label release];
+    return label;
+}
+
++(CGFloat) heightForString:(NSString*)string font:(UIFont*)font;
+{
+    CGSize constraint = CGSizeMake(IMAGE_SIZE, 200000.0f);
+    CGSize size = [string sizeWithFont:font
+                     constrainedToSize:constraint
+                         lineBreakMode:UILineBreakModeWordWrap];
+    CGFloat height = MAX(size.height, 10.0f);
+    return height;
+}
+
++(CGFloat) cellHeightForPhoto:(StreamPhoto*)photo;
+{
+    CGFloat fixed = PADDING_SIZE + AVATAR_SIZE + PADDING_SIZE + IMAGE_SIZE + PADDING_SIZE;
+    CGFloat title = [StreamPhotoViewCell heightForString:photo.title font:[UIFont boldSystemFontOfSize:TITLE_FONT_SIZE]];
+    CGFloat description = 0.0f;
+    if (photo.description.length) {
+        description = PADDING_SIZE + [StreamPhotoViewCell heightForString:photo.description font:[UIFont systemFontOfSize:TITLE_FONT_SIZE]];
+    }
+    return fixed + title + description + PADDING_SIZE;
+}
 
 -(id)initWithBounds:(CGRect)bounds;
 {
-    NSLog(@"Initting cell");
     self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"streamCell"];
     if (!self) return nil;
     
-    // these numbers arrived at by copying instagram. :-)
-    float padding = 7;
-    float avatarsize = 30;
-
-    // width of the "time ago" box.
-    float timesize = 70;
-    
-    float imagesize = bounds.size.width - padding * 2;
-
-    CGRect avatarRect = CGRectMake(padding, padding, avatarsize, avatarsize);
+    CGRect avatarRect = CGRectMake(PADDING_SIZE, PADDING_SIZE, AVATAR_SIZE, AVATAR_SIZE);
     self.avatarView = [[[RemoteImageView alloc] initWithFrame:avatarRect] autorelease];
     [[self contentView] addSubview:avatarView];
 
-    CGRect imageRect = CGRectMake(padding, padding + avatarsize + padding, imagesize, imagesize);
+    CGRect imageRect = CGRectMake(PADDING_SIZE, PADDING_SIZE + AVATAR_SIZE + PADDING_SIZE, IMAGE_SIZE, IMAGE_SIZE);
     self.photoView = [[[RemoteImageView alloc] initWithFrame:imageRect] autorelease];
     [[self contentView] addSubview:photoView];
     
-    CGRect textRect = CGRectMake(padding + avatarsize, padding, imagesize - (avatarsize + padding + timesize), avatarsize);
-    
-    CGRect timeRect = CGRectMake(bounds.size.width - (padding + timesize), padding, timesize, avatarsize);
-    
-    self.usernameView = [[[UITextView alloc] initWithFrame:textRect] autorelease];
-    self.usernameView.textAlignment = UITextAlignmentLeft;
-    self.usernameView.font = [UIFont boldSystemFontOfSize:16];
-    self.usernameView.contentMode = UIViewContentModeTopLeft;
-    self.usernameView.textColor = [UIColor colorWithRed:0.1 green:0.5 blue:0.8 alpha:1];
-    [self.contentView addSubview:usernameView];
-    
-    self.timeagoView = [[[UITextView alloc] initWithFrame:timeRect] autorelease];
-    self.timeagoView.textAlignment = UITextAlignmentRight;
-    self.timeagoView.font = [UIFont boldSystemFontOfSize:16];
-    self.timeagoView.textColor = [UIColor colorWithWhite:0.6 alpha:1];
-    self.timeagoView.contentMode = UIViewContentModeTopRight;
-    [self.contentView addSubview:timeagoView];
 
-//    self.placeView = [[[UITextView alloc] initWithFrame:textRect] autorelease];
-//    self.placeView.contentMode = UIViewContentModeBottomLeft;
-//    [self.contentView addSubview:placeView];
-        
+    CGRect textRect = CGRectMake(PADDING_SIZE + AVATAR_SIZE, PADDING_SIZE, IMAGE_SIZE - (AVATAR_SIZE + PADDING_SIZE + TIMEBOX_SIZE), AVATAR_SIZE);
+    self.usernameView = [self addLabelWithFrame:textRect
+                                       fontSize:16
+                                           bold:YES
+                                          color:[UIColor colorWithRed:0.1 green:0.4 blue:0.7 alpha:1]];
+    
+
+    CGRect timeRect = CGRectMake(bounds.size.width - (PADDING_SIZE + TIMEBOX_SIZE), PADDING_SIZE, TIMEBOX_SIZE, AVATAR_SIZE);
+    self.timeagoView =  [self addLabelWithFrame:timeRect
+                                       fontSize:16
+                                           bold:YES
+                                          color:[UIColor colorWithWhite:0.6 alpha:1]];
+    self.timeagoView.textAlignment = UITextAlignmentRight;
+
+    
+    CGRect titleRect = CGRectMake(PADDING_SIZE, PADDING_SIZE + AVATAR_SIZE + PADDING_SIZE + IMAGE_SIZE + PADDING_SIZE, IMAGE_SIZE, 100);
+    self.titleView =    [self addLabelWithFrame:titleRect
+                                       fontSize:TITLE_FONT_SIZE
+                                           bold:YES
+                                          color:[UIColor colorWithWhite:0.4 alpha:1]];
+    
+    CGRect descRect = CGRectMake(PADDING_SIZE, PADDING_SIZE + AVATAR_SIZE + PADDING_SIZE + IMAGE_SIZE + PADDING_SIZE + PADDING_SIZE, IMAGE_SIZE, 100);
+    self.descView =     [self addLabelWithFrame:descRect
+                                       fontSize:TITLE_FONT_SIZE
+                                           bold:NO
+                                          color:[UIColor colorWithWhite:0.4 alpha:1]];
+    
     return self;
+}
+
+-(CGFloat)resizeLabel:(UILabel*)label atY:(CGFloat)y;
+{
+    CGFloat height = [StreamPhotoViewCell heightForString:label.text font:label.font];
+    CGRect frame = label.frame;
+    NSLog(@"setting heigt for frame to %f", height);
+    frame.size.height = height;
+    frame.origin.y = y;
+    label.frame = frame;
+    return height;
 }
 
 -(void) populateFromPhoto:(StreamPhoto*)photo;
@@ -73,8 +125,16 @@
     self.usernameView.text = photo.ownername;
     self.timeagoView.text = photo.ago;
     self.placeView.text = photo.placename;
+    self.titleView.text = photo.title;
+    self.descView.text = photo.description;
+
     [self.photoView loadURL:photo.imageURL];
     [self.avatarView loadURL:photo.avatarURL];
+    
+    CGFloat y = self.titleView.frame.origin.y;
+    
+    CGFloat height = [self resizeLabel:self.titleView atY:y];
+    [self resizeLabel:self.descView atY:y + height + PADDING_SIZE];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

@@ -40,8 +40,8 @@
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context;
 {
-	NSLog(@"manager process changed");
     refreshButton.enabled = !( [StreamManager sharedStreamManager].inProgress );
+    refreshButton.style = refreshButton.enabled ? UIBarButtonSystemItemRefresh : UIBarButtonSystemItemStop;
 }
 
 - (void)newPhotos;
@@ -115,7 +115,13 @@
 
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-	return 400.0f;
+    NSMutableArray *photos = [StreamManager sharedStreamManager].photos;
+	if (photos.count == 0) {
+        return 100.0f;
+    }
+    
+    StreamPhoto *photo = [photos objectAtIndex:indexPath.row];
+    return [StreamPhotoViewCell cellHeightForPhoto:photo];
 }
 
 - (void)dealloc {
