@@ -15,6 +15,10 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.textPull = @"Pull to refresh..";
+    self.textRelease = @"Release to refresh..";
+    self.textLoading = @"Loading..";
 
 	[[NSNotificationCenter defaultCenter] addObserver:self 
 											 selector:@selector(newPhotos) 
@@ -35,21 +39,25 @@
 	[[self navigationItem] setRightBarButtonItem:refreshButton];
     [refreshButton release];
     
-    [self performSelector:@selector(refreshButtonPressed) withObject:nil afterDelay:0.1];
+    [self performSelector:@selector(refresh) withObject:nil afterDelay:0.1];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context;
 {
     refreshButton.enabled = !( [StreamManager sharedStreamManager].inProgress );
-    refreshButton.style = refreshButton.enabled ? UIBarButtonSystemItemRefresh : UIBarButtonSystemItemStop;
+    //refreshButton.style = refreshButton.enabled ? UIBarButtonSystemItemRefresh : UIBarButtonSystemItemStop;
+    if (refreshButton.enabled) {
+        [self stopLoading];
+    }
 }
 
 - (void)newPhotos;
 {
 	[self.tableView reloadData];
+    [self stopLoading];
 }
 
-- (void)refreshButtonPressed;
+- (void)refresh;
 {
     [[StreamManager sharedStreamManager] refresh];
 }

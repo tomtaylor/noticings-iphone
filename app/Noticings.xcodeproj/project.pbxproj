@@ -58,6 +58,8 @@
 		E6218ADD13C35D7C0021CB80 /* StreamViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E6218ADA13C35D7C0021CB80 /* StreamViewController.m */; };
 		E6218ADF13C35D950021CB80 /* 40-inbox.png in Resources */ = {isa = PBXBuildFile; fileRef = E6218ADE13C35D950021CB80 /* 40-inbox.png */; };
 		E64839C813C8EA1C008DB9CE /* 43-film-roll.png in Resources */ = {isa = PBXBuildFile; fileRef = E64839C713C8EA1C008DB9CE /* 43-film-roll.png */; };
+		E64839CB13C8EBBF008DB9CE /* PullRefreshTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E64839CA13C8EBBF008DB9CE /* PullRefreshTableViewController.m */; };
+		E64839CD13C8EC39008DB9CE /* arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = E64839CC13C8EC39008DB9CE /* arrow.png */; };
 		E67305D313C388C2005CEC62 /* RemoteImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = E67305D213C388C2005CEC62 /* RemoteImageView.m */; };
 		E6AE4A9B13C3A1FD00702DA3 /* StreamManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E6AE4A9A13C3A1FD00702DA3 /* StreamManager.m */; };
 /* End PBXBuildFile section */
@@ -163,6 +165,9 @@
 		E6218ADA13C35D7C0021CB80 /* StreamViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StreamViewController.m; path = Classes/StreamViewController.m; sourceTree = "<group>"; };
 		E6218ADE13C35D950021CB80 /* 40-inbox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "40-inbox.png"; sourceTree = "<group>"; };
 		E64839C713C8EA1C008DB9CE /* 43-film-roll.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "43-film-roll.png"; sourceTree = "<group>"; };
+		E64839C913C8EBBF008DB9CE /* PullRefreshTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PullRefreshTableViewController.h; path = Classes/PullRefreshTableViewController.h; sourceTree = "<group>"; };
+		E64839CA13C8EBBF008DB9CE /* PullRefreshTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PullRefreshTableViewController.m; path = Classes/PullRefreshTableViewController.m; sourceTree = "<group>"; };
+		E64839CC13C8EC39008DB9CE /* arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = arrow.png; sourceTree = "<group>"; };
 		E67305D113C388C2005CEC62 /* RemoteImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteImageView.h; sourceTree = "<group>"; };
 		E67305D213C388C2005CEC62 /* RemoteImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RemoteImageView.m; sourceTree = "<group>"; };
 		E6AE4A9913C3A1FD00702DA3 /* StreamManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamManager.h; sourceTree = "<group>"; };
@@ -276,6 +281,7 @@
 				E244D5DA109CA6BA0075CAFD /* tab-eye.png */,
 				E21EEF9D1098C60300E8B313 /* Default.png */,
 				E22800ED11C91D5F00758E75 /* Default@2x.png */,
+				E64839CC13C8EC39008DB9CE /* arrow.png */,
 				E2D6365910984DF60073D598 /* 56-cloud.png */,
 				E6218ADE13C35D950021CB80 /* 40-inbox.png */,
 				E2D6365A10984DF60073D598 /* 42-photos.png */,
@@ -321,6 +327,8 @@
 		E2AC983D107FAE68007A570A /* Third Party */ = {
 			isa = PBXGroup;
 			children = (
+				E64839C913C8EBBF008DB9CE /* PullRefreshTableViewController.h */,
+				E64839CA13C8EBBF008DB9CE /* PullRefreshTableViewController.m */,
 				E27C7E12108B9B2D0083E392 /* SynthesizeSingleton.h */,
 			);
 			name = "Third Party";
@@ -436,6 +444,7 @@
 				E201C92313753FFD00FA5AFD /* PhotoSaveViewController.xib in Resources */,
 				E6218ADF13C35D950021CB80 /* 40-inbox.png in Resources */,
 				E64839C813C8EA1C008DB9CE /* 43-film-roll.png in Resources */,
+				E64839CD13C8EC39008DB9CE /* arrow.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -469,6 +478,7 @@
 				E6218ADD13C35D7C0021CB80 /* StreamViewController.m in Sources */,
 				E67305D313C388C2005CEC62 /* RemoteImageView.m in Sources */,
 				E6AE4A9B13C3A1FD00702DA3 /* StreamManager.m in Sources */,
+				E64839CB13C8EBBF008DB9CE /* PullRefreshTableViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

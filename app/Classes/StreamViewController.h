@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "PullRefreshTableViewController.h"
 
-@interface StreamViewController : UITableViewController {
+@interface StreamViewController : PullRefreshTableViewController {
     UIBarButtonItem *refreshButton;
 }
 
