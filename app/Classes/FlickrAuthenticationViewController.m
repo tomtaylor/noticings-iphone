@@ -8,6 +8,7 @@
 
 #import "FlickrAuthenticationViewController.h"
 #import "UploadQueueManager.h"
+#import "StreamManager.h"
 
 @implementation FlickrAuthenticationViewController
 
@@ -67,6 +68,8 @@
 	[[NSUserDefaults standardUserDefaults] setObject:userName forKey:@"userName"];
 	
 	[[NSUserDefaults standardUserDefaults] synchronize];
+    
+    [[StreamManager sharedStreamManager] refresh];
 	
 	[[[[UIAlertView alloc] initWithTitle:@"You've been signed in!" message:@"Now you can get on with uploading your noticings." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] autorelease] show];
 	

@@ -56,6 +56,11 @@ extern const NSUInteger kMaxDiskCacheSize;
         return;
     }
     
+    if (![self flickrRequest]) {
+        NSLog(@"No authenticated flickr connection - not refreshing.");
+        return;
+    }
+    
     self.inProgress = YES;
 
     NSLog(@"refresh!");
@@ -149,6 +154,7 @@ extern const NSUInteger kMaxDiskCacheSize;
 {
     NSLog(@"flushing in-memory cache");
     [self.imageCache removeAllObjects];
+    [self resetFlickrContext];
 }
 
 
@@ -159,6 +165,12 @@ extern const NSUInteger kMaxDiskCacheSize;
 - (OFFlickrAPIRequest *)flickrRequest;
 {
 	if (!flickrRequest) {
+        NSString* token = [[NSUserDefaults standardUserDefaults] stringForKey:@"authToken"];
+        if (!token) {
+            return nil;
+        }
+        
+        NSLog(@"connecting to flickr with token %@", token);
 		OFFlickrAPIContext *apiContext = [[OFFlickrAPIContext alloc] initWithAPIKey:FLICKR_API_KEY
                                                                        sharedSecret:FLICKR_API_SECRET];
 		[apiContext setAuthToken:[[NSUserDefaults standardUserDefaults] stringForKey:@"authToken"]];
@@ -169,6 +181,15 @@ extern const NSUInteger kMaxDiskCacheSize;
 	}
 	
 	return flickrRequest;
+}
+
+- (void)resetFlickrContext;
+{
+    NSLog(@"binning flickr request");
+    // called when the app wakes from sleep - invalidate the flickr request object,
+    // in case it is the old, unauthenticated version.
+    [flickrRequest release];
+    flickrRequest = nil;
 }
 
 

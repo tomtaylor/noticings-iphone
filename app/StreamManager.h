@@ -32,6 +32,7 @@
 - (void) clearCacheForURL:(NSURL*)url;
 - (void) clearCache;
 - (void) flushMemoryCache;
+- (void) resetFlickrContext;
    
 // interface
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didCompleteWithResponse:(NSDictionary *)inResponseDictionary;
