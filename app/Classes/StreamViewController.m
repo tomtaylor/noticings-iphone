@@ -38,8 +38,8 @@
 	
 	[[self navigationItem] setRightBarButtonItem:refreshButton];
     [refreshButton release];
-    
-    [self performSelector:@selector(refresh) withObject:nil afterDelay:0.1];
+
+    [[StreamManager sharedStreamManager] maybeRefresh];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context;

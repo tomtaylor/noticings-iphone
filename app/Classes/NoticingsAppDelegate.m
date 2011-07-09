@@ -112,7 +112,7 @@ BOOL gLogging = FALSE;
 - (void)applicationWillEnterForeground:(UIApplication *)application;
 {
     // resume from background. Multitasking devices only.
-    [[StreamManager sharedStreamManager] refresh]; // the viewcontroller listens to this
+    [[StreamManager sharedStreamManager] maybeRefresh]; // the viewcontroller listens to this
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {

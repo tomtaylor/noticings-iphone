@@ -66,6 +66,7 @@ extern const NSUInteger kMaxDiskCacheSize;
     NSData *data = [[NSData alloc] initWithContentsOfFile:cache];
     NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
     NSArray *archived = [[unarchiver decodeObjectForKey:@"photos"] retain];
+    NSNumber *archivedLastRefresh = [[unarchiver decodeObjectForKey:@"lastRefresh"] retain];
     [unarchiver release];
     [data release];
     
@@ -75,6 +76,8 @@ extern const NSUInteger kMaxDiskCacheSize;
         [self.photos addObject:photo];
     }
     [archived release];
+    
+    lastRefresh = [archivedLastRefresh doubleValue];
 
 	[[NSNotificationCenter defaultCenter] postNotificationName:@"newPhotos"
                                                         object:[NSNumber numberWithInt:self.photos.count]];
@@ -87,10 +90,24 @@ extern const NSUInteger kMaxDiskCacheSize;
     NSMutableData *data = [NSMutableData new];
     NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data];
     [archiver encodeObject:self.photos forKey:@"photos"];
+    [archiver encodeObject:[NSNumber numberWithDouble:lastRefresh] forKey:@"lastRefresh"];
     [archiver finishEncoding];
     [data writeToFile:cache atomically:YES];
     [archiver release];
     [data release];
+}
+
+// refresh, but only if we haven't refreshed recently.
+-(void)maybeRefresh;
+{
+    NSTimeInterval now = [[NSDate date] timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970;
+    NSLog(@"it's been %f seconds since refresh", now - lastRefresh);
+    if (now - lastRefresh < 60 * 10) {
+        // 10 mins
+        NSLog(@"not long enough");
+        return;
+    }
+    [self refresh];
 }
 
 - (void)refresh;
@@ -105,6 +122,8 @@ extern const NSUInteger kMaxDiskCacheSize;
         return;
     }
     
+    NSLog(@"Refreshing from Flickr..");
+
     self.inProgress = YES;
 
     NSString *extras = @"date_upload,date_taken,owner_name,icon_server,geo,path_alias,description";
@@ -268,6 +287,11 @@ extern const NSUInteger kMaxDiskCacheSize;
     self.inProgress = NO;
 	[[NSNotificationCenter defaultCenter] postNotificationName:@"newPhotos"
                                                         object:[NSNumber numberWithInt:self.photos.count]];
+
+
+    NSTimeInterval now = [[NSDate date] timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970;
+    lastRefresh = now;
+
 }
 
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didFailWithError:(NSError *)inError

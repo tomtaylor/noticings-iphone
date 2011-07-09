@@ -20,10 +20,13 @@
     
     NSString * cacheDir;
     NSMutableDictionary *imageCache;
+    
+    NSTimeInterval lastRefresh;
 }
 
 +(StreamManager *)sharedStreamManager;
 
+- (void)maybeRefresh;
 - (void)refresh;
 
 - (OFFlickrAPIRequest *)flickrRequest;
