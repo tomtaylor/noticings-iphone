@@ -57,6 +57,7 @@
 		E6218ADC13C35D7C0021CB80 /* StreamPhotoViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E6218AD813C35D7C0021CB80 /* StreamPhotoViewCell.m */; };
 		E6218ADD13C35D7C0021CB80 /* StreamViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E6218ADA13C35D7C0021CB80 /* StreamViewController.m */; };
 		E6218ADF13C35D950021CB80 /* 40-inbox.png in Resources */ = {isa = PBXBuildFile; fileRef = E6218ADE13C35D950021CB80 /* 40-inbox.png */; };
+		E64839C813C8EA1C008DB9CE /* 43-film-roll.png in Resources */ = {isa = PBXBuildFile; fileRef = E64839C713C8EA1C008DB9CE /* 43-film-roll.png */; };
 		E67305D313C388C2005CEC62 /* RemoteImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = E67305D213C388C2005CEC62 /* RemoteImageView.m */; };
 		E6AE4A9B13C3A1FD00702DA3 /* StreamManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E6AE4A9A13C3A1FD00702DA3 /* StreamManager.m */; };
 /* End PBXBuildFile section */
@@ -161,6 +162,7 @@
 		E6218AD913C35D7C0021CB80 /* StreamViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StreamViewController.h; path = Classes/StreamViewController.h; sourceTree = "<group>"; };
 		E6218ADA13C35D7C0021CB80 /* StreamViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StreamViewController.m; path = Classes/StreamViewController.m; sourceTree = "<group>"; };
 		E6218ADE13C35D950021CB80 /* 40-inbox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "40-inbox.png"; sourceTree = "<group>"; };
+		E64839C713C8EA1C008DB9CE /* 43-film-roll.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "43-film-roll.png"; sourceTree = "<group>"; };
 		E67305D113C388C2005CEC62 /* RemoteImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteImageView.h; sourceTree = "<group>"; };
 		E67305D213C388C2005CEC62 /* RemoteImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RemoteImageView.m; sourceTree = "<group>"; };
 		E6AE4A9913C3A1FD00702DA3 /* StreamManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamManager.h; sourceTree = "<group>"; };
@@ -277,6 +279,7 @@
 				E2D6365910984DF60073D598 /* 56-cloud.png */,
 				E6218ADE13C35D950021CB80 /* 40-inbox.png */,
 				E2D6365A10984DF60073D598 /* 42-photos.png */,
+				E64839C713C8EA1C008DB9CE /* 43-film-roll.png */,
 				E2D6365B10984DF60073D598 /* 19-gear.png */,
 				E211FAC610960D6200ABAE72 /* FlickrAuthenticationViewController.xib */,
 				E201C92113753FFD00FA5AFD /* PhotoSaveViewController.xib */,
@@ -432,6 +435,7 @@
 				E2493586137356850066EE38 /* PhotoPreviewViewController.xib in Resources */,
 				E201C92313753FFD00FA5AFD /* PhotoSaveViewController.xib in Resources */,
 				E6218ADF13C35D950021CB80 /* 40-inbox.png in Resources */,
+				E64839C813C8EA1C008DB9CE /* 43-film-roll.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
