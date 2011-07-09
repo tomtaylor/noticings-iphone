@@ -99,7 +99,7 @@
 		return cell;
 
 	} else {
-        StreamPhotoViewCell *cell = (StreamPhotoViewCell*)[tableView dequeueReusableCellWithIdentifier:@"streamCell"];
+        StreamPhotoViewCell *cell = (StreamPhotoViewCell*)[tableView dequeueReusableCellWithIdentifier:nil];
         if (cell == nil) {
             CGRect bounds = self.view.bounds;
             cell = [[[StreamPhotoViewCell alloc] initWithBounds:bounds] autorelease];
