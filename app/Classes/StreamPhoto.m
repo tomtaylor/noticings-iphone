@@ -106,6 +106,16 @@
     return [NSString stringWithFormat:@"%ds", seconds];
 }
 
+-(int)visibility;
+{
+    if ([[self.details objectForKey:@"ispublic"] intValue]) {
+        return StreamPhotoVisibilityPublic;
+    }
+    if ([[self.details objectForKey:@"isfriend"] intValue] || [[self.details objectForKey:@"isfamily"] intValue]) {
+        return StreamPhotoVisibilityLimited;
+    }
+    return StreamPhotoVisibilityPrivate;
+}
 
 #pragma mark serialize / deserizlise
 

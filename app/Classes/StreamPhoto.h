@@ -17,6 +17,10 @@
 
 - (id)initWithDictionary:(NSDictionary*)dict;
 
+#define StreamPhotoVisibilityPublic 0
+#define StreamPhotoVisibilityLimited 1
+#define StreamPhotoVisibilityPrivate 2
+
 @property (retain) NSDictionary *details;
 
 // method/properties that extract information from datails dict.
@@ -25,6 +29,7 @@
 @property (readonly) NSString* ownername;
 @property (readonly) NSString* ago;
 @property (readonly) NSString* placename;
+@property (readonly) int visibility;
 @property (readonly) NSURL* avatarURL;
 @property (readonly) NSURL* imageURL;
 
