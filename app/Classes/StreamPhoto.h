@@ -30,7 +30,9 @@
 @property (readonly) NSString* ago;
 @property (readonly) NSString* placename;
 @property (readonly) int visibility;
+
 @property (readonly) NSURL* avatarURL;
 @property (readonly) NSURL* imageURL;
+@property (readonly) NSURL* pageURL;
 
 @end

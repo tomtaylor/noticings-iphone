@@ -85,6 +85,12 @@
     return [NSURL URLWithString:avatarUrl];
 }
 
+- (NSURL*) pageURL;
+{
+    OFFlickrAPIContext *apiContext = [[[OFFlickrAPIContext alloc] initWithAPIKey:FLICKR_API_KEY sharedSecret:FLICKR_API_SECRET] autorelease];
+    return [apiContext photoWebPageURLFromDictionary:self.details];
+}
+
 - (NSString*) ago;
 {
     NSTimeInterval epoch = [[NSDate date] timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970; // yeah.

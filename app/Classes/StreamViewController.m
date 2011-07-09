@@ -125,6 +125,18 @@
     return [StreamPhotoViewCell cellHeightForPhoto:photo];
 }
 
+-(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+{
+    NSMutableArray *photos = [StreamManager sharedStreamManager].photos;
+    StreamPhoto *photo = [photos objectAtIndex:indexPath.row];
+    NSLog(@"page url is %@", photo.pageURL);
+    [[UIApplication sharedApplication] openURL:photo.pageURL];
+}
+
+
+
+# pragma mark memory management
+
 - (void)dealloc {
     [super dealloc];
 }
