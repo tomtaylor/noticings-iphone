@@ -13,6 +13,8 @@
 
 SYNTHESIZE_SINGLETON_FOR_CLASS(StreamManager);
 
+#define IMAGE_DATA_CACHE @"images.cache"
+
 extern const NSUInteger kMaxDiskCacheSize;
 
 @synthesize photos;
@@ -46,7 +48,49 @@ extern const NSUInteger kMaxDiskCacheSize;
     
     }
     
+    // It's worth blocking the runloop during app startup while we check the cache to
+    // avoid a flash of empty photo list.
+    [self loadCachedImageData];
+
     return self;
+}
+
+-(void)loadCachedImageData;
+{
+    // TODO - error handling? what if the cache is bad?
+    NSString* cache = [self cachePathForFilename:IMAGE_DATA_CACHE];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:cache]) {
+        return; // no cache
+    }
+    NSLog(@"Loading cached image data");
+    NSData *data = [[NSData alloc] initWithContentsOfFile:cache];
+    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
+    NSArray *archived = [[unarchiver decodeObjectForKey:@"photos"] retain];
+    [unarchiver release];
+    [data release];
+    
+    // don't replace self.photos, alter, so we fire the watchers.
+    [self.photos removeAllObjects];
+    for (StreamPhoto *photo in archived) {
+        [self.photos addObject:photo];
+    }
+    [archived release];
+
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"newPhotos"
+                                                        object:[NSNumber numberWithInt:self.photos.count]];
+}
+
+-(void)saveCachedImageData;
+{
+    NSLog(@"Saving cached image data");
+    NSString* cache = [self cachePathForFilename:IMAGE_DATA_CACHE];
+    NSMutableData *data = [NSMutableData new];
+    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data];
+    [archiver encodeObject:self.photos forKey:@"photos"];
+    [archiver finishEncoding];
+    [data writeToFile:cache atomically:YES];
+    [archiver release];
+    [data release];
 }
 
 - (void)refresh;
@@ -93,11 +137,15 @@ extern const NSUInteger kMaxDiskCacheSize;
     return hash;
 }
 
+-(NSString*) cachePathForFilename:(NSString*)filename;
+{
+    return [self.cacheDir stringByAppendingPathComponent:filename];
+}
+
 -(NSString*) urlToFilename:(NSURL*)url;
 {
     NSString *hash = [self sha256:[url absoluteString]];
-    NSString *file = [[self.cacheDir stringByAppendingPathComponent:hash] stringByAppendingPathExtension:@"jpg"];
-    return file;
+    return [self cachePathForFilename:[hash stringByAppendingPathExtension:@"jpg"]];
 }
 
 // try to return an NSImage for the image at this url from a cache.
@@ -214,6 +262,8 @@ extern const NSUInteger kMaxDiskCacheSize;
         [self.photos addObject:sp];
         [sp release];
     }
+
+    [self saveCachedImageData];
     
     self.inProgress = NO;
 	[[NSNotificationCenter defaultCenter] postNotificationName:@"newPhotos"

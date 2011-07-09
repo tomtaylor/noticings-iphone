@@ -10,7 +10,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface StreamPhoto : NSObject {
+@interface StreamPhoto : NSObject<NSCoding> {
     // NSDictionary describing the photo as returned by the API. Don't bother exploding it.
     NSDictionary *details;
 }

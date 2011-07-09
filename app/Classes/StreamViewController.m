@@ -90,15 +90,16 @@
     NSMutableArray *photos = [StreamManager sharedStreamManager].photos;
     
 	if (photos.count == 0) {
-		UITableViewCell *cell = [[[UITableViewCell alloc] initWithStyle:UITableViewStylePlain reuseIdentifier:nil] autorelease];
+		UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewStylePlain reuseIdentifier:nil];
 		cell.textLabel.textAlignment = UITextAlignmentCenter;
 		cell.textLabel.text = @"No photos from your contacts";
 		cell.textLabel.textColor = [UIColor grayColor];
 		cell.textLabel.font = [UIFont systemFontOfSize:14];
 		cell.selectionStyle = UITableViewCellSelectionStyleNone;
-		return cell;
+		return [cell autorelease];
 
 	} else {
+        // TODO - reuse identifier removed for now because of deferred loading bugs. Needs to come back at some point.
         StreamPhotoViewCell *cell = (StreamPhotoViewCell*)[tableView dequeueReusableCellWithIdentifier:nil];
         if (cell == nil) {
             CGRect bounds = self.view.bounds;

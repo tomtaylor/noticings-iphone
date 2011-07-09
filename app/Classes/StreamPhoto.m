@@ -24,6 +24,8 @@
     return self;
 }
 
+#pragma mark accessors / view utilities
+
 - (NSString*)title;
 {
     return [self.details valueForKeyPath:@"title"];
@@ -104,6 +106,25 @@
     return [NSString stringWithFormat:@"%ds", seconds];
 }
 
+
+#pragma mark serialize / deserizlise
+
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+    [coder encodeObject:self.details forKey:@"details"];
+}
+
+- (id)initWithCoder:(NSCoder *)coder
+{
+    self = [super init];
+    if (self) {
+        self.details = [coder decodeObjectForKey:@"details"];
+    }
+    return self;
+}
+
+
+#pragma mark memory managment
 
 - (void)dealloc
 {

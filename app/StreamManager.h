@@ -33,7 +33,14 @@
 - (void) clearCache;
 - (void) flushMemoryCache;
 - (void) resetFlickrContext;
-   
+
+// cache
+-(NSString*) cachePathForFilename:(NSString*)filename;
+-(NSString*) urlToFilename:(NSURL*)url;
+-(void)loadCachedImageData;
+-(void)saveCachedImageData;
+
+
 // interface
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didCompleteWithResponse:(NSDictionary *)inResponseDictionary;
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didFailWithError:(NSError *)inError;
