@@ -37,13 +37,13 @@
     if (raw == nil) {
         return nil;
     }
+    // strip HTML tags and their contents from the response.
     NSRange r;
     NSString *s = [[raw copy] autorelease];
     while ((r = [s rangeOfString:@"<[^>]+>" options:NSRegularExpressionSearch]).location != NSNotFound) {
         s = [s stringByReplacingCharactersInRange:r withString:@""];
     }
     s = [s stringByReplacingOccurrencesOfString:@"&nbsp;" withString:@"&"];
-    //s = [s stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
     return s;
 }
 
