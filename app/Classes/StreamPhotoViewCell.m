@@ -113,7 +113,6 @@
 {
     CGFloat height = [StreamPhotoViewCell heightForString:label.text font:label.font];
     CGRect frame = label.frame;
-    NSLog(@"setting heigt for frame to %f", height);
     frame.size.height = height;
     frame.origin.y = y;
     label.frame = frame;

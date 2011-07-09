@@ -11,15 +11,8 @@
 #import <Foundation/Foundation.h>
 
 @interface StreamPhoto : NSObject {
-    
     // NSDictionary describing the photo as returned by the API. Don't bother exploding it.
     NSDictionary *details;
-    NSData *avatarData;
-    NSData *imageData;
-    
-    UIImage *image;
-    UIImage *avatar;
-    
 }
 
 - (id)initWithDictionary:(NSDictionary*)dict;

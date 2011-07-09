@@ -106,14 +106,12 @@ BOOL gLogging = FALSE;
 - (void)applicationDidEnterBackground:(UIApplication *)application;
 {
     // something caused us to be bakgrounded. incoming call, home button, etc.
-    NSLog(@"applicationWillResignActive");    
     [[StreamManager sharedStreamManager] flushMemoryCache];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application;
 {
     // resume from background. Multitasking devices only.
-    NSLog(@"applicationWillEnterForground");
     [[StreamManager sharedStreamManager] refresh]; // the viewcontroller listens to this
 }
 

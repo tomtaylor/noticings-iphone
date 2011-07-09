@@ -52,7 +52,7 @@ extern const NSUInteger kMaxDiskCacheSize;
 - (void)refresh;
 {
     if (self.inProgress) {
-        NSLog(@"scan in progress, refusing to go again.");
+        NSLog(@"Refresh already in progress, refusing to go again.");
         return;
     }
     
@@ -63,8 +63,6 @@ extern const NSUInteger kMaxDiskCacheSize;
     
     self.inProgress = YES;
 
-    NSLog(@"refresh!");
-    
     NSString *extras = @"date_upload,date_taken,owner_name,icon_server,geo,path_alias,description";
     
     NSDictionary *args = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -85,7 +83,6 @@ extern const NSUInteger kMaxDiskCacheSize;
 -(NSString*) sha256:(NSString *)clear{
     const char *s=[clear cStringUsingEncoding:NSASCIIStringEncoding];
     NSData *keyData=[NSData dataWithBytes:s length:strlen(s)];
-    
     uint8_t digest[CC_SHA256_DIGEST_LENGTH]={0};
     CC_SHA256(keyData.bytes, keyData.length, digest);
     NSData *out=[NSData dataWithBytes:digest length:CC_SHA256_DIGEST_LENGTH];
@@ -103,7 +100,13 @@ extern const NSUInteger kMaxDiskCacheSize;
     return file;
 }
 
-
+// try to return an NSImage for the image at this url from a cache.
+// There are 2 levels of cache - we cache the raw UIImage in memory for a time,
+// but we flush that when the phone needs more memory or when the app gets sent to
+// the background. We also store the JPEGs for the images on disk.
+//
+// TODO - the disk cache needs reaping, based on mtime or something, but we can 
+// run for an awfully long time before I need to worry about that.
 - (UIImage *) imageForURL:(NSURL*)url;
 {
     NSString *filename = [self urlToFilename:url];
@@ -114,7 +117,10 @@ extern const NSUInteger kMaxDiskCacheSize;
         return inMemory;
     }
     
-    // now look on disk for image.
+    // now look on disk for image. Parsing a JPG takes noticable (barely) time
+    // on an iphone 4 so scrolling a list of images off the disk cache will have
+    // maybe a frame or 2 of jerk per image.
+    // TODO - pre-scale these images to display size? might help.
     if ([[NSFileManager defaultManager] fileExistsAtPath:filename]) {
         inMemory = [UIImage imageWithContentsOfFile:filename];
         // copy to the in-memory cache

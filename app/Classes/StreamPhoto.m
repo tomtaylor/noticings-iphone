@@ -42,7 +42,6 @@
     }
     s = [s stringByReplacingOccurrencesOfString:@"&nbsp;" withString:@"&"];
     //s = [s stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
-    NSLog(@"done - got:\n%@", s);
     return s;
 }
 
