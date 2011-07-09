@@ -29,6 +29,24 @@
     return [self.details valueForKeyPath:@"title"];
 }
 
+- (NSString*)description;
+{
+    NSString* raw = [self.details valueForKeyPath:@"description._text"];
+    if (raw == nil) {
+        return nil;
+    }
+    NSRange r;
+    NSString *s = [[raw copy] autorelease];
+    while ((r = [s rangeOfString:@"<[^>]+>" options:NSRegularExpressionSearch]).location != NSNotFound) {
+        s = [s stringByReplacingCharactersInRange:r withString:@""];
+    }
+    s = [s stringByReplacingOccurrencesOfString:@"&nbsp;" withString:@"&"];
+    //s = [s stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
+    NSLog(@"done - got:\n%@", s);
+    return s;
+}
+
+
 - (NSString*)ownername;
 {
     return [self.details valueForKeyPath:@"ownername"];

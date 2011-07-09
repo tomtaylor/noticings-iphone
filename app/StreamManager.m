@@ -60,7 +60,7 @@ extern const NSUInteger kMaxDiskCacheSize;
 
     NSLog(@"refresh!");
     
-    NSString *extras = @"date_upload,date_taken,owner_name,icon_server,geo,path_alias";
+    NSString *extras = @"date_upload,date_taken,owner_name,icon_server,geo,path_alias,description";
     
     NSDictionary *args = [NSDictionary dictionaryWithObjectsAndKeys:
                           @"50", @"count",
