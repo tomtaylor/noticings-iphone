@@ -55,7 +55,12 @@
 
 - (NSString*)placename;
 {
-    return [self.details valueForKeyPath:@"ownername"];
+    float lat = [[self.details valueForKey:@"latitude"] floatValue];
+    float lng = [[self.details valueForKey:@"longitude"] floatValue];
+    if (lat == 0 || lng == 0) {
+        return nil;
+    }
+    return [NSString stringWithFormat:@"%.3f,%.3f", lat, lng];
 }
 
 - (NSURL*) imageURL;
