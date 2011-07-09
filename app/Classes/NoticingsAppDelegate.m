@@ -9,6 +9,7 @@
 #import "NoticingsAppDelegate.h"
 #import "FlickrAuthenticationViewController.h"
 #import "UploadQueueManager.h"
+#import "StreamManager.h"
 
 @implementation NoticingsAppDelegate
 
@@ -100,6 +101,20 @@ BOOL gLogging = FALSE;
 	[authViewController finalizeAuthWithUrl:url];
 	[tabBarController presentModalViewController:authViewController animated:NO];
     return YES;
+}
+
+- (void)applicationDidEnterBackground:(UIApplication *)application;
+{
+    // something caused us to be bakgrounded. incoming call, home button, etc.
+    NSLog(@"applicationWillResignActive");    
+    [[StreamManager sharedStreamManager] flushMemoryCache];
+}
+
+- (void)applicationWillEnterForeground:(UIApplication *)application;
+{
+    // resume from background. Multitasking devices only.
+    NSLog(@"applicationWillEnterForground");
+    [[StreamManager sharedStreamManager] refresh]; // the viewcontroller listens to this
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
