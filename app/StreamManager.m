@@ -78,6 +78,7 @@ extern const NSUInteger kMaxDiskCacheSize;
     [archived release];
     
     lastRefresh = [archivedLastRefresh doubleValue];
+    [archivedLastRefresh release];
 
 	[[NSNotificationCenter defaultCenter] postNotificationName:@"newPhotos"
                                                         object:[NSNumber numberWithInt:self.photos.count]];
@@ -261,8 +262,16 @@ extern const NSUInteger kMaxDiskCacheSize;
     NSLog(@"binning flickr request");
     // called when the app wakes from sleep - invalidate the flickr request object,
     // in case it is the old, unauthenticated version.
-    [flickrRequest release];
+    if (flickrRequest) {
+        [flickrRequest cancel]; // stop ongoing HTTP requests
+        flickrRequest.delegate = nil;
+        [flickrRequest release];
+    }
     flickrRequest = nil;
+
+    // this tells the view controller that we're done with whatever we were doing - it hides the 'loading' message
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"newPhotos"
+                                                        object:[NSNumber numberWithInt:self.photos.count]];
 }
 
 
