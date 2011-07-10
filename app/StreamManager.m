@@ -305,8 +305,15 @@ extern const NSUInteger kMaxDiskCacheSize;
 
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didFailWithError:(NSError *)inError
 {
-    NSLog(@"failed flickr request!");
+    NSLog(@"failed flickr request! %@", inError);
     self.inProgress = NO;
+
+	[[[[UIAlertView alloc] initWithTitle:@"Flickr API call failed"
+                                 message:@"There was a problem getting your contacts' photos from Flickr."
+                                delegate:nil
+                       cancelButtonTitle:@"OK"
+                       otherButtonTitles:nil]
+      autorelease] show];
 }
 
 
