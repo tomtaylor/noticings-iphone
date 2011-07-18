@@ -66,7 +66,7 @@
 - (NSURL*) imageURL;
 {
     OFFlickrAPIContext *apiContext = [[[OFFlickrAPIContext alloc] initWithAPIKey:FLICKR_API_KEY sharedSecret:FLICKR_API_SECRET] autorelease];
-    return [apiContext photoSourceURLFromDictionary:self.details size:@"m"];
+    return [apiContext photoSourceURLFromDictionary:self.details size:nil];
 }
 
 - (NSURL*) avatarURL;
