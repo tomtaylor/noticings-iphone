@@ -2,9 +2,9 @@
 app/build/*
 *.pbxuser
 *.mode1v3
-app/Noticings.xcodeproj/project.xcworkspace/xcuserdata/*
-app/Noticings.xcodeproj/xcuserdata/*
-vendor/objectiveflickr/ObjectiveFlickr.xcodeproj/xcuserdata/*
+app/Noticings.xcodeproj/project.xcworkspace/xcuserdata
+app/Noticings.xcodeproj/xcuserdata
+vendor/objectiveflickr/ObjectiveFlickr.xcodeproj/xcuserdata
 
 # old skool
 .svn
@@ -12,3 +12,4 @@ vendor/objectiveflickr/ObjectiveFlickr.xcodeproj/xcuserdata/*
 # osx noise
 .DS_Store
 profile
+xcuserdata
