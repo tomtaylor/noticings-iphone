@@ -107,6 +107,7 @@ BOOL gLogging = FALSE;
 {
     // something caused us to be bakgrounded. incoming call, home button, etc.
     [[StreamManager sharedStreamManager] flushMemoryCache];
+    [[StreamManager sharedStreamManager] resetFlickrContext];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application;

@@ -268,6 +268,8 @@ extern const NSUInteger kMaxDiskCacheSize;
         [flickrRequest release];
     }
     flickrRequest = nil;
+    
+    self.inProgress = NO;
 
     // this tells the view controller that we're done with whatever we were doing - it hides the 'loading' message
 	[[NSNotificationCenter defaultCenter] postNotificationName:@"newPhotos"

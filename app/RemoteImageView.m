@@ -80,8 +80,13 @@
     StreamManager *manager = [StreamManager sharedStreamManager];
     
     UIImage *theImage = [UIImage imageWithData:data];
-    [manager cacheImage:theImage forURL:self.url];
-    [self setImage:theImage withAnimation:YES];
+    if (theImage) {
+        [manager cacheImage:theImage forURL:self.url];
+        [self setImage:theImage withAnimation:YES];
+    } else {
+        // TODO error handling. Failed to parse image?
+        NSLog(@"Failed to parse an image from data %@", data);
+    }
 
     [data release];
     data=nil;
