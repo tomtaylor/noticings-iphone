@@ -134,9 +134,12 @@
     if (mode == CameraControllerCameraMode) {
         [self imagePickerController:picker didFinishTakingPhotoWithInfo:info];
     } else {
+        [self.baseViewController dismissModalViewControllerAnimated:NO];
         NSURL *assetUrl = [info objectForKey:UIImagePickerControllerReferenceURL];
-        [assetsLibrary assetForURL:assetUrl 
+        DLog(@"Reading asset with URL: %@", assetUrl);
+        [self.assetsLibrary assetForURL:assetUrl 
                        resultBlock:^(ALAsset *asset) {
+                           DLog(@"Asset: %@", asset);
                            PhotoUpload *photoUpload = [[PhotoUpload alloc] initWithAsset:asset];
                            PhotoDetailViewController *photoDetailViewController = [[PhotoDetailViewController alloc] initWithStyle:UITableViewStyleGrouped];
                            photoDetailViewController.photoUpload = photoUpload;
@@ -146,7 +149,7 @@
                            [photoDetailViewController release];
                            
                            [self.baseViewController dismissModalViewControllerAnimated:NO];
-                           [self.baseViewController presentModalViewController:detailNavigationController animated:NO];
+                           [self.baseViewController.navigationController presentModalViewController:detailNavigationController animated:NO];
                            [detailNavigationController release];
                            
                        }
@@ -175,7 +178,7 @@
     
     CGImageRef cgImage = [originalImage CGImage];
     
-    [assetsLibrary 
+    [self.assetsLibrary 
      writeImageToSavedPhotosAlbum:cgImage
      metadata:metadata 
      completionBlock:^(NSURL *assetURL, NSError *error) {
@@ -230,7 +233,7 @@
     mode = CameraControllerSavedPhotosMode;
     UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
     imagePickerController.delegate = self;
-    imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    imagePickerController.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
     [self.baseViewController presentModalViewController:imagePickerController 
                                                animated:YES];
     [imagePickerController release];
