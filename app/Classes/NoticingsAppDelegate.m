@@ -10,11 +10,14 @@
 #import "FlickrAuthenticationViewController.h"
 #import "UploadQueueManager.h"
 #import "StreamManager.h"
+#import <ImageIO/ImageIO.h>
 
 @implementation NoticingsAppDelegate
 
 @synthesize window;
 @synthesize tabBarController;
+@synthesize dummyViewController;
+@synthesize cameraController;
 
 BOOL gLogging = FALSE;
 
@@ -27,10 +30,10 @@ BOOL gLogging = FALSE;
 	[userDefaults registerDefaults:defaults];
 	[userDefaults synchronize];
 	
-	uploadQueueManager = [UploadQueueManager sharedUploadQueueManager];
-	[uploadQueueManager restoreQueuedUploads];
+//	uploadQueueManager = [UploadQueueManager sharedUploadQueueManager];
+//	[uploadQueueManager restoreQueuedUploads];
 
-	queueTab = [tabBarController.tabBar.items objectAtIndex:2];
+	queueTab = [tabBarController.tabBar.items objectAtIndex:0];
 	int count = [[UploadQueueManager sharedUploadQueueManager].photoUploads count];
 	
 	if (count > 0) {
@@ -122,14 +125,31 @@ BOOL gLogging = FALSE;
 }
 
 #pragma mark -
+#pragma UITabBarControllerDelegate methods
+
+// this feels odd, but it's the easiest way of doing something when a tab is selected without having to hack the tabbar
+- (BOOL)tabBarController:(UITabBarController *)aTabBarController shouldSelectViewController:(UIViewController *)viewController {
+    if ([viewController isEqual:dummyViewController]) {
+        if (self.cameraController == nil) {
+            CameraController *aCameraController = [[CameraController alloc] initWithTabBarController:self.tabBarController];
+            self.cameraController = aCameraController;
+            [aCameraController release];
+        }
+        [self.cameraController presentImagePicker];
+        return NO;
+    }
+    return YES;
+}
+
+#pragma mark -
 #pragma mark Memory management
 
 - (void)dealloc {
 	[tabBarController release];
+    [cameraController release];
 	[window release];
 	[super dealloc];
 }
-
 
 @end
 

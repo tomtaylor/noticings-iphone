@@ -27,10 +27,10 @@
 	[[self navigationItem] setRightBarButtonItem:nextButton];
 	[nextButton release];
 	
-	if (self.photoUpload.photo.timestamp == nil) {
+	if (self.photoUpload.timestamp == nil) {
 		[self.datePicker setDate:[NSDate date]];
 	} else {
-		[self.datePicker setDate:self.photoUpload.photo.timestamp];		
+		[self.datePicker setDate:self.photoUpload.timestamp];		
 	}
 }
 

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -25,6 +25,7 @@
 		E21EEF9E1098C60300E8B313 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = E21EEF9D1098C60300E8B313 /* Default.png */; };
 		E22800EE11C91D5F00758E75 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E22800ED11C91D5F00758E75 /* Default@2x.png */; };
 		E228010111C91F6100758E75 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E228010011C91F6100758E75 /* Icon@2x.png */; };
+		E22C520513D4C5F700197EC5 /* CameraController.m in Sources */ = {isa = PBXBuildFile; fileRef = E22C520413D4C5F700197EC5 /* CameraController.m */; };
 		E244D468109C82AA0075CAFD /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = E244D467109C82AA0075CAFD /* Icon.png */; };
 		E244D479109C83CF0075CAFD /* MoreViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E244D478109C83CF0075CAFD /* MoreViewController.m */; };
 		E244D5DB109CA6BA0075CAFD /* tab-eye.png in Resources */ = {isa = PBXBuildFile; fileRef = E244D5DA109CA6BA0075CAFD /* tab-eye.png */; };
@@ -35,7 +36,6 @@
 		E256C42A10826C4100948E14 /* EditableTextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E256C42910826C4100948E14 /* EditableTextFieldCell.m */; };
 		E256C4991083192D00948E14 /* EditableTextViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E256C4981083192D00948E14 /* EditableTextViewCell.m */; };
 		E269437310A0398600253D6C /* Entitlements.plist in Resources */ = {isa = PBXBuildFile; fileRef = E269437210A0398600253D6C /* Entitlements.plist */; };
-		E26976F6102B497700A85F05 /* Photo.m in Sources */ = {isa = PBXBuildFile; fileRef = E26976F5102B497700A85F05 /* Photo.m */; };
 		E27762B3109649FB00FCC1F1 /* UploadQueueViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E27762B2109649FB00FCC1F1 /* UploadQueueViewController.m */; };
 		E27762BB10964C3A00FCC1F1 /* PhotoUpload.m in Sources */ = {isa = PBXBuildFile; fileRef = E27762BA10964C3A00FCC1F1 /* PhotoUpload.m */; };
 		E2792D101097976C00F9802C /* PhotoUploadCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E2792D0F1097976C00F9802C /* PhotoUploadCell.m */; };
@@ -47,7 +47,6 @@
 		E2AC9A1A1080AD39007A570A /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2AC9A191080AD39007A570A /* QuartzCore.framework */; };
 		E2AC9A6A1080BED6007A570A /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2AC9A691080BED6007A570A /* MapKit.framework */; };
 		E2B7D70611CA6425009D6A25 /* libObjectiveFlickr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E27C7D8B108B270E0083E392 /* libObjectiveFlickr.a */; };
-		E2CB4FED11C028590040100D /* PhotosViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E2CB4FEC11C028590040100D /* PhotosViewController.m */; };
 		E2D6365C10984DF60073D598 /* 56-cloud.png in Resources */ = {isa = PBXBuildFile; fileRef = E2D6365910984DF60073D598 /* 56-cloud.png */; };
 		E2D6365D10984DF60073D598 /* 42-photos.png in Resources */ = {isa = PBXBuildFile; fileRef = E2D6365A10984DF60073D598 /* 42-photos.png */; };
 		E2D6365E10984DF60073D598 /* 19-gear.png in Resources */ = {isa = PBXBuildFile; fileRef = E2D6365B10984DF60073D598 /* 19-gear.png */; };
@@ -114,6 +113,8 @@
 		E21EEF9D1098C60300E8B313 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		E22800ED11C91D5F00758E75 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		E228010011C91F6100758E75 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
+		E22C520313D4C5F700197EC5 /* CameraController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraController.h; sourceTree = "<group>"; };
+		E22C520413D4C5F700197EC5 /* CameraController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CameraController.m; sourceTree = "<group>"; };
 		E244D467109C82AA0075CAFD /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		E244D477109C83CF0075CAFD /* MoreViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoreViewController.h; sourceTree = "<group>"; };
 		E244D478109C83CF0075CAFD /* MoreViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MoreViewController.m; sourceTree = "<group>"; };
@@ -131,8 +132,6 @@
 		E256C4971083192D00948E14 /* EditableTextViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditableTextViewCell.h; sourceTree = "<group>"; };
 		E256C4981083192D00948E14 /* EditableTextViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditableTextViewCell.m; sourceTree = "<group>"; };
 		E269437210A0398600253D6C /* Entitlements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Entitlements.plist; sourceTree = "<group>"; };
-		E26976F4102B497700A85F05 /* Photo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Photo.h; sourceTree = "<group>"; };
-		E26976F5102B497700A85F05 /* Photo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Photo.m; sourceTree = "<group>"; wrapsLines = 1; };
 		E27762B1109649FB00FCC1F1 /* UploadQueueViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UploadQueueViewController.h; sourceTree = "<group>"; };
 		E27762B2109649FB00FCC1F1 /* UploadQueueViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UploadQueueViewController.m; sourceTree = "<group>"; };
 		E27762B910964C3A00FCC1F1 /* PhotoUpload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoUpload.h; sourceTree = "<group>"; };
@@ -149,8 +148,6 @@
 		E2A6C4EA11CA4A810065E27A /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		E2AC9A191080AD39007A570A /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		E2AC9A691080BED6007A570A /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
-		E2CB4FEB11C028590040100D /* PhotosViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotosViewController.h; sourceTree = "<group>"; };
-		E2CB4FEC11C028590040100D /* PhotosViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotosViewController.m; sourceTree = "<group>"; };
 		E2D6365910984DF60073D598 /* 56-cloud.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "56-cloud.png"; sourceTree = "<group>"; };
 		E2D6365A10984DF60073D598 /* 42-photos.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "42-photos.png"; sourceTree = "<group>"; };
 		E2D6365B10984DF60073D598 /* 19-gear.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "19-gear.png"; sourceTree = "<group>"; };
@@ -205,8 +202,6 @@
 				E256C42910826C4100948E14 /* EditableTextFieldCell.m */,
 				1D3623240D0F684500981E51 /* NoticingsAppDelegate.h */,
 				1D3623250D0F684500981E51 /* NoticingsAppDelegate.m */,
-				E26976F4102B497700A85F05 /* Photo.h */,
-				E26976F5102B497700A85F05 /* Photo.m */,
 				E256C3FC108267E800948E14 /* PhotoDetailViewController.h */,
 				E256C3FD108267E800948E14 /* PhotoDetailViewController.m */,
 				E256C4971083192D00948E14 /* EditableTextViewCell.h */,
@@ -227,12 +222,12 @@
 				E20EF687109A4A8F001C5F05 /* UploadTimestampViewController.m */,
 				E244D477109C83CF0075CAFD /* MoreViewController.h */,
 				E244D478109C83CF0075CAFD /* MoreViewController.m */,
-				E2CB4FEB11C028590040100D /* PhotosViewController.h */,
-				E2CB4FEC11C028590040100D /* PhotosViewController.m */,
 				E2493582137356840066EE38 /* PhotoPreviewViewController.h */,
 				E2493583137356850066EE38 /* PhotoPreviewViewController.m */,
 				E201C91F13753FFD00FA5AFD /* PhotoSaveViewController.h */,
 				E201C92013753FFD00FA5AFD /* PhotoSaveViewController.m */,
+				E22C520313D4C5F700197EC5 /* CameraController.h */,
+				E22C520413D4C5F700197EC5 /* CameraController.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -377,8 +372,11 @@
 /* Begin PBXProject section */
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0410;
+			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Noticings" */;
-			compatibilityVersion = "Xcode 3.1";
+			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -457,7 +455,6 @@
 			files = (
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				1D3623260D0F684500981E51 /* NoticingsAppDelegate.m in Sources */,
-				E26976F6102B497700A85F05 /* Photo.m in Sources */,
 				E256C3FE108267E800948E14 /* PhotoDetailViewController.m in Sources */,
 				E256C42A10826C4100948E14 /* EditableTextFieldCell.m in Sources */,
 				E256C4991083192D00948E14 /* EditableTextViewCell.m in Sources */,
@@ -469,7 +466,6 @@
 				E2792D101097976C00F9802C /* PhotoUploadCell.m in Sources */,
 				E20EF689109A4A8F001C5F05 /* UploadTimestampViewController.m in Sources */,
 				E244D479109C83CF0075CAFD /* MoreViewController.m in Sources */,
-				E2CB4FED11C028590040100D /* PhotosViewController.m in Sources */,
 				E2493571137343D40066EE38 /* ImageScrollView.m in Sources */,
 				E2493585137356850066EE38 /* PhotoPreviewViewController.m in Sources */,
 				E201C92213753FFD00FA5AFD /* PhotoSaveViewController.m in Sources */,
@@ -479,6 +475,7 @@
 				E67305D313C388C2005CEC62 /* RemoteImageView.m in Sources */,
 				E6AE4A9B13C3A1FD00702DA3 /* StreamManager.m in Sources */,
 				E64839CB13C8EBBF008DB9CE /* PullRefreshTableViewController.m in Sources */,
+				E22C520513D4C5F700197EC5 /* CameraController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -502,11 +499,13 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Noticings_Prefix.pch;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = (
 					../vendor/objectiveflickr/LFWebAPIKit,
 					../vendor/objectiveflickr/Source,
 				);
 				INFOPLIST_FILE = "Noticings-Info.plist";
+				OTHER_CFLAGS = "-DDEBUG";
 				PRODUCT_NAME = Noticings;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
@@ -520,11 +519,13 @@
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Noticings_Prefix.pch;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = (
 					../vendor/objectiveflickr/LFWebAPIKit,
 					../vendor/objectiveflickr/Source,
 				);
 				INFOPLIST_FILE = "Noticings-Info.plist";
+				OTHER_CFLAGS = "";
 				PRODUCT_NAME = Noticings;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
@@ -539,8 +540,7 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				PREBINDING = NO;
-				SDKROOT = iphoneos4.3;
+				SDKROOT = iphoneos;
 			};
 			name = Debug;
 		};
@@ -552,8 +552,7 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				PREBINDING = NO;
-				SDKROOT = iphoneos4.3;
+				SDKROOT = iphoneos;
 			};
 			name = Release;
 		};
@@ -565,8 +564,7 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				PREBINDING = NO;
-				SDKROOT = iphoneos4.3;
+				SDKROOT = iphoneos;
 			};
 			name = "Debug Ad-Hoc";
 		};
@@ -579,11 +577,13 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Noticings_Prefix.pch;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = (
 					../vendor/objectiveflickr/LFWebAPIKit,
 					../vendor/objectiveflickr/Source,
 				);
 				INFOPLIST_FILE = "Noticings-Info.plist";
+				OTHER_CFLAGS = "-DDEBUG";
 				PRODUCT_NAME = Noticings;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
@@ -598,8 +598,7 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				PREBINDING = NO;
-				SDKROOT = iphoneos4.3;
+				SDKROOT = iphoneos;
 			};
 			name = "App Store Distribution";
 		};
@@ -607,15 +606,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_ENTITLEMENTS = Entitlements.plist;
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Noticings_Prefix.pch;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = (
 					../vendor/objectiveflickr/LFWebAPIKit,
 					../vendor/objectiveflickr/Source,
 				);
 				INFOPLIST_FILE = "Noticings-Info.plist";
+				OTHER_CFLAGS = "";
 				PRODUCT_NAME = Noticings;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
@@ -634,7 +634,7 @@
 				E28C152C10A489DF00B79928 /* App Store Distribution */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Noticings" */ = {
 			isa = XCConfigurationList;
@@ -645,7 +645,7 @@
 				E28C152B10A489DF00B79928 /* App Store Distribution */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};

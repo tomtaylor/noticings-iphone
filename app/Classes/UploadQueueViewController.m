@@ -9,7 +9,6 @@
 #import "UploadQueueViewController.h"
 #import "UploadQueueManager.h"
 #import "PhotoUpload.h"
-#import "Photo.h"
 #import "PhotoUploadCell.h"
 #import "PhotoDetailViewController.h"
 

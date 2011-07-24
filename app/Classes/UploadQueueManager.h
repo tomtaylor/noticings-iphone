@@ -10,8 +10,13 @@
 #import "SynthesizeSingleton.h"
 #import "ObjectiveFlickr.h"
 #import "PhotoUpload.h"
-
 #import "FlickrAPIKeys.h"
+
+enum RequestType {
+    UploadRequestType,
+    LocationRequestType,
+    TimestampRequestType
+};
 
 @interface UploadQueueManager : NSObject <OFFlickrAPIRequestDelegate> {
 	NSMutableArray *photoUploads;

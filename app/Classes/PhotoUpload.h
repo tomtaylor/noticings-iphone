@@ -8,36 +8,47 @@
 
 #import <Foundation/Foundation.h>
 #import <MapKit/MapKit.h>
-#import "Photo.h"
+#import <AssetsLibrary/AssetsLibrary.h>
 
-#define PhotoUploadStatePending @"pending"
-#define PhotoUploadStateUploading @"uploading"
-#define PhotoUploadStateSettingTimestamp @"settingTimestamp"
-#define PhotoUploadStateSettingLocation @"settingLocation"
-#define PhotoUploadStateSettingPermissions @"settingPermissions"
-#define PhotoUploadStateComplete @"complete"
+enum {
+    PhotoUploadStatePendingUpload,
+    PhotoUploadStateUploaded,
+    PhotoUploadStateLocationSet,
+    PhotoUploadStateComplete
+};
 
 @interface PhotoUpload : NSObject <MKAnnotation> {
-	Photo *photo;
+	ALAsset *asset;
 	NSString *title;
 	NSString *tags;
 	NSNumber *progress;
-	NSString *state;
+    BOOL inProgress;
+	NSInteger state;
 	NSString *flickrId;
-	NSDate *timestamp;
+    CLLocation *location;
 	CLLocationCoordinate2D coordinate;
+    CLLocationCoordinate2D originalCoordinate;
+    NSDate *timestamp;
+    NSDate *originalTimestamp;
 }
 
-@property (nonatomic, retain) Photo *photo;
+@property (nonatomic, retain) ALAsset *asset;
 @property (nonatomic, retain) NSString *title;
 @property (nonatomic, retain) NSString *tags;
 @property (nonatomic, retain) NSNumber *progress;
-@property (nonatomic, retain) NSString *state;
+@property (nonatomic) BOOL inProgress;
+@property (nonatomic) NSInteger state;
 @property (nonatomic, retain) NSString *flickrId;
-@property (nonatomic, retain) NSDate *timestamp;
+@property (nonatomic, retain) CLLocation *location;
 @property (nonatomic) CLLocationCoordinate2D coordinate;
+@property (nonatomic, readonly) CLLocationCoordinate2D originalCoordinate;
+@property (nonatomic, retain) NSDate *timestamp;
+@property (nonatomic, readonly, retain) NSDate *originalTimestamp;
 
-- (id)initWithPhoto:(Photo *)_photo;
-- (NSDictionary *)asDictionary;
+
+- (id)initWithAsset:(ALAsset *)asset;
+//- (id)initWithDictionary:(NSDictionary *)dictionary;
+//- (NSDictionary *)asDictionary;
+- (NSData *)imageData;
 
 @end

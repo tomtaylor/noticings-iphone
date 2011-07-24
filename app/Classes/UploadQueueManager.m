@@ -7,22 +7,16 @@
 //
 
 #import "UploadQueueManager.h"
-
 #import "PhotoUpload.h"
-#import "Photo.h"
-
-#define UploadRequestType @"upload"
-#define LocationRequestType @"location"
-#define PermissionsRequestType @"permissions"
-#define TimestampRequestType @"timestamp"
 
 @interface UploadQueueManager (Private)
 
 - (void)uploadNextPhoto;
 - (void)announceQueueCount;
+- (void)nextStageForUploadQueue;
+- (void)nextStageForPhotoUpload:(PhotoUpload *)photoUpload;
 - (void)uploadPhotoUpload:(PhotoUpload *)photoUpload;
 - (void)setLocationForPhotoUpload:(PhotoUpload *)photoUpload;
-- (void)setPermissionsForPhotoUpload:(PhotoUpload *)photoUpload;
 - (void)setTimestampForPhotoUpload:(PhotoUpload *)photoUpload;
 - (void)endBackgroundTask;
 - (void)startBackgroundTaskIfNeeded;
@@ -76,10 +70,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(UploadQueueManager);
 
 - (void)startQueueIfNeeded {
 	if ([self.photoUploads count] > 0 && self.inProgress == NO) {
-		//PhotoUpload *photoUpload = [self.photoUploads objectAtIndex:0];
-		[self startBackgroundTaskIfNeeded];
-		[self uploadNextPhoto];
-	} else {
+        [self nextStageForUploadQueue];
 	}
 }
 
@@ -96,44 +87,68 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(UploadQueueManager);
 	UIApplication *app = [UIApplication sharedApplication];
 	dispatch_async(dispatch_get_main_queue(), ^{
 		if (backgroundTask != UIBackgroundTaskInvalid) {
-			// add cleanup code here
 			[app endBackgroundTask:backgroundTask];
 			backgroundTask = UIBackgroundTaskInvalid;
 		}
 	});
 }
 
-
-- (void)uploadNextPhoto {
+- (void)nextStageForUploadQueue {
 	if ([self.photoUploads count] > 0) {
+        [self startBackgroundTaskIfNeeded];
+        self.inProgress = YES;
 		PhotoUpload *photoUpload = [self.photoUploads objectAtIndex:0];
-		self.inProgress = YES;
-		
-		if ([photoUpload.state isEqualToString:PhotoUploadStatePending]) {
-			[self uploadPhotoUpload:photoUpload];
-		} else if ([photoUpload.state isEqualToString:PhotoUploadStateUploading]) {
-			[self uploadPhotoUpload:photoUpload];
-		} else if ([photoUpload.state isEqualToString:PhotoUploadStateSettingTimestamp]) {
-			[self setTimestampForPhotoUpload:photoUpload];
-		} else if ([photoUpload.state isEqualToString:PhotoUploadStateSettingLocation]) {
-			[self setLocationForPhotoUpload:photoUpload];
-		} else if ([photoUpload.state isEqualToString:PhotoUploadStateSettingPermissions]) {
-			[self setPermissionsForPhotoUpload:photoUpload];
-		}
-	}
+        DLog(@"Starting upload for: %@", photoUpload);
+        [self nextStageForPhotoUpload:photoUpload];
+	} else {
+        self.inProgress = NO;
+        [self endBackgroundTask];
+    }
+}
+
+- (void)nextStageForPhotoUpload:(PhotoUpload *)photoUpload
+{
+    switch (photoUpload.state) {
+        case PhotoUploadStatePendingUpload:
+            DLog(@"PhotoUpload (%@) in pending upload state; uploading", photoUpload);
+            [self uploadPhotoUpload:photoUpload];
+            break;
+        
+        case PhotoUploadStateUploaded:
+            DLog(@"PhotoUpload (%@) in uploaded state; setting location", photoUpload);
+            [self setLocationForPhotoUpload:photoUpload];
+            break;
+            
+        case PhotoUploadStateLocationSet:
+            DLog(@"PhotoUpload (%@) in location set state; setting timestamp", photoUpload);
+            [self setTimestampForPhotoUpload:photoUpload];
+            break;
+            
+        case PhotoUploadStateComplete:
+            DLog(@"PhotoUpload (%@) in completed state; finishing", photoUpload);
+            photoUpload.inProgress = NO;
+            [self.photoUploads removeObject:photoUpload];
+            [self announceQueueCount];
+            [self nextStageForUploadQueue];
+            break;
+        
+        default:
+            break;
+    }
 }
 
 - (void)uploadPhotoUpload:(PhotoUpload *)photoUpload {
 	OFFlickrAPIRequest *request = [self flickrRequest];
 	
-	photoUpload.state = PhotoUploadStateUploading;
+    photoUpload.inProgress = YES;
 	photoUpload.progress = [NSNumber numberWithFloat:0.0f];
 	
-	NSInputStream *imageStream = [NSInputStream inputStreamWithData:photoUpload.photo.imageData];
+    NSInputStream *imageStream = [NSInputStream inputStreamWithData:[photoUpload imageData]];
+    DLog(@"Input stream: %@", imageStream);
 	
 	NSDictionary *sessionInfo = [NSDictionary dictionaryWithObjectsAndKeys:
 								 photoUpload, @"photoUpload",
-								 UploadRequestType, @"requestType", 
+								 [NSNumber numberWithInteger:UploadRequestType], @"requestType", 
 								 nil];
 
 	NSString *uploadedTitleString;
@@ -142,7 +157,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(UploadQueueManager);
 		NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 		[dateFormatter setTimeStyle:NSDateFormatterShortStyle];
 		[dateFormatter setDateStyle:NSDateFormatterNoStyle];
-		uploadedTitleString = [dateFormatter stringFromDate:photoUpload.photo.timestamp];
+		uploadedTitleString = [dateFormatter stringFromDate:photoUpload.timestamp];
 		[dateFormatter release];
 	} else {
 		uploadedTitleString = photoUpload.title;
@@ -161,114 +176,98 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(UploadQueueManager);
 }
 
 - (void)setTimestampForPhotoUpload:(PhotoUpload *)photoUpload {
-	photoUpload.state = PhotoUploadStateSettingTimestamp;
-	
-	OFFlickrAPIRequest *request = [self flickrRequest];
-	
-	NSDictionary *sessionInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-								 photoUpload, @"photoUpload",
-								 TimestampRequestType, @"requestType", 
-								 nil];
-	
-	[request setSessionInfo:sessionInfo];
-	
-	NSDateFormatter *outputFormatter = [[NSDateFormatter alloc] init];
-	[outputFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-	NSString *timestampString = [outputFormatter stringFromDate:photoUpload.timestamp];
-	[outputFormatter release];
-	
-	NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:photoUpload.flickrId, @"photo_id",
-							   timestampString, @"date_taken",
-							   nil];
-	
-	[request callAPIMethodWithPOST:@"flickr.photos.setDates" arguments:arguments];
-																		
+    if (photoUpload.timestamp != photoUpload.originalTimestamp) {
+        photoUpload.inProgress = YES;
+        photoUpload.progress = [NSNumber numberWithFloat:0.85f];
+        
+        OFFlickrAPIRequest *request = [self flickrRequest];
+        
+        NSDictionary *sessionInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                                     photoUpload, @"photoUpload",
+                                     [NSNumber numberWithInteger:TimestampRequestType], @"requestType", 
+                                     nil];
+        
+        [request setSessionInfo:sessionInfo];
+        
+        NSDateFormatter *outputFormatter = [[NSDateFormatter alloc] init];
+        [outputFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+        NSString *timestampString = [outputFormatter stringFromDate:photoUpload.timestamp];
+        [outputFormatter release];
+        
+        NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:photoUpload.flickrId, @"photo_id",
+                                   timestampString, @"date_taken",
+                                   nil];
+        
+        [request callAPIMethodWithPOST:@"flickr.photos.setDates" arguments:arguments];
+    } else {
+        photoUpload.state = PhotoUploadStateComplete;
+        [self nextStageForPhotoUpload:photoUpload];
+    }
 }
 
 - (void)setLocationForPhotoUpload:(PhotoUpload *)photoUpload {
-	photoUpload.state = PhotoUploadStateSettingLocation;
-	
-	OFFlickrAPIRequest *request = [self flickrRequest];
-	
-	NSDictionary *sessionInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-								 photoUpload, @"photoUpload",
-								 LocationRequestType, @"requestType", 
-								 nil];
-	
-	[request setSessionInfo:sessionInfo];
-	
-	NSNumber *latitudeNumber = [NSNumber numberWithDouble:photoUpload.coordinate.latitude];
-	NSNumber *longitudeNumber = [NSNumber numberWithDouble:photoUpload.coordinate.longitude];
-	
-	NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:photoUpload.flickrId, @"photo_id", 
-							   [latitudeNumber stringValue], @"lat",
-							   [longitudeNumber stringValue], @"lon",
-							   nil];
-	
-	[request callAPIMethodWithPOST:@"flickr.photos.geo.setLocation" arguments:arguments];
-
-}
-
-- (void)setPermissionsForPhotoUpload:(PhotoUpload *)photoUpload {
-	photoUpload.state = PhotoUploadStateSettingPermissions;
-	
-	OFFlickrAPIRequest *request = [self flickrRequest];
-	
-	NSDictionary *sessionInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-								 photoUpload, @"photoUpload",
-								 PermissionsRequestType, @"requestType", 
-								 nil];
-	
-	[request setSessionInfo:sessionInfo];
-	
-	NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:photoUpload.flickrId, @"photo_id",
-							   @"1", @"is_public",
-							   @"1", @"is_friend",
-							   @"1", @"is_family",
-							   @"1", @"is_contact",
-							   nil];
-	
-	[request callAPIMethodWithPOST:@"flickr.photos.geo.setPerms" arguments:arguments];
+	if (photoUpload.coordinate.latitude != photoUpload.originalCoordinate.latitude ||
+        photoUpload.coordinate.longitude != photoUpload.originalCoordinate.longitude)
+    {
+        photoUpload.inProgress = YES;
+        photoUpload.progress = [NSNumber numberWithFloat:0.9f];
+        
+        OFFlickrAPIRequest *request = [self flickrRequest];
+        
+        NSDictionary *sessionInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                                     photoUpload, @"photoUpload",
+                                     [NSNumber numberWithInteger:LocationRequestType], @"requestType", 
+                                     nil];
+        
+        [request setSessionInfo:sessionInfo];
+        
+        NSNumber *latitudeNumber = [NSNumber numberWithDouble:photoUpload.coordinate.latitude];
+        NSNumber *longitudeNumber = [NSNumber numberWithDouble:photoUpload.coordinate.longitude];
+        
+        NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:photoUpload.flickrId, @"photo_id", 
+                                   [latitudeNumber stringValue], @"lat",
+                                   [longitudeNumber stringValue], @"lon",
+                                   nil];
+        
+        [request callAPIMethodWithPOST:@"flickr.photos.geo.setLocation" arguments:arguments];
+    } else {
+        photoUpload.state = PhotoUploadStateLocationSet;
+        [self nextStageForPhotoUpload:photoUpload];
+    }
 }
 
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest 
  didCompleteWithResponse:(NSDictionary *)inResponseDictionary
 {
 	PhotoUpload *photoUpload = [inRequest.sessionInfo objectForKey:@"photoUpload"];
-	NSString *requestType = [inRequest.sessionInfo objectForKey:@"requestType"];
-	
-	if ([requestType isEqualToString:UploadRequestType]) {
-		photoUpload.flickrId = [[inResponseDictionary objectForKey:@"photoid"] textContent];
-		
-		if (!photoUpload.photo.timestamp && photoUpload.photo.timestamp != photoUpload.timestamp) {
-			[self setTimestampForPhotoUpload:photoUpload];
-		} else {
-			[self setLocationForPhotoUpload:photoUpload];
-		}
-		
-	} else if ([requestType isEqualToString:TimestampRequestType]) {
-		[self setLocationForPhotoUpload:photoUpload];
-	} else if ([requestType isEqualToString:LocationRequestType]) {
-		[self setPermissionsForPhotoUpload:photoUpload];
-	} else {
-		[photoUploads removeObjectAtIndex:0];
-		[self announceQueueCount];
-		
-		if ([self.photoUploads count] > 0) {
-			[self uploadNextPhoto];
-		} else {
-			self.inProgress = NO;
-			[self endBackgroundTask];
-		}
-	}
+	NSInteger requestType = [[inRequest.sessionInfo objectForKey:@"requestType"] integerValue];
+    
+    switch (requestType) {
+        case UploadRequestType:
+            photoUpload.flickrId = [[inResponseDictionary objectForKey:@"photoid"] textContent];
+            photoUpload.state = PhotoUploadStateUploaded;
+            break;
+            
+        case LocationRequestType:
+            photoUpload.state = PhotoUploadStateLocationSet;
+            break;
+        
+        case TimestampRequestType:
+            photoUpload.state = PhotoUploadStateComplete;
+            photoUpload.progress = [NSNumber numberWithFloat:1.0f];
+            
+        default:
+            break;
+    } 
+    
+    [self nextStageForPhotoUpload:photoUpload];
 }
 
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest 
 		didFailWithError:(NSError *)inError
 {
 	PhotoUpload *photoUpload = [inRequest.sessionInfo objectForKey:@"photoUpload"];
-	photoUpload.progress = [NSNumber numberWithFloat:0.0f];
-	
+    photoUpload.inProgress = NO;
 	self.inProgress = NO;
 	
 	if ([UIApplication sharedApplication].applicationState == UIApplicationStateActive) {	
@@ -286,7 +285,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(UploadQueueManager);
 		[localNotification release];
 	}
 	
-	NSLog(@"Error in state: %@, %@", photoUpload.state, inError);
+	DLog(@"Error in state: %@, %@", photoUpload.state, inError);
 }
 
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest 
@@ -297,7 +296,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(UploadQueueManager);
 	
 	float totalBytesFloat = [[NSNumber numberWithInt:inTotalBytes] floatValue];
 	float sentBytesFloat = [[NSNumber numberWithInt:inSentBytes] floatValue];
-	photoUpload.progress = [NSNumber numberWithFloat:(sentBytesFloat/totalBytesFloat)];
+	photoUpload.progress = [NSNumber numberWithFloat:((sentBytesFloat/totalBytesFloat * 0.9))];
 }
 
 - (void)announceQueueCount {
@@ -306,21 +305,21 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(UploadQueueManager);
 }
 
 - (void)saveQueuedUploads {
-	[self pauseQueue];
-	
-	NSLog(@"Saving queued uploads");
-	
-	NSMutableArray *savedUploads = [[NSMutableArray alloc] initWithCapacity:[self.photoUploads count]];
-
-	for (int i = 0; i < [self.photoUploads count]; i++) {
-		PhotoUpload *photoUpload = [self.photoUploads objectAtIndex:i];
-		NSDictionary *dict = [photoUpload asDictionary];
-		NSLog(@"Saving dictionary: %@", dict);
-		[savedUploads addObject:dict];
-	}
-	
-	[[NSUserDefaults standardUserDefaults] setObject:savedUploads forKey:@"savedUploads"];
-	[savedUploads release];
+//	[self pauseQueue];
+//	
+//	NSLog(@"Saving queued uploads");
+//	
+//	NSMutableArray *savedUploads = [[NSMutableArray alloc] initWithCapacity:[self.photoUploads count]];
+//
+//	for (int i = 0; i < [self.photoUploads count]; i++) {
+//		PhotoUpload *photoUpload = [self.photoUploads objectAtIndex:i];
+//		NSDictionary *dict = [photoUpload asDictionary];
+//		NSLog(@"Saving dictionary: %@", dict);
+//		[savedUploads addObject:dict];
+//	}
+//	
+//	[[NSUserDefaults standardUserDefaults] setObject:savedUploads forKey:@"savedUploads"];
+//	[savedUploads release];
 }
 
 - (void)restoreQueuedUploads {

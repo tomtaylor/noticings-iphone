@@ -12,11 +12,10 @@
 
 @implementation PhotoPreviewViewController
 
-@synthesize photo, imageView;
+@synthesize imageView;
 
 - (void)dealloc
 {
-    [photo release];
     [super dealloc];
 }
 
@@ -24,26 +23,26 @@
 
 - (void)viewDidLoad
 {
-    [super viewDidLoad];
-    
-    nextButton = [[UIBarButtonItem alloc] 
-                  initWithTitle:@"Next" 
-                  style:UIBarButtonSystemItemAction 
-                  target:self 
-                  action:@selector(nextPressed:)];    
-    [[self navigationItem] setRightBarButtonItem:nextButton];
-
-    
-    // allows us to use the space behind the status bar
-    self.wantsFullScreenLayout = YES;
-    
-    ALAssetRepresentation *defaultRepresentation = [photo.asset defaultRepresentation];
-    
-    CGImageRef imageRef = [defaultRepresentation fullScreenImage];
-    UIImage *image = [UIImage imageWithCGImage:imageRef 
-                                         scale:[defaultRepresentation scale] 
-                                   orientation:[defaultRepresentation orientation]];
-    imageView.image = image;
+//    [super viewDidLoad];
+//    
+//    nextButton = [[UIBarButtonItem alloc] 
+//                  initWithTitle:@"Next" 
+//                  style:UIBarButtonSystemItemAction 
+//                  target:self 
+//                  action:@selector(nextPressed:)];    
+//    [[self navigationItem] setRightBarButtonItem:nextButton];
+//
+//    
+//    // allows us to use the space behind the status bar
+//    self.wantsFullScreenLayout = YES;
+//    
+//    ALAssetRepresentation *defaultRepresentation = [photo.asset defaultRepresentation];
+//    
+//    CGImageRef imageRef = [defaultRepresentation fullScreenImage];
+//    UIImage *image = [UIImage imageWithCGImage:imageRef 
+//                                         scale:[defaultRepresentation scale] 
+//                                   orientation:[defaultRepresentation orientation]];
+//    imageView.image = image;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -57,12 +56,12 @@
 }
 
 - (void)nextPressed:(id)sender {
-    PhotoDetailViewController *photoDetailViewController = [[PhotoDetailViewController alloc] initWithStyle:UITableViewStyleGrouped];
-    PhotoUpload *photoUpload = [[PhotoUpload alloc] initWithPhoto:self.photo];
-    photoDetailViewController.photoUpload = photoUpload;
-    [self.navigationController pushViewController:photoDetailViewController animated:YES];
-    [photoUpload release];
-    [photoDetailViewController release];
+//    PhotoDetailViewController *photoDetailViewController = [[PhotoDetailViewController alloc] initWithStyle:UITableViewStyleGrouped];
+//    PhotoUpload *photoUpload = [[PhotoUpload alloc] initWithPhoto:self.photo];
+//    photoDetailViewController.photoUpload = photoUpload;
+//    [self.navigationController pushViewController:photoDetailViewController animated:YES];
+//    [photoUpload release];
+//    [photoDetailViewController release];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
