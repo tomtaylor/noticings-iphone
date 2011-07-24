@@ -16,10 +16,10 @@
 @synthesize photoUpload;
 @synthesize photoTitleCell;
 @synthesize photoTagsCell;
+@synthesize privacyView;
 
 - (id)initWithStyle:(UITableViewStyle)style {
     if (self = [super initWithStyle:style]) {
-
 		self.photoTitleCell = [[[EditableTextFieldCell alloc] initWithFrame:CGRectZero 
 															 reuseIdentifier:nil] autorelease];
 		self.photoTitleCell.textField.delegate = self;
@@ -35,6 +35,27 @@
 		self.photoTagsCell.textField.text = [[NSUserDefaults standardUserDefaults] stringForKey:@"defaultTags"];
 		self.photoTagsCell.textField.autocapitalizationType = UITextAutocapitalizationTypeNone;
 		self.photoTagsCell.textField.autocorrectionType = UITextAutocorrectionTypeNo;
+        
+        self.privacyView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 94.25)] autorelease];
+        
+        UILabel *privacyLabel = [[UILabel alloc] initWithFrame:CGRectMake(19.0, 4.25, 320.0, 46.0)];
+        privacyLabel.backgroundColor = [UIColor clearColor];
+        privacyLabel.textColor = [UIColor colorWithRed:0.265 green:0.294 blue:0.367 alpha:1.0];
+        
+        privacyLabel.shadowColor = [UIColor whiteColor];
+        privacyLabel.shadowOffset = CGSizeMake(0, 1);
+        privacyLabel.font = [UIFont boldSystemFontOfSize:17.0];
+        privacyLabel.text = @"Privacy";
+        [privacyView addSubview:privacyLabel];
+        [privacyLabel release];
+        
+        UISegmentedControl *privacyControl = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"Private", @"F & F", @"Public", nil]];
+        privacyControl.frame = CGRectMake(10, 50.25, 300, self.privacyView.frame.size.height-50.25);
+        [privacyControl addTarget:self action:@selector(privacyChanged:) forControlEvents:UIControlEventValueChanged];
+        [privacyControl setSelectedSegmentIndex:2]; // default to being public
+        [privacyView addSubview:privacyControl];
+        [privacyControl release];
+        
     }
     return self;
 }
@@ -113,47 +134,67 @@
 
 // Customize the number of rows in the table view.
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 1;
+    switch (section) {
+        case TitleSection:
+            return 2;
+        case PrivacySection:
+            return 0;
+        default:
+            return 0;
+    }
 }
 
 
 // Customize the appearance of table view cells.
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 	
-	NSUInteger section = [indexPath section];
-    
-    switch (section) {
+    switch (indexPath.section) {
 		case TitleSection:
-			return self.photoTitleCell;
-			break;
-		case TagsSection:
-			return self.photoTagsCell;
-			break;
+            switch (indexPath.row) {
+                case 0:
+                    return self.photoTitleCell;
+                case 1:
+                    return self.photoTagsCell;
+            }
 		default:
 			return nil;
-			break;
 	}
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
 	
 	switch (section) {
-		case TitleSection: return @"Title";
-		case TagsSection: return @"Tags";
+		case TitleSection: return @"Title & Tags";
+        case PrivacySection: return @"Privacy";
 	}
-
 	return nil;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
 	switch (section) {
-		case TagsSection:
-			return @"You can change the default tags in your device settings.";
-			break;
+		case TitleSection:
+			return @"You can change the default tags in the Settings app.";
 		default:
 			return nil;
-			break;
 	}
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    switch (section) {
+        case PrivacySection:
+            return self.privacyView;
+        default:
+            return nil;
+    }
+}
+
+- (float)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    switch (section) {
+        case PrivacySection:
+            return self.privacyView.frame.size.height;
+        default:
+            return 46.0;
+    }
 }
 
 #pragma mark Table View Delegate
@@ -177,6 +218,22 @@
 
 - (void)cancel {
     [self.navigationController.parentViewController dismissModalViewControllerAnimated:YES];
+}
+
+- (void)privacyChanged:(UISegmentedControl *)sender
+{
+    switch (sender.selectedSegmentIndex) {
+        case 0:
+            self.photoUpload.privacy = PhotoUploadPrivacyPrivate;
+            break;
+        case 1:
+            self.photoUpload.privacy = PhotoUploadPrivacyFriendsAndFamily;
+            break;
+        case 2:
+            self.photoUpload.privacy = PhotoUploadPrivacyPublic;
+        default:
+            break;
+    }
 }
 
 @end

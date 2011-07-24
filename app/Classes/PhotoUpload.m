@@ -15,6 +15,7 @@
 @synthesize progress;
 @synthesize inProgress;
 @synthesize state;
+@synthesize privacy;
 @synthesize flickrId;
 @synthesize title;
 @synthesize tags;
@@ -32,7 +33,8 @@
 		self.state = PhotoUploadStatePendingUpload;
         self.inProgress = NO;
 		self.progress = [NSNumber numberWithFloat:0.0f];
-
+        self.privacy = PhotoUploadPrivacyPublic;
+        
         self.location = [asset valueForProperty:ALAssetPropertyLocation];
         self.originalTimestamp = [asset valueForProperty:ALAssetPropertyDate];
         self.timestamp = [asset valueForProperty:ALAssetPropertyDate];

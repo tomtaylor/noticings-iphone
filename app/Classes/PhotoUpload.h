@@ -17,6 +17,12 @@ enum {
     PhotoUploadStateComplete
 };
 
+enum {
+    PhotoUploadPrivacyPrivate,
+    PhotoUploadPrivacyFriendsAndFamily,
+    PhotoUploadPrivacyPublic
+};
+
 @interface PhotoUpload : NSObject <MKAnnotation> {
 	ALAsset *asset;
 	NSString *title;
@@ -24,6 +30,7 @@ enum {
 	NSNumber *progress;
     BOOL inProgress;
 	NSInteger state;
+    NSInteger privacy;
 	NSString *flickrId;
     CLLocation *location;
 	CLLocationCoordinate2D coordinate;
@@ -38,6 +45,7 @@ enum {
 @property (nonatomic, retain) NSNumber *progress;
 @property (nonatomic) BOOL inProgress;
 @property (nonatomic) NSInteger state;
+@property (nonatomic) NSInteger privacy;
 @property (nonatomic, retain) NSString *flickrId;
 @property (nonatomic, retain) CLLocation *location;
 @property (nonatomic) CLLocationCoordinate2D coordinate;

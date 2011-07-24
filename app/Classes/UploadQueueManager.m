@@ -162,16 +162,27 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(UploadQueueManager);
 	} else {
 		uploadedTitleString = photoUpload.title;
 	}
+    
+    NSMutableDictionary *arguments = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                      uploadedTitleString, @"title", 
+                                      photoUpload.tags, @"tags",
+                                      nil];
+
+    if (photoUpload.privacy == PhotoUploadPrivacyPrivate) {
+        [arguments setObject:@"0" forKey:@"is_public"];
+    } else if (photoUpload.privacy == PhotoUploadPrivacyFriendsAndFamily) {
+        [arguments setObject:@"1" forKey:@"is_friend"];
+        [arguments setObject:@"1" forKey:@"is_family"];
+        [arguments setObject:@"0" forKey:@"is_public"];
+    } else {
+        [arguments setObject:@"1" forKey:@"is_public"];
+    }
 		
 	[request setSessionInfo:sessionInfo];
 	[request uploadImageStream:imageStream 
 			 suggestedFilename:@"noticing.jpg"
 					  MIMEType:@"image/jpeg"
-					 arguments:[NSDictionary dictionaryWithObjectsAndKeys:
-								uploadedTitleString, @"title", 
-								photoUpload.tags, @"tags", 
-								@"1", @"is_public",
-								nil]
+					 arguments:arguments
 	 ];
 }
 

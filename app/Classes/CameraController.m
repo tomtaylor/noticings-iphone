@@ -139,7 +139,7 @@
         DLog(@"Reading asset with URL: %@", assetUrl);
         [self.assetsLibrary assetForURL:assetUrl 
                        resultBlock:^(ALAsset *asset) {
-                           DLog(@"Asset: %@", asset);
+                           DLog(@"Loaded Asset: %@", asset);
                            PhotoUpload *photoUpload = [[PhotoUpload alloc] initWithAsset:asset];
                            PhotoDetailViewController *photoDetailViewController = [[PhotoDetailViewController alloc] initWithStyle:UITableViewStyleGrouped];
                            photoDetailViewController.photoUpload = photoUpload;
@@ -151,7 +151,6 @@
                            [self.baseViewController dismissModalViewControllerAnimated:NO];
                            [self.baseViewController.navigationController presentModalViewController:detailNavigationController animated:NO];
                            [detailNavigationController release];
-                           
                        }
                       failureBlock:^(NSError *error) {
                           DLog(@"Failed to get Asset by URL: %@", error);

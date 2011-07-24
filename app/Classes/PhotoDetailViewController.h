@@ -22,18 +22,20 @@ enum {
 
 enum {
     TitleSection,
-    TagsSection
+    PrivacySection
 };
 
 @interface PhotoDetailViewController : UITableViewController <UITextFieldDelegate, UITextViewDelegate> {
 	PhotoUpload *photoUpload;
 	EditableTextFieldCell *photoTitleCell;
 	EditableTextFieldCell *photoTagsCell;
+    UIView *privacyView;
 }
 
 @property (nonatomic, retain) PhotoUpload *photoUpload;
 @property (nonatomic, retain) EditableTextFieldCell *photoTitleCell;
 @property (nonatomic, retain) EditableTextFieldCell *photoTagsCell;
+@property (nonatomic, retain) UIView *privacyView;
 
 - (void)next;
 
