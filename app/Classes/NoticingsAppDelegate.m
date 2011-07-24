@@ -131,11 +131,11 @@ BOOL gLogging = FALSE;
 - (BOOL)tabBarController:(UITabBarController *)aTabBarController shouldSelectViewController:(UIViewController *)viewController {
     if ([viewController isEqual:dummyViewController]) {
         if (self.cameraController == nil) {
-            CameraController *aCameraController = [[CameraController alloc] initWithTabBarController:self.tabBarController];
+            CameraController *aCameraController = [[CameraController alloc] initWithBaseViewController:self.tabBarController];
             self.cameraController = aCameraController;
             [aCameraController release];
         }
-        [self.cameraController presentImagePicker];
+        [self.cameraController presentCamera];
         return NO;
     }
     return YES;

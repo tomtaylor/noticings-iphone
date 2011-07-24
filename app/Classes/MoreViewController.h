@@ -7,10 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "CameraController.h"
 
 @interface MoreViewController : UITableViewController {
-
+    CameraController *cameraController;
 }
 
 @end

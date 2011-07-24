@@ -34,23 +34,13 @@ enum AppSectionRows {
 
 @implementation MoreViewController
 
-/*
-- (id)initWithStyle:(UITableViewStyle)style {
-    // Override initWithStyle: if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
-    if (self = [super initWithStyle:style]) {
-    }
-    return self;
-}
-*/
 
-/*
 - (void)viewDidLoad {
+    if (!cameraController) {
+        cameraController = [[CameraController alloc] initWithBaseViewController:self];
+    }
     [super viewDidLoad];
-
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
-*/
 
 /*
 - (void)viewWillAppear:(BOOL)animated {
@@ -89,8 +79,10 @@ enum AppSectionRows {
 }
 
 - (void)viewDidUnload {
-	// Release any retained subviews of the main view.
-	// e.g. self.myOutlet = nil;
+    if (cameraController) {
+        [cameraController release];
+        cameraController = nil;
+    }    
 }
 
 
@@ -130,7 +122,7 @@ enum AppSectionRows {
 	if (indexPath.section == kNoticingsSection) {
 		switch (indexPath.row) {
 			case kNoticingsSectionSiteRow:
-				cell.textLabel.text = @"Open noticin.gs";
+				cell.textLabel.text = @"Upload from Camera Roll";
 				break;
 			default:
 				break;
@@ -149,7 +141,7 @@ enum AppSectionRows {
 	if (indexPath.section == kNoticingsSection) {
 		switch (indexPath.row) {
 			case kNoticingsSectionSiteRow:
-				[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://noticin.gs"]];
+				[cameraController presentImagePicker];
 				break;
 			default:
 				break;
@@ -169,6 +161,7 @@ enum AppSectionRows {
 }
 
 - (void)dealloc {
+    [cameraController release];
     [super dealloc];
 }
 

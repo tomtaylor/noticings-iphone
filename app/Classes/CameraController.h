@@ -10,20 +10,28 @@
 #import <AssetsLibrary/AssetsLibrary.h>
 #import <CoreLocation/CoreLocation.h>
 
+enum CameraControllerMode {
+    CameraControllerCameraMode,
+    CameraControllerSavedPhotosMode
+};
+
 @interface CameraController : NSObject <CLLocationManagerDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate> 
 {
     CLLocationManager *locationManager;
     CLLocation *currentLocation;
     ALAssetsLibrary *assetsLibrary;
-    UITabBarController *tabBarController;
+    UIViewController *baseViewController;
+    NSInteger mode;
 }
 
 - (void)presentImagePicker;
-- (id)initWithTabBarController:(UITabBarController *)tabBarController;
+- (void)presentCamera;
+- (id)initWithBaseViewController:(UIViewController *)baseViewController;
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishTakingPhotoWithInfo:(NSDictionary *)info;
 
 @property (nonatomic, retain) CLLocationManager *locationManager;
 @property (nonatomic, retain) CLLocation *currentLocation;
 @property (nonatomic, retain) ALAssetsLibrary *assetsLibrary;
-@property (nonatomic, retain) UITabBarController *tabBarController;
+@property (nonatomic, retain) UIViewController *baseViewController;
 
 @end

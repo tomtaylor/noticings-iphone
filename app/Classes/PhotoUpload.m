@@ -31,19 +31,17 @@
 		self.asset = _asset;
 		self.state = PhotoUploadStatePendingUpload;
         self.inProgress = NO;
-		self.progress = [NSNumber numberWithFloat:0];
-        //metadata = [[[self.asset defaultRepresentation] metadata] copy];
-        //DLog(@"Created PhotoUpload for Asset with metadata: %@", metadata);
-        
+		self.progress = [NSNumber numberWithFloat:0.0f];
+
         self.location = [asset valueForProperty:ALAssetPropertyLocation];
-        originalTimestamp = [asset valueForProperty:ALAssetPropertyDate];
-        self.timestamp = self.originalTimestamp;
+        self.originalTimestamp = [asset valueForProperty:ALAssetPropertyDate];
+        self.timestamp = [asset valueForProperty:ALAssetPropertyDate];
         DLog(@"Created PhotoUpload for Asset with location: %@ and timestamp: %@", self.location, self.timestamp);
         		
 		if (self.location) {
-			originalCoordinate = self.location.coordinate;
+			self.originalCoordinate = self.location.coordinate;
 		} else {
-			originalCoordinate = kCLLocationCoordinate2DInvalid;
+			self.originalCoordinate = kCLLocationCoordinate2DInvalid;
 		}
         self.coordinate = originalCoordinate;
 	}
@@ -136,11 +134,11 @@
 
 - (void) dealloc
 {
-	[progress release];
 	[asset release];
-	[flickrId release];
 	[title release];
 	[tags release];
+    [progress release];
+    [flickrId release];
     [location release];
     [timestamp release];
     [originalTimestamp release];

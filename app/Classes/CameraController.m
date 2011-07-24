@@ -22,9 +22,9 @@
 @synthesize locationManager;
 @synthesize currentLocation;
 @synthesize assetsLibrary;
-@synthesize tabBarController;
+@synthesize baseViewController;
 
-- (id)initWithTabBarController:(UITabBarController *)_tabBarController {
+- (id)initWithBaseViewController:(UIViewController *)_baseViewController {
     self = [super init];
     if (self) {
         CLLocationManager *aLocationManager = [[CLLocationManager alloc] init];
@@ -37,7 +37,7 @@
         self.assetsLibrary = anAssetsLibrary;
         [anAssetsLibrary release];
         
-        self.tabBarController = _tabBarController;
+        self.baseViewController = _baseViewController;
     }
     return self;
 }
@@ -62,9 +62,13 @@
     
 }
 
-- (NSDictionary *)gpsDictionaryForCurrentLocation {
-    NSMutableDictionary *gps = [NSMutableDictionary dictionary];
+- (NSDictionary *)gpsDictionaryForCurrentLocation {    
+    if (!self.currentLocation) {
+        return nil;
+    }
     
+    NSMutableDictionary *gps = [NSMutableDictionary dictionary];
+
     // GPS tag version
     [gps setObject:@"2.2.0.0" forKey:(NSString *)kCGImagePropertyGPSVersion];
     
@@ -120,7 +124,6 @@
         [gps setObject:@"T" forKey:(NSString *)kCGImagePropertyGPSTrackRef];
         [gps setObject:[NSNumber numberWithFloat:self.currentLocation.course] forKey:(NSString *)kCGImagePropertyGPSTrack];
     }
-    
     return gps;
 }
 
@@ -128,7 +131,34 @@
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
-    //[self.tabBarController dismissModalViewControllerAnimated:NO];
+    if (mode == CameraControllerCameraMode) {
+        [self imagePickerController:picker didFinishTakingPhotoWithInfo:info];
+    } else {
+        NSURL *assetUrl = [info objectForKey:UIImagePickerControllerReferenceURL];
+        [assetsLibrary assetForURL:assetUrl 
+                       resultBlock:^(ALAsset *asset) {
+                           PhotoUpload *photoUpload = [[PhotoUpload alloc] initWithAsset:asset];
+                           PhotoDetailViewController *photoDetailViewController = [[PhotoDetailViewController alloc] initWithStyle:UITableViewStyleGrouped];
+                           photoDetailViewController.photoUpload = photoUpload;
+                           [photoUpload release];
+                           
+                           UINavigationController *detailNavigationController = [[UINavigationController alloc] initWithRootViewController:photoDetailViewController];
+                           [photoDetailViewController release];
+                           
+                           [self.baseViewController dismissModalViewControllerAnimated:NO];
+                           [self.baseViewController presentModalViewController:detailNavigationController animated:NO];
+                           [detailNavigationController release];
+                           
+                       }
+                      failureBlock:^(NSError *error) {
+                          DLog(@"Failed to get Asset by URL: %@", error);
+                      }];
+    }
+
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishTakingPhotoWithInfo:(NSDictionary *)info
+{
     [self.locationManager stopUpdatingLocation];
     
     DLog(@"metadata: %@", info);
@@ -138,7 +168,10 @@
     
     // GPS isn't recorded unless we do it manually
     NSDictionary *gpsMetadata = [self gpsDictionaryForCurrentLocation];
-    [metadata setValue:gpsMetadata forKey:(NSString *)kCGImagePropertyGPSDictionary];
+    
+    if (gpsMetadata) {
+        [metadata setValue:gpsMetadata forKey:(NSString *)kCGImagePropertyGPSDictionary];
+    }
     
     CGImageRef cgImage = [originalImage CGImage];
     
@@ -149,20 +182,21 @@
          if (error) {
              DLog(@"Failed to write Asset: %@", error);
          } else {
+             DLog(@"Asset written to URL: %@", assetURL);
              [assetsLibrary 
               assetForURL:assetURL 
               resultBlock:^(ALAsset *asset) {
-                  DLog(@"Asset written to URL: %@", assetURL);
+                  DLog(@"Asset read from URL: %@", assetURL);
                   PhotoUpload *photoUpload = [[PhotoUpload alloc] initWithAsset:asset];
                   PhotoDetailViewController *photoDetailViewController = [[PhotoDetailViewController alloc] initWithStyle:UITableViewStyleGrouped];
                   photoDetailViewController.photoUpload = photoUpload;
+                  [photoUpload release];
                   
                   UINavigationController *detailNavigationController = [[UINavigationController alloc] initWithRootViewController:photoDetailViewController];
-                  [self.tabBarController dismissModalViewControllerAnimated:NO];
-                  [self.tabBarController presentModalViewController:detailNavigationController animated:NO];
-                  
-                  [photoUpload release];
                   [photoDetailViewController release];
+                  
+                  [self.baseViewController dismissModalViewControllerAnimated:NO];
+                  [self.baseViewController presentModalViewController:detailNavigationController animated:NO];
                   [detailNavigationController release];
               }
               failureBlock:^(NSError *error) {
@@ -179,22 +213,36 @@
     [picker dismissModalViewControllerAnimated:YES];
 }
 
-- (void)presentImagePicker
+- (void)presentCamera
 {
+    mode = CameraControllerCameraMode;
     [self.locationManager startUpdatingLocation];
     UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
     imagePickerController.delegate = self;
     imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
-    [self.tabBarController presentModalViewController:imagePickerController 
+    [self.baseViewController presentModalViewController:imagePickerController 
                                              animated:YES];
+    [imagePickerController release];
+}
+
+- (void)presentImagePicker
+{
+    mode = CameraControllerSavedPhotosMode;
+    UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+    imagePickerController.delegate = self;
+    imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    [self.baseViewController presentModalViewController:imagePickerController 
+                                               animated:YES];
     [imagePickerController release];
 }
 
 - (void)dealloc {
     locationManager.delegate = nil;
+    [locationManager stopUpdatingLocation];
     [locationManager release];
     [assetsLibrary release];
-    [tabBarController release];
+    [baseViewController release];
+    [currentLocation release];
     [super dealloc];
 }
 

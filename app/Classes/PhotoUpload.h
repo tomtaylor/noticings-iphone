@@ -41,9 +41,9 @@ enum {
 @property (nonatomic, retain) NSString *flickrId;
 @property (nonatomic, retain) CLLocation *location;
 @property (nonatomic) CLLocationCoordinate2D coordinate;
-@property (nonatomic, readonly) CLLocationCoordinate2D originalCoordinate;
+@property (nonatomic) CLLocationCoordinate2D originalCoordinate;
 @property (nonatomic, retain) NSDate *timestamp;
-@property (nonatomic, readonly, retain) NSDate *originalTimestamp;
+@property (nonatomic, retain) NSDate *originalTimestamp;
 
 
 - (id)initWithAsset:(ALAsset *)asset;
