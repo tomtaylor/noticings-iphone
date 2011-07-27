@@ -8,9 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "PullRefreshTableViewController.h"
+#import "UploadQueueManager.h"
 
 @interface StreamViewController : PullRefreshTableViewController {
     UIBarButtonItem *refreshButton;
+    UploadQueueManager *uploadQueueManager;
 }
 
 @end

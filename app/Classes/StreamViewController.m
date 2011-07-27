@@ -29,12 +29,19 @@
                                           forKeyPath:@"inProgress"
                                              options:(NSKeyValueObservingOptionNew)
                                              context:NULL];
-
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self 
+											 selector:@selector(uploadQueueDidChange) 
+												 name:@"queueCount" 
+											   object:nil];
+    
     
     refreshButton = [[UIBarButtonItem alloc] 
                      initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh
                                           target:self
                                           action:@selector(refreshButtonPressed)];
+    
+    uploadQueueManager = [UploadQueueManager sharedUploadQueueManager];
 	
 	[[self navigationItem] setRightBarButtonItem:refreshButton];
     [refreshButton release];
@@ -55,6 +62,11 @@
 {
 	[self.tableView reloadData];
     [self stopLoading];
+}
+
+- (void)uploadQueueDidChange
+{
+    [self.tableView reloadData];
 }
 
 - (void)refresh;
@@ -85,52 +97,67 @@
 // Customize the number of rows in the table view.
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     NSMutableArray *photos = [StreamManager sharedStreamManager].photos;
-	if (photos.count == 0) {
-        return 1;
-    }
-    return photos.count;
+	NSInteger photosCount = photos.count == 0 ? 1 : photos.count;
+    return photosCount + [uploadQueueManager.photoUploads count];
 }
-
 
 // Customize the appearance of table view cells.
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
     NSMutableArray *photos = [StreamManager sharedStreamManager].photos;
+    NSMutableArray *photoUploads = uploadQueueManager.photoUploads;
     
-	if (photos.count == 0) {
-		UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewStylePlain reuseIdentifier:nil];
-		cell.textLabel.textAlignment = UITextAlignmentCenter;
-		cell.textLabel.text = @"No photos from your contacts";
-		cell.textLabel.textColor = [UIColor grayColor];
-		cell.textLabel.font = [UIFont systemFontOfSize:14];
-		cell.selectionStyle = UITableViewCellSelectionStyleNone;
-		return [cell autorelease];
-
-	} else {
-        // TODO - reuse identifier removed for now because of deferred loading bugs. Needs to come back at some point.
-        StreamPhotoViewCell *cell = (StreamPhotoViewCell*)[tableView dequeueReusableCellWithIdentifier:nil];
-        if (cell == nil) {
-            CGRect bounds = self.view.bounds;
-            cell = [[[StreamPhotoViewCell alloc] initWithBounds:bounds] autorelease];
-        } 
-        
-        StreamPhoto *photo = [photos objectAtIndex:indexPath.row];
-        [cell populateFromPhoto:photo];
-        
-        return cell;
-	}
-	
+    if (indexPath.row+1 > [photoUploads count]) {
+        if (photos.count == 0) {
+            UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewStylePlain reuseIdentifier:nil];
+            cell.textLabel.textAlignment = UITextAlignmentCenter;
+            cell.textLabel.text = @"No photos from your contacts";
+            cell.textLabel.textColor = [UIColor grayColor];
+            cell.textLabel.font = [UIFont systemFontOfSize:14];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            return [cell autorelease];
+            
+        } else {
+            // TODO - reuse identifier removed for now because of deferred loading bugs. Needs to come back at some point.
+            StreamPhotoViewCell *cell = (StreamPhotoViewCell*)[tableView dequeueReusableCellWithIdentifier:nil];
+            if (cell == nil) {
+                CGRect bounds = self.view.bounds;
+                cell = [[[StreamPhotoViewCell alloc] initWithBounds:bounds] autorelease];
+            } 
+            
+            NSInteger photoIndex = indexPath.row - [photoUploads count];
+            StreamPhoto *photo = [photos objectAtIndex:photoIndex];
+            [cell populateFromPhoto:photo];
+            
+            return cell;
+        }
+    } else {
+        UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewStylePlain reuseIdentifier:nil];
+        cell.textLabel.textAlignment = UITextAlignmentCenter;
+        cell.textLabel.text = @"I am an upload";
+        cell.textLabel.textColor = [UIColor grayColor];
+        cell.textLabel.font = [UIFont systemFontOfSize:14];
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        return [cell autorelease];
+    }
 }
 
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSMutableArray *photos = [StreamManager sharedStreamManager].photos;
-	if (photos.count == 0) {
+    NSMutableArray *photoUploads = uploadQueueManager.photoUploads;
+    
+    if (indexPath.row+1 > [photoUploads count]) {    
+        if (photos.count == 0) {
+            return 100.0f;
+        }
+        
+        NSInteger photoIndex = indexPath.row - [photoUploads count];
+        StreamPhoto *photo = [photos objectAtIndex:photoIndex];
+        return [StreamPhotoViewCell cellHeightForPhoto:photo];
+    } else {
         return 100.0f;
     }
-    
-    StreamPhoto *photo = [photos objectAtIndex:indexPath.row];
-    return [StreamPhotoViewCell cellHeightForPhoto:photo];
 }
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
