@@ -217,6 +217,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(UploadQueueManager);
 }
 
 - (void)setLocationForPhotoUpload:(PhotoUpload *)photoUpload {
+    // if the photo has a coordinate that's the same as the original file, then we don't need to do anything
 	if (photoUpload.coordinate.latitude != photoUpload.originalCoordinate.latitude ||
         photoUpload.coordinate.longitude != photoUpload.originalCoordinate.longitude)
     {
@@ -232,15 +233,25 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(UploadQueueManager);
         
         [request setSessionInfo:sessionInfo];
         
-        NSNumber *latitudeNumber = [NSNumber numberWithDouble:photoUpload.coordinate.latitude];
-        NSNumber *longitudeNumber = [NSNumber numberWithDouble:photoUpload.coordinate.longitude];
+        // if the photo has been removed from the map, then we need to remove the geo tag on Flickr
+        if (photoUpload.coordinate.latitude == kCLLocationCoordinate2DInvalid.latitude ||
+            photoUpload.coordinate.longitude == kCLLocationCoordinate2DInvalid.longitude)
+        {
+            NSDictionary *arguments = [NSDictionary dictionaryWithObject:photoUpload.flickrId forKey:@"photo_id"];
+            [request callAPIMethodWithPOST:@"flickr.photos.geo.removeLocation" arguments:arguments];
         
-        NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:photoUpload.flickrId, @"photo_id", 
-                                   [latitudeNumber stringValue], @"lat",
-                                   [longitudeNumber stringValue], @"lon",
-                                   nil];
-        
-        [request callAPIMethodWithPOST:@"flickr.photos.geo.setLocation" arguments:arguments];
+        } else {
+            // otherwise, we need to set a new coordinate
+            NSNumber *latitudeNumber = [NSNumber numberWithDouble:photoUpload.coordinate.latitude];
+            NSNumber *longitudeNumber = [NSNumber numberWithDouble:photoUpload.coordinate.longitude];
+            
+            NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:photoUpload.flickrId, @"photo_id", 
+                                       [latitudeNumber stringValue], @"lat",
+                                       [longitudeNumber stringValue], @"lon",
+                                       nil];
+            
+            [request callAPIMethodWithPOST:@"flickr.photos.geo.setLocation" arguments:arguments];
+        }
     } else {
         photoUpload.state = PhotoUploadStateLocationSet;
         [self nextStageForPhotoUpload:photoUpload];
