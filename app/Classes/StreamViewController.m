@@ -10,6 +10,7 @@
 #import "StreamPhotoViewCell.h"
 #import "StreamPhoto.h"
 #import "StreamManager.h"
+#import "PhotoUploadCell.h"
 
 @implementation StreamViewController
 
@@ -132,12 +133,8 @@
             return cell;
         }
     } else {
-        UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewStylePlain reuseIdentifier:nil];
-        cell.textLabel.textAlignment = UITextAlignmentCenter;
-        cell.textLabel.text = @"I am an upload";
-        cell.textLabel.textColor = [UIColor grayColor];
-        cell.textLabel.font = [UIFont systemFontOfSize:14];
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        PhotoUpload *photoUpload = [uploadQueueManager.photoUploads objectAtIndex:indexPath.row];
+        PhotoUploadCell *cell = [[PhotoUploadCell alloc] initWithPhotoUpload:photoUpload];        
         return [cell autorelease];
     }
 }
@@ -156,7 +153,7 @@
         StreamPhoto *photo = [photos objectAtIndex:photoIndex];
         return [StreamPhotoViewCell cellHeightForPhoto:photo];
     } else {
-        return 100.0f;
+        return 75.0f;
     }
 }
 

@@ -26,14 +26,14 @@
 	if (self != nil) {		
 		self.photoUpload = _photoUpload;
 		
-		//self.imageView.image = self.photoUpload.photo.thumbnailImage;
+		self.imageView.image = [UIImage imageWithCGImage:self.photoUpload.asset.thumbnail];
 		
 		if (self.photoUpload.title == nil || [self.photoUpload.title isEqualToString:@""]) {
 			self.textLabel.text = @"No title";
 		} else {
 			self.textLabel.text = self.photoUpload.title;
 		}
-				
+        
 		percentFormatter = [[NSNumberFormatter alloc] init];
 		[percentFormatter setFormatterBehavior:NSNumberFormatterBehavior10_4];
 		[percentFormatter setPercentSymbol:@"%"];
@@ -75,19 +75,28 @@
 
 - (void)updateDetailText {
 	if ([UploadQueueManager sharedUploadQueueManager].inProgress == YES) {
-//		if ([self.photoUpload.state isEqualToString:PhotoUploadStatePending]) {
-//			self.detailTextLabel.text = @"Queued for upload";
-//		} else if ([self.photoUpload.state isEqualToString:PhotoUploadStateUploading]) {
-//			self.detailTextLabel.text = [NSString stringWithFormat:@"Uploading (%@)", [percentFormatter stringFromNumber:self.photoUpload.progress]];
-//		} else if ([self.photoUpload.state isEqualToString:PhotoUploadStateSettingTimestamp]) {
-//			self.detailTextLabel.text = @"Setting timestamp";
-//		} else if ([self.photoUpload.state isEqualToString:PhotoUploadStateSettingLocation]) {
-//			self.detailTextLabel.text = @"Setting location";
-//		} else if ([self.photoUpload.state isEqualToString:PhotoUploadStateSettingPermissions]) {
-//			self.detailTextLabel.text = @"Setting permissions";
-//		} else {
-//			self.detailTextLabel.text = @"Finished uploading";
-//		}
+        
+        if (!self.photoUpload.inProgress) {
+            self.detailTextLabel.text = @"Queued for upload";
+            return;
+        }
+        
+        switch (self.photoUpload.state) {
+            case PhotoUploadStatePendingUpload:
+                self.detailTextLabel.text = [NSString stringWithFormat:@"Uploading (%@)", [percentFormatter stringFromNumber:self.photoUpload.progress]];
+                break;
+            case PhotoUploadStateUploaded:
+                self.detailTextLabel.text = @"Setting metadata";
+                break;
+            case PhotoUploadStateLocationSet:
+                self.detailTextLabel.text = @"Setting metadata";
+                break;
+            case PhotoUploadStateComplete:
+                self.detailTextLabel.text = @"Uploaded successfully.";
+                break;
+            default:
+                break;
+        }        
 	} else {
 		self.detailTextLabel.text = @"Upload paused";
 	}
@@ -101,7 +110,7 @@
                        context:(void *)context
 {
 	//if ([keyPath isEqual:@"progress"]) {
-		[self updateDetailText];
+    [self updateDetailText];
 	//}
 }
 
