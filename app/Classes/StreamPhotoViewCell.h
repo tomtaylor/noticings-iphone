@@ -30,7 +30,7 @@
 #define PADDING_SIZE 7.0f
 #define AVATAR_SIZE 40.0f
 #define TIMEBOX_SIZE 70.0f
-#define IMAGE_SIZE (320.0f - PADDING_SIZE * 2)
+#define IMAGE_WIDTH (320.0f - PADDING_SIZE * 2)
 #define HEADER_FONT_SIZE 14
 #define FONT_SIZE 14
 

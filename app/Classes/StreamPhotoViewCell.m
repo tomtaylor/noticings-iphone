@@ -23,10 +23,10 @@
     CGFloat line2_top = line1_top + AVATAR_SIZE / 2;
     CGFloat line_height = AVATAR_SIZE / 2;
     CGFloat line_left = PADDING_SIZE + AVATAR_SIZE + PADDING_SIZE;
-    CGFloat line_width = IMAGE_SIZE - (AVATAR_SIZE + PADDING_SIZE + TIMEBOX_SIZE);
+    CGFloat line_width = IMAGE_WIDTH - (AVATAR_SIZE + PADDING_SIZE + TIMEBOX_SIZE);
     CGFloat timebox_left = bounds.size.width - (PADDING_SIZE + TIMEBOX_SIZE);
 
-    CGFloat line3_top = PADDING_SIZE + AVATAR_SIZE + PADDING_SIZE + IMAGE_SIZE + PADDING_SIZE;
+    CGFloat line3_top = PADDING_SIZE + AVATAR_SIZE + PADDING_SIZE + IMAGE_WIDTH + PADDING_SIZE;
     
     
     
@@ -34,7 +34,7 @@
     avatarView = [[[RemoteImageView alloc] initWithFrame:avatarRect] autorelease];
     [[self contentView] addSubview:avatarView];
     
-    CGRect imageRect = CGRectMake(PADDING_SIZE, PADDING_SIZE + AVATAR_SIZE + PADDING_SIZE, IMAGE_SIZE, IMAGE_SIZE);
+    CGRect imageRect = CGRectMake(PADDING_SIZE, PADDING_SIZE + AVATAR_SIZE + PADDING_SIZE, IMAGE_WIDTH, IMAGE_WIDTH);
     photoView = [[[RemoteImageView alloc] initWithFrame:imageRect] autorelease];
     [[self contentView] addSubview:photoView];
     
@@ -70,12 +70,12 @@
     
     
     // labels below image
-    titleView =    [self addLabelWithFrame:CGRectMake(PADDING_SIZE, line3_top, IMAGE_SIZE, 100)
+    titleView =    [self addLabelWithFrame:CGRectMake(PADDING_SIZE, line3_top, IMAGE_WIDTH, 100)
                                   fontSize:FONT_SIZE
                                       bold:YES
                                      color:[UIColor colorWithWhite:0.4 alpha:1]];
     
-    descView =     [self addLabelWithFrame:CGRectMake(PADDING_SIZE, line3_top + 22, IMAGE_SIZE, 100)
+    descView =     [self addLabelWithFrame:CGRectMake(PADDING_SIZE, line3_top + 22, IMAGE_WIDTH, 100)
                                   fontSize:FONT_SIZE
                                       bold:NO
                                      color:[UIColor colorWithWhite:0.4 alpha:1]];
@@ -86,7 +86,7 @@
 
 +(CGFloat) heightForString:(NSString*)string font:(UIFont*)font;
 {
-    CGSize constraint = CGSizeMake(IMAGE_SIZE, 200000.0f);
+    CGSize constraint = CGSizeMake(IMAGE_WIDTH, 200000.0f);
     CGSize size = [string sizeWithFont:font
                      constrainedToSize:constraint
                          lineBreakMode:UILineBreakModeWordWrap];
@@ -96,7 +96,7 @@
 
 +(CGFloat) cellHeightForPhoto:(StreamPhoto*)photo;
 {
-    CGFloat fixed = PADDING_SIZE + AVATAR_SIZE + PADDING_SIZE + IMAGE_SIZE + PADDING_SIZE;
+    CGFloat fixed = PADDING_SIZE + AVATAR_SIZE + PADDING_SIZE + IMAGE_WIDTH + PADDING_SIZE;
     CGFloat title = [StreamPhotoViewCell heightForString:photo.title font:[UIFont boldSystemFontOfSize:FONT_SIZE]];
     CGFloat description = 0.0f;
     if (photo.description.length) {
