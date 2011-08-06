@@ -19,7 +19,7 @@
 {
     self = [super init];
     if (self) {
-        self.details = [dict copy];
+        self.details = [[dict copy] autorelease];
     }
     return self;
 }
