@@ -189,7 +189,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(UploadQueueManager);
 - (void)setTimestampForPhotoUpload:(PhotoUpload *)photoUpload {
     if (photoUpload.timestamp != photoUpload.originalTimestamp) {
         photoUpload.inProgress = YES;
-        photoUpload.progress = [NSNumber numberWithFloat:0.85f];
+        photoUpload.progress = [NSNumber numberWithFloat:0.95f];
         
         OFFlickrAPIRequest *request = [self flickrRequest];
         
@@ -217,33 +217,27 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(UploadQueueManager);
 }
 
 - (void)setLocationForPhotoUpload:(PhotoUpload *)photoUpload {
-    // if the photo has a coordinate that's the same as the original file, then we don't need to do anything
-	if (photoUpload.coordinate.latitude != photoUpload.originalCoordinate.latitude ||
-        photoUpload.coordinate.longitude != photoUpload.originalCoordinate.longitude)
-    {
-        photoUpload.inProgress = YES;
-        photoUpload.progress = [NSNumber numberWithFloat:0.9f];
+    photoUpload.inProgress = YES;
+    photoUpload.progress = [NSNumber numberWithFloat:0.95f];
+
+    // if the coordinate differs from what was set in the asset, then we update the geodata manually
+    if (photoUpload.coordinate.latitude != photoUpload.originalCoordinate.latitude ||
+        photoUpload.coordinate.longitude != photoUpload.originalCoordinate.longitude) {
         
         OFFlickrAPIRequest *request = [self flickrRequest];
-        
         NSDictionary *sessionInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                                      photoUpload, @"photoUpload",
                                      [NSNumber numberWithInteger:LocationRequestType], @"requestType", 
                                      nil];
-        
         [request setSessionInfo:sessionInfo];
         
-        // if the photo has been removed from the map, then we need to remove the geo tag on Flickr
-        if (photoUpload.coordinate.latitude == kCLLocationCoordinate2DInvalid.latitude ||
-            photoUpload.coordinate.longitude == kCLLocationCoordinate2DInvalid.longitude)
-        {
-            NSDictionary *arguments = [NSDictionary dictionaryWithObject:photoUpload.flickrId forKey:@"photo_id"];
-            [request callAPIMethodWithPOST:@"flickr.photos.geo.removeLocation" arguments:arguments];
-        
-        } else {
-            // otherwise, we need to set a new coordinate
+        if (CLLocationCoordinate2DIsValid(photoUpload.coordinate)) {
+            // set the geodata manually
+            
             NSNumber *latitudeNumber = [NSNumber numberWithDouble:photoUpload.coordinate.latitude];
             NSNumber *longitudeNumber = [NSNumber numberWithDouble:photoUpload.coordinate.longitude];
+            
+            DLog(@"Setting latitude to %f, longitude to %f", photoUpload.coordinate.latitude, photoUpload.coordinate.longitude);
             
             NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:photoUpload.flickrId, @"photo_id", 
                                        [latitudeNumber stringValue], @"lat",
@@ -251,11 +245,22 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(UploadQueueManager);
                                        nil];
             
             [request callAPIMethodWithPOST:@"flickr.photos.geo.setLocation" arguments:arguments];
+            return;
+            
+        } else if (CLLocationCoordinate2DIsValid(photoUpload.originalCoordinate)) {            
+            // remove the geodata manually
+            
+            DLog(@"PhotoUpload did originally have a coordinate, but was removed the map, so removing the geodata manually.");
+            NSDictionary *arguments = [NSDictionary dictionaryWithObject:photoUpload.flickrId forKey:@"photo_id"];
+            [request callAPIMethodWithPOST:@"flickr.photos.geo.removeLocation" arguments:arguments];
+            return;
         }
-    } else {
-        photoUpload.state = PhotoUploadStateLocationSet;
-        [self nextStageForPhotoUpload:photoUpload];
+        
     }
+    
+    // otherwise, just jump to the next stage
+    photoUpload.state = PhotoUploadStateLocationSet;
+    [self nextStageForPhotoUpload:photoUpload];
 }
 
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest 
@@ -306,8 +311,6 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(UploadQueueManager);
 		[[UIApplication sharedApplication] presentLocalNotificationNow:localNotification];
 		[localNotification release];
 	}
-	
-	DLog(@"Error in state: %@, %@", photoUpload.state, inError);
 }
 
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest 

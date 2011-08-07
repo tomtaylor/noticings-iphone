@@ -66,37 +66,34 @@
 }
 
 - (void) layoutSubviews {
-	[super layoutSubviews];
-	self.detailTextLabel.frame = CGRectMake(self.detailTextLabel.frame.origin.x, 
-											self.detailTextLabel.frame.origin.y, 
-											150.0f, 
-											self.detailTextLabel.frame.size.height);
+    // This is a bit of a hack. The default indentation looks awful with an image in the cell, so we use indentation level to nudge the image right, but that also nudges the labels so there's an extra gap. So we have to adjust the labels back so they stay the same relative position from the image. Sigh.
+    // We could do this by moving the contentview, but that seems to result in animation glitches.
+    self.indentationWidth = 10.0f;
+    
+    if (self.editing) {
+        self.indentationLevel = 1;
+    } else {
+        self.indentationLevel = 0;
+    }
+    
+    [super layoutSubviews];
+    
+    if (self.indentationLevel > 0) {
+        self.detailTextLabel.frame = CGRectOffset(self.detailTextLabel.frame, -self.indentationWidth, 0);
+        self.textLabel.frame = CGRectOffset(self.textLabel.frame, -self.indentationWidth, 0);
+    }
+    
 }
 
 - (void)updateDetailText {
-	if ([UploadQueueManager sharedUploadQueueManager].inProgress == YES) {
+	if ([UploadQueueManager sharedUploadQueueManager].inProgress) {
         
         if (!self.photoUpload.inProgress) {
             self.detailTextLabel.text = @"Queued for upload";
             return;
         }
         
-        switch (self.photoUpload.state) {
-            case PhotoUploadStatePendingUpload:
-                self.detailTextLabel.text = [NSString stringWithFormat:@"Uploading (%@)", [percentFormatter stringFromNumber:self.photoUpload.progress]];
-                break;
-            case PhotoUploadStateUploaded:
-                self.detailTextLabel.text = @"Setting metadata";
-                break;
-            case PhotoUploadStateLocationSet:
-                self.detailTextLabel.text = @"Setting metadata";
-                break;
-            case PhotoUploadStateComplete:
-                self.detailTextLabel.text = @"Uploaded successfully.";
-                break;
-            default:
-                break;
-        }        
+        self.detailTextLabel.text = [NSString stringWithFormat:@"Uploading (%@)", [percentFormatter stringFromNumber:self.photoUpload.progress]];
 	} else {
 		self.detailTextLabel.text = @"Upload paused";
 	}

@@ -12,6 +12,13 @@
 #import "StreamManager.h"
 #import "PhotoUploadCell.h"
 
+@interface StreamViewController (Private)
+
+- (void)setQueueButtonState;
+- (void)queueButtonPressed;
+
+@end
+
 @implementation StreamViewController
 
 - (void)viewDidLoad {
@@ -25,38 +32,28 @@
 											 selector:@selector(newPhotos) 
 												 name:@"newPhotos" 
 											   object:nil];
-	
-    [[StreamManager sharedStreamManager] addObserver:self
-                                          forKeyPath:@"inProgress"
-                                             options:(NSKeyValueObservingOptionNew)
-                                             context:NULL];
     
     [[NSNotificationCenter defaultCenter] addObserver:self 
 											 selector:@selector(uploadQueueDidChange) 
 												 name:@"queueCount" 
 											   object:nil];
     
-    
-    refreshButton = [[UIBarButtonItem alloc] 
-                     initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh
-                                          target:self
-                                          action:@selector(refreshButtonPressed)];
-    
     uploadQueueManager = [UploadQueueManager sharedUploadQueueManager];
+    
+    [uploadQueueManager addObserver:self
+                         forKeyPath:@"inProgress"
+                            options:(NSKeyValueObservingOptionNew)
+                            context:NULL];
 	
-	[[self navigationItem] setRightBarButtonItem:refreshButton];
-    [refreshButton release];
+    queueButton = [[UIBarButtonItem alloc] 
+                   initWithTitle:@"Pause Queue" 
+                   style:UIBarButtonItemStylePlain 
+                   target:self
+                   action:@selector(queueButtonPressed)];
+    
+    [self setQueueButtonState];
 
     [[StreamManager sharedStreamManager] maybeRefresh];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context;
-{
-    refreshButton.enabled = !( [StreamManager sharedStreamManager].inProgress );
-    //refreshButton.style = refreshButton.enabled ? UIBarButtonSystemItemRefresh : UIBarButtonSystemItemStop;
-    if (refreshButton.enabled) {
-        [self stopLoading];
-    }
 }
 
 - (void)newPhotos;
@@ -65,9 +62,48 @@
     [self stopLoading];
 }
 
+- (void)observeValueForKeyPath:(NSString *)keyPath
+					  ofObject:(id)object
+                        change:(NSDictionary *)change
+                       context:(void *)context
+{
+	[self setQueueButtonState];
+}
+
 - (void)uploadQueueDidChange
 {
+    [self setQueueButtonState];
     [self.tableView reloadData];
+}
+
+- (void)setQueueButtonState
+{
+    if ([uploadQueueManager.photoUploads count] > 0) {
+        if (uploadQueueManager.inProgress) {
+            queueButton.title = @"Pause Queue";
+        } else {
+            queueButton.title = @"Start Queue";
+        }
+        if (self.navigationItem.rightBarButtonItem == nil) {
+            self.navigationItem.rightBarButtonItem = queueButton;
+        }
+    } else {
+        if (self.navigationItem.rightBarButtonItem != nil) {
+            self.navigationItem.rightBarButtonItem = nil;
+        }
+    }
+}
+
+- (void)queueButtonPressed
+{
+    if (uploadQueueManager.inProgress) {
+        [uploadQueueManager pauseQueue];
+        [self.tableView setEditing:YES animated:YES];
+    } else {
+        [self.tableView setEditing:NO animated:YES];
+        [uploadQueueManager startQueueIfNeeded];
+    }
+    [self setQueueButtonState];
 }
 
 - (void)refresh;
@@ -160,12 +196,43 @@
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
     NSMutableArray *photos = [StreamManager sharedStreamManager].photos;
-    StreamPhoto *photo = [photos objectAtIndex:indexPath.row];
-    NSLog(@"page url is %@", photo.pageURL);
-    [[UIApplication sharedApplication] openURL:photo.pageURL];
+    NSMutableArray *photoUploads = uploadQueueManager.photoUploads;
+    
+    if (indexPath.row+1 > [photoUploads count]) {
+        NSInteger photoIndex = indexPath.row - [photoUploads count];
+        StreamPhoto *photo = [photos objectAtIndex:photoIndex];
+        NSLog(@"page url is %@", photo.pageURL);
+        [[UIApplication sharedApplication] openURL:photo.pageURL];
+    }
 }
 
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    if (indexPath.row < [uploadQueueManager.photoUploads count]) {
+        return !uploadQueueManager.inProgress;
+    } else {
+        return NO;
+    }
+}
 
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+		[uploadQueueManager removePhotoUploadAtIndex:indexPath.row];
+		//[self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:YES];
+		// TOOD: use deleteRowsAtIndexPaths
+		//[self.tableView reloadData];
+    }   
+}
+
+- (BOOL)tableView:(UITableView *)tableView shouldIndentWhileEditingRowAtIndexPath:(NSIndexPath *)indexPath {
+    return NO;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return @"Remove";
+}
 
 # pragma mark memory management
 

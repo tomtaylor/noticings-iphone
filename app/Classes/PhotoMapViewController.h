@@ -19,6 +19,7 @@
 	CLLocationManager *locationManager;
 	CLLocation *currentLocation;
     CLLocation *previousLocation;
+    UIBarButtonItem *uploadButton;
 }
 
 - (IBAction)adjustPin:(id)sender;
