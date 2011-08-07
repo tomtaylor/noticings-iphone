@@ -176,9 +176,10 @@
     }
     
     CGImageRef cgImage = [originalImage CGImage];
+    CGImageRef resizedImage = [self resizedImage:cgImage withWidth:1200.0f AndHeight:1200.0f];
     
     [self.assetsLibrary 
-     writeImageToSavedPhotosAlbum:cgImage
+     writeImageToSavedPhotosAlbum:resizedImage
      metadata:metadata 
      completionBlock:^(NSURL *assetURL, NSError *error) {
          if (error) {
@@ -236,6 +237,58 @@
     [self.baseViewController presentModalViewController:imagePickerController 
                                                animated:YES];
     [imagePickerController release];
+}
+
+- (CGImageRef)resizedImage:(CGImageRef)sourceImage withWidth:(CGFloat)maxWidth AndHeight:(CGFloat)maxHeight {
+	CGFloat targetWidth;
+	CGFloat targetHeight;
+	
+	CGFloat width = CGImageGetWidth(sourceImage);
+	CGFloat height = CGImageGetHeight(sourceImage);
+	
+	if ((width == maxWidth && height <= maxHeight) || (width <= maxWidth && height == maxHeight)){
+		// the source image already has the exact target size (one dimension is equal and one is less)
+		return sourceImage;
+	} else { // picture must be resized
+             // The biggest ratio (ratioWidth, ratioHeight) will tell us which side should be the max side
+		CGFloat ratioWidth = width / maxWidth;
+		CGFloat ratioHeight = height / maxHeight;
+		if (ratioWidth > ratioHeight) {
+			targetWidth = maxWidth;
+			targetHeight = height / ratioWidth;
+		}
+		else {
+			targetHeight = maxHeight;
+			targetWidth = width / ratioHeight;
+		}
+	}
+	
+	CGBitmapInfo bitmapInfo = CGImageGetBitmapInfo(sourceImage);
+	CGColorSpaceRef colorSpaceInfo = CGImageGetColorSpace(sourceImage);
+	
+	if (bitmapInfo == kCGImageAlphaNone) {
+		bitmapInfo = kCGImageAlphaNoneSkipLast;
+	}
+	
+	size_t bitesPerComponent = CGImageGetBitsPerComponent(sourceImage);
+	// To know the "bitesPerRow", we multiply the number of bits of a component per pixel (a component = Green for instance), 4 (RGB + alpha) and the row length (targetWidth)
+	size_t bitesPerRow = bitesPerComponent * 4 * targetWidth;
+	
+	
+	CGContextRef bitmap;
+    bitmap = CGBitmapContextCreate(NULL, targetWidth, targetHeight, bitesPerComponent, bitesPerRow, colorSpaceInfo, bitmapInfo);
+
+	CGContextDrawImage(bitmap, CGRectMake(0, 0, targetWidth, targetHeight), sourceImage);
+	CGImageRef resizedImage = CGBitmapContextCreateImage(bitmap);
+	CGContextRelease(bitmap);
+    
+    // return an autoreleased CGImage
+    if (resizedImage) {
+        resizedImage = (CGImageRef)[[(id)resizedImage retain] autorelease];
+        CGImageRelease(resizedImage);
+    }
+    
+	return resizedImage; 
 }
 
 - (void)dealloc {
