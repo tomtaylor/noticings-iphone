@@ -28,6 +28,7 @@ enum CameraControllerMode {
 - (void)presentCamera;
 - (id)initWithBaseViewController:(UIViewController *)baseViewController;
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishTakingPhotoWithInfo:(NSDictionary *)info;
+- (CGImageRef)resizedImage:(CGImageRef)sourceImage withWidth:(CGFloat)maxWidth AndHeight:(CGFloat)maxHeight;
 
 @property (nonatomic, retain) CLLocationManager *locationManager;
 @property (nonatomic, retain) CLLocation *currentLocation;

@@ -11,7 +11,7 @@
 #import "UploadQueueManager.h"
 
 @interface StreamViewController : PullRefreshTableViewController {
-    UIBarButtonItem *refreshButton;
+    UIBarButtonItem *queueButton;
     UploadQueueManager *uploadQueueManager;
 }
 

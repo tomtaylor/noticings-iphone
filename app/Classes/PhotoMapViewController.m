@@ -10,6 +10,7 @@
 #import <MapKit/MapKit.h>
 #import <CoreLocation/CoreLocation.h>
 #import "UploadQueueManager.h"
+#import "NoticingsAppDelegate.h"
 
 enum {
     kUIAlertViewCurrentLocation,
@@ -47,22 +48,25 @@ static NSString *adjustPinActionSheetAddTitle = @"Add to Map";
 	
 	self.title = @"Location";
 	
-	UIBarButtonItem *uploadButton = [[UIBarButtonItem alloc] 
+	uploadButton = [[UIBarButtonItem alloc] 
 								   initWithTitle:@"Upload" 
 								   style:UIBarButtonItemStyleDone
 								   target:self
 								   action:@selector(upload)];
 	
-	[[self navigationItem] setRightBarButtonItem:uploadButton];
-	[uploadButton release];
-		
+    [self.navigationItem performSelector:@selector(setRightBarButtonItem:) withObject:uploadButton afterDelay:1.0f];
+//	[[self navigationItem] setRightBarButtonItem:uploadButton];
+//[uploadButton release];
+    
 	CLLocationCoordinate2D coordinate = self.photoUpload.coordinate;
     
     if (CLLocationCoordinate2DIsValid(coordinate)) {
         self.mapView.region = MKCoordinateRegionMakeWithDistance(coordinate, 500, 500);
         [self.mapView addAnnotation:self.photoUpload];
     } else {
-        [self promptForLocation];
+        // give it a second to get a location from the locationmanager, before popping the dialog
+        [self performSelector:@selector(promptForLocation) withObject:nil afterDelay:1.0f];
+        //[self promptForLocation];
     }
 }
 
@@ -73,21 +77,21 @@ static NSString *adjustPinActionSheetAddTitle = @"Add to Map";
                                                message:@"Do you want to add the photo to the map at your current location?" 
                                               delegate:self
                                      cancelButtonTitle:nil 
-                                     otherButtonTitles:@"Add at Current Location", @"Skip & Upload", nil];
+                                     otherButtonTitles:@"Add to map", @"Skip map", nil];
         alertView.tag = kUIAlertViewCurrentLocation;
     } else if (self.previousLocation) {
         alertView = [[UIAlertView alloc] initWithTitle:@"No Location for Photo"
                                                message:@"Do you want to add the photo to the map at the last uploaded location?" 
                                               delegate:self 
                                      cancelButtonTitle:nil 
-                                     otherButtonTitles:@"Add at Last Location", @"Skip & Upload", nil];
+                                     otherButtonTitles:@"Add to map", @"Skip map", nil];
         alertView.tag = kUIAlertViewPreviousLocation;
     } else {
         alertView = [[UIAlertView alloc] initWithTitle:@"No Location for Photo"
-                                               message:@"Do you want to add the photo to the map at your current location?" 
+                                               message:@"Do you want to add the photo to the map?" 
                                               delegate:self 
                                      cancelButtonTitle:nil 
-                                     otherButtonTitles:@"Add at Current Location", @"Skip & Upload", nil];
+                                     otherButtonTitles:@"Add to map", @"Skip map", nil];
         alertView.tag = kUIAlertViewNoLocation;
     }
     [alertView show];
@@ -160,13 +164,19 @@ static NSString *adjustPinActionSheetAddTitle = @"Add to Map";
 
 - (void)upload {
 	CLLocationCoordinate2D coordinate = self.photoUpload.coordinate;
-	[[NSUserDefaults standardUserDefaults] setFloat:coordinate.latitude forKey:@"lastKnownLatitude"];
-	[[NSUserDefaults standardUserDefaults] setFloat:coordinate.longitude forKey:@"lastKnownLongitude"];
-	[[NSUserDefaults standardUserDefaults] synchronize];
+    
+    if (CLLocationCoordinate2DIsValid(coordinate)) {
+        [[NSUserDefaults standardUserDefaults] setFloat:coordinate.latitude forKey:@"lastKnownLatitude"];
+        [[NSUserDefaults standardUserDefaults] setFloat:coordinate.longitude forKey:@"lastKnownLongitude"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
 	
 	[[UploadQueueManager sharedUploadQueueManager] addPhotoUploadToQueue:self.photoUpload];
 	[[UploadQueueManager sharedUploadQueueManager] startQueueIfNeeded];
-	[self.navigationController popToRootViewControllerAnimated:YES];
+    [[AppDelegate tabBarController] setSelectedIndex:0];
+    [self.navigationController dismissModalViewControllerAnimated:YES];
+    
+    
 }
 
 - (IBAction)adjustPin:(id)sender {
@@ -179,7 +189,7 @@ static NSString *adjustPinActionSheetAddTitle = @"Add to Map";
     if ([self.mapView.annotations containsObject:self.photoUpload]) {
         [sheet addButtonWithTitle:adjustPinActionSheetRemoveTitle];
 
-        if (self.photoUpload.location) {
+        if (CLLocationCoordinate2DIsValid(self.photoUpload.originalCoordinate)) {
             [sheet addButtonWithTitle:adjustPinActionSheetOriginalLocationTitle];
         }
         
@@ -220,6 +230,7 @@ static NSString *adjustPinActionSheetAddTitle = @"Add to Map";
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
+    DLog(@"Button pressed at index %u for alert view with tag %u", buttonIndex, alertView.tag);
     switch (alertView.tag) {
         case kUIAlertViewCurrentLocation:
             [self currentLocationAlertViewClickedButtonAtIndex:buttonIndex];
@@ -239,7 +250,7 @@ static NSString *adjustPinActionSheetAddTitle = @"Add to Map";
     NSString *buttonTitle = [actionSheet buttonTitleAtIndex:buttonIndex];
     
     if ([buttonTitle isEqualToString:adjustPinActionSheetOriginalLocationTitle]) {
-        self.photoUpload.coordinate = self.photoUpload.location.coordinate;
+        self.photoUpload.coordinate = self.photoUpload.originalCoordinate;
         [self.mapView setRegion:MKCoordinateRegionMakeWithDistance(self.photoUpload.coordinate, 500, 500) animated:YES];
         
     } else if ([buttonTitle isEqualToString:adjustPinActionSheetCurrentLocationTitle]) {
@@ -265,12 +276,16 @@ static NSString *adjustPinActionSheetAddTitle = @"Add to Map";
 - (void)currentLocationAlertViewClickedButtonAtIndex:(NSInteger)buttonIndex {
     switch (buttonIndex) {
         case 0:
+            DLog(@"Adding photo to map at current location");
             self.photoUpload.coordinate = self.currentLocation.coordinate;
             [self.mapView addAnnotation:self.photoUpload];
+            [self.mapView setRegion:MKCoordinateRegionMakeWithDistance(self.photoUpload.coordinate, 500, 500) animated:YES];
             break;
         case 1:
+            [self upload];
             break;
         default:
+            [NSException raise:@"Unknown Button Index" format:@"Unknown Button Index for current location alert view"];
             break;
     }
 }
@@ -279,12 +294,16 @@ static NSString *adjustPinActionSheetAddTitle = @"Add to Map";
 {
     switch (buttonIndex) {
         case 0:
+            DLog(@"Adding photo to map at previous good location");
             self.photoUpload.coordinate = self.previousLocation.coordinate;
             [self.mapView addAnnotation:self.photoUpload];
+            [self.mapView setRegion:MKCoordinateRegionMakeWithDistance(self.photoUpload.coordinate, 500, 500) animated:YES];
             break;
         case 1:
+            [self upload];
             break;
         default:
+            [NSException raise:@"Unknown Button Index" format:@"Unknown Button Index for previous location alert view"];
             break;
     }
 }
@@ -295,8 +314,10 @@ static NSString *adjustPinActionSheetAddTitle = @"Add to Map";
         case 0:
             break;
         case 1:
+            [self upload];
             break;
         default:
+            [NSException raise:@"Unknown Button Index" format:@"Unknown Button Index for no location alert view"];
             break;
     }
 }

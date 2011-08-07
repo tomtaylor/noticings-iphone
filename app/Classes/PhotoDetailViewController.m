@@ -117,7 +117,8 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-	[self.photoTitleCell.textField becomeFirstResponder];
+    
+    [self.photoTitleCell.textField performSelector:@selector(becomeFirstResponder) withObject:nil afterDelay:0.5];
 }
 
 - (void)viewDidUnload {
