@@ -19,7 +19,7 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        self.backgroundColor = [UIColor colorWithWhite:0.8 alpha:1];
+        self.backgroundColor = [UIColor whiteColor];
         self.contentMode = UIViewContentModeScaleAspectFit;
     }
     return self;
@@ -51,7 +51,7 @@
     
     // TODO - better 'loading' state.
     self.image = nil;
-    self.backgroundColor = [UIColor colorWithWhite:0.8 alpha:1];
+    self.backgroundColor = [UIColor whiteColor];
     [self setNeedsLayout];
 
     // TODO - cache images based on url in DB or something. Till then, use a very
@@ -62,6 +62,7 @@
     connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
     // TODO - error handling
 
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
 }
 
 - (void)connection:(NSURLConnection *)theConnection didReceiveData:(NSData *)incrementalData
@@ -91,6 +92,7 @@
     [data release];
     data=nil;
 
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 }
 
 - (void)setImage:(UIImage*)theImage withAnimation:(BOOL)animate;
@@ -106,7 +108,7 @@
     // TODO - http://stackoverflow.com/questions/603907/uiimage-resize-then-crop/605385#605385
     self.image = theImage;
     self.alpha = 1;
-    self.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1];
+    self.backgroundColor = [UIColor whiteColor];
     
     if (theImage && animate) {
         [UIView commitAnimations];
