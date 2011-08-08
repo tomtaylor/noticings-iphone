@@ -556,7 +556,7 @@
 			};
 			name = Release;
 		};
-		E239BD4710A1C104002FAAB0 /* Debug Ad-Hoc */ = {
+		E24BCD7C13F0468D00D5A566 /* Ad Hoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
@@ -566,15 +566,14 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				SDKROOT = iphoneos;
 			};
-			name = "Debug Ad-Hoc";
+			name = "Ad Hoc";
 		};
-		E239BD4810A1C104002FAAB0 /* Debug Ad-Hoc */ = {
+		E24BCD7D13F0468D00D5A566 /* Ad Hoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
+				CODE_SIGN_ENTITLEMENTS = Entitlements.plist;
+				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Noticings_Prefix.pch;
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
@@ -583,12 +582,12 @@
 					../vendor/objectiveflickr/Source,
 				);
 				INFOPLIST_FILE = "Noticings-Info.plist";
-				OTHER_CFLAGS = "-DDEBUG";
+				OTHER_CFLAGS = "";
 				PRODUCT_NAME = Noticings;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
 			};
-			name = "Debug Ad-Hoc";
+			name = "Ad Hoc";
 		};
 		E28C152B10A489DF00B79928 /* App Store Distribution */ = {
 			isa = XCBuildConfiguration;
@@ -629,8 +628,8 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1D6058940D05DD3E006BFB54 /* Debug */,
-				E239BD4810A1C104002FAAB0 /* Debug Ad-Hoc */,
 				1D6058950D05DD3E006BFB54 /* Release */,
+				E24BCD7D13F0468D00D5A566 /* Ad Hoc */,
 				E28C152C10A489DF00B79928 /* App Store Distribution */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -640,8 +639,8 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,
-				E239BD4710A1C104002FAAB0 /* Debug Ad-Hoc */,
 				C01FCF5008A954540054247B /* Release */,
+				E24BCD7C13F0468D00D5A566 /* Ad Hoc */,
 				E28C152B10A489DF00B79928 /* App Store Distribution */,
 			);
 			defaultConfigurationIsVisible = 0;
