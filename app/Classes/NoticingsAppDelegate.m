@@ -26,7 +26,7 @@ BOOL gLogging = FALSE;
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
 	NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-	NSDictionary *defaults = [NSDictionary dictionaryWithObject:@"noticings " forKey:@"defaultTags"];
+	NSDictionary *defaults = [NSDictionary dictionaryWithObject:@"" forKey:@"defaultTags"];
 	[userDefaults registerDefaults:defaults];
 	[userDefaults synchronize];
 	
