@@ -147,34 +147,40 @@
     NSMutableArray *photos = [StreamManager sharedStreamManager].photos;
     NSMutableArray *photoUploads = uploadQueueManager.photoUploads;
     
-    if (indexPath.section+1 > [photoUploads count]) {
-        if (photos.count == 0) {
-            UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewStylePlain reuseIdentifier:nil];
-            cell.textLabel.textAlignment = UITextAlignmentCenter;
-            cell.textLabel.text = @"No photos from your contacts";
-            cell.textLabel.textColor = [UIColor grayColor];
-            cell.textLabel.font = [UIFont systemFontOfSize:14];
-            cell.selectionStyle = UITableViewCellSelectionStyleNone;
-            return [cell autorelease];
-            
-        } else {
-            // TODO - reuse identifier removed for now because of deferred loading bugs. Needs to come back at some point.
-            StreamPhotoViewCell *cell = (StreamPhotoViewCell*)[tableView dequeueReusableCellWithIdentifier:nil];
-            if (cell == nil) {
-                CGRect bounds = self.view.bounds;
-                cell = [[[StreamPhotoViewCell alloc] initWithBounds:bounds] autorelease];
-            } 
-            
-            NSInteger photoIndex = indexPath.section - [photoUploads count];
-            StreamPhoto *photo = [photos objectAtIndex:photoIndex];
-            [cell populateFromPhoto:photo];
-            
-            return cell;
-        }
-    } else {
+    if (indexPath.section < [photoUploads count]) {
+        // upload cell
         PhotoUpload *photoUpload = [uploadQueueManager.photoUploads objectAtIndex:indexPath.section];
         PhotoUploadCell *cell = [[PhotoUploadCell alloc] initWithPhotoUpload:photoUpload];        
         return [cell autorelease];
+    }
+
+    // notmal photo cell
+
+    if (photos.count == 0) {
+        // no photos to display. Placeholder.
+        // TODO - if this is the first run, this might be because we haven't loaded any
+        // photos yet.
+        UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+        cell.textLabel.textAlignment = UITextAlignmentCenter;
+        cell.textLabel.text = @"No photos from your contacts";
+        cell.textLabel.textColor = [UIColor grayColor];
+        cell.textLabel.font = [UIFont systemFontOfSize:14];
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        return [cell autorelease];
+        
+    } else {
+        // TODO - reuse identifier removed for now because of deferred loading bugs. Needs to come back at some point.
+        StreamPhotoViewCell *cell = (StreamPhotoViewCell*)[tableView dequeueReusableCellWithIdentifier:nil];
+        if (cell == nil) {
+            CGRect bounds = self.view.bounds;
+            cell = [[[StreamPhotoViewCell alloc] initWithBounds:bounds] autorelease];
+        }
+        
+        NSInteger photoIndex = indexPath.section - [photoUploads count];
+        StreamPhoto *photo = [photos objectAtIndex:photoIndex];
+        [cell populateFromPhoto:photo];
+        
+        return cell;
     }
 }
 
@@ -243,6 +249,11 @@
 {
     NSMutableArray *photos = [StreamManager sharedStreamManager].photos;
     NSMutableArray *photoUploads = uploadQueueManager.photoUploads;
+    if (section < [photoUploads count]) {
+        // no headers on upload cells
+        return nil;
+    }
+
     NSInteger photoIndex = section - [photoUploads count];
     StreamPhoto *photo = [photos objectAtIndex:photoIndex];
 
