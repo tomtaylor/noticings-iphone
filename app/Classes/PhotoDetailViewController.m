@@ -61,11 +61,12 @@
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    // If the user just pressed 'next' on the keyboard from the title cell, then jump to showing the tags cell. Otherwise, jump to next stage.
+    // If the user just pressed 'next' on the keyboard from the title cell, then jump to showing the tags cell. Otherwise, close the keyboard.
 	if ([textField isEqual:self.photoTitleCell.textField]) {
 		[self.photoTagsCell.textField becomeFirstResponder];
 	} else {
-		[self next];
+        [textField resignFirstResponder];
+        return NO;
 	}
 	return YES;
 }
@@ -118,7 +119,8 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    [self.photoTitleCell.textField performSelector:@selector(becomeFirstResponder) withObject:nil afterDelay:0.5];
+    // don't focus keyboard, or it hides the privacy toggles.
+    //[self.photoTitleCell.textField performSelector:@selector(becomeFirstResponder) withObject:nil afterDelay:0.5];
 }
 
 - (void)viewDidUnload {
