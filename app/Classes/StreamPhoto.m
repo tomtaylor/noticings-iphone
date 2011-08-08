@@ -128,6 +128,15 @@
     return StreamPhotoVisibilityPrivate;
 }
 
+
+-(CGFloat)imageHeightForWidth:(CGFloat)width;
+{
+    float width_m = [[self.details objectForKey:@"width_m"] floatValue];
+    float height_m = [[self.details objectForKey:@"height_m"] floatValue];
+    return MIN( width * height_m / width_m, width * 1.618 );
+}
+
+
 #pragma mark serialize / deserizlise
 
 - (void)encodeWithCoder:(NSCoder *)coder

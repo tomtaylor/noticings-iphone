@@ -127,7 +127,7 @@ extern const NSUInteger kMaxDiskCacheSize;
 
     self.inProgress = YES;
 
-    NSString *extras = @"date_upload,date_taken,owner_name,icon_server,geo,path_alias,description";
+    NSString *extras = @"date_upload,date_taken,owner_name,icon_server,geo,path_alias,description,url_m";
     
     NSDictionary *args = [NSDictionary dictionaryWithObjectsAndKeys:
                           @"50", @"count",
@@ -317,8 +317,6 @@ extern const NSUInteger kMaxDiskCacheSize;
                        otherButtonTitles:nil]
       autorelease] show];
 }
-
-
 
 
 
