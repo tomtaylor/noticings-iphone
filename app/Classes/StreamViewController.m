@@ -198,7 +198,7 @@
         StreamPhoto *photo = [photos objectAtIndex:photoIndex];
         return [StreamPhotoViewCell cellHeightForPhoto:photo width:IMAGE_WIDTH];
     } else {
-        return 75.0f;
+        return 60.0f;
     }
 }
 

@@ -9,6 +9,7 @@
 #import "PhotoUploadCell.h"
 #import "UploadQueueManager.h"
 
+#import "StreamPhotoViewCell.h" // for PADDING constant
 @interface PhotoUploadCell (Private)
 
 - (void)updateDetailText;
@@ -83,6 +84,12 @@
         self.textLabel.frame = CGRectOffset(self.textLabel.frame, -self.indentationWidth, 0);
     }
     
+    // pad the uploading image to match the rest of the view.
+    CGFloat height = self.frame.size.height;
+    CGRect imageWithPadding = CGRectMake(PADDING_SIZE, PADDING_SIZE, height - PADDING_SIZE*2, height - PADDING_SIZE*2);
+    self.imageView.bounds = imageWithPadding;
+    self.imageView.frame = imageWithPadding;
+    self.imageView.contentMode = UIViewContentModeScaleAspectFit;
 }
 
 - (void)updateDetailText {
