@@ -133,7 +133,8 @@
 {
     float width_m = [[self.details objectForKey:@"width_m"] floatValue];
     float height_m = [[self.details objectForKey:@"height_m"] floatValue];
-    return MIN( width * height_m / width_m, width * 1.618 );
+    // if it's taller than square it won't fit in the view.
+    return MIN( width * height_m / width_m, width );
 }
 
 
