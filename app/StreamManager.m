@@ -127,7 +127,7 @@ extern const NSUInteger kMaxDiskCacheSize;
 
     self.inProgress = YES;
 
-    NSString *extras = @"date_upload,date_taken,owner_name,icon_server,geo,path_alias,description";
+    NSString *extras = @"date_upload,date_taken,owner_name,icon_server,geo,path_alias,description,url_m";
     
     NSDictionary *args = [NSDictionary dictionaryWithObjectsAndKeys:
                           @"50", @"count",
@@ -136,6 +136,7 @@ extern const NSUInteger kMaxDiskCacheSize;
                           nil];
     
     [[self flickrRequest] callAPIMethodWithGET:@"flickr.photos.getContactsPhotos" arguments:args];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
 }
 
 
@@ -270,10 +271,12 @@ extern const NSUInteger kMaxDiskCacheSize;
     flickrRequest = nil;
     
     self.inProgress = NO;
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 
     // this tells the view controller that we're done with whatever we were doing - it hides the 'loading' message
 	[[NSNotificationCenter defaultCenter] postNotificationName:@"newPhotos"
                                                         object:[NSNumber numberWithInt:self.photos.count]];
+
 }
 
 
@@ -296,19 +299,22 @@ extern const NSUInteger kMaxDiskCacheSize;
     [self saveCachedImageData];
     
     self.inProgress = NO;
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+
 	[[NSNotificationCenter defaultCenter] postNotificationName:@"newPhotos"
                                                         object:[NSNumber numberWithInt:self.photos.count]];
 
 
     NSTimeInterval now = [[NSDate date] timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970;
     lastRefresh = now;
-
 }
+
 
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didFailWithError:(NSError *)inError
 {
     NSLog(@"failed flickr request! %@", inError);
     self.inProgress = NO;
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 
 	[[[[UIAlertView alloc] initWithTitle:@"Flickr API call failed"
                                  message:@"There was a problem getting your contacts' photos from Flickr."
@@ -317,8 +323,6 @@ extern const NSUInteger kMaxDiskCacheSize;
                        otherButtonTitles:nil]
       autorelease] show];
 }
-
-
 
 
 

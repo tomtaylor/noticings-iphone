@@ -11,6 +11,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import "UploadQueueManager.h"
 #import "NoticingsAppDelegate.h"
+#import "StreamViewController.h"
 
 enum {
     kUIAlertViewCurrentLocation,
@@ -176,6 +177,10 @@ static NSString *adjustPinActionSheetAddTitle = @"Add to Map";
     [[AppDelegate tabBarController] setSelectedIndex:0];
     [self.navigationController dismissModalViewControllerAnimated:YES];
     
+    // zoom the image view to the top so we can see the uploading image.
+    UINavigationController *firstNavController = [[[AppDelegate tabBarController] viewControllers] objectAtIndex:0];
+    StreamViewController *streamView = (StreamViewController*)firstNavController.topViewController;
+    [streamView.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:YES];
     
 }
 

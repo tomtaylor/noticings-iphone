@@ -35,4 +35,6 @@
 @property (readonly) NSURL* imageURL;
 @property (readonly) NSURL* pageURL;
 
+-(CGFloat)imageHeightForWidth:(CGFloat)width;
+
 @end
