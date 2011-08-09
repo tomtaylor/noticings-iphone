@@ -210,7 +210,6 @@
     if (indexPath.section+1 > [photoUploads count]) {
         NSInteger photoIndex = indexPath.section - [photoUploads count];
         StreamPhoto *photo = [photos objectAtIndex:photoIndex];
-        NSLog(@"page url is %@", photo.pageURL);
         [[UIApplication sharedApplication] openURL:photo.mobilePageURL];
     }
 }
