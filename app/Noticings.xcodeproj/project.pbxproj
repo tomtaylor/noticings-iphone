@@ -564,7 +564,7 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "305ED539-249F-42E6-BA53-2DB5106C520A";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "704166F1-B1DD-4DE0-A154-C8E4CF4230EC";
 				SDKROOT = iphoneos;
 			};
 			name = "Ad Hoc";
@@ -622,6 +622,43 @@
 			};
 			name = "App Store Distribution";
 		};
+		E2C2CD1313F13583000767A5 /* Ad Hoc Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CODE_SIGN_ENTITLEMENTS = Entitlements.plist;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Tom Taylor (S6696PWN7E)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PROVISIONING_PROFILE = "8B9AFA03-563E-4D6B-879A-5E1DD7836BEF";
+				SDKROOT = iphoneos;
+			};
+			name = "Ad Hoc Debug";
+		};
+		E2C2CD1413F13583000767A5 /* Ad Hoc Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Noticings_Prefix.pch;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				HEADER_SEARCH_PATHS = (
+					../vendor/objectiveflickr/LFWebAPIKit,
+					../vendor/objectiveflickr/Source,
+				);
+				INFOPLIST_FILE = "Noticings-Info.plist";
+				OTHER_CFLAGS = "-DDEBUG";
+				PRODUCT_NAME = Noticings;
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				SDKROOT = iphoneos;
+			};
+			name = "Ad Hoc Debug";
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -629,6 +666,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1D6058940D05DD3E006BFB54 /* Debug */,
+				E2C2CD1413F13583000767A5 /* Ad Hoc Debug */,
 				1D6058950D05DD3E006BFB54 /* Release */,
 				E24BCD7D13F0468D00D5A566 /* Ad Hoc */,
 				E28C152C10A489DF00B79928 /* App Store Distribution */,
@@ -640,6 +678,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,
+				E2C2CD1313F13583000767A5 /* Ad Hoc Debug */,
 				C01FCF5008A954540054247B /* Release */,
 				E24BCD7C13F0468D00D5A566 /* Ad Hoc */,
 				E28C152B10A489DF00B79928 /* App Store Distribution */,
