@@ -34,6 +34,7 @@
 @property (readonly) NSURL* avatarURL;
 @property (readonly) NSURL* imageURL;
 @property (readonly) NSURL* pageURL;
+@property (readonly) NSURL* mobilePageURL;
 
 -(CGFloat)imageHeightForWidth:(CGFloat)width;
 

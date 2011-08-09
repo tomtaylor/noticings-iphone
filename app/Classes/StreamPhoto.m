@@ -87,8 +87,20 @@
 
 - (NSURL*) pageURL;
 {
-    OFFlickrAPIContext *apiContext = [[[OFFlickrAPIContext alloc] initWithAPIKey:FLICKR_API_KEY sharedSecret:FLICKR_API_SECRET] autorelease];
-    return [apiContext photoWebPageURLFromDictionary:self.details];
+    NSString *urlString = [NSString stringWithFormat:@"http://www.flickr.com/photos/%@/%@",
+                           [self.details objectForKey:@"pathalias"],
+                           [self.details objectForKey:@"id"]
+                           ];
+    return [NSURL URLWithString:urlString];
+}
+
+- (NSURL *)mobilePageURL;
+{
+    NSString *urlString = [NSString stringWithFormat:@"http://m.flickr.com/photos/%@/%@",
+                           [self.details objectForKey:@"pathalias"],
+                           [self.details objectForKey:@"id"]
+                           ];
+    return [NSURL URLWithString:urlString];
 }
 
 - (NSString*) ago;
