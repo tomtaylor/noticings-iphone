@@ -255,6 +255,12 @@
     }
 
     NSInteger photoIndex = section - [photoUploads count];
+    
+    if (photoIndex >= [photos count]) {
+        // there's always at least _one_ section, even for no photos.
+        return nil;
+    }
+        
     StreamPhoto *photo = [photos objectAtIndex:photoIndex];
 
     UIView *headerView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.bounds.size.width, tableView.sectionHeaderHeight)] autorelease];
