@@ -7,8 +7,9 @@
 //
 
 #import "FlickrAuthenticationViewController.h"
-#import "UploadQueueManager.h"
+//#import "UploadQueueManager.h"
 #import "StreamManager.h"
+#import "FlickrAPIKeys.h"
 
 @implementation FlickrAuthenticationViewController
 
@@ -71,18 +72,23 @@
     
     [[StreamManager sharedStreamManager] refresh];
 	
-	[[[[UIAlertView alloc] initWithTitle:@"You've been signed in!" message:@"Now you can get on with uploading your noticings." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] autorelease] show];
+	[[[[UIAlertView alloc] initWithTitle:@"Welcome to Noticings" message:@"You've been signed in." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] autorelease] show];
 	
-	[[self parentViewController] dismissModalViewControllerAnimated:YES];
+	[self dismissModalViewControllerAnimated:YES];
 }
 
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didFailWithError:(NSError *)inError
 {
-	[[[[UIAlertView alloc] initWithTitle:@"Authentication Failed" message:@"There was a problem signing you into Flickr. Please try again." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] autorelease] show];
+	[[[[UIAlertView alloc] initWithTitle:@"Flickr Authentication Failed" message:@"There was a problem signing you into Flickr. Please try again." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] autorelease] show];
+    [self displaySignIn];
 }
 
 - (void) dealloc
 {
+    // ensure if we dealloc with a request inflight that we don't crash on return.
+    if (flickrRequest) {
+        flickrRequest.delegate = nil;
+    }
 	[flickrRequest release];
 	[apiContext release];
 	[super dealloc];

@@ -24,7 +24,7 @@ BOOL gLogging = FALSE;
 #pragma mark -
 #pragma mark Application lifecycle
 
-- (void)applicationDidFinishLaunching:(UIApplication *)application {
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 	NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
 	NSDictionary *defaults = [NSDictionary dictionaryWithObject:@"" forKey:@"defaultTags"];
 	[userDefaults registerDefaults:defaults];
@@ -41,32 +41,64 @@ BOOL gLogging = FALSE;
 	} else {
 		queueTab.badgeValue = nil;
 	}
-	
-	authViewController = [[FlickrAuthenticationViewController alloc] init];
-	
-	[window addSubview:[tabBarController view]];
+    
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self 
+                                             selector:@selector(queueDidChange) 
+                                                 name:@"queueCount" 
+                                               object:nil];	
+    
+    [[UploadQueueManager sharedUploadQueueManager] addObserver:self
+                                                    forKeyPath:@"inProgress"
+                                                       options:(NSKeyValueObservingOptionNew)
+                                                       context:NULL];
+    
+    [window addSubview:[tabBarController view]];
 	[window makeKeyAndVisible];
-	
-	// Apple trick: Do this so after we got a chance to let application:handleOpenURL: run before our next stage of init...
-	[self performSelector:@selector(_applicationDidFinishLaunchingContinued) withObject:nil afterDelay:0.0];
+    
+    DLog(@"Launch options: %@", launchOptions);
+    
+    // If there's no launch URL, then we haven't opened due to an auth callback.
+    // If there is, we want to continue regardless, because we let the application:openURL: method below catch it.
+    // We don't want to catch it here, because this is only called on launch, and won't call if the application is waking up after being backgrounded.
+    NSURL *launchURL = [launchOptions objectForKey:UIApplicationLaunchOptionsURLKey];
+    if (!launchURL && ![self isAuthenticated]) {
+        DLog(@"App is not authenticated, so popping sign in modal.");
+        
+        if (!authViewController) {
+            authViewController = [[FlickrAuthenticationViewController alloc] init];
+        }
+        
+        [authViewController displaySignIn];
+        [tabBarController presentModalViewController:authViewController animated:NO];
+    }
+    
+    return YES;
 }
 
-- (void)_applicationDidFinishLaunchingContinued
+- (BOOL)application:(UIApplication *)application 
+            openURL:(NSURL *)url 
+  sourceApplication:(NSString *)sourceApplication 
+         annotation:(id)annotation
 {
-	if ([[NSUserDefaults standardUserDefaults] objectForKey:@"authToken"] == nil && authViewController.parentViewController == nil) {
-		[authViewController displaySignIn];
-		[tabBarController presentModalViewController:authViewController animated:YES];
-	}
-	
-	[[NSNotificationCenter defaultCenter] addObserver:self 
-											 selector:@selector(queueDidChange) 
-												 name:@"queueCount" 
-											   object:nil];	
-	
-	[[UploadQueueManager sharedUploadQueueManager] addObserver:self
-													forKeyPath:@"inProgress"
-													   options:(NSKeyValueObservingOptionNew)
-													   context:NULL];
+    DLog(@"App launched with URL: %@", [url absoluteString]);
+    //[tabBarController dismissModalViewControllerAnimated:NO];
+    
+    if (tabBarController.modalViewController) {
+        [tabBarController dismissModalViewControllerAnimated:NO];
+    }
+    
+    if (!authViewController) {
+        authViewController = [[FlickrAuthenticationViewController alloc] init];
+    }
+    
+    [authViewController displaySpinner];
+    [authViewController finalizeAuthWithUrl:url];
+    [tabBarController presentModalViewController:authViewController animated:NO];
+    
+    // when we return, make sure the feed is set.
+    [tabBarController setSelectedIndex:0];
+    return YES;
 }
 
 - (void)queueDidChange {
@@ -95,15 +127,6 @@ BOOL gLogging = FALSE;
 							  [NSArray array], @"savedUploads",
 							  nil];
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
-}
-
-- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
-{
-    if (!url) {  return NO; }
-	[authViewController displaySpinner];
-	[authViewController finalizeAuthWithUrl:url];
-	[tabBarController presentModalViewController:authViewController animated:NO];
-    return YES;
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application;
@@ -135,16 +158,29 @@ BOOL gLogging = FALSE;
             self.cameraController = aCameraController;
             [aCameraController release];
         }
-        [self.cameraController presentCamera];
+        
+        if ([self.cameraController cameraIsAvailable]) {
+            [self.cameraController presentCamera];
+        } else {
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Camera Not Available" message:@"You can upload photos in your Camera Roll from the More tab." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alertView show];
+            [alertView release];
+        }
         return NO;
     }
     return YES;
+}
+               
+- (BOOL)isAuthenticated
+{
+    return [[NSUserDefaults standardUserDefaults] objectForKey:@"authToken"] != nil;
 }
 
 #pragma mark -
 #pragma mark Memory management
 
 - (void)dealloc {
+    [authViewController release];
 	[tabBarController release];
     [cameraController release];
 	[window release];

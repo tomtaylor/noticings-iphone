@@ -27,6 +27,8 @@
 @property (nonatomic, retain) IBOutlet UIViewController *dummyViewController;
 @property (nonatomic, retain) CameraController *cameraController;
 
+- (BOOL)isAuthenticated;
+
 
 @end
 

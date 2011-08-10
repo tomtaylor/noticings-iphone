@@ -291,6 +291,11 @@
 	return resizedImage; 
 }
 
+- (BOOL)cameraIsAvailable
+{
+    return [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera];
+}
+
 - (void)dealloc {
     locationManager.delegate = nil;
     [locationManager stopUpdatingLocation];

@@ -38,18 +38,22 @@
 												 name:@"queueCount" 
 											   object:nil];
     
-    uploadQueueManager = [UploadQueueManager sharedUploadQueueManager];
-    
+    if (uploadQueueManager == nil) {
+        uploadQueueManager = [UploadQueueManager sharedUploadQueueManager];
+    }
+        
     [uploadQueueManager addObserver:self
                          forKeyPath:@"inProgress"
                             options:(NSKeyValueObservingOptionNew)
                             context:NULL];
 	
-    queueButton = [[UIBarButtonItem alloc] 
-                   initWithTitle:@"Pause Queue" 
-                   style:UIBarButtonItemStylePlain 
-                   target:self
-                   action:@selector(queueButtonPressed)];
+    if (queueButton == nil) {
+        queueButton = [[UIBarButtonItem alloc] 
+                       initWithTitle:@"Pause Queue" 
+                       style:UIBarButtonItemStylePlain 
+                       target:self
+                       action:@selector(queueButtonPressed)];
+    }
     
     [self setQueueButtonState];
 
@@ -57,6 +61,23 @@
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
     [[StreamManager sharedStreamManager] maybeRefresh];
+}
+
+- (void)viewDidUnload
+{
+    [super viewDidUnload];
+    
+    // we need to unsubscribe from these, in case they fire and it no longer exists
+    [[NSNotificationCenter defaultCenter] removeObserver:self forKeyPath:@"newPhotos"];
+    [[NSNotificationCenter defaultCenter] removeObserver:self forKeyPath:@"queueCount"];
+    
+    // tear this down too - it'll be reassigned and subscribed when viewDidLoad is called again
+    if (uploadQueueManager) {
+        [uploadQueueManager removeObserver:self forKeyPath:@"inProgress"];
+        [uploadQueueManager release];
+        uploadQueueManager = nil;
+    }
+    
 }
 
 - (void)newPhotos;
@@ -116,16 +137,8 @@
 
 - (void)didReceiveMemoryWarning
 {
-	// Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
-	// Release any cached data, images, etc that aren't in use.
     [[StreamManager sharedStreamManager] flushMemoryCache];
-}
-
-- (void)viewDidUnload
-{
-	// Release any retained subviews of the main view.
-	// e.g. self.myOutlet = nil;
 }
 
 #pragma mark Table view methods
