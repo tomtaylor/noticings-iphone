@@ -340,10 +340,6 @@
     }   
 }
 
-- (BOOL)tableView:(UITableView *)tableView shouldIndentWhileEditingRowAtIndexPath:(NSIndexPath *)indexPath {
-    return NO;
-}
-
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return @"Remove";
@@ -352,6 +348,8 @@
 # pragma mark memory management
 
 - (void)dealloc {
+    [queueButton release];
+    [uploadQueueManager release];
     [super dealloc];
 }
 

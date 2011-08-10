@@ -389,7 +389,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
-				GCC_ENABLE_OBJC_GC = supported;
+				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -417,7 +417,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
-				GCC_ENABLE_OBJC_GC = supported;
+				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -449,6 +449,7 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = ObjectiveFlickr;
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = iphoneos;
@@ -462,6 +463,7 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = ObjectiveFlickr;
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = iphoneos;
