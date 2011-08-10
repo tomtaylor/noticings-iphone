@@ -297,8 +297,10 @@
 }
 
 - (void)dealloc {
-    locationManager.delegate = nil;
-    [locationManager stopUpdatingLocation];
+    if (locationManager) {
+        locationManager.delegate = nil;
+        [locationManager stopUpdatingLocation];
+    }
     [locationManager release];
     [assetsLibrary release];
     [baseViewController release];
