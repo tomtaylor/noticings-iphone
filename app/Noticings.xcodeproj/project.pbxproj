@@ -26,6 +26,7 @@
 		E22800EE11C91D5F00758E75 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E22800ED11C91D5F00758E75 /* Default@2x.png */; };
 		E228010111C91F6100758E75 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E228010011C91F6100758E75 /* Icon@2x.png */; };
 		E22C520513D4C5F700197EC5 /* CameraController.m in Sources */ = {isa = PBXBuildFile; fileRef = E22C520413D4C5F700197EC5 /* CameraController.m */; };
+		E23B29F113F28C0600614C71 /* Entitlements.plist in Resources */ = {isa = PBXBuildFile; fileRef = E23B29F013F28C0600614C71 /* Entitlements.plist */; };
 		E244D468109C82AA0075CAFD /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = E244D467109C82AA0075CAFD /* Icon.png */; };
 		E244D479109C83CF0075CAFD /* MoreViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E244D478109C83CF0075CAFD /* MoreViewController.m */; };
 		E244D5DB109CA6BA0075CAFD /* tab-eye.png in Resources */ = {isa = PBXBuildFile; fileRef = E244D5DA109CA6BA0075CAFD /* tab-eye.png */; };
@@ -35,7 +36,6 @@
 		E256C3FE108267E800948E14 /* PhotoDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E256C3FD108267E800948E14 /* PhotoDetailViewController.m */; };
 		E256C42A10826C4100948E14 /* EditableTextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E256C42910826C4100948E14 /* EditableTextFieldCell.m */; };
 		E256C4991083192D00948E14 /* EditableTextViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E256C4981083192D00948E14 /* EditableTextViewCell.m */; };
-		E269437310A0398600253D6C /* Entitlements.plist in Resources */ = {isa = PBXBuildFile; fileRef = E269437210A0398600253D6C /* Entitlements.plist */; };
 		E27762B3109649FB00FCC1F1 /* UploadQueueViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E27762B2109649FB00FCC1F1 /* UploadQueueViewController.m */; };
 		E27762BB10964C3A00FCC1F1 /* PhotoUpload.m in Sources */ = {isa = PBXBuildFile; fileRef = E27762BA10964C3A00FCC1F1 /* PhotoUpload.m */; };
 		E2792D101097976C00F9802C /* PhotoUploadCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E2792D0F1097976C00F9802C /* PhotoUploadCell.m */; };
@@ -115,6 +115,7 @@
 		E228010011C91F6100758E75 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		E22C520313D4C5F700197EC5 /* CameraController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraController.h; sourceTree = "<group>"; };
 		E22C520413D4C5F700197EC5 /* CameraController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CameraController.m; sourceTree = "<group>"; };
+		E23B29F013F28C0600614C71 /* Entitlements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Entitlements.plist; sourceTree = "<group>"; };
 		E244D467109C82AA0075CAFD /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		E244D477109C83CF0075CAFD /* MoreViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoreViewController.h; sourceTree = "<group>"; };
 		E244D478109C83CF0075CAFD /* MoreViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MoreViewController.m; sourceTree = "<group>"; };
@@ -131,7 +132,6 @@
 		E256C42910826C4100948E14 /* EditableTextFieldCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditableTextFieldCell.m; sourceTree = "<group>"; };
 		E256C4971083192D00948E14 /* EditableTextViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditableTextViewCell.h; sourceTree = "<group>"; };
 		E256C4981083192D00948E14 /* EditableTextViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditableTextViewCell.m; sourceTree = "<group>"; };
-		E269437210A0398600253D6C /* Entitlements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Entitlements.plist; sourceTree = "<group>"; };
 		E27762B1109649FB00FCC1F1 /* UploadQueueViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UploadQueueViewController.h; sourceTree = "<group>"; };
 		E27762B2109649FB00FCC1F1 /* UploadQueueViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UploadQueueViewController.m; sourceTree = "<group>"; };
 		E27762B910964C3A00FCC1F1 /* PhotoUpload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoUpload.h; sourceTree = "<group>"; };
@@ -243,9 +243,9 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				E23B29F013F28C0600614C71 /* Entitlements.plist */,
 				E201C91D13753DEE00FA5AFD /* ImageIO.framework */,
 				E2A6C4EA11CA4A810065E27A /* Settings.bundle */,
-				E269437210A0398600253D6C /* Entitlements.plist */,
 				E27C7D82108B270E0083E392 /* ObjectiveFlickr.xcodeproj */,
 				E2AC983D107FAE68007A570A /* Third Party */,
 				E6218AD413C35D6D0021CB80 /* Stream */,
@@ -434,7 +434,6 @@
 				E20EF68A109A4A8F001C5F05 /* UploadTimestampViewController.xib in Resources */,
 				E244D468109C82AA0075CAFD /* Icon.png in Resources */,
 				E244D5DB109CA6BA0075CAFD /* tab-eye.png in Resources */,
-				E269437310A0398600253D6C /* Entitlements.plist in Resources */,
 				E22800EE11C91D5F00758E75 /* Default@2x.png in Resources */,
 				E228010111C91F6100758E75 /* Icon@2x.png in Resources */,
 				E2A6C4EB11CA4A810065E27A /* Settings.bundle in Resources */,
@@ -443,6 +442,7 @@
 				E6218ADF13C35D950021CB80 /* 40-inbox.png in Resources */,
 				E64839C813C8EA1C008DB9CE /* 43-film-roll.png in Resources */,
 				E64839CD13C8EC39008DB9CE /* arrow.png in Resources */,
+				E23B29F113F28C0600614C71 /* Entitlements.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -505,6 +505,7 @@
 					../vendor/objectiveflickr/Source,
 				);
 				INFOPLIST_FILE = "Noticings-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
 				OTHER_CFLAGS = "-DDEBUG";
 				PRODUCT_NAME = Noticings;
 				RUN_CLANG_STATIC_ANALYZER = YES;
@@ -525,6 +526,7 @@
 					../vendor/objectiveflickr/Source,
 				);
 				INFOPLIST_FILE = "Noticings-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
 				OTHER_CFLAGS = "";
 				PRODUCT_NAME = Noticings;
 				RUN_CLANG_STATIC_ANALYZER = YES;
@@ -572,7 +574,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_ENTITLEMENTS = Entitlements.plist;
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Noticings_Prefix.pch;
@@ -582,6 +583,7 @@
 					../vendor/objectiveflickr/Source,
 				);
 				INFOPLIST_FILE = "Noticings-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
 				OTHER_CFLAGS = "";
 				PRODUCT_NAME = Noticings;
 				RUN_CLANG_STATIC_ANALYZER = YES;
@@ -613,6 +615,7 @@
 					../vendor/objectiveflickr/Source,
 				);
 				INFOPLIST_FILE = "Noticings-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
 				OTHER_CFLAGS = "";
 				PRODUCT_NAME = Noticings;
 				RUN_CLANG_STATIC_ANALYZER = YES;
@@ -649,6 +652,7 @@
 					../vendor/objectiveflickr/Source,
 				);
 				INFOPLIST_FILE = "Noticings-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
 				OTHER_CFLAGS = "-DDEBUG";
 				PRODUCT_NAME = Noticings;
 				RUN_CLANG_STATIC_ANALYZER = YES;
