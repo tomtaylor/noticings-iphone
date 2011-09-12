@@ -8,7 +8,7 @@
 
 #import "StreamPhotoViewCell.h"
 
-#import "FlickrAPIKeys.h"
+#import "APIKeys.h"
 #import "ObjectiveFlickr.h"
 
 @implementation StreamPhotoViewCell
