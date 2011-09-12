@@ -22,8 +22,6 @@
 		E211FAC710960D6200ABAE72 /* FlickrAuthenticationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E211FAC510960D6200ABAE72 /* FlickrAuthenticationViewController.m */; };
 		E211FAC810960D6200ABAE72 /* FlickrAuthenticationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E211FAC610960D6200ABAE72 /* FlickrAuthenticationViewController.xib */; };
 		E211FACC109610A300ABAE72 /* type-280px.png in Resources */ = {isa = PBXBuildFile; fileRef = E211FACB109610A300ABAE72 /* type-280px.png */; };
-		E21EEF9E1098C60300E8B313 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = E21EEF9D1098C60300E8B313 /* Default.png */; };
-		E22800EE11C91D5F00758E75 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E22800ED11C91D5F00758E75 /* Default@2x.png */; };
 		E228010111C91F6100758E75 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E228010011C91F6100758E75 /* Icon@2x.png */; };
 		E22C520513D4C5F700197EC5 /* CameraController.m in Sources */ = {isa = PBXBuildFile; fileRef = E22C520413D4C5F700197EC5 /* CameraController.m */; };
 		E23B29F113F28C0600614C71 /* Entitlements.plist in Resources */ = {isa = PBXBuildFile; fileRef = E23B29F013F28C0600614C71 /* Entitlements.plist */; };
@@ -47,16 +45,15 @@
 		E2AC9A1A1080AD39007A570A /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2AC9A191080AD39007A570A /* QuartzCore.framework */; };
 		E2AC9A6A1080BED6007A570A /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2AC9A691080BED6007A570A /* MapKit.framework */; };
 		E2B7D70611CA6425009D6A25 /* libObjectiveFlickr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E27C7D8B108B270E0083E392 /* libObjectiveFlickr.a */; };
-		E2D6365C10984DF60073D598 /* 56-cloud.png in Resources */ = {isa = PBXBuildFile; fileRef = E2D6365910984DF60073D598 /* 56-cloud.png */; };
-		E2D6365D10984DF60073D598 /* 42-photos.png in Resources */ = {isa = PBXBuildFile; fileRef = E2D6365A10984DF60073D598 /* 42-photos.png */; };
-		E2D6365E10984DF60073D598 /* 19-gear.png in Resources */ = {isa = PBXBuildFile; fileRef = E2D6365B10984DF60073D598 /* 19-gear.png */; };
+		E2CC8A69141E9E7800C1CF1B /* camera.png in Resources */ = {isa = PBXBuildFile; fileRef = E2CC8A68141E9E7800C1CF1B /* camera.png */; };
+		E2CC8A6B141E9E8A00C1CF1B /* camera@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E2CC8A6A141E9E8A00C1CF1B /* camera@2x.png */; };
+		E2CC8A6D141E9EEE00C1CF1B /* photos@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E2CC8A6C141E9EEE00C1CF1B /* photos@2x.png */; };
+		E2CC8A6F141E9EFB00C1CF1B /* photos.png in Resources */ = {isa = PBXBuildFile; fileRef = E2CC8A6E141E9EFB00C1CF1B /* photos.png */; };
 		E2F553B310850EB200FE67C7 /* PhotoMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F553B110850EB200FE67C7 /* PhotoMapViewController.m */; };
 		E2F553B410850EB200FE67C7 /* PhotoMapViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2F553B210850EB200FE67C7 /* PhotoMapViewController.xib */; };
 		E6218ADB13C35D7C0021CB80 /* StreamPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = E6218AD613C35D7C0021CB80 /* StreamPhoto.m */; };
 		E6218ADC13C35D7C0021CB80 /* StreamPhotoViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E6218AD813C35D7C0021CB80 /* StreamPhotoViewCell.m */; };
 		E6218ADD13C35D7C0021CB80 /* StreamViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E6218ADA13C35D7C0021CB80 /* StreamViewController.m */; };
-		E6218ADF13C35D950021CB80 /* 40-inbox.png in Resources */ = {isa = PBXBuildFile; fileRef = E6218ADE13C35D950021CB80 /* 40-inbox.png */; };
-		E64839C813C8EA1C008DB9CE /* 43-film-roll.png in Resources */ = {isa = PBXBuildFile; fileRef = E64839C713C8EA1C008DB9CE /* 43-film-roll.png */; };
 		E64839CB13C8EBBF008DB9CE /* PullRefreshTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E64839CA13C8EBBF008DB9CE /* PullRefreshTableViewController.m */; };
 		E64839CD13C8EC39008DB9CE /* arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = E64839CC13C8EC39008DB9CE /* arrow.png */; };
 		E67305D313C388C2005CEC62 /* RemoteImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = E67305D213C388C2005CEC62 /* RemoteImageView.m */; };
@@ -110,8 +107,6 @@
 		E211FAC510960D6200ABAE72 /* FlickrAuthenticationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlickrAuthenticationViewController.m; sourceTree = "<group>"; };
 		E211FAC610960D6200ABAE72 /* FlickrAuthenticationViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = FlickrAuthenticationViewController.xib; path = Classes/FlickrAuthenticationViewController.xib; sourceTree = "<group>"; };
 		E211FACB109610A300ABAE72 /* type-280px.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "type-280px.png"; sourceTree = "<group>"; };
-		E21EEF9D1098C60300E8B313 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
-		E22800ED11C91D5F00758E75 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		E228010011C91F6100758E75 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		E22C520313D4C5F700197EC5 /* CameraController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraController.h; sourceTree = "<group>"; };
 		E22C520413D4C5F700197EC5 /* CameraController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CameraController.m; sourceTree = "<group>"; };
@@ -148,9 +143,10 @@
 		E2A6C4EA11CA4A810065E27A /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		E2AC9A191080AD39007A570A /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		E2AC9A691080BED6007A570A /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
-		E2D6365910984DF60073D598 /* 56-cloud.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "56-cloud.png"; sourceTree = "<group>"; };
-		E2D6365A10984DF60073D598 /* 42-photos.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "42-photos.png"; sourceTree = "<group>"; };
-		E2D6365B10984DF60073D598 /* 19-gear.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "19-gear.png"; sourceTree = "<group>"; };
+		E2CC8A68141E9E7800C1CF1B /* camera.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = camera.png; sourceTree = "<group>"; };
+		E2CC8A6A141E9E8A00C1CF1B /* camera@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "camera@2x.png"; sourceTree = "<group>"; };
+		E2CC8A6C141E9EEE00C1CF1B /* photos@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "photos@2x.png"; sourceTree = "<group>"; };
+		E2CC8A6E141E9EFB00C1CF1B /* photos.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = photos.png; sourceTree = "<group>"; };
 		E2F553B010850EB200FE67C7 /* PhotoMapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoMapViewController.h; sourceTree = "<group>"; };
 		E2F553B110850EB200FE67C7 /* PhotoMapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoMapViewController.m; sourceTree = "<group>"; };
 		E2F553B210850EB200FE67C7 /* PhotoMapViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = PhotoMapViewController.xib; path = Classes/PhotoMapViewController.xib; sourceTree = "<group>"; };
@@ -160,8 +156,6 @@
 		E6218AD813C35D7C0021CB80 /* StreamPhotoViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StreamPhotoViewCell.m; path = Classes/StreamPhotoViewCell.m; sourceTree = "<group>"; };
 		E6218AD913C35D7C0021CB80 /* StreamViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StreamViewController.h; path = Classes/StreamViewController.h; sourceTree = "<group>"; };
 		E6218ADA13C35D7C0021CB80 /* StreamViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StreamViewController.m; path = Classes/StreamViewController.m; sourceTree = "<group>"; };
-		E6218ADE13C35D950021CB80 /* 40-inbox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "40-inbox.png"; sourceTree = "<group>"; };
-		E64839C713C8EA1C008DB9CE /* 43-film-roll.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "43-film-roll.png"; sourceTree = "<group>"; };
 		E64839C913C8EBBF008DB9CE /* PullRefreshTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PullRefreshTableViewController.h; path = Classes/PullRefreshTableViewController.h; sourceTree = "<group>"; };
 		E64839CA13C8EBBF008DB9CE /* PullRefreshTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PullRefreshTableViewController.m; path = Classes/PullRefreshTableViewController.m; sourceTree = "<group>"; };
 		E64839CC13C8EC39008DB9CE /* arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = arrow.png; sourceTree = "<group>"; };
@@ -271,17 +265,14 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				E2CC8A6E141E9EFB00C1CF1B /* photos.png */,
+				E2CC8A6C141E9EEE00C1CF1B /* photos@2x.png */,
 				E244D467109C82AA0075CAFD /* Icon.png */,
 				E228010011C91F6100758E75 /* Icon@2x.png */,
 				E244D5DA109CA6BA0075CAFD /* tab-eye.png */,
-				E21EEF9D1098C60300E8B313 /* Default.png */,
-				E22800ED11C91D5F00758E75 /* Default@2x.png */,
+				E2CC8A68141E9E7800C1CF1B /* camera.png */,
+				E2CC8A6A141E9E8A00C1CF1B /* camera@2x.png */,
 				E64839CC13C8EC39008DB9CE /* arrow.png */,
-				E2D6365910984DF60073D598 /* 56-cloud.png */,
-				E6218ADE13C35D950021CB80 /* 40-inbox.png */,
-				E2D6365A10984DF60073D598 /* 42-photos.png */,
-				E64839C713C8EA1C008DB9CE /* 43-film-roll.png */,
-				E2D6365B10984DF60073D598 /* 19-gear.png */,
 				E211FAC610960D6200ABAE72 /* FlickrAuthenticationViewController.xib */,
 				E201C92113753FFD00FA5AFD /* PhotoSaveViewController.xib */,
 				E2493584137356850066EE38 /* PhotoPreviewViewController.xib */,
@@ -427,22 +418,19 @@
 				E2F553B410850EB200FE67C7 /* PhotoMapViewController.xib in Resources */,
 				E211FAC810960D6200ABAE72 /* FlickrAuthenticationViewController.xib in Resources */,
 				E211FACC109610A300ABAE72 /* type-280px.png in Resources */,
-				E2D6365C10984DF60073D598 /* 56-cloud.png in Resources */,
-				E2D6365D10984DF60073D598 /* 42-photos.png in Resources */,
-				E2D6365E10984DF60073D598 /* 19-gear.png in Resources */,
-				E21EEF9E1098C60300E8B313 /* Default.png in Resources */,
 				E20EF68A109A4A8F001C5F05 /* UploadTimestampViewController.xib in Resources */,
 				E244D468109C82AA0075CAFD /* Icon.png in Resources */,
 				E244D5DB109CA6BA0075CAFD /* tab-eye.png in Resources */,
-				E22800EE11C91D5F00758E75 /* Default@2x.png in Resources */,
 				E228010111C91F6100758E75 /* Icon@2x.png in Resources */,
 				E2A6C4EB11CA4A810065E27A /* Settings.bundle in Resources */,
 				E2493586137356850066EE38 /* PhotoPreviewViewController.xib in Resources */,
 				E201C92313753FFD00FA5AFD /* PhotoSaveViewController.xib in Resources */,
-				E6218ADF13C35D950021CB80 /* 40-inbox.png in Resources */,
-				E64839C813C8EA1C008DB9CE /* 43-film-roll.png in Resources */,
 				E64839CD13C8EC39008DB9CE /* arrow.png in Resources */,
 				E23B29F113F28C0600614C71 /* Entitlements.plist in Resources */,
+				E2CC8A69141E9E7800C1CF1B /* camera.png in Resources */,
+				E2CC8A6B141E9E8A00C1CF1B /* camera@2x.png in Resources */,
+				E2CC8A6D141E9EEE00C1CF1B /* photos@2x.png in Resources */,
+				E2CC8A6F141E9EFB00C1CF1B /* photos.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
