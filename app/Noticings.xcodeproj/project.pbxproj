@@ -49,6 +49,7 @@
 		E2CC8A6B141E9E8A00C1CF1B /* camera@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E2CC8A6A141E9E8A00C1CF1B /* camera@2x.png */; };
 		E2CC8A6D141E9EEE00C1CF1B /* photos@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E2CC8A6C141E9EEE00C1CF1B /* photos@2x.png */; };
 		E2CC8A6F141E9EFB00C1CF1B /* photos.png in Resources */ = {isa = PBXBuildFile; fileRef = E2CC8A6E141E9EFB00C1CF1B /* photos.png */; };
+		E2CC8A72141EA0D400C1CF1B /* libTestFlight.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E2CC8A70141EA0D400C1CF1B /* libTestFlight.a */; };
 		E2F553B310850EB200FE67C7 /* PhotoMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F553B110850EB200FE67C7 /* PhotoMapViewController.m */; };
 		E2F553B410850EB200FE67C7 /* PhotoMapViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2F553B210850EB200FE67C7 /* PhotoMapViewController.xib */; };
 		E6218ADB13C35D7C0021CB80 /* StreamPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = E6218AD613C35D7C0021CB80 /* StreamPhoto.m */; };
@@ -120,7 +121,7 @@
 		E2493582137356840066EE38 /* PhotoPreviewViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhotoPreviewViewController.h; path = ../Noticings.xcodeproj/PhotoPreviewViewController.h; sourceTree = "<group>"; };
 		E2493583137356850066EE38 /* PhotoPreviewViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PhotoPreviewViewController.m; path = ../Noticings.xcodeproj/PhotoPreviewViewController.m; sourceTree = "<group>"; };
 		E2493584137356850066EE38 /* PhotoPreviewViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PhotoPreviewViewController.xib; path = Noticings.xcodeproj/PhotoPreviewViewController.xib; sourceTree = "<group>"; };
-		E24942F811E676DE00E43643 /* FlickrAPIKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlickrAPIKeys.h; sourceTree = "<group>"; };
+		E24942F811E676DE00E43643 /* APIKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; path = APIKeys.h; sourceTree = "<group>"; };
 		E256C3FC108267E800948E14 /* PhotoDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoDetailViewController.h; sourceTree = "<group>"; };
 		E256C3FD108267E800948E14 /* PhotoDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoDetailViewController.m; sourceTree = "<group>"; };
 		E256C42810826C4100948E14 /* EditableTextFieldCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditableTextFieldCell.h; sourceTree = "<group>"; };
@@ -147,6 +148,8 @@
 		E2CC8A6A141E9E8A00C1CF1B /* camera@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "camera@2x.png"; sourceTree = "<group>"; };
 		E2CC8A6C141E9EEE00C1CF1B /* photos@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "photos@2x.png"; sourceTree = "<group>"; };
 		E2CC8A6E141E9EFB00C1CF1B /* photos.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = photos.png; sourceTree = "<group>"; };
+		E2CC8A70141EA0D400C1CF1B /* libTestFlight.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libTestFlight.a; sourceTree = "<group>"; };
+		E2CC8A71141EA0D400C1CF1B /* TestFlight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFlight.h; sourceTree = "<group>"; };
 		E2F553B010850EB200FE67C7 /* PhotoMapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoMapViewController.h; sourceTree = "<group>"; };
 		E2F553B110850EB200FE67C7 /* PhotoMapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoMapViewController.m; sourceTree = "<group>"; };
 		E2F553B210850EB200FE67C7 /* PhotoMapViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = PhotoMapViewController.xib; path = Classes/PhotoMapViewController.xib; sourceTree = "<group>"; };
@@ -181,6 +184,7 @@
 				E27C7D98108B272D0083E392 /* CFNetwork.framework in Frameworks */,
 				E27C7DAD108B27D90083E392 /* SystemConfiguration.framework in Frameworks */,
 				E280D6E9109F8DC1009F689A /* CoreLocation.framework in Frameworks */,
+				E2CC8A72141EA0D400C1CF1B /* libTestFlight.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -257,7 +261,7 @@
 			children = (
 				28A0AAE50D9B0CCF005BE974 /* Noticings_Prefix.pch */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
-				E24942F811E676DE00E43643 /* FlickrAPIKeys.h */,
+				E24942F811E676DE00E43643 /* APIKeys.h */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -313,6 +317,8 @@
 		E2AC983D107FAE68007A570A /* Third Party */ = {
 			isa = PBXGroup;
 			children = (
+				E2CC8A70141EA0D400C1CF1B /* libTestFlight.a */,
+				E2CC8A71141EA0D400C1CF1B /* TestFlight.h */,
 				E64839C913C8EBBF008DB9CE /* PullRefreshTableViewController.h */,
 				E64839CA13C8EBBF008DB9CE /* PullRefreshTableViewController.m */,
 				E27C7E12108B9B2D0083E392 /* SynthesizeSingleton.h */,
@@ -494,6 +500,10 @@
 				);
 				INFOPLIST_FILE = "Noticings-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				OTHER_CFLAGS = "-DDEBUG";
 				PRODUCT_NAME = Noticings;
 				RUN_CLANG_STATIC_ANALYZER = YES;
@@ -515,6 +525,10 @@
 				);
 				INFOPLIST_FILE = "Noticings-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				OTHER_CFLAGS = "";
 				PRODUCT_NAME = Noticings;
 				RUN_CLANG_STATIC_ANALYZER = YES;
@@ -572,6 +586,10 @@
 				);
 				INFOPLIST_FILE = "Noticings-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				OTHER_CFLAGS = "";
 				PRODUCT_NAME = Noticings;
 				RUN_CLANG_STATIC_ANALYZER = YES;
@@ -604,6 +622,10 @@
 				);
 				INFOPLIST_FILE = "Noticings-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				OTHER_CFLAGS = "";
 				PRODUCT_NAME = Noticings;
 				RUN_CLANG_STATIC_ANALYZER = YES;
@@ -641,6 +663,10 @@
 				);
 				INFOPLIST_FILE = "Noticings-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.2;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				OTHER_CFLAGS = "-DDEBUG";
 				PRODUCT_NAME = Noticings;
 				RUN_CLANG_STATIC_ANALYZER = YES;

@@ -10,7 +10,7 @@
 #import "SynthesizeSingleton.h"
 #import "ObjectiveFlickr.h"
 #import "PhotoUpload.h"
-#import "FlickrAPIKeys.h"
+#import "APIKeys.h"
 
 enum RequestType {
     UploadRequestType,

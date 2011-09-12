@@ -9,7 +9,7 @@
 #import "FlickrAuthenticationViewController.h"
 //#import "UploadQueueManager.h"
 #import "StreamManager.h"
-#import "FlickrAPIKeys.h"
+#import "APIKeys.h"
 
 @implementation FlickrAuthenticationViewController
 

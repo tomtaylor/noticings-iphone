@@ -10,7 +10,7 @@
 #import "SynthesizeSingleton.h"
 
 #import "ObjectiveFlickr.h"
-#import "FlickrAPIKeys.h"
+#import "APIKeys.h"
 
 @interface StreamManager : NSObject <OFFlickrAPIRequestDelegate> {
 @private

@@ -12,6 +12,11 @@
 #import "StreamManager.h"
 #import <ImageIO/ImageIO.h>
 
+#ifdef DEBUG
+#import "TestFlight.h"
+#import "APIKeys.h"
+#endif
+
 @implementation NoticingsAppDelegate
 
 @synthesize window;
@@ -25,6 +30,10 @@ BOOL gLogging = FALSE;
 #pragma mark Application lifecycle
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    #ifdef DEBUG
+    [TestFlight takeOff:TESTFLIGHT_API_KEY];
+    #endif
+    
 	NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
 	NSDictionary *defaults = [NSDictionary dictionaryWithObject:@"" forKey:@"defaultTags"];
 	[userDefaults registerDefaults:defaults];
