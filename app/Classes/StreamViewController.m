@@ -67,9 +67,8 @@
 {
     [super viewDidUnload];
     
-    // we need to unsubscribe from these, in case they fire and it no longer exists
-    [[NSNotificationCenter defaultCenter] removeObserver:self forKeyPath:@"newPhotos"];
-    [[NSNotificationCenter defaultCenter] removeObserver:self forKeyPath:@"queueCount"];
+    // we need to unsubscribe, in case they fire and it no longer exists
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     
     // tear this down too - it'll be reassigned and subscribed when viewDidLoad is called again
     if (uploadQueueManager) {
@@ -361,6 +360,7 @@
 # pragma mark memory management
 
 - (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [queueButton release];
     [uploadQueueManager release];
     [super dealloc];
