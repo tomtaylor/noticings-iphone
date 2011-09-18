@@ -157,7 +157,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
 	if ([[UploadQueueManager sharedUploadQueueManager].photoUploads count] == 0) {
-		UITableViewCell *cell = [[[UITableViewCell alloc] initWithStyle:UITableViewStylePlain reuseIdentifier:nil] autorelease];
+		UITableViewCell *cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil] autorelease];
 		cell.textLabel.textAlignment = UITextAlignmentCenter;
 		cell.textLabel.text = @"There aren't any photos queued for upload";
 		cell.textLabel.textColor = [UIColor grayColor];
