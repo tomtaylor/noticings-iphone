@@ -121,7 +121,7 @@
 		E2493582137356840066EE38 /* PhotoPreviewViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhotoPreviewViewController.h; path = ../Noticings.xcodeproj/PhotoPreviewViewController.h; sourceTree = "<group>"; };
 		E2493583137356850066EE38 /* PhotoPreviewViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PhotoPreviewViewController.m; path = ../Noticings.xcodeproj/PhotoPreviewViewController.m; sourceTree = "<group>"; };
 		E2493584137356850066EE38 /* PhotoPreviewViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PhotoPreviewViewController.xib; path = Noticings.xcodeproj/PhotoPreviewViewController.xib; sourceTree = "<group>"; };
-		E24942F811E676DE00E43643 /* APIKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; path = APIKeys.h; sourceTree = "<group>"; };
+		E24942F811E676DE00E43643 /* APIKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIKeys.h; sourceTree = "<group>"; };
 		E256C3FC108267E800948E14 /* PhotoDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoDetailViewController.h; sourceTree = "<group>"; };
 		E256C3FD108267E800948E14 /* PhotoDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoDetailViewController.m; sourceTree = "<group>"; };
 		E256C42810826C4100948E14 /* EditableTextFieldCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditableTextFieldCell.h; sourceTree = "<group>"; };
@@ -507,7 +507,7 @@
 				OTHER_CFLAGS = "-DDEBUG";
 				PRODUCT_NAME = Noticings;
 				RUN_CLANG_STATIC_ANALYZER = YES;
-				SDKROOT = iphoneos;
+				SDKROOT = iphoneos4.3;
 			};
 			name = Debug;
 		};
@@ -532,7 +532,7 @@
 				OTHER_CFLAGS = "";
 				PRODUCT_NAME = Noticings;
 				RUN_CLANG_STATIC_ANALYZER = YES;
-				SDKROOT = iphoneos;
+				SDKROOT = iphoneos4.3;
 			};
 			name = Release;
 		};
@@ -593,7 +593,7 @@
 				OTHER_CFLAGS = "";
 				PRODUCT_NAME = Noticings;
 				RUN_CLANG_STATIC_ANALYZER = YES;
-				SDKROOT = iphoneos;
+				SDKROOT = iphoneos4.3;
 			};
 			name = "Ad Hoc";
 		};
@@ -629,7 +629,7 @@
 				OTHER_CFLAGS = "";
 				PRODUCT_NAME = Noticings;
 				RUN_CLANG_STATIC_ANALYZER = YES;
-				SDKROOT = iphoneos;
+				SDKROOT = iphoneos4.3;
 			};
 			name = "App Store Distribution";
 		};
@@ -670,7 +670,7 @@
 				OTHER_CFLAGS = "-DDEBUG";
 				PRODUCT_NAME = Noticings;
 				RUN_CLANG_STATIC_ANALYZER = YES;
-				SDKROOT = iphoneos;
+				SDKROOT = iphoneos4.3;
 			};
 			name = "Ad Hoc Debug";
 		};
