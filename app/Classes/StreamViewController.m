@@ -140,6 +140,32 @@
     [[StreamManager sharedStreamManager] flushMemoryCache];
 }
 
+- (StreamPhoto *)streamPhotoAtIndexPath:(NSIndexPath*)indexPath {
+    NSMutableArray *photos = [StreamManager sharedStreamManager].photos;
+    if ([photos count] == 0) {
+        return nil;
+    }
+    NSMutableArray *photoUploads = uploadQueueManager.photoUploads;
+    if (indexPath.section < [photoUploads count]) {
+        // upload cell
+        return nil;
+    }
+    NSInteger photoIndex = indexPath.section - [photoUploads count];
+    return [photos objectAtIndex:photoIndex];
+}
+
+- (PhotoUpload*)photoUploadAtIndexPath:(NSIndexPath*)indexPath;
+{
+    NSMutableArray *photoUploads = uploadQueueManager.photoUploads;
+    if ([photoUploads count] == 0) {
+        return nil;
+    }
+    if (indexPath.section < [photoUploads count]) {
+        return [uploadQueueManager.photoUploads objectAtIndex:indexPath.section];
+    }
+    return nil;
+}
+
 #pragma mark Table view methods
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -155,87 +181,73 @@
 
 // Customize the appearance of table view cells.
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-
-    NSMutableArray *photos = [StreamManager sharedStreamManager].photos;
-    NSMutableArray *photoUploads = uploadQueueManager.photoUploads;
     
-    if (indexPath.section < [photoUploads count]) {
-        // upload cell
-        PhotoUpload *photoUpload = [uploadQueueManager.photoUploads objectAtIndex:indexPath.section];
-        PhotoUploadCell *cell = [[PhotoUploadCell alloc] initWithPhotoUpload:photoUpload];        
+    PhotoUpload *upload = [self photoUploadAtIndexPath:indexPath];
+    if (upload) {
+        PhotoUploadCell *cell = [[PhotoUploadCell alloc] initWithPhotoUpload:upload];        
         return [cell autorelease];
     }
-
-    // notmal photo cell
-
-    if (photos.count == 0) {
-        // no photos to display. Placeholder.
-        // TODO - if this is the first run, this might be because we haven't loaded any
-        // photos yet.
-        UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-        cell.textLabel.textAlignment = UITextAlignmentCenter;
-        cell.textLabel.text = @"No photos from your contacts";
-        cell.textLabel.textColor = [UIColor grayColor];
-        cell.textLabel.font = [UIFont systemFontOfSize:14];
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        return [cell autorelease];
-        
-    } else {
+    
+    StreamPhoto *photo = [self streamPhotoAtIndexPath:indexPath];
+    if (photo) {
         // TODO - reuse identifier removed for now because of deferred loading bugs. Needs to come back at some point.
         StreamPhotoViewCell *cell = (StreamPhotoViewCell*)[tableView dequeueReusableCellWithIdentifier:nil];
         if (cell == nil) {
             CGRect bounds = self.view.bounds;
             cell = [[[StreamPhotoViewCell alloc] initWithBounds:bounds] autorelease];
         }
-        
-        NSInteger photoIndex = indexPath.section - [photoUploads count];
-        StreamPhoto *photo = [photos objectAtIndex:photoIndex];
         [cell populateFromPhoto:photo];
-        
         return cell;
     }
+
+    
+    // no photos to display. Placeholder.
+    // TODO - if this is the first run, this might be because we haven't loaded any
+    // photos yet.
+    UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+    cell.textLabel.textAlignment = UITextAlignmentCenter;
+    cell.textLabel.text = @"No photos from your contacts";
+    cell.textLabel.textColor = [UIColor grayColor];
+    cell.textLabel.font = [UIFont systemFontOfSize:14];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    return [cell autorelease];
+    
 }
 
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSMutableArray *photos = [StreamManager sharedStreamManager].photos;
-    NSMutableArray *photoUploads = uploadQueueManager.photoUploads;
-    
-    if (indexPath.section+1 > [photoUploads count]) {    
-        if (photos.count == 0) {
-            return 100.0f;
-        }
-        
-        NSInteger photoIndex = indexPath.section - [photoUploads count];
-        StreamPhoto *photo = [photos objectAtIndex:photoIndex];
-        return [StreamPhotoViewCell cellHeightForPhoto:photo width:IMAGE_WIDTH];
-    } else {
+    PhotoUpload *upload = [self photoUploadAtIndexPath:indexPath];
+    if (upload) {
         return 60.0f;
     }
+
+    StreamPhoto *photo = [self streamPhotoAtIndexPath:indexPath];
+    if (photo) {
+        return [StreamPhotoViewCell cellHeightForPhoto:photo width:IMAGE_WIDTH];
+    }
+    
+    return 100.0f;
 }
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    NSMutableArray *photos = [StreamManager sharedStreamManager].photos;
-    NSMutableArray *photoUploads = uploadQueueManager.photoUploads;
-    
-    if (indexPath.section+1 > [photoUploads count]) {
-        NSInteger photoIndex = indexPath.section - [photoUploads count];
-        StreamPhoto *photo = [photos objectAtIndex:photoIndex];
+    StreamPhoto *photo = [self streamPhotoAtIndexPath:indexPath];
+    if (photo) {
         [[UIApplication sharedApplication] openURL:photo.mobilePageURL];
     }
 }
 
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    if (indexPath.section < [uploadQueueManager.photoUploads count]) {
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath;
+{
+    PhotoUpload *upload = [self photoUploadAtIndexPath:indexPath];
+    if (upload) {
         return !uploadQueueManager.inProgress;
     } else {
         return NO;
     }
 }
--(UILabel*) addLabelWithFrame:(CGRect)frame fontSize:(int)size bold:(BOOL)bold color:(UIColor*)color;
 
+-(UILabel*) addLabelWithFrame:(CGRect)frame fontSize:(int)size bold:(BOOL)bold color:(UIColor*)color;
 {
     UILabel* label = [[UILabel alloc] initWithFrame:frame];
     label.textAlignment = UITextAlignmentLeft;
@@ -258,22 +270,12 @@
 
 - (UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section 
 {
-    NSMutableArray *photos = [StreamManager sharedStreamManager].photos;
-    NSMutableArray *photoUploads = uploadQueueManager.photoUploads;
-    if (section < [photoUploads count]) {
-        // no headers on upload cells
-        return nil;
-    }
-
-    NSInteger photoIndex = section - [photoUploads count];
-    
-    if (photoIndex >= [photos count]) {
-        // there's always at least _one_ section, even for no photos.
+    NSIndexPath *tempIndex = [NSIndexPath indexPathForRow:0 inSection:section];
+    StreamPhoto *photo = [self streamPhotoAtIndexPath:tempIndex];
+    if (!photo) {
         return nil;
     }
         
-    StreamPhoto *photo = [photos objectAtIndex:photoIndex];
-
     UIView *headerView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.bounds.size.width, tableView.sectionHeaderHeight)] autorelease];
 
     CGRect avatarRect = CGRectMake(PADDING_SIZE, PADDING_SIZE, AVATAR_SIZE, AVATAR_SIZE);
@@ -302,7 +304,6 @@
                                      color:[UIColor colorWithWhite:0.4 alpha:1]];
     placeView.backgroundColor = [UIColor clearColor];
     [headerView addSubview:placeView];
-
     
     // labels top-right
     UILabel *visibilityView =  [self addLabelWithFrame:CGRectMake(timebox_left, line1_top, TIMEBOX_SIZE, line_height)
