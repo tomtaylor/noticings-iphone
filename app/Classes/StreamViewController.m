@@ -294,7 +294,7 @@
     NSIndexPath *tempIndex = [NSIndexPath indexPathForRow:0 inSection:section];
     StreamPhoto *photo = [self streamPhotoAtIndexPath:tempIndex];
     if (!photo) {
-        return nil;
+        return [[[UIView alloc] initWithFrame:CGRectNull] autorelease];
     }
         
     UIView *headerView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.bounds.size.width, tableView.sectionHeaderHeight)] autorelease];
