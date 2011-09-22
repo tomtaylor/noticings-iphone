@@ -9,8 +9,9 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <MapKit/MKAnnotation.h>
 
-@interface StreamPhoto : NSObject<NSCoding> {
+@interface StreamPhoto : NSObject<NSCoding, MKAnnotation> {
     // NSDictionary describing the photo as returned by the API. Don't bother exploding it.
     NSDictionary *details;
 }
@@ -24,13 +25,15 @@
 @property (retain) NSDictionary *details;
 
 // method/properties that extract information from datails dict.
-@property (readonly) NSString* title;
+@property (nonatomic, readonly, copy) NSString *title;
 @property (readonly) NSString* description;
 @property (readonly) NSString* ownername;
 @property (readonly) NSString* ownerId;
 @property (readonly) NSString* ago;
 @property (readonly) NSString* placename;
 @property (readonly) int visibility;
+@property (readonly) float latitude;
+@property (readonly) float longitude;
 
 @property (readonly) NSURL* avatarURL;
 @property (readonly) NSURL* imageURL;
@@ -38,6 +41,8 @@
 @property (readonly) NSURL* pageURL;
 @property (readonly) NSURL* mobilePageURL;
 @property (readonly) NSURL* bigImageURL;
+
+@property (nonatomic, readonly) CLLocationCoordinate2D coordinate;
 
 -(CGFloat)imageHeightForWidth:(CGFloat)width;
 

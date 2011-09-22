@@ -14,6 +14,7 @@
 #import "ContactsStreamManager.h"
 #import "UserStreamManager.h"
 #import "ImageViewController.h"
+#import "MapViewController.h"
 
 @interface StreamViewController (Private)
 - (void)setQueueButtonState;
@@ -402,7 +403,14 @@
 - (void)tapPlace:(UIView*)sender event:(UIEvent*)event;
 {
     StreamPhoto *photo = [self photoForHeaderEvent:event];
-    [[UIApplication sharedApplication] openURL:photo.mapPageURL];
+
+    MapViewController *mapController = [[MapViewController alloc] init];
+    [self.navigationController pushViewController:mapController animated:YES];
+    [mapController displayPhoto:photo];
+    [mapController release];
+                                        
+
+    //[[UIApplication sharedApplication] openURL:photo.mapPageURL];
 }
 
 

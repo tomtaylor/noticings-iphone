@@ -61,6 +61,24 @@
     return [self.details valueForKeyPath:@"owner"];
 }
 
+-(float)latitude;
+{
+    return [[self.details valueForKey:@"latitude"] floatValue];
+}
+
+-(float)longitude;
+{
+    return [[self.details valueForKey:@"longitude"] floatValue];
+}
+
+-(CLLocationCoordinate2D)coordinate;
+{
+    CLLocationCoordinate2D location;
+    location.latitude = self.latitude;
+    location.longitude = self.longitude;
+    return location;
+}
+
 - (NSString*)placename;
 {
     float lat = [[self.details valueForKey:@"latitude"] floatValue];

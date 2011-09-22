@@ -74,6 +74,7 @@
 		E68D5F1E142BA7FC003192AE /* UserStreamManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E68D5F1D142BA7FC003192AE /* UserStreamManager.m */; };
 		E6AE4A9B13C3A1FD00702DA3 /* ContactsStreamManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E6AE4A9A13C3A1FD00702DA3 /* ContactsStreamManager.m */; };
 		E6DE3ACB142BC3ED00E9BE0B /* ImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E6DE3ACA142BC3ED00E9BE0B /* ImageViewController.m */; };
+		E6F80E23142BE73400B7432D /* MapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E6F80E22142BE73400B7432D /* MapViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -213,6 +214,8 @@
 		E6AE4A9A13C3A1FD00702DA3 /* ContactsStreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactsStreamManager.m; sourceTree = "<group>"; };
 		E6DE3AC9142BC3ED00E9BE0B /* ImageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageViewController.h; path = Classes/ImageViewController.h; sourceTree = "<group>"; };
 		E6DE3ACA142BC3ED00E9BE0B /* ImageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ImageViewController.m; path = Classes/ImageViewController.m; sourceTree = "<group>"; };
+		E6F80E21142BE73400B7432D /* MapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapViewController.h; path = Classes/MapViewController.h; sourceTree = "<group>"; };
+		E6F80E22142BE73400B7432D /* MapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MapViewController.m; path = Classes/MapViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -428,6 +431,8 @@
 				E63D611F142B9D6F00884F10 /* PhotoStreamManager.m */,
 				E6AE4A9913C3A1FD00702DA3 /* ContactsStreamManager.h */,
 				E6AE4A9A13C3A1FD00702DA3 /* ContactsStreamManager.m */,
+				E6F80E21142BE73400B7432D /* MapViewController.h */,
+				E6F80E22142BE73400B7432D /* MapViewController.m */,
 			);
 			name = Stream;
 			sourceTree = "<group>";
@@ -572,6 +577,7 @@
 				E63D6120142B9D6F00884F10 /* PhotoStreamManager.m in Sources */,
 				E68D5F1E142BA7FC003192AE /* UserStreamManager.m in Sources */,
 				E6DE3ACB142BC3ED00E9BE0B /* ImageViewController.m in Sources */,
+				E6F80E23142BE73400B7432D /* MapViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
