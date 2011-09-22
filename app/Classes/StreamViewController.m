@@ -257,11 +257,8 @@
     if (photo) {
         ImageViewController *imageViewController = [[ImageViewController alloc] init];
         [self.navigationController pushViewController:imageViewController animated:YES];
-        [imageViewController displayURL:photo.imageURL];
-        // In theory, we can just fetch the bigger image and the view will Do The Ritght Thing. Not working yet.
-        //[imageViewController displayURL:photo.bigImageURL];
+        [imageViewController displayPhoto:photo];
         [imageViewController release];
-        //[[UIApplication sharedApplication] openURL:photo.mobilePageURL];
     }
 }
 

@@ -12,6 +12,7 @@
 
 #define ZOOM_STEP 3
 
+@synthesize photo;
 @synthesize scrollView;
 @synthesize imageView;
 
@@ -38,11 +39,26 @@
     [self.scrollView addGestureRecognizer:twoFingerTap];
     [doubleTap release];
     [twoFingerTap release];
+    
+    UIBarButtonItem *externalItem = [[UIBarButtonItem alloc] 
+        initWithBarButtonSystemItem:UIBarButtonSystemItemAction
+        target:self
+        action:@selector(openInBrowser)];
+
+    self.navigationItem.rightBarButtonItem = externalItem;
+    [externalItem release];
 }
 
--(void)displayURL:(NSURL*)url;
+-(void)openInBrowser;
 {
-    [[CacheManager sharedCacheManager] fetchImageForURL:url andNotify:self];
+    [[UIApplication sharedApplication] openURL:photo.mobilePageURL];
+    
+}
+
+-(void)displayPhoto:(StreamPhoto*)_photo;
+{
+    self.photo = _photo;
+    [[CacheManager sharedCacheManager] fetchImageForURL:self.photo.imageURL andNotify:self];
 }
 
 -(void)loadedImage:(UIImage *)image cached:(BOOL)cached;
