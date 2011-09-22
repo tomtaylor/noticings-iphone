@@ -17,6 +17,7 @@
     self = [super init];
     if (self) {
         self.userId = _userId;
+        [self loadCachedImageList];
     }
     return self;
 }
@@ -30,6 +31,14 @@
                           self.userId, @"user_id",
                           nil];
     [[self flickrRequest] callAPIMethodWithGET:@"flickr.photos.search" arguments:args];
+}
+
+-(NSString*)cacheFilename;
+{
+    if (!self.userId) {
+        return @"";
+    }
+    return [NSString stringWithFormat:@"user-%@", self.userId];
 }
 
 @end

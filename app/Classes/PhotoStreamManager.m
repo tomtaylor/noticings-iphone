@@ -26,6 +26,10 @@
     if (self) {
         self.photos = [NSMutableArray arrayWithCapacity:50];
         self.inProgress = NO;
+
+        // It's worth blocking the runloop during app startup while we check
+        // the cache, to avoid a flash of empty photo list.
+        [self loadCachedImageList];
     }
     
     return self;
@@ -114,6 +118,62 @@
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 }
 
+-(NSString*)cacheFilename;
+{
+    return @""; 
+}
+
+// load the cached list of images fetched from flickr
+-(void)loadCachedImageList;
+{
+    if ([self cacheFilename].length == 0) {
+        return;
+    }
+
+    // TODO - error handling? what if the cache is bad?
+    NSString* cache = [[CacheManager sharedCacheManager] cachePathForFilename:[self cacheFilename]];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:cache]) {
+        return; // no cache
+    }
+    NSLog(@"Loading cached image data from %@", cache);
+    NSData *data = [[NSData alloc] initWithContentsOfFile:cache];
+    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
+    NSArray *archived = [[unarchiver decodeObjectForKey:@"photos"] retain];
+    NSNumber *archivedLastRefresh = [[unarchiver decodeObjectForKey:@"lastRefresh"] retain];
+    [unarchiver release];
+    [data release];
+    
+    // don't replace self.photos, alter, so we fire the watchers.
+    [self.photos removeAllObjects];
+    for (StreamPhoto *photo in archived) {
+        [self.photos addObject:photo];
+    }
+    [archived release];
+    
+    self.lastRefresh = [archivedLastRefresh doubleValue];
+    [archivedLastRefresh release];
+}
+
+// save the cached list of images fetched from flickr
+-(void)saveCachedImageList;
+{
+    if ([self cacheFilename].length == 0) {
+        return;
+    }
+
+    NSString* cache = [[CacheManager sharedCacheManager] cachePathForFilename:[self cacheFilename]];
+    NSLog(@"Saving cached image data to %@", cache);
+    NSMutableData *data = [NSMutableData new];
+    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data];
+    [archiver encodeObject:self.photos forKey:@"photos"];
+    [archiver encodeObject:[NSNumber numberWithDouble:self.lastRefresh] forKey:@"lastRefresh"];
+    [archiver finishEncoding];
+    [data writeToFile:cache atomically:YES];
+    [archiver release];
+    [data release];
+}
+
+
 
 
 #pragma mark Flickr delegate methods
@@ -145,12 +205,7 @@
         [self.delegate performSelector:@selector(newPhotos)];
     }
 
-    [self fetchComplete];
-}
-
--(void)fetchComplete;
-{
-    // for subclasses
+    [self saveCachedImageList];
 }
 
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didFailWithError:(NSError *)inError

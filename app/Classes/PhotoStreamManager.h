@@ -20,14 +20,15 @@
 
 -(void)callFlickr;
 -(NSString*)extras;
--(void)fetchComplete;
-
+-(NSString*)cacheFilename;
 - (void)resetFlickrContext;
 - (OFFlickrAPIRequest *)flickrRequest;
 
-// interface
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didCompleteWithResponse:(NSDictionary *)inResponseDictionary;
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didFailWithError:(NSError *)inError;
+
+-(void)loadCachedImageList;
+-(void)saveCachedImageList;
 
 @property (retain) NSMutableArray* photos;
 @property (nonatomic) BOOL inProgress;

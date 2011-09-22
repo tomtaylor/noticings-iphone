@@ -15,9 +15,6 @@
 
 +(ContactsStreamManager *)sharedContactsStreamManager;
 
--(void)loadCachedImageList;
--(void)saveCachedImageList;
-
 @end
 
 
