@@ -22,6 +22,7 @@ extern const NSUInteger kMaxDiskCacheSize;
 @synthesize inProgress;
 @synthesize cacheDir;
 @synthesize imageCache;
+@synthesize queue;
 
 - (id)init;
 {
@@ -29,9 +30,10 @@ extern const NSUInteger kMaxDiskCacheSize;
     if (self) {
         self.photos = [NSMutableArray arrayWithCapacity:50];
         self.inProgress = NO;
-
-        
         self.imageCache = [NSMutableDictionary dictionary];
+
+        self.queue = [[[NSOperationQueue alloc] init] autorelease];
+        self.queue.maxConcurrentOperationCount = 2;
 
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
         self.cacheDir = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"imageCache"];
@@ -46,13 +48,12 @@ extern const NSUInteger kMaxDiskCacheSize;
             }
         }
 
-    
+        // It's worth blocking the runloop during app startup while we check the cache to
+        // avoid a flash of empty photo list.
+        [self loadCachedImageData];
+        
     }
     
-    // It's worth blocking the runloop during app startup while we check the cache to
-    // avoid a flash of empty photo list.
-    [self loadCachedImageData];
-
     return self;
 }
 
@@ -237,14 +238,17 @@ extern const NSUInteger kMaxDiskCacheSize;
 // return an image for the passed url. Will try the cache first.
 - (void)fetchImageForURL:(NSURL*)url andNotify:(NSObject <DeferredImageLoader>*)sender;
 {
+    NSLog(@"fetchImageForURL:%@", url);
     UIImage *image = [self cachedImageForURL:url];
     if (image) {
         // we have a cached version. Send that first. But not till this method is done
-        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-            // (use block so we can send the second param)
+        if (sender) {
+            // in theory, we should defer this till after the fetchImage call is done. in
+            // practice, we want the cached version of the image returned before the 
+            // runloop gets a look-in, to avoid flickers of white.
             [sender loadedImage:image cached:YES];
-        }];
-        return;
+        }
+        return YES; // there was a cached version
     }
     
     NSLog(@"need to fetch image %@", url);
@@ -255,15 +259,18 @@ extern const NSUInteger kMaxDiskCacheSize;
         UIImage *image = [UIImage imageWithData:[request responseData]];
         NSLog(@"fetched image %@ for url %@", image, url);
         [self cacheImage:image forURL:url];
-        [sender loadedImage:image cached:NO];
+        if (sender) {
+            [sender loadedImage:image cached:NO];
+        }
     }];
 
     [request setFailedBlock:^{
         NSError *error = [request error];
         NSLog(@"Failed to fetch image %@: %@", url, error);
     }];
-
-    [request startAsynchronous];
+    [self.queue addOperation:request];
+    
+    return NO; // had to fetch image
 }
 
 
@@ -325,6 +332,9 @@ extern const NSUInteger kMaxDiskCacheSize;
     for (NSDictionary *photo in [inResponseDictionary valueForKeyPath:@"photos.photo"]) {
         StreamPhoto *sp = [[StreamPhoto alloc] initWithDictionary:photo];
         [self.photos addObject:sp];
+        // pre-cache images
+        [self fetchImageForURL:sp.avatarURL andNotify:nil];
+        [self fetchImageForURL:sp.imageURL andNotify:nil];
         [sp release];
     }
 

@@ -3,19 +3,15 @@
 //  Noticings
 //
 //  Created by Tom Insam on 05/07/2011.
-//  Copyright 2011 __MyCompanyName__. All rights reserved.
-//
-// based on http://www.markj.net/iphone-asynchronous-table-image/
 
 #import "RemoteImageView.h"
-
 #import "StreamManager.h"
 
 @implementation RemoteImageView
 
 @synthesize url;
 
--(id)initWithFrame:(CGRect)frame;
+- (id)initWithFrame:(CGRect)frame;
 {
     self = [super initWithFrame:frame];
     if (self) {
@@ -25,23 +21,25 @@
     return self;
 }
 
-
 - (void)loadURL:(NSURL*)loadUrl;
 {
-    StreamManager *manager = [StreamManager sharedStreamManager];
+    self.url = loadUrl;
 
-    // TODO - better 'loading' state.
     self.image = nil;
     self.backgroundColor = [UIColor whiteColor];
     [self setNeedsLayout];
-    
+
+    StreamManager *manager = [StreamManager sharedStreamManager];
     [manager fetchImageForURL:loadUrl andNotify:self];
 }
 
--(void)loadedImage:(UIImage *)image cached:(BOOL)cached;
+- (void)loadedImage:(UIImage *)image cached:(BOOL)cached;
 {
-    NSLog(@"called loadedImage:%@ cached:%@", image, cached ? @"YES" : @"NO");
-    if (cached) {
+    NSLog(@"called loadedImage:%@ cached:%@ for url %@", image, cached ? @"YES" : @"NO", self.url);
+    
+    if (self.image) {
+        NSLog(@"image already set!");
+    } else if (cached) {
         [self setImage:image withAnimation:NO];
     } else {
         [self setImage:image withAnimation:YES];

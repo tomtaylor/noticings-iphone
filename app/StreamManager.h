@@ -23,12 +23,6 @@
 @interface StreamManager : NSObject <OFFlickrAPIRequestDelegate> {
 @private
 	OFFlickrAPIRequest *flickrRequest;
-    NSMutableArray *photos;
-	BOOL inProgress;
-    
-    NSString * cacheDir;
-    NSMutableDictionary *imageCache;
-    
     NSTimeInterval lastRefresh;
 }
 
@@ -64,6 +58,7 @@
 @property (retain) NSString *cacheDir;
 @property (retain) NSMutableDictionary *imageCache;
 
+@property (retain) NSOperationQueue *queue;
 @end
 
 
