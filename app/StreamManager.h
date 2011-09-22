@@ -51,6 +51,7 @@
 
 @property (retain) NSString *cacheDir;
 @property (retain) NSMutableDictionary *imageCache;
+@property (retain) NSMutableDictionary *imageRequests;
 
 @property (retain) NSOperationQueue *queue;
 @end

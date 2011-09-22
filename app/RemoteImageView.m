@@ -35,8 +35,6 @@
 
 - (void)loadedImage:(UIImage *)image cached:(BOOL)cached;
 {
-    NSLog(@"called loadedImage:%@ cached:%@ for url %@", image, cached ? @"YES" : @"NO", self.url);
-    
     if (self.image) {
         NSLog(@"image already set!");
     } else if (cached) {

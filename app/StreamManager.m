@@ -23,6 +23,7 @@ extern const NSUInteger kMaxDiskCacheSize;
 @synthesize cacheDir;
 @synthesize imageCache;
 @synthesize queue;
+@synthesize imageRequests;
 
 - (id)init;
 {
@@ -31,9 +32,10 @@ extern const NSUInteger kMaxDiskCacheSize;
         self.photos = [NSMutableArray arrayWithCapacity:50];
         self.inProgress = NO;
         self.imageCache = [NSMutableDictionary dictionary];
+        self.imageRequests = [NSMutableDictionary dictionary];
 
         self.queue = [[[NSOperationQueue alloc] init] autorelease];
-        self.queue.maxConcurrentOperationCount = 2;
+        self.queue.maxConcurrentOperationCount = 3;
         
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
         self.cacheDir = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"imageCache"];
@@ -189,7 +191,7 @@ extern const NSUInteger kMaxDiskCacheSize;
     if (inMemory) {
         return inMemory;
     }
-    
+
     // now look on disk for image. Parsing a JPG takes noticable (barely) time
     // on an iphone 4 so scrolling a list of images off the disk cache will have
     // maybe a frame or 2 of jerk per image.
@@ -221,12 +223,12 @@ extern const NSUInteger kMaxDiskCacheSize;
 
 - (void) clearCacheForURL:(NSURL*)url;
 {
-    
+    // TODO   
 }
 
 - (void) clearCache;
 {
-    
+    // TODO   
 }
 
 - (void) flushMemoryCache;
@@ -240,7 +242,7 @@ extern const NSUInteger kMaxDiskCacheSize;
 // return an image for the passed url. Will try the cache first.
 - (void)fetchImageForURL:(NSURL*)url andNotify:(NSObject <DeferredImageLoader>*)sender;
 {
-    NSLog(@"fetchImageForURL:%@", url);
+    NSString *key = [url absoluteString];
     UIImage *image = [self cachedImageForURL:url];
     if (image) {
         // we have a cached version. Send that first. But not till this method is done
@@ -253,24 +255,46 @@ extern const NSUInteger kMaxDiskCacheSize;
         return;
     }
     
-    NSLog(@"need to fetch image %@", url);
+    // for any particular url, we will keep track of which senders are interested, rather
+    // than queueing it more than once.
+    BOOL alreadyQueued = YES;
+    NSMutableArray* listeners = [self.imageRequests objectForKey:key];
+    if (!listeners) {
+        listeners = [NSMutableArray arrayWithCapacity:1];
+        [self.imageRequests setObject:listeners forKey:key];
+        alreadyQueued = NO;
+    }
+    if (sender) {
+        // might be nil, because we pre-cache images without nessecarily caring who gets a response
+        [listeners addObject:sender];
+    }
+    
+    if (alreadyQueued) {
+        return;
+    }
     
     __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
     [request setShouldContinueWhenAppEntersBackground:YES];
 
     [request setCompletionBlock:^{
         UIImage *image = [UIImage imageWithData:[request responseData]];
-        NSLog(@"fetched image %@ for url %@", image, url);
+        NSLog(@"fetched image %@", url);
         [self cacheImage:image forURL:url];
-        if (sender) {
-            [sender loadedImage:image cached:NO];
+        NSMutableArray* listeners = [self.imageRequests objectForKey:key];
+        if (listeners) {
+            for (NSObject <DeferredImageLoader>* sender in listeners) {
+                [sender loadedImage:image cached:NO];
+            }
         }
+        [self.imageRequests removeObjectForKey:key];
     }];
 
     [request setFailedBlock:^{
         NSError *error = [request error];
         NSLog(@"Failed to fetch image %@: %@", url, error);
+        [self.imageRequests removeObjectForKey:key];
     }];
+
     [self.queue addOperation:request];
 }
 
@@ -327,7 +351,7 @@ extern const NSUInteger kMaxDiskCacheSize;
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didCompleteWithResponse:(NSDictionary *)inResponseDictionary
 {
     NSLog(@"completed flickr request!");
-    NSLog(@"got %@", inResponseDictionary);
+    //NSLog(@"got %@", inResponseDictionary);
 
     [self.photos removeAllObjects];
     for (NSDictionary *photo in [inResponseDictionary valueForKeyPath:@"photos.photo"]) {
