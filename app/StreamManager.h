@@ -8,30 +8,15 @@
 
 #import <Foundation/Foundation.h>
 #import "ObjectiveFlickr.h"
+#import "PhotoStreamManager.h"
 
-@interface StreamManager : NSObject <OFFlickrAPIRequestDelegate> {
-@private
-	OFFlickrAPIRequest *flickrRequest;
-    NSTimeInterval lastRefresh;
+@interface StreamManager : PhotoStreamManager {
 }
 
 +(StreamManager *)sharedStreamManager;
 
-- (void)maybeRefresh;
-- (void)refresh;
-
 -(void)loadCachedImageList;
 -(void)saveCachedImageList;
-
-- (OFFlickrAPIRequest *)flickrRequest;
-- (void) resetFlickrContext;
-
-// interface
-- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didCompleteWithResponse:(NSDictionary *)inResponseDictionary;
-- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didFailWithError:(NSError *)inError;
-
-@property (retain) NSMutableArray* photos;
-@property (nonatomic) BOOL inProgress;
 
 @end
 

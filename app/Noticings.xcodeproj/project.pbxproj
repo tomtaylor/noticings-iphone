@@ -67,6 +67,7 @@
 		E6218ADB13C35D7C0021CB80 /* StreamPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = E6218AD613C35D7C0021CB80 /* StreamPhoto.m */; };
 		E6218ADC13C35D7C0021CB80 /* StreamPhotoViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E6218AD813C35D7C0021CB80 /* StreamPhotoViewCell.m */; };
 		E6218ADD13C35D7C0021CB80 /* StreamViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E6218ADA13C35D7C0021CB80 /* StreamViewController.m */; };
+		E63D6120142B9D6F00884F10 /* PhotoStreamManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E63D611F142B9D6F00884F10 /* PhotoStreamManager.m */; };
 		E64839CB13C8EBBF008DB9CE /* PullRefreshTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E64839CA13C8EBBF008DB9CE /* PullRefreshTableViewController.m */; };
 		E64839CD13C8EC39008DB9CE /* arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = E64839CC13C8EC39008DB9CE /* arrow.png */; };
 		E67305D313C388C2005CEC62 /* RemoteImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = E67305D213C388C2005CEC62 /* RemoteImageView.m */; };
@@ -197,6 +198,8 @@
 		E6218AD813C35D7C0021CB80 /* StreamPhotoViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StreamPhotoViewCell.m; path = Classes/StreamPhotoViewCell.m; sourceTree = "<group>"; };
 		E6218AD913C35D7C0021CB80 /* StreamViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StreamViewController.h; path = Classes/StreamViewController.h; sourceTree = "<group>"; };
 		E6218ADA13C35D7C0021CB80 /* StreamViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StreamViewController.m; path = Classes/StreamViewController.m; sourceTree = "<group>"; };
+		E63D611E142B9D6F00884F10 /* PhotoStreamManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhotoStreamManager.h; path = Classes/PhotoStreamManager.h; sourceTree = "<group>"; };
+		E63D611F142B9D6F00884F10 /* PhotoStreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PhotoStreamManager.m; path = Classes/PhotoStreamManager.m; sourceTree = "<group>"; };
 		E64839C913C8EBBF008DB9CE /* PullRefreshTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PullRefreshTableViewController.h; path = Classes/PullRefreshTableViewController.h; sourceTree = "<group>"; };
 		E64839CA13C8EBBF008DB9CE /* PullRefreshTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PullRefreshTableViewController.m; path = Classes/PullRefreshTableViewController.m; sourceTree = "<group>"; };
 		E64839CC13C8EC39008DB9CE /* arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = arrow.png; sourceTree = "<group>"; };
@@ -413,6 +416,8 @@
 				E6AE4A9A13C3A1FD00702DA3 /* StreamManager.m */,
 				E60912F6142B982C004861F5 /* CacheManager.h */,
 				E60912F7142B982C004861F5 /* CacheManager.m */,
+				E63D611E142B9D6F00884F10 /* PhotoStreamManager.h */,
+				E63D611F142B9D6F00884F10 /* PhotoStreamManager.m */,
 			);
 			name = Stream;
 			sourceTree = "<group>";
@@ -554,6 +559,7 @@
 				E60912E4142B531A004861F5 /* ASINetworkQueue.m in Sources */,
 				E60912E5142B531A004861F5 /* Reachability.m in Sources */,
 				E60912F8142B982C004861F5 /* CacheManager.m in Sources */,
+				E63D6120142B9D6F00884F10 /* PhotoStreamManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
