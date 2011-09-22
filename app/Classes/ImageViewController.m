@@ -20,15 +20,18 @@
 {
     self.scrollView = [[[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, 320, 480)] autorelease];
     self.scrollView.backgroundColor = [UIColor grayColor];
-    self.scrollView.maximumZoomScale = 10;
-    self.scrollView.minimumZoomScale = 0.1;
+    self.scrollView.minimumZoomScale = 1;
+    self.scrollView.maximumZoomScale = 20;
     self.scrollView.delegate = self;
+    self.scrollView.bouncesZoom = YES;
+    self.scrollView.bounces = YES;
 
-    self.imageView = [[[UIImageView alloc] initWithFrame:CGRectNull] autorelease];
+    self.imageView = [[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 1024, 1024 * (480.0f/320))] autorelease];
+    self.imageView.contentMode = UIViewContentModeScaleAspectFit;
     [self.scrollView addSubview:self.imageView];
+    self.scrollView.contentSize = self.imageView.frame.size;
 
     self.view = self.scrollView;
-
     
     // gesture management
     UITapGestureRecognizer *doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTap:)];
@@ -58,7 +61,19 @@
 -(void)displayPhoto:(StreamPhoto*)_photo;
 {
     self.photo = _photo;
-    [[CacheManager sharedCacheManager] fetchImageForURL:self.photo.imageURL andNotify:self];
+    // ask for the big one first. if it's in the cache, it'll load, and we'll refuse to load
+    // the smaller one later. otherwise, the smaller one will almost certainly be either already
+    // in the cache, or load faster.
+    //
+    // Explicitly _don't_ load the original. Some of those are insane, and you're probably using
+    // the wrong app if you care about them.
+    //
+    // Defer this to the next iteration of the runloop, so that we have a view
+    // already set up, or the scaling goes squiffy.
+    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+        [[CacheManager sharedCacheManager] fetchImageForURL:self.photo.bigImageURL andNotify:self];
+        [[CacheManager sharedCacheManager] fetchImageForURL:self.photo.imageURL andNotify:self];
+    }];
 }
 
 -(void)loadedImage:(UIImage *)image cached:(BOOL)cached;
@@ -72,25 +87,13 @@
             return;
         }
     }
+    
+    // snap back out to full zoom before loading, or sometihng odd happens with the extents.
+    self.scrollView.zoomScale = 1;
 
     self.imageView.image = image;
-    self.imageView.frame = CGRectMake(0, 0, image.size.width, image.size.height);
-    self.scrollView.contentSize = image.size;
-    
-    // allow zooming out so that the whole image fits on screen. By default, zoom so that
-    // the image fills the screen.
-    float minWidthZoom = self.scrollView.frame.size.width / image.size.width;
-    float minHeightZoom = self.scrollView.frame.size.height / image.size.height;
-    self.scrollView.minimumZoomScale = MIN(minWidthZoom, minHeightZoom);
-    self.scrollView.zoomScale = MAX(minWidthZoom, minHeightZoom);
-    
-    // view insets such that at full zoom out, the image is centered
-    float minWidth = self.scrollView.minimumZoomScale * image.size.width;
-    float minHeight = self.scrollView.minimumZoomScale * image.size.height;
-    float xOffset = (self.scrollView.frame.size.width - minWidth) / 2;
-    float yOffset = (self.scrollView.frame.size.height - minHeight) / 2;
-    self.scrollView.contentInset = UIEdgeInsetsMake(yOffset, xOffset, yOffset, xOffset);
-    
+    self.imageView.frame = self.view.frame;
+    self.scrollView.contentSize = self.imageView.frame.size;
 }
 
 
@@ -143,9 +146,11 @@
 
 -(void)dealloc;
 {
+    NSLog(@"deallocing %@", self.class);
     self.scrollView.delegate = nil;
     self.scrollView = nil;
     self.imageView = nil;
+    self.photo = nil;
     [super dealloc];
 }
 
