@@ -10,6 +10,7 @@
 #import "StreamPhotoViewCell.h"
 #import "StreamPhoto.h"
 #import "StreamManager.h"
+#import "CacheManager.h"
 #import "PhotoUploadCell.h"
 
 @interface StreamViewController (Private)
@@ -137,7 +138,7 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    [[StreamManager sharedStreamManager] flushMemoryCache];
+    [[CacheManager sharedCacheManager] flushMemoryCache];
 }
 
 - (StreamPhoto *)streamPhotoAtIndexPath:(NSIndexPath*)indexPath {
@@ -329,7 +330,6 @@
     timeagoView.textAlignment = UITextAlignmentRight;
     timeagoView.backgroundColor = [UIColor clearColor];
     [headerView addSubview:timeagoView];
-
 
     usernameView.text = photo.ownername;
     // gfx are for losers. I like unicode.

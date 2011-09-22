@@ -5,7 +5,7 @@
 //  Created by Tom Insam on 05/07/2011.
 
 #import "RemoteImageView.h"
-#import "StreamManager.h"
+#import "CacheManager.h"
 
 @implementation RemoteImageView
 
@@ -29,7 +29,7 @@
     self.backgroundColor = [UIColor whiteColor];
     [self setNeedsLayout];
 
-    StreamManager *manager = [StreamManager sharedStreamManager];
+    CacheManager *manager = [CacheManager sharedCacheManager];
     [manager fetchImageForURL:loadUrl andNotify:self];
 }
 

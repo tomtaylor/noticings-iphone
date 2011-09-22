@@ -7,18 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SynthesizeSingleton.h"
-
 #import "ObjectiveFlickr.h"
-#import "APIKeys.h"
-
-// protocol for delegates of loadImagefetchImageForURL:andNotify:
-@protocol DeferredImageLoader <NSObject>
-@required
--(void) loadedImage:(UIImage*)image cached:(BOOL)cached;
-@end
-
-
 
 @interface StreamManager : NSObject <OFFlickrAPIRequestDelegate> {
 @private
@@ -31,16 +20,11 @@
 - (void)maybeRefresh;
 - (void)refresh;
 
-- (OFFlickrAPIRequest *)flickrRequest;
-- (void) flushMemoryCache;
-- (void) resetFlickrContext;
-
-// cache
 -(void)loadCachedImageList;
 -(void)saveCachedImageList;
 
-// deferred image loading
-- (void)fetchImageForURL:(NSURL*)url andNotify:(NSObject <DeferredImageLoader>*)sender;
+- (OFFlickrAPIRequest *)flickrRequest;
+- (void) resetFlickrContext;
 
 // interface
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didCompleteWithResponse:(NSDictionary *)inResponseDictionary;
@@ -49,11 +33,6 @@
 @property (retain) NSMutableArray* photos;
 @property (nonatomic) BOOL inProgress;
 
-@property (retain) NSString *cacheDir;
-@property (retain) NSMutableDictionary *imageCache;
-@property (retain) NSMutableDictionary *imageRequests;
-
-@property (retain) NSOperationQueue *queue;
 @end
 
 

@@ -6,24 +6,20 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
+#import "SynthesizeSingleton.h"
 #import "StreamManager.h"
 #import "StreamPhoto.h"
 #import "ASIHTTPRequest.h"
+#import "APIKeys.h"
+#import "CacheManager.h"
 
 @implementation StreamManager
-
 SYNTHESIZE_SINGLETON_FOR_CLASS(StreamManager);
 
 #define IMAGE_DATA_CACHE @"images.cache"
 
-extern const NSUInteger kMaxDiskCacheSize;
-
 @synthesize photos;
 @synthesize inProgress;
-@synthesize cacheDir;
-@synthesize imageCache;
-@synthesize queue;
-@synthesize imageRequests;
 
 - (id)init;
 {
@@ -31,29 +27,10 @@ extern const NSUInteger kMaxDiskCacheSize;
     if (self) {
         self.photos = [NSMutableArray arrayWithCapacity:50];
         self.inProgress = NO;
-        self.imageCache = [NSMutableDictionary dictionary];
-        self.imageRequests = [NSMutableDictionary dictionary];
-
-        self.queue = [[[NSOperationQueue alloc] init] autorelease];
-        self.queue.maxConcurrentOperationCount = 3;
-        
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-        self.cacheDir = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"imageCache"];
-
-        // create cache directory if it doesn't exist already.
-        if (![[NSFileManager defaultManager] fileExistsAtPath:self.cacheDir]) {
-            if (![[NSFileManager defaultManager] createDirectoryAtPath:self.cacheDir
-                                           withIntermediateDirectories:YES
-                                                            attributes:nil
-                                                                 error:nil]) {
-                NSLog(@"can't create cache folder");
-            }
-        }
 
         // It's worth blocking the runloop during app startup while we check the cache to
         // avoid a flash of empty photo list.
         [self loadCachedImageList];
-        
     }
     
     return self;
@@ -102,37 +79,11 @@ extern const NSUInteger kMaxDiskCacheSize;
 }
 
 
-#pragma mark cache
-
--(NSString*) sha256:(NSString *)clear{
-    const char *s=[clear cStringUsingEncoding:NSASCIIStringEncoding];
-    NSData *keyData=[NSData dataWithBytes:s length:strlen(s)];
-    uint8_t digest[CC_SHA256_DIGEST_LENGTH]={0};
-    CC_SHA256(keyData.bytes, keyData.length, digest);
-    NSData *out=[NSData dataWithBytes:digest length:CC_SHA256_DIGEST_LENGTH];
-    NSString *hash=[out description];
-    hash = [hash stringByReplacingOccurrencesOfString:@" " withString:@""];
-    hash = [hash stringByReplacingOccurrencesOfString:@"<" withString:@""];
-    hash = [hash stringByReplacingOccurrencesOfString:@">" withString:@""];
-    return hash;
-}
-
--(NSString*) cachePathForFilename:(NSString*)filename;
-{
-    return [self.cacheDir stringByAppendingPathComponent:filename];
-}
-
--(NSString*) urlToFilename:(NSURL*)url;
-{
-    NSString *hash = [self sha256:[url absoluteString]];
-    return [self cachePathForFilename:[hash stringByAppendingPathExtension:@"jpg"]];
-}
-
 // load the cached list of images fetched from flickr
 -(void)loadCachedImageList;
 {
     // TODO - error handling? what if the cache is bad?
-    NSString* cache = [self cachePathForFilename:IMAGE_DATA_CACHE];
+    NSString* cache = [[CacheManager sharedCacheManager] cachePathForFilename:IMAGE_DATA_CACHE];
     if (![[NSFileManager defaultManager] fileExistsAtPath:cache]) {
         return; // no cache
     }
@@ -162,7 +113,7 @@ extern const NSUInteger kMaxDiskCacheSize;
 -(void)saveCachedImageList;
 {
     NSLog(@"Saving cached image data");
-    NSString* cache = [self cachePathForFilename:IMAGE_DATA_CACHE];
+    NSString* cache = [[CacheManager sharedCacheManager] cachePathForFilename:IMAGE_DATA_CACHE];
     NSMutableData *data = [NSMutableData new];
     NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data];
     [archiver encodeObject:self.photos forKey:@"photos"];
@@ -172,132 +123,6 @@ extern const NSUInteger kMaxDiskCacheSize;
     [archiver release];
     [data release];
 }
-
-
-
-// try to return an NSImage for the image at this url from a cache.
-// There are 2 levels of cache - we cache the raw UIImage in memory for a time,
-// but we flush that when the phone needs more memory or when the app gets sent to
-// the background. We also store the JPEGs for the images on disk.
-//
-// TODO - the disk cache needs reaping, based on mtime or something, but we can 
-// run for an awfully long time before I need to worry about that.
-- (UIImage *) cachedImageForURL:(NSURL*)url;
-{
-    NSString *filename = [self urlToFilename:url];
-    
-    // look in in-memory cache first, we're storing the processed image, it's _way_ faster.
-    UIImage *inMemory = [self.imageCache objectForKey:filename];
-    if (inMemory) {
-        return inMemory;
-    }
-
-    // now look on disk for image. Parsing a JPG takes noticable (barely) time
-    // on an iphone 4 so scrolling a list of images off the disk cache will have
-    // maybe a frame or 2 of jerk per image.
-    // TODO - pre-scale these images to display size? might help.
-    if ([[NSFileManager defaultManager] fileExistsAtPath:filename]) {
-        inMemory = [UIImage imageWithContentsOfFile:filename];
-        // copy to the in-memory cache
-        [self.imageCache setObject:inMemory forKey:filename];
-        return inMemory;
-    }
-
-    // not in cache
-    return nil;
-}
-
-- (void) cacheImage:(UIImage *)image forURL:(NSURL*)url;
-{
-    NSString *filename = [self urlToFilename:url];
-    
-    // store in in-memory cache
-    [self.imageCache setObject:image forKey:filename];
-    
-    // and store on disk
-    NSData *imageData = UIImageJPEGRepresentation(image, 0.9);
-    if (![imageData writeToFile:filename atomically:TRUE]) {
-        NSLog(@"error writing to cache");
-    }
-}
-
-- (void) clearCacheForURL:(NSURL*)url;
-{
-    // TODO   
-}
-
-- (void) clearCache;
-{
-    // TODO   
-}
-
-- (void) flushMemoryCache;
-{
-    NSLog(@"flushing in-memory cache");
-    [self.imageCache removeAllObjects];
-    [self resetFlickrContext];
-}
-
-
-// return an image for the passed url. Will try the cache first.
-- (void)fetchImageForURL:(NSURL*)url andNotify:(NSObject <DeferredImageLoader>*)sender;
-{
-    NSString *key = [url absoluteString];
-    UIImage *image = [self cachedImageForURL:url];
-    if (image) {
-        // we have a cached version. Send that first. But not till this method is done
-        if (sender) {
-            // in theory, we should defer this till after the fetchImage call is done. in
-            // practice, we want the cached version of the image returned before the 
-            // runloop gets a look-in, to avoid flickers of white.
-            [sender loadedImage:image cached:YES];
-        }
-        return;
-    }
-    
-    // for any particular url, we will keep track of which senders are interested, rather
-    // than queueing it more than once.
-    BOOL alreadyQueued = YES;
-    NSMutableArray* listeners = [self.imageRequests objectForKey:key];
-    if (!listeners) {
-        listeners = [NSMutableArray arrayWithCapacity:1];
-        [self.imageRequests setObject:listeners forKey:key];
-        alreadyQueued = NO;
-    }
-    if (sender) {
-        // might be nil, because we pre-cache images without nessecarily caring who gets a response
-        [listeners addObject:sender];
-    }
-    
-    if (alreadyQueued) {
-        return;
-    }
-    
-    __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-    [request setShouldContinueWhenAppEntersBackground:YES];
-
-    [request setCompletionBlock:^{
-        UIImage *image = [UIImage imageWithData:[request responseData]];
-        NSLog(@"fetched image %@", url);
-        [self cacheImage:image forURL:url];
-        NSMutableArray* listeners = [self.imageRequests objectForKey:key];
-        if (listeners) {
-            for (NSObject <DeferredImageLoader>* sender in listeners) {
-                [sender loadedImage:image cached:NO];
-            }
-        }
-        [self.imageRequests removeObjectForKey:key];
-    }];
-
-    [request setFailedBlock:^{
-        NSError *error = [request error];
-        NSLog(@"Failed to fetch image %@: %@", url, error);
-        [self.imageRequests removeObjectForKey:key];
-    }];
-
-    [self.queue addOperation:request];
-}
-
 
 
 // TODO - stolen from the uploader. refactor into base class?
@@ -352,14 +177,17 @@ extern const NSUInteger kMaxDiskCacheSize;
 {
     NSLog(@"completed flickr request!");
     //NSLog(@"got %@", inResponseDictionary);
+    
+    CacheManager *cacheManager = [CacheManager sharedCacheManager];
 
     [self.photos removeAllObjects];
+    
     for (NSDictionary *photo in [inResponseDictionary valueForKeyPath:@"photos.photo"]) {
         StreamPhoto *sp = [[StreamPhoto alloc] initWithDictionary:photo];
         [self.photos addObject:sp];
         // pre-cache images
-        [self fetchImageForURL:sp.avatarURL andNotify:nil];
-        [self fetchImageForURL:sp.imageURL andNotify:nil];
+        [cacheManager fetchImageForURL:sp.avatarURL andNotify:nil];
+        [cacheManager fetchImageForURL:sp.imageURL andNotify:nil];
         [sp release];
     }
 
@@ -397,8 +225,6 @@ extern const NSUInteger kMaxDiskCacheSize;
 - (void)dealloc
 {
     self.photos = nil;
-    self.imageCache = nil;
-    self.cacheDir = nil;
     [flickrRequest release];
     [super dealloc];
 }

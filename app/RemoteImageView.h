@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "StreamManager.h"
+#import "CacheManager.h"
 
 @interface RemoteImageView : UIImageView <DeferredImageLoader> {
 }

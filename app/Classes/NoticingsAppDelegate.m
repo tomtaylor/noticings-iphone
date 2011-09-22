@@ -10,6 +10,7 @@
 #import "FlickrAuthenticationViewController.h"
 #import "UploadQueueManager.h"
 #import "StreamManager.h"
+#import "CacheManager.h"
 #import <ImageIO/ImageIO.h>
 
 #ifdef DEBUG
@@ -141,7 +142,7 @@ BOOL gLogging = FALSE;
 - (void)applicationDidEnterBackground:(UIApplication *)application;
 {
     // something caused us to be bakgrounded. incoming call, home button, etc.
-    [[StreamManager sharedStreamManager] flushMemoryCache];
+    [[CacheManager sharedCacheManager] flushMemoryCache];
     [[StreamManager sharedStreamManager] resetFlickrContext];
 }
 
