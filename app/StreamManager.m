@@ -34,7 +34,7 @@ extern const NSUInteger kMaxDiskCacheSize;
 
         self.queue = [[[NSOperationQueue alloc] init] autorelease];
         self.queue.maxConcurrentOperationCount = 2;
-
+        
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
         self.cacheDir = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"imageCache"];
 
@@ -50,14 +50,84 @@ extern const NSUInteger kMaxDiskCacheSize;
 
         // It's worth blocking the runloop during app startup while we check the cache to
         // avoid a flash of empty photo list.
-        [self loadCachedImageData];
+        [self loadCachedImageList];
         
     }
     
     return self;
 }
 
--(void)loadCachedImageData;
+
+// refresh, but only if we haven't refreshed recently.
+-(void)maybeRefresh;
+{
+    NSTimeInterval now = [[NSDate date] timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970;
+    NSLog(@"it's been %f seconds since refresh", now - lastRefresh);
+    if (now - lastRefresh < 60 * 10) {
+        // 10 mins
+        NSLog(@"not long enough");
+        return;
+    }
+    [self refresh];
+}
+
+- (void)refresh;
+{
+    if (self.inProgress) {
+        NSLog(@"Refresh already in progress, refusing to go again.");
+        return;
+    }
+    
+    if (![self flickrRequest]) {
+        NSLog(@"No authenticated flickr connection - not refreshing.");
+        return;
+    }
+    
+    NSLog(@"Refreshing from Flickr..");
+    
+    self.inProgress = YES;
+    
+    NSString *extras = @"date_upload,date_taken,owner_name,icon_server,geo,path_alias,description,url_m";
+    
+    NSDictionary *args = [NSDictionary dictionaryWithObjectsAndKeys:
+                          @"50", @"count",
+                          extras, @"extras",
+                          @"1", @"include_self",
+                          nil];
+    
+    [[self flickrRequest] callAPIMethodWithGET:@"flickr.photos.getContactsPhotos" arguments:args];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+}
+
+
+#pragma mark cache
+
+-(NSString*) sha256:(NSString *)clear{
+    const char *s=[clear cStringUsingEncoding:NSASCIIStringEncoding];
+    NSData *keyData=[NSData dataWithBytes:s length:strlen(s)];
+    uint8_t digest[CC_SHA256_DIGEST_LENGTH]={0};
+    CC_SHA256(keyData.bytes, keyData.length, digest);
+    NSData *out=[NSData dataWithBytes:digest length:CC_SHA256_DIGEST_LENGTH];
+    NSString *hash=[out description];
+    hash = [hash stringByReplacingOccurrencesOfString:@" " withString:@""];
+    hash = [hash stringByReplacingOccurrencesOfString:@"<" withString:@""];
+    hash = [hash stringByReplacingOccurrencesOfString:@">" withString:@""];
+    return hash;
+}
+
+-(NSString*) cachePathForFilename:(NSString*)filename;
+{
+    return [self.cacheDir stringByAppendingPathComponent:filename];
+}
+
+-(NSString*) urlToFilename:(NSURL*)url;
+{
+    NSString *hash = [self sha256:[url absoluteString]];
+    return [self cachePathForFilename:[hash stringByAppendingPathExtension:@"jpg"]];
+}
+
+// load the cached list of images fetched from flickr
+-(void)loadCachedImageList;
 {
     // TODO - error handling? what if the cache is bad?
     NSString* cache = [self cachePathForFilename:IMAGE_DATA_CACHE];
@@ -86,7 +156,8 @@ extern const NSUInteger kMaxDiskCacheSize;
                                                         object:[NSNumber numberWithInt:self.photos.count]];
 }
 
--(void)saveCachedImageData;
+// save the cached list of images fetched from flickr
+-(void)saveCachedImageList;
 {
     NSLog(@"Saving cached image data");
     NSString* cache = [self cachePathForFilename:IMAGE_DATA_CACHE];
@@ -100,76 +171,7 @@ extern const NSUInteger kMaxDiskCacheSize;
     [data release];
 }
 
-// refresh, but only if we haven't refreshed recently.
--(void)maybeRefresh;
-{
-    NSTimeInterval now = [[NSDate date] timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970;
-    NSLog(@"it's been %f seconds since refresh", now - lastRefresh);
-    if (now - lastRefresh < 60 * 10) {
-        // 10 mins
-        NSLog(@"not long enough");
-        return;
-    }
-    [self refresh];
-}
 
-- (void)refresh;
-{
-    if (self.inProgress) {
-        NSLog(@"Refresh already in progress, refusing to go again.");
-        return;
-    }
-    
-    if (![self flickrRequest]) {
-        NSLog(@"No authenticated flickr connection - not refreshing.");
-        return;
-    }
-    
-    NSLog(@"Refreshing from Flickr..");
-
-    self.inProgress = YES;
-
-    NSString *extras = @"date_upload,date_taken,owner_name,icon_server,geo,path_alias,description,url_m";
-    
-    NSDictionary *args = [NSDictionary dictionaryWithObjectsAndKeys:
-                          @"50", @"count",
-                          extras, @"extras",
-                          @"1", @"include_self",
-                          nil];
-    
-    [[self flickrRequest] callAPIMethodWithGET:@"flickr.photos.getContactsPhotos" arguments:args];
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-}
-
-
-
-
-#pragma mark image cache
-
-
--(NSString*) sha256:(NSString *)clear{
-    const char *s=[clear cStringUsingEncoding:NSASCIIStringEncoding];
-    NSData *keyData=[NSData dataWithBytes:s length:strlen(s)];
-    uint8_t digest[CC_SHA256_DIGEST_LENGTH]={0};
-    CC_SHA256(keyData.bytes, keyData.length, digest);
-    NSData *out=[NSData dataWithBytes:digest length:CC_SHA256_DIGEST_LENGTH];
-    NSString *hash=[out description];
-    hash = [hash stringByReplacingOccurrencesOfString:@" " withString:@""];
-    hash = [hash stringByReplacingOccurrencesOfString:@"<" withString:@""];
-    hash = [hash stringByReplacingOccurrencesOfString:@">" withString:@""];
-    return hash;
-}
-
--(NSString*) cachePathForFilename:(NSString*)filename;
-{
-    return [self.cacheDir stringByAppendingPathComponent:filename];
-}
-
--(NSString*) urlToFilename:(NSURL*)url;
-{
-    NSString *hash = [self sha256:[url absoluteString]];
-    return [self cachePathForFilename:[hash stringByAppendingPathExtension:@"jpg"]];
-}
 
 // try to return an NSImage for the image at this url from a cache.
 // There are 2 levels of cache - we cache the raw UIImage in memory for a time,
@@ -337,7 +339,7 @@ extern const NSUInteger kMaxDiskCacheSize;
         [sp release];
     }
 
-    [self saveCachedImageData];
+    [self saveCachedImageList];
     
     self.inProgress = NO;
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;

@@ -32,18 +32,12 @@
 - (void)refresh;
 
 - (OFFlickrAPIRequest *)flickrRequest;
-- (UIImage *) cachedImageForURL:(NSURL*)url;
-- (void) cacheImage:(UIImage *)image forURL:(NSURL*)url;
-- (void) clearCacheForURL:(NSURL*)url;
-- (void) clearCache;
 - (void) flushMemoryCache;
 - (void) resetFlickrContext;
 
 // cache
--(NSString*) cachePathForFilename:(NSString*)filename;
--(NSString*) urlToFilename:(NSURL*)url;
--(void)loadCachedImageData;
--(void)saveCachedImageData;
+-(void)loadCachedImageList;
+-(void)saveCachedImageList;
 
 // deferred image loading
 - (void)fetchImageForURL:(NSURL*)url andNotify:(NSObject <DeferredImageLoader>*)sender;
