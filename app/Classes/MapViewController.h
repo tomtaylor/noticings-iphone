@@ -11,10 +11,11 @@
 #import <MapKit/MKAnnotation.h>
 
 #import "StreamPhoto.h"
+#import "PhotoStreamManager.h"
 
 @interface MapViewController : UIViewController <MKMapViewDelegate>
 
--(void)displayPhoto:(StreamPhoto*)photo;
+-(void)displayPhoto:(StreamPhoto*)_photo inManager:(PhotoStreamManager*)manager;
 
 @property (retain) MKMapView *mapView;
 @property (retain) StreamPhoto *photo;

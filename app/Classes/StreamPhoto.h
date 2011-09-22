@@ -42,7 +42,9 @@
 @property (readonly) NSURL* mobilePageURL;
 @property (readonly) NSURL* bigImageURL;
 
+// MKAnnotation
 @property (nonatomic, readonly) CLLocationCoordinate2D coordinate;
+@property (nonatomic, readonly, copy) NSString *subtitle;
 
 -(CGFloat)imageHeightForWidth:(CGFloat)width;
 

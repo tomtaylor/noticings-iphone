@@ -406,7 +406,7 @@
 
     MapViewController *mapController = [[MapViewController alloc] init];
     [self.navigationController pushViewController:mapController animated:YES];
-    [mapController displayPhoto:photo];
+    [mapController displayPhoto:photo inManager:self.streamManager];
     [mapController release];
                                         
 

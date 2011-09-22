@@ -71,14 +71,6 @@
     return [[self.details valueForKey:@"longitude"] floatValue];
 }
 
--(CLLocationCoordinate2D)coordinate;
-{
-    CLLocationCoordinate2D location;
-    location.latitude = self.latitude;
-    location.longitude = self.longitude;
-    return location;
-}
-
 - (NSString*)placename;
 {
     float lat = [[self.details valueForKey:@"latitude"] floatValue];
@@ -195,6 +187,25 @@
     // if it's taller than square it won't fit in the view.
     return MIN( width * height_m / width_m, width );
 }
+
+
+
+#pragma mark MKAnnotation
+
+-(CLLocationCoordinate2D)coordinate;
+{
+    CLLocationCoordinate2D location;
+    location.latitude = self.latitude;
+    location.longitude = self.longitude;
+    return location;
+}
+
+- (NSString*)subtitle;
+{
+    return [self.details valueForKeyPath:@"ownername"];
+}
+
+
 
 
 #pragma mark serialize / deserizlise
