@@ -248,12 +248,13 @@ extern const NSUInteger kMaxDiskCacheSize;
             // runloop gets a look-in, to avoid flickers of white.
             [sender loadedImage:image cached:YES];
         }
-        return YES; // there was a cached version
+        return;
     }
     
     NSLog(@"need to fetch image %@", url);
     
     __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
+    [request setShouldContinueWhenAppEntersBackground:YES];
 
     [request setCompletionBlock:^{
         UIImage *image = [UIImage imageWithData:[request responseData]];
@@ -269,8 +270,6 @@ extern const NSUInteger kMaxDiskCacheSize;
         NSLog(@"Failed to fetch image %@: %@", url, error);
     }];
     [self.queue addOperation:request];
-    
-    return NO; // had to fetch image
 }
 
 
