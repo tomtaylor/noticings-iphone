@@ -37,6 +37,7 @@
 @property (readonly) NSURL* mapPageURL;
 @property (readonly) NSURL* pageURL;
 @property (readonly) NSURL* mobilePageURL;
+@property (readonly) NSURL* bigImageURL;
 
 -(CGFloat)imageHeightForWidth:(CGFloat)width;
 

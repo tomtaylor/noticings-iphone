@@ -73,6 +73,7 @@
 		E67305D313C388C2005CEC62 /* RemoteImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = E67305D213C388C2005CEC62 /* RemoteImageView.m */; };
 		E68D5F1E142BA7FC003192AE /* UserStreamManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E68D5F1D142BA7FC003192AE /* UserStreamManager.m */; };
 		E6AE4A9B13C3A1FD00702DA3 /* ContactsStreamManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E6AE4A9A13C3A1FD00702DA3 /* ContactsStreamManager.m */; };
+		E6DE3ACB142BC3ED00E9BE0B /* ImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E6DE3ACA142BC3ED00E9BE0B /* ImageViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -210,6 +211,8 @@
 		E68D5F1D142BA7FC003192AE /* UserStreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UserStreamManager.m; path = Classes/UserStreamManager.m; sourceTree = "<group>"; };
 		E6AE4A9913C3A1FD00702DA3 /* ContactsStreamManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactsStreamManager.h; sourceTree = "<group>"; };
 		E6AE4A9A13C3A1FD00702DA3 /* ContactsStreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactsStreamManager.m; sourceTree = "<group>"; };
+		E6DE3AC9142BC3ED00E9BE0B /* ImageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageViewController.h; path = Classes/ImageViewController.h; sourceTree = "<group>"; };
+		E6DE3ACA142BC3ED00E9BE0B /* ImageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ImageViewController.m; path = Classes/ImageViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -415,6 +418,8 @@
 				E6218AD813C35D7C0021CB80 /* StreamPhotoViewCell.m */,
 				E6218AD913C35D7C0021CB80 /* StreamViewController.h */,
 				E6218ADA13C35D7C0021CB80 /* StreamViewController.m */,
+				E6DE3AC9142BC3ED00E9BE0B /* ImageViewController.h */,
+				E6DE3ACA142BC3ED00E9BE0B /* ImageViewController.m */,
 				E60912F6142B982C004861F5 /* CacheManager.h */,
 				E60912F7142B982C004861F5 /* CacheManager.m */,
 				E68D5F1C142BA7FC003192AE /* UserStreamManager.h */,
@@ -566,6 +571,7 @@
 				E60912F8142B982C004861F5 /* CacheManager.m in Sources */,
 				E63D6120142B9D6F00884F10 /* PhotoStreamManager.m in Sources */,
 				E68D5F1E142BA7FC003192AE /* UserStreamManager.m in Sources */,
+				E6DE3ACB142BC3ED00E9BE0B /* ImageViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
