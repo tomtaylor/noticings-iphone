@@ -1,5 +1,5 @@
 //
-//  StreamManager.h
+//  ContactsStreamManager.h
 //  Noticings
 //
 //  Created by Tom Insam on 05/07/2011.
@@ -10,10 +10,10 @@
 #import "ObjectiveFlickr.h"
 #import "PhotoStreamManager.h"
 
-@interface StreamManager : PhotoStreamManager {
+@interface ContactsStreamManager : PhotoStreamManager {
 }
 
-+(StreamManager *)sharedStreamManager;
++(ContactsStreamManager *)sharedContactsStreamManager;
 
 -(void)loadCachedImageList;
 -(void)saveCachedImageList;

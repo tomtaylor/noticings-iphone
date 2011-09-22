@@ -9,7 +9,7 @@
 #import "NoticingsAppDelegate.h"
 #import "FlickrAuthenticationViewController.h"
 #import "UploadQueueManager.h"
-#import "StreamManager.h"
+#import "ContactsStreamManager.h"
 #import "CacheManager.h"
 #import <ImageIO/ImageIO.h>
 
@@ -143,13 +143,13 @@ BOOL gLogging = FALSE;
 {
     // something caused us to be bakgrounded. incoming call, home button, etc.
     [[CacheManager sharedCacheManager] flushMemoryCache];
-    [[StreamManager sharedStreamManager] resetFlickrContext];
+    [[ContactsStreamManager sharedContactsStreamManager] resetFlickrContext];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application;
 {
     // resume from background. Multitasking devices only.
-    [[StreamManager sharedStreamManager] maybeRefresh]; // the viewcontroller listens to this
+    [[ContactsStreamManager sharedContactsStreamManager] maybeRefresh]; // the viewcontroller listens to this
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {

@@ -8,7 +8,7 @@
 
 #import "FlickrAuthenticationViewController.h"
 //#import "UploadQueueManager.h"
-#import "StreamManager.h"
+#import "ContactsStreamManager.h"
 #import "APIKeys.h"
 
 @implementation FlickrAuthenticationViewController
@@ -70,7 +70,7 @@
 	
 	[[NSUserDefaults standardUserDefaults] synchronize];
     
-    [[StreamManager sharedStreamManager] refresh];
+    [[ContactsStreamManager sharedContactsStreamManager] refresh];
 	
 	[[[[UIAlertView alloc] initWithTitle:@"Welcome to Noticings" message:@"You've been signed in." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] autorelease] show];
 	

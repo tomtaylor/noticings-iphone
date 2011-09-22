@@ -71,7 +71,7 @@
 		E64839CB13C8EBBF008DB9CE /* PullRefreshTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E64839CA13C8EBBF008DB9CE /* PullRefreshTableViewController.m */; };
 		E64839CD13C8EC39008DB9CE /* arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = E64839CC13C8EC39008DB9CE /* arrow.png */; };
 		E67305D313C388C2005CEC62 /* RemoteImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = E67305D213C388C2005CEC62 /* RemoteImageView.m */; };
-		E6AE4A9B13C3A1FD00702DA3 /* StreamManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E6AE4A9A13C3A1FD00702DA3 /* StreamManager.m */; };
+		E6AE4A9B13C3A1FD00702DA3 /* ContactsStreamManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E6AE4A9A13C3A1FD00702DA3 /* ContactsStreamManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -205,8 +205,8 @@
 		E64839CC13C8EC39008DB9CE /* arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = arrow.png; sourceTree = "<group>"; };
 		E67305D113C388C2005CEC62 /* RemoteImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteImageView.h; sourceTree = "<group>"; };
 		E67305D213C388C2005CEC62 /* RemoteImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RemoteImageView.m; sourceTree = "<group>"; };
-		E6AE4A9913C3A1FD00702DA3 /* StreamManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamManager.h; sourceTree = "<group>"; };
-		E6AE4A9A13C3A1FD00702DA3 /* StreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StreamManager.m; sourceTree = "<group>"; };
+		E6AE4A9913C3A1FD00702DA3 /* ContactsStreamManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactsStreamManager.h; sourceTree = "<group>"; };
+		E6AE4A9A13C3A1FD00702DA3 /* ContactsStreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactsStreamManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -412,12 +412,12 @@
 				E6218AD813C35D7C0021CB80 /* StreamPhotoViewCell.m */,
 				E6218AD913C35D7C0021CB80 /* StreamViewController.h */,
 				E6218ADA13C35D7C0021CB80 /* StreamViewController.m */,
-				E6AE4A9913C3A1FD00702DA3 /* StreamManager.h */,
-				E6AE4A9A13C3A1FD00702DA3 /* StreamManager.m */,
 				E60912F6142B982C004861F5 /* CacheManager.h */,
 				E60912F7142B982C004861F5 /* CacheManager.m */,
 				E63D611E142B9D6F00884F10 /* PhotoStreamManager.h */,
 				E63D611F142B9D6F00884F10 /* PhotoStreamManager.m */,
+				E6AE4A9913C3A1FD00702DA3 /* ContactsStreamManager.h */,
+				E6AE4A9A13C3A1FD00702DA3 /* ContactsStreamManager.m */,
 			);
 			name = Stream;
 			sourceTree = "<group>";
@@ -546,7 +546,7 @@
 				E6218ADC13C35D7C0021CB80 /* StreamPhotoViewCell.m in Sources */,
 				E6218ADD13C35D7C0021CB80 /* StreamViewController.m in Sources */,
 				E67305D313C388C2005CEC62 /* RemoteImageView.m in Sources */,
-				E6AE4A9B13C3A1FD00702DA3 /* StreamManager.m in Sources */,
+				E6AE4A9B13C3A1FD00702DA3 /* ContactsStreamManager.m in Sources */,
 				E64839CB13C8EBBF008DB9CE /* PullRefreshTableViewController.m in Sources */,
 				E22C520513D4C5F700197EC5 /* CameraController.m in Sources */,
 				E60912DD142B531A004861F5 /* ASIAuthenticationDialog.m in Sources */,

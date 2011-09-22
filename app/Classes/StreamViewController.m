@@ -9,7 +9,7 @@
 #import "StreamViewController.h"
 #import "StreamPhotoViewCell.h"
 #import "StreamPhoto.h"
-#import "StreamManager.h"
+#import "ContactsStreamManager.h"
 #import "CacheManager.h"
 #import "PhotoUploadCell.h"
 
@@ -61,7 +61,7 @@
     self.tableView.sectionHeaderHeight = PADDING_SIZE + AVATAR_SIZE + PADDING_SIZE;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
-    [[StreamManager sharedStreamManager] maybeRefresh];
+    [[ContactsStreamManager sharedContactsStreamManager] maybeRefresh];
 }
 
 - (void)viewDidUnload
@@ -132,7 +132,7 @@
 
 - (void)refresh;
 {
-    [[StreamManager sharedStreamManager] refresh];
+    [[ContactsStreamManager sharedContactsStreamManager] refresh];
 }
 
 - (void)didReceiveMemoryWarning
@@ -142,7 +142,7 @@
 }
 
 - (StreamPhoto *)streamPhotoAtIndexPath:(NSIndexPath*)indexPath {
-    NSMutableArray *photos = [StreamManager sharedStreamManager].photos;
+    NSMutableArray *photos = [ContactsStreamManager sharedContactsStreamManager].photos;
     if ([photos count] == 0) {
         return nil;
     }
@@ -170,7 +170,7 @@
 #pragma mark Table view methods
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    NSMutableArray *photos = [StreamManager sharedStreamManager].photos;
+    NSMutableArray *photos = [ContactsStreamManager sharedContactsStreamManager].photos;
 	NSInteger photosCount = photos.count == 0 ? 1 : photos.count;
     return photosCount + [uploadQueueManager.photoUploads count];
 }
