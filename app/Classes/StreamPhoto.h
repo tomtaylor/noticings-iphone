@@ -27,6 +27,7 @@
 @property (readonly) NSString* title;
 @property (readonly) NSString* description;
 @property (readonly) NSString* ownername;
+@property (readonly) NSString* ownerId;
 @property (readonly) NSString* ago;
 @property (readonly) NSString* placename;
 @property (readonly) int visibility;

@@ -71,6 +71,7 @@
 		E64839CB13C8EBBF008DB9CE /* PullRefreshTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E64839CA13C8EBBF008DB9CE /* PullRefreshTableViewController.m */; };
 		E64839CD13C8EC39008DB9CE /* arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = E64839CC13C8EC39008DB9CE /* arrow.png */; };
 		E67305D313C388C2005CEC62 /* RemoteImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = E67305D213C388C2005CEC62 /* RemoteImageView.m */; };
+		E68D5F1E142BA7FC003192AE /* UserStreamManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E68D5F1D142BA7FC003192AE /* UserStreamManager.m */; };
 		E6AE4A9B13C3A1FD00702DA3 /* ContactsStreamManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E6AE4A9A13C3A1FD00702DA3 /* ContactsStreamManager.m */; };
 /* End PBXBuildFile section */
 
@@ -205,6 +206,8 @@
 		E64839CC13C8EC39008DB9CE /* arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = arrow.png; sourceTree = "<group>"; };
 		E67305D113C388C2005CEC62 /* RemoteImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteImageView.h; sourceTree = "<group>"; };
 		E67305D213C388C2005CEC62 /* RemoteImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RemoteImageView.m; sourceTree = "<group>"; };
+		E68D5F1C142BA7FC003192AE /* UserStreamManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserStreamManager.h; path = Classes/UserStreamManager.h; sourceTree = "<group>"; };
+		E68D5F1D142BA7FC003192AE /* UserStreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UserStreamManager.m; path = Classes/UserStreamManager.m; sourceTree = "<group>"; };
 		E6AE4A9913C3A1FD00702DA3 /* ContactsStreamManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactsStreamManager.h; sourceTree = "<group>"; };
 		E6AE4A9A13C3A1FD00702DA3 /* ContactsStreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactsStreamManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -414,6 +417,8 @@
 				E6218ADA13C35D7C0021CB80 /* StreamViewController.m */,
 				E60912F6142B982C004861F5 /* CacheManager.h */,
 				E60912F7142B982C004861F5 /* CacheManager.m */,
+				E68D5F1C142BA7FC003192AE /* UserStreamManager.h */,
+				E68D5F1D142BA7FC003192AE /* UserStreamManager.m */,
 				E63D611E142B9D6F00884F10 /* PhotoStreamManager.h */,
 				E63D611F142B9D6F00884F10 /* PhotoStreamManager.m */,
 				E6AE4A9913C3A1FD00702DA3 /* ContactsStreamManager.h */,
@@ -560,6 +565,7 @@
 				E60912E5142B531A004861F5 /* Reachability.m in Sources */,
 				E60912F8142B982C004861F5 /* CacheManager.m in Sources */,
 				E63D6120142B9D6F00884F10 /* PhotoStreamManager.m in Sources */,
+				E68D5F1E142BA7FC003192AE /* UserStreamManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

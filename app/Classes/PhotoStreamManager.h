@@ -33,6 +33,8 @@
 @property (nonatomic) BOOL inProgress;
 @property (nonatomic) NSTimeInterval lastRefresh;
 
+@property (assign) id delegate;
+
 @end
 
 

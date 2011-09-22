@@ -9,59 +9,74 @@
 #import "StreamViewController.h"
 #import "StreamPhotoViewCell.h"
 #import "StreamPhoto.h"
-#import "ContactsStreamManager.h"
 #import "CacheManager.h"
 #import "PhotoUploadCell.h"
+#import "ContactsStreamManager.h"
+#import "UserStreamManager.h"
 
 @interface StreamViewController (Private)
-
 - (void)setQueueButtonState;
 - (void)queueButtonPressed;
-
 @end
 
 @implementation StreamViewController
 
+@synthesize streamManager;
+
+-(id)initWithPhotoStreamManager:(PhotoStreamManager*)manager;
+{
+    self = [super initWithStyle:UITableViewStylePlain];
+    if (self) {
+        self.streamManager = manager;
+    }
+    return self;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    BOOL isRoot = NO;
+    if (!self.streamManager) {
+        self.streamManager = [ContactsStreamManager sharedContactsStreamManager];
+        isRoot = YES; // crude
+    }
     
     self.textPull = @"Pull to refresh..";
     self.textRelease = @"Release to refresh..";
     self.textLoading = @"Loading..";
+    
+    self.streamManager.delegate = self;
 
-	[[NSNotificationCenter defaultCenter] addObserver:self 
-											 selector:@selector(newPhotos) 
-												 name:@"newPhotos" 
-											   object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self 
-											 selector:@selector(uploadQueueDidChange) 
-												 name:@"queueCount" 
-											   object:nil];
-    
-    if (uploadQueueManager == nil) {
-        uploadQueueManager = [UploadQueueManager sharedUploadQueueManager];
-    }
+    if (isRoot) {
+        [[NSNotificationCenter defaultCenter] addObserver:self 
+                                                 selector:@selector(uploadQueueDidChange) 
+                                                     name:@"queueCount" 
+                                                   object:nil];
         
-    [uploadQueueManager addObserver:self
-                         forKeyPath:@"inProgress"
-                            options:(NSKeyValueObservingOptionNew)
-                            context:NULL];
-	
-    if (queueButton == nil) {
-        queueButton = [[UIBarButtonItem alloc] 
-                       initWithTitle:@"Pause Queue" 
-                       style:UIBarButtonItemStylePlain 
-                       target:self
-                       action:@selector(queueButtonPressed)];
+        if (uploadQueueManager == nil) {
+            uploadQueueManager = [UploadQueueManager sharedUploadQueueManager];
+        }
+            
+        [uploadQueueManager addObserver:self
+                             forKeyPath:@"inProgress"
+                                options:(NSKeyValueObservingOptionNew)
+                                context:NULL];
+        
+        if (queueButton == nil) {
+            queueButton = [[UIBarButtonItem alloc] 
+                           initWithTitle:@"Pause Queue" 
+                           style:UIBarButtonItemStylePlain 
+                           target:self
+                           action:@selector(queueButtonPressed)];
+        }
+        
+        [self setQueueButtonState];
     }
-    
-    [self setQueueButtonState];
 
     self.tableView.sectionHeaderHeight = PADDING_SIZE + AVATAR_SIZE + PADDING_SIZE;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
-    [[ContactsStreamManager sharedContactsStreamManager] maybeRefresh];
+    [streamManager maybeRefresh];
 }
 
 - (void)viewDidUnload
@@ -82,6 +97,7 @@
 
 - (void)newPhotos;
 {
+    NSLog(@"new photos");
 	[self.tableView reloadData];
     [self stopLoading];
 }
@@ -132,7 +148,7 @@
 
 - (void)refresh;
 {
-    [[ContactsStreamManager sharedContactsStreamManager] refresh];
+    [streamManager refresh];
 }
 
 - (void)didReceiveMemoryWarning
@@ -142,7 +158,7 @@
 }
 
 - (StreamPhoto *)streamPhotoAtIndexPath:(NSIndexPath*)indexPath {
-    NSMutableArray *photos = [ContactsStreamManager sharedContactsStreamManager].photos;
+    NSMutableArray *photos = streamManager.photos;
     if ([photos count] == 0) {
         return nil;
     }
@@ -170,7 +186,7 @@
 #pragma mark Table view methods
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    NSMutableArray *photos = [ContactsStreamManager sharedContactsStreamManager].photos;
+    NSMutableArray *photos = self.streamManager.photos;
 	NSInteger photosCount = photos.count == 0 ? 1 : photos.count;
     return photosCount + [uploadQueueManager.photoUploads count];
 }
@@ -207,7 +223,11 @@
     // photos yet.
     UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
     cell.textLabel.textAlignment = UITextAlignmentCenter;
-    cell.textLabel.text = @"No photos from your contacts";
+    if (self.streamManager.inProgress) {
+        cell.textLabel.text = @"Loading photos...";
+    } else {
+        cell.textLabel.text = @"No photos from your contacts";
+    }
     cell.textLabel.textColor = [UIColor grayColor];
     cell.textLabel.font = [UIFont systemFontOfSize:14];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -284,6 +304,12 @@
     [headerView addSubview:avatarView];
     [avatarView loadURL:photo.avatarURL];
 
+    // layer a button over the top of the place so you can tap it.
+    UIButton *avatarButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    avatarButton.frame = avatarView.frame;
+    [avatarButton addTarget:self action:@selector(tapUser:event:) forControlEvents:UIControlEventTouchUpInside];
+    [headerView addSubview:avatarButton];
+
     CGFloat line1_top = PADDING_SIZE;
     CGFloat line2_top = line1_top + AVATAR_SIZE / 2;
     CGFloat line_height = AVATAR_SIZE / 2;
@@ -298,7 +324,13 @@
                                      color:[UIColor colorWithRed:0.1 green:0.4 blue:0.7 alpha:1]];
     usernameView.backgroundColor = [UIColor clearColor];
     [headerView addSubview:usernameView];
-    
+
+    // layer a button over the top of the place so you can tap it.
+    UIButton *usernameButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    usernameButton.frame = usernameView.frame;
+    [usernameButton addTarget:self action:@selector(tapUser:event:) forControlEvents:UIControlEventTouchUpInside];
+    [headerView addSubview:usernameButton];
+
     UILabel *placeView =    [self addLabelWithFrame:CGRectMake(line_left, line2_top, line_width, line_height)
                                   fontSize:HEADER_FONT_SIZE
                                       bold:YES
@@ -351,23 +383,38 @@
     return headerView;
 }
 
-- (void)tapPlace:(UIView*)sender event:(UIEvent*)event;
+-(StreamPhoto*)photoForHeaderEvent:(UIEvent*)event;
 {
-    NSLog(@"sender %@ got event %@", sender, event);
     UITouch *first = [[event allTouches] anyObject];
-    NSLog(@"first touch is %@", first);
     CGPoint loc = [first locationInView:self.tableView];
-    NSLog(@"location in view is %f,%f", loc.x, loc.y);
     // zomg hack. the touch is in the header, which isn't in any row. but
     // 20 pixels lower will be in the image! (gahrghrhag)
     CGPoint locInRow = CGPointMake(loc.x, loc.y + 20);
     NSIndexPath *path = [self.tableView indexPathForRowAtPoint:locInRow];
-    NSLog(@"touc is at path %@",path);
-
     StreamPhoto *photo = [self streamPhotoAtIndexPath:path];
+    return photo;
+}
+
+- (void)tapPlace:(UIView*)sender event:(UIEvent*)event;
+{
+    StreamPhoto *photo = [self photoForHeaderEvent:event];
     [[UIApplication sharedApplication] openURL:photo.mapPageURL];
-    
-    
+}
+
+
+- (void)tapUser:(UIView*)sender event:(UIEvent*)event;
+{
+    if (self.streamManager.class == UserStreamManager.class) {
+        NSLog(@"refusing to recurse into a user.");
+        return;
+    }
+    StreamPhoto *photo = [self photoForHeaderEvent:event];
+    UserStreamManager *manager = [[UserStreamManager alloc] initWithUser:photo.ownerId];
+    StreamViewController *userController = [[StreamViewController alloc] initWithPhotoStreamManager:manager];
+    userController.title = photo.ownername;
+    [self.navigationController pushViewController:userController animated:YES];
+    [manager release];
+    [userController release];
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {

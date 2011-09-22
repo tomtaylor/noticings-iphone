@@ -18,6 +18,7 @@
 @synthesize photos;
 @synthesize inProgress;
 @synthesize lastRefresh;
+@synthesize delegate;
 
 - (id)init;
 {
@@ -120,7 +121,7 @@
 
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didCompleteWithResponse:(NSDictionary *)inResponseDictionary
 {
-    NSLog(@"completed flickr request!");
+    NSLog(@"completed flickr request");
     
     CacheManager *cacheManager = [CacheManager sharedCacheManager];
 
@@ -137,6 +138,12 @@
     lastRefresh = [[NSDate date] timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970;
     self.inProgress = NO;
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+    
+    NSLog(@"loaded %d photos", [self.photos count]);
+
+    if (self.delegate) {
+        [self.delegate performSelector:@selector(newPhotos)];
+    }
 
     [self fetchComplete];
 }

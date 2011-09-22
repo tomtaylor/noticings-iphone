@@ -55,6 +55,11 @@
     return [self.details valueForKeyPath:@"ownername"];
 }
 
+- (NSString*)ownerId;
+{
+    return [self.details valueForKeyPath:@"owner"];
+}
+
 - (NSString*)placename;
 {
     float lat = [[self.details valueForKey:@"latitude"] floatValue];
@@ -71,6 +76,9 @@
     float lng = [[self.details valueForKey:@"longitude"] floatValue];
     if (lat && lng) {
         NSString *title = [self.title stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        if (title.length == 0) {
+            title = @"Photo"; // google maps needs something
+        }
         NSString *mapURL = [NSString stringWithFormat:@"http://maps.google.com/maps?q=%f,%f+(%@)", lat, lng, title];
         return [NSURL URLWithString:mapURL];
     }
