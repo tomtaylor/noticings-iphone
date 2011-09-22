@@ -25,7 +25,7 @@
 -(void) callFlickr;
 {
     NSDictionary *args = [NSDictionary dictionaryWithObjectsAndKeys:
-                          @"50", @"count",
+                          @"50", @"per_page",
                           [self extras], @"extras",
                           self.userId, @"user_id",
                           nil];

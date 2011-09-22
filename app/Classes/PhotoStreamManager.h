@@ -13,7 +13,6 @@
 @interface PhotoStreamManager : NSObject <OFFlickrAPIRequestDelegate> {
 @private
 	OFFlickrAPIRequest *flickrRequest;
-    NSTimeInterval lastRefresh;
 }
 
 - (void)maybeRefresh;
@@ -23,6 +22,7 @@
 -(NSString*)extras;
 -(void)fetchComplete;
 
+- (void)resetFlickrContext;
 - (OFFlickrAPIRequest *)flickrRequest;
 
 // interface

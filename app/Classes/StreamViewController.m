@@ -435,7 +435,9 @@
 # pragma mark memory management
 
 - (void)dealloc {
+    NSLog(@"deallocing %@", self.class);
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    self.streamManager = nil;
     [queueButton release];
     [uploadQueueManager release];
     [super dealloc];

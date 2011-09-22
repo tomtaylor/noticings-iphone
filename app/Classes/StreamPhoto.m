@@ -44,6 +44,7 @@
         s = [s stringByReplacingCharactersInRange:r withString:@""];
     }
     s = [s stringByReplacingOccurrencesOfString:@"&nbsp;" withString:@"&"];
+    s = [s stringByReplacingOccurrencesOfString:@"&quot;" withString:@"\""];
     s = [s stringByReplacingOccurrencesOfString:@"&gt;" withString:@">"];
     s = [s stringByReplacingOccurrencesOfString:@"&lt;" withString:@"<"];
     return s;

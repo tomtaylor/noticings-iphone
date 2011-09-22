@@ -35,8 +35,8 @@
 -(void)maybeRefresh;
 {
     NSTimeInterval now = [[NSDate date] timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970;
-    NSLog(@"it's been %f seconds since refresh", now - lastRefresh);
-    if (now - lastRefresh < 60 * 10) {
+    NSLog(@"it's been %f seconds since refresh", now - self.lastRefresh);
+    if (now - self.lastRefresh < 60 * 10) {
         // 10 mins
         NSLog(@"not long enough");
         return;
@@ -135,7 +135,7 @@
         [sp release];
     }
     
-    lastRefresh = [[NSDate date] timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970;
+    self.lastRefresh = [[NSDate date] timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970;
     self.inProgress = NO;
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     
@@ -172,8 +172,12 @@
 
 - (void)dealloc
 {
-    self.photos = nil;
+    NSLog(@"deallocing %@", self.class);
+    [flickrRequest cancel];
+    flickrRequest.delegate = nil;
     [flickrRequest release];
+    self.delegate = nil;
+    self.photos = nil;
     [super dealloc];
 }
 
