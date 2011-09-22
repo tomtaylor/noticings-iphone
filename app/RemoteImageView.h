@@ -7,13 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "StreamManager.h"
 
-
-@interface RemoteImageView : UIImageView {
-@private
-    NSURLConnection* connection;
-    NSMutableData* data;
-    NSURL *url;
+@interface RemoteImageView : UIImageView <DeferredImageLoader> {
 }
 
 -(id)initWithFrame:(CGRect)frame;

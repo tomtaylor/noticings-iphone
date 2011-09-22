@@ -12,6 +12,14 @@
 #import "ObjectiveFlickr.h"
 #import "APIKeys.h"
 
+// protocol for delegates of loadImagefetchImageForURL:andNotify:
+@protocol DeferredImageLoader <NSObject>
+@required
+-(void) loadedImage:(UIImage*)image cached:(BOOL)cached;
+@end
+
+
+
 @interface StreamManager : NSObject <OFFlickrAPIRequestDelegate> {
 @private
 	OFFlickrAPIRequest *flickrRequest;
@@ -30,7 +38,7 @@
 - (void)refresh;
 
 - (OFFlickrAPIRequest *)flickrRequest;
-- (UIImage *) imageForURL:(NSURL*)url;
+- (UIImage *) cachedImageForURL:(NSURL*)url;
 - (void) cacheImage:(UIImage *)image forURL:(NSURL*)url;
 - (void) clearCacheForURL:(NSURL*)url;
 - (void) clearCache;
@@ -43,6 +51,8 @@
 -(void)loadCachedImageData;
 -(void)saveCachedImageData;
 
+// deferred image loading
+- (void)fetchImageForURL:(NSURL*)url andNotify:(NSObject <DeferredImageLoader>*)sender;
 
 // interface
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didCompleteWithResponse:(NSDictionary *)inResponseDictionary;
@@ -55,3 +65,5 @@
 @property (retain) NSMutableDictionary *imageCache;
 
 @end
+
+

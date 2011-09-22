@@ -8,6 +8,7 @@
 
 #import "StreamManager.h"
 #import "StreamPhoto.h"
+#import "ASIHTTPRequest.h"
 
 @implementation StreamManager
 
@@ -176,7 +177,7 @@ extern const NSUInteger kMaxDiskCacheSize;
 //
 // TODO - the disk cache needs reaping, based on mtime or something, but we can 
 // run for an awfully long time before I need to worry about that.
-- (UIImage *) imageForURL:(NSURL*)url;
+- (UIImage *) cachedImageForURL:(NSURL*)url;
 {
     NSString *filename = [self urlToFilename:url];
     
@@ -233,6 +234,37 @@ extern const NSUInteger kMaxDiskCacheSize;
 }
 
 
+// return an image for the passed url. Will try the cache first.
+- (void)fetchImageForURL:(NSURL*)url andNotify:(NSObject <DeferredImageLoader>*)sender;
+{
+    UIImage *image = [self cachedImageForURL:url];
+    if (image) {
+        // we have a cached version. Send that first. But not till this method is done
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            // (use block so we can send the second param)
+            [sender loadedImage:image cached:YES];
+        }];
+        return;
+    }
+    
+    NSLog(@"need to fetch image %@", url);
+    
+    __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
+
+    [request setCompletionBlock:^{
+        UIImage *image = [UIImage imageWithData:[request responseData]];
+        NSLog(@"fetched image %@ for url %@", image, url);
+        [self cacheImage:image forURL:url];
+        [sender loadedImage:image cached:NO];
+    }];
+
+    [request setFailedBlock:^{
+        NSError *error = [request error];
+        NSLog(@"Failed to fetch image %@: %@", url, error);
+    }];
+
+    [request startAsynchronous];
+}
 
 
 
