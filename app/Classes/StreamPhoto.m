@@ -65,6 +65,18 @@
     return [NSString stringWithFormat:@"%.3f,%.3f", lat, lng];
 }
 
+- (NSURL*) mapPageURL;
+{
+    float lat = [[self.details valueForKey:@"latitude"] floatValue];
+    float lng = [[self.details valueForKey:@"longitude"] floatValue];
+    if (lat && lng) {
+        NSString *title = [self.title stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        NSString *mapURL = [NSString stringWithFormat:@"http://maps.google.com/maps?q=%f,%f+(%@)", lat, lng, title];
+        return [NSURL URLWithString:mapURL];
+    }
+    return nil;
+}
+
 - (NSURL*) imageURL;
 {
     OFFlickrAPIContext *apiContext = [[[OFFlickrAPIContext alloc] initWithAPIKey:FLICKR_API_KEY sharedSecret:FLICKR_API_SECRET] autorelease];

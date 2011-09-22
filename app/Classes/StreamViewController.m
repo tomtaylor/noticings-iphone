@@ -305,6 +305,14 @@
     placeView.backgroundColor = [UIColor clearColor];
     [headerView addSubview:placeView];
     
+    if ([photo.placename length] > 0) {
+        // layer a button over the top of the place so you can tap it.
+        UIButton *placeButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        placeButton.frame = placeView.frame;
+        [placeButton addTarget:self action:@selector(tapPlace:event:) forControlEvents:UIControlEventTouchUpInside];
+        [headerView addSubview:placeButton];
+    }
+    
     // labels top-right
     UILabel *visibilityView =  [self addLabelWithFrame:CGRectMake(timebox_left, line1_top, TIMEBOX_SIZE, line_height)
                                      fontSize:HEADER_FONT_SIZE
@@ -341,6 +349,25 @@
 
     headerView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.8];
     return headerView;
+}
+
+- (void)tapPlace:(UIView*)sender event:(UIEvent*)event;
+{
+    NSLog(@"sender %@ got event %@", sender, event);
+    UITouch *first = [[event allTouches] anyObject];
+    NSLog(@"first touch is %@", first);
+    CGPoint loc = [first locationInView:self.tableView];
+    NSLog(@"location in view is %f,%f", loc.x, loc.y);
+    // zomg hack. the touch is in the header, which isn't in any row. but
+    // 20 pixels lower will be in the image! (gahrghrhag)
+    CGPoint locInRow = CGPointMake(loc.x, loc.y + 20);
+    NSIndexPath *path = [self.tableView indexPathForRowAtPoint:locInRow];
+    NSLog(@"touc is at path %@",path);
+
+    StreamPhoto *photo = [self streamPhotoAtIndexPath:path];
+    [[UIApplication sharedApplication] openURL:photo.mapPageURL];
+    
+    
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
