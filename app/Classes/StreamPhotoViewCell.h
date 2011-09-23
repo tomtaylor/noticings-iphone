@@ -31,6 +31,7 @@
 #define AVATAR_SIZE 32.0f
 #define TIMEBOX_SIZE 70.0f
 #define IMAGE_WIDTH (320.0f - PADDING_SIZE * 2)
+#define IMAGE_HEIGHT (IMAGE_WIDTH * 0.8)
 #define HEADER_FONT_SIZE 14
 #define FONT_SIZE 14
 

@@ -18,9 +18,9 @@
     self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"streamCell"];
     if (!self) return nil;
 
-    CGFloat line3_top = IMAGE_WIDTH + PADDING_SIZE;
+    CGFloat line3_top = IMAGE_HEIGHT + PADDING_SIZE;
     
-    CGRect imageRect = CGRectMake(PADDING_SIZE, 0, IMAGE_WIDTH, IMAGE_WIDTH);
+    CGRect imageRect = CGRectMake((320 - IMAGE_WIDTH)/2, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
     photoView = [[[RemoteImageView alloc] initWithFrame:imageRect] autorelease];
     [[self contentView] addSubview:photoView];
     
