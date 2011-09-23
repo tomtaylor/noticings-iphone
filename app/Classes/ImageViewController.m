@@ -94,6 +94,9 @@
     self.imageView.image = image;
     self.imageView.frame = self.view.frame;
     self.scrollView.contentSize = self.imageView.frame.size;
+
+    // knock the zoom level in a tiny tiny bit so we get bouncy edges to the scroll view.
+    self.scrollView.zoomScale = 1.001;
 }
 
 
