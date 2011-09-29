@@ -40,7 +40,7 @@ enum {
 }
 
 @property (nonatomic, retain) ALAsset *asset;
-@property (nonatomic, retain) NSString *title;
+@property (nonatomic, copy) NSString *title;
 @property (nonatomic, retain) NSString *tags;
 @property (nonatomic, retain) NSNumber *progress;
 @property (nonatomic) BOOL inProgress;
