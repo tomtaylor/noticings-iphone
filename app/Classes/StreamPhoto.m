@@ -31,9 +31,14 @@
     return [self.details valueForKeyPath:@"title"];
 }
 
+- (NSString*)html;
+{
+    return [self.details valueForKeyPath:@"description._text"];
+}
+
 - (NSString*)description;
 {
-    NSString* raw = [self.details valueForKeyPath:@"description._text"];
+    NSString* raw = self.html;
     if (raw == nil) {
         return nil;
     }
@@ -182,10 +187,12 @@
 
 -(CGFloat)imageHeightForWidth:(CGFloat)width;
 {
+    static float MAX_HEIGHT = 260.0f;
     float width_m = [[self.details objectForKey:@"width_m"] floatValue];
     float height_m = [[self.details objectForKey:@"height_m"] floatValue];
     // if it's taller than square it won't fit in the view.
-    return MIN( width * height_m / width_m, width * 0.85 );
+    CGFloat height = MIN( width * height_m / width_m, MAX_HEIGHT );
+    return height;
 }
 
 

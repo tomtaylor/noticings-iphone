@@ -75,7 +75,6 @@
         [self setQueueButtonState];
     }
 
-    self.tableView.sectionHeaderHeight = PADDING_SIZE + AVATAR_SIZE + PADDING_SIZE;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
     [streamManager maybeRefresh];
@@ -209,12 +208,15 @@
     
     StreamPhoto *photo = [self streamPhotoAtIndexPath:indexPath];
     if (photo) {
-        // TODO - reuse identifier removed for now because of deferred loading bugs. Needs to come back at some point.
-        StreamPhotoViewCell *cell = (StreamPhotoViewCell*)[tableView dequeueReusableCellWithIdentifier:nil];
+
+        static NSString *MyIdentifier = @"StreamPhotoViewCell";
+        StreamPhotoViewCell *cell = [tableView dequeueReusableCellWithIdentifier:MyIdentifier];
         if (cell == nil) {
-            CGRect bounds = self.view.bounds;
-            cell = [[[StreamPhotoViewCell alloc] initWithBounds:bounds] autorelease];
+            [[NSBundle mainBundle] loadNibNamed:@"StreamPhotoViewCell" owner:self options:nil];
+            cell = photoViewCell;
+            photoViewCell = nil;
         }
+        
         [cell populateFromPhoto:photo];
         return cell;
     }
@@ -239,17 +241,8 @@
 
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    PhotoUpload *upload = [self photoUploadAtIndexPath:indexPath];
-    if (upload) {
-        return 60.0f;
-    }
-
-    StreamPhoto *photo = [self streamPhotoAtIndexPath:indexPath];
-    if (photo) {
-        return [StreamPhotoViewCell cellHeightForPhoto:photo width:IMAGE_WIDTH];
-    }
-    
-    return 100.0f;
+    UITableViewCell *cell = [self tableView:tableView cellForRowAtIndexPath:indexPath];
+    return cell.frame.size.height + 10;
 }
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
@@ -257,10 +250,22 @@
     StreamPhoto *photo = [self streamPhotoAtIndexPath:indexPath];
     if (photo) {
         ImageViewController *imageViewController = [[ImageViewController alloc] init];
+        //[self presentModalViewController:imageViewController animated:YES];
         [self.navigationController pushViewController:imageViewController animated:YES];
         [imageViewController displayPhoto:photo];
         [imageViewController release];
     }
+
+//    MapViewController *mapController = [[MapViewController alloc] init];
+//    [self.navigationController pushViewController:mapController animated:YES];
+//    [mapController displayPhoto:photo inManager:self.streamManager];
+//    [mapController release];
+//    
+//    UserStreamManager *manager = [[UserStreamManager alloc] initWithUser:photo.ownerId];
+//    StreamViewController *userController = [[StreamViewController alloc] initWithPhotoStreamManager:manager];
+//    userController.title = photo.ownername;
+//    [self.navigationController pushViewController:userController animated:YES];
+
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath;
@@ -271,162 +276,6 @@
     } else {
         return NO;
     }
-}
-
--(UILabel*) addLabelWithFrame:(CGRect)frame fontSize:(int)size bold:(BOOL)bold color:(UIColor*)color;
-{
-    UILabel* label = [[UILabel alloc] initWithFrame:frame];
-    label.textAlignment = UITextAlignmentLeft;
-    if (bold) {
-        label.font = [UIFont boldSystemFontOfSize:size];
-    } else {
-        label.font = [UIFont systemFontOfSize:size];
-    }
-    label.contentMode = UIViewContentModeTopLeft;
-    label.textColor = color;
-    label.lineBreakMode = UILineBreakModeWordWrap;
-    label.minimumFontSize = size;
-    label.numberOfLines = 0;
-    
-    [label autorelease];
-    return label;
-}
-
-
-
-- (UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section 
-{
-    NSIndexPath *tempIndex = [NSIndexPath indexPathForRow:0 inSection:section];
-    StreamPhoto *photo = [self streamPhotoAtIndexPath:tempIndex];
-    if (!photo) {
-        return [[[UIView alloc] initWithFrame:CGRectNull] autorelease];
-    }
-        
-    UIView *headerView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.bounds.size.width, tableView.sectionHeaderHeight)] autorelease];
-
-    CGRect avatarRect = CGRectMake(PADDING_SIZE, PADDING_SIZE, AVATAR_SIZE, AVATAR_SIZE);
-    RemoteImageView *avatarView = [[[RemoteImageView alloc] initWithFrame:avatarRect] autorelease];
-    [headerView addSubview:avatarView];
-    [avatarView loadURL:photo.avatarURL];
-
-    // layer a button over the top of the place so you can tap it.
-    UIButton *avatarButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    avatarButton.frame = avatarView.frame;
-    [avatarButton addTarget:self action:@selector(tapUser:event:) forControlEvents:UIControlEventTouchUpInside];
-    [headerView addSubview:avatarButton];
-
-    CGFloat line1_top = PADDING_SIZE;
-    CGFloat line2_top = line1_top + AVATAR_SIZE / 2;
-    CGFloat line_height = AVATAR_SIZE / 2;
-    CGFloat line_left = PADDING_SIZE + AVATAR_SIZE + PADDING_SIZE;
-    CGFloat line_width = IMAGE_WIDTH - (AVATAR_SIZE + PADDING_SIZE + TIMEBOX_SIZE);
-    CGFloat timebox_left = tableView.bounds.size.width - (PADDING_SIZE + TIMEBOX_SIZE);
-
-    // labels top-left
-    UILabel *usernameView = [self addLabelWithFrame:CGRectMake(line_left, line1_top, line_width, line_height)
-                                  fontSize:HEADER_FONT_SIZE
-                                      bold:YES
-                                     color:[UIColor colorWithRed:0.1 green:0.4 blue:0.7 alpha:1]];
-    usernameView.backgroundColor = [UIColor clearColor];
-    [headerView addSubview:usernameView];
-
-    // layer a button over the top of the place so you can tap it.
-    UIButton *usernameButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    usernameButton.frame = usernameView.frame;
-    [usernameButton addTarget:self action:@selector(tapUser:event:) forControlEvents:UIControlEventTouchUpInside];
-    [headerView addSubview:usernameButton];
-
-    UILabel *placeView =    [self addLabelWithFrame:CGRectMake(line_left, line2_top, line_width, line_height)
-                                  fontSize:HEADER_FONT_SIZE
-                                      bold:YES
-                                     color:[UIColor colorWithWhite:0.4 alpha:1]];
-    placeView.backgroundColor = [UIColor clearColor];
-    [headerView addSubview:placeView];
-    
-    if ([photo.placename length] > 0) {
-        // layer a button over the top of the place so you can tap it.
-        UIButton *placeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        placeButton.frame = placeView.frame;
-        [placeButton addTarget:self action:@selector(tapPlace:event:) forControlEvents:UIControlEventTouchUpInside];
-        [headerView addSubview:placeButton];
-    }
-    
-    // labels top-right
-    UILabel *visibilityView =  [self addLabelWithFrame:CGRectMake(timebox_left, line1_top, TIMEBOX_SIZE, line_height)
-                                     fontSize:HEADER_FONT_SIZE
-                                         bold:YES
-                                        color:[UIColor colorWithWhite:0.6 alpha:1]];
-    visibilityView.textAlignment = UITextAlignmentRight;
-    visibilityView.backgroundColor = [UIColor clearColor];
-    [headerView addSubview:visibilityView];
-    
-    UILabel *timeagoView =  [self addLabelWithFrame:CGRectMake(timebox_left, line2_top, TIMEBOX_SIZE, line_height)
-                                  fontSize:HEADER_FONT_SIZE
-                                      bold:YES
-                                     color:[UIColor colorWithWhite:0.6 alpha:1]];
-    timeagoView.textAlignment = UITextAlignmentRight;
-    timeagoView.backgroundColor = [UIColor clearColor];
-    [headerView addSubview:timeagoView];
-
-    usernameView.text = photo.ownername;
-    // gfx are for losers. I like unicode.
-    timeagoView.text = [@"⌚" stringByAppendingString:photo.ago];
-    placeView.text = photo.placename;
-    int vis = photo.visibility;
-    if (vis == StreamPhotoVisibilityPrivate) {
-        visibilityView.text = @"private";
-        visibilityView.textColor = [UIColor colorWithRed:0.5 green:0 blue:0 alpha:1];
-    } else if (vis == StreamPhotoVisibilityLimited) {
-        visibilityView.text = @"limited";
-        visibilityView.textColor = [UIColor colorWithRed:0.7 green:0.7 blue:0 alpha:1];
-    } else if (vis == StreamPhotoVisibilityPublic) {
-        visibilityView.text = @"public";
-        visibilityView.textColor = [UIColor colorWithRed:0 green:0.5 blue:0 alpha:1];
-    }
-
-    headerView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.8];
-    return headerView;
-}
-
--(StreamPhoto*)photoForHeaderEvent:(UIEvent*)event;
-{
-    UITouch *first = [[event allTouches] anyObject];
-    CGPoint loc = [first locationInView:self.tableView];
-    // zomg hack. the touch is in the header, which isn't in any row. but
-    // 20 pixels lower will be in the image! (gahrghrhag)
-    CGPoint locInRow = CGPointMake(loc.x, loc.y + 20);
-    NSIndexPath *path = [self.tableView indexPathForRowAtPoint:locInRow];
-    StreamPhoto *photo = [self streamPhotoAtIndexPath:path];
-    return photo;
-}
-
-- (void)tapPlace:(UIView*)sender event:(UIEvent*)event;
-{
-    StreamPhoto *photo = [self photoForHeaderEvent:event];
-
-    MapViewController *mapController = [[MapViewController alloc] init];
-    [self.navigationController pushViewController:mapController animated:YES];
-    [mapController displayPhoto:photo inManager:self.streamManager];
-    [mapController release];
-                                        
-
-    //[[UIApplication sharedApplication] openURL:photo.mapPageURL];
-}
-
-
-- (void)tapUser:(UIView*)sender event:(UIEvent*)event;
-{
-    if (self.streamManager.class == UserStreamManager.class) {
-        NSLog(@"refusing to recurse into a user.");
-        return;
-    }
-    StreamPhoto *photo = [self photoForHeaderEvent:event];
-    UserStreamManager *manager = [[UserStreamManager alloc] initWithUser:photo.ownerId];
-    StreamViewController *userController = [[StreamViewController alloc] initWithPhotoStreamManager:manager];
-    userController.title = photo.ownername;
-    [self.navigationController pushViewController:userController animated:YES];
-    [manager release];
-    [userController release];
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {

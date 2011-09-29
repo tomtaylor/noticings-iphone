@@ -10,30 +10,19 @@
 #import "StreamPhoto.h"
 #import "RemoteImageView.h"
 
+#define PADDING_SIZE 4.0f
+
 @interface StreamPhotoViewCell : UITableViewCell {
-    RemoteImageView *avatarView;
-    RemoteImageView *photoView;
-    UILabel *usernameView;
-    UILabel *placeView;
-    UILabel *timeagoView;
-    UILabel *titleView;
-    UILabel *descView;
-    UILabel *visibilityView;
+    IBOutlet RemoteImageView *avatarView;
+    IBOutlet RemoteImageView *photoView;
+    IBOutlet UILabel *usernameView;
+    IBOutlet UILabel *placeView;
+    IBOutlet UILabel *timeagoView;
+    IBOutlet UILabel *titleView;
+    IBOutlet UILabel *descView;
+    IBOutlet UILabel *visibilityView;
 }
 
--(id)initWithBounds:(CGRect)bounds;
 -(void) populateFromPhoto:(StreamPhoto*)photo;
-+(CGFloat) cellHeightForPhoto:(StreamPhoto*)photo width:(CGFloat)width;
--(UILabel*) addLabelWithFrame:(CGRect)frame fontSize:(int)size bold:(BOOL)bold color:(UIColor*)color;
-
-
-#define PADDING_SIZE 4.0f
-#define AVATAR_SIZE 32.0f
-#define TIMEBOX_SIZE 70.0f
-#define IMAGE_WIDTH (320.0f - PADDING_SIZE * 2)
-#define IMAGE_HEIGHT (IMAGE_WIDTH * 0.8)
-#define HEADER_FONT_SIZE 14
-#define FONT_SIZE 14
-
 
 @end

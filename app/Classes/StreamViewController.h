@@ -10,10 +10,13 @@
 #import "PullRefreshTableViewController.h"
 #import "UploadQueueManager.h"
 #import "PhotoStreamManager.h"
+#import "StreamPhotoViewCell.h"
 
 @interface StreamViewController : PullRefreshTableViewController {
     UIBarButtonItem *queueButton;
     UploadQueueManager *uploadQueueManager;
+    IBOutlet StreamPhotoViewCell *photoViewCell;
+    
 }
 
 -(id)initWithPhotoStreamManager:(PhotoStreamManager*)manager;

@@ -71,6 +71,7 @@
 		E64839CB13C8EBBF008DB9CE /* PullRefreshTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E64839CA13C8EBBF008DB9CE /* PullRefreshTableViewController.m */; };
 		E64839CD13C8EC39008DB9CE /* arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = E64839CC13C8EC39008DB9CE /* arrow.png */; };
 		E67305D313C388C2005CEC62 /* RemoteImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = E67305D213C388C2005CEC62 /* RemoteImageView.m */; };
+		E67599D1143521BF003AE272 /* StreamPhotoViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E67599D0143521BF003AE272 /* StreamPhotoViewCell.xib */; };
 		E68D5F1E142BA7FC003192AE /* UserStreamManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E68D5F1D142BA7FC003192AE /* UserStreamManager.m */; };
 		E6AE4A9B13C3A1FD00702DA3 /* ContactsStreamManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E6AE4A9A13C3A1FD00702DA3 /* ContactsStreamManager.m */; };
 		E6DE3ACB142BC3ED00E9BE0B /* ImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E6DE3ACA142BC3ED00E9BE0B /* ImageViewController.m */; };
@@ -208,6 +209,7 @@
 		E64839CC13C8EC39008DB9CE /* arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = arrow.png; sourceTree = "<group>"; };
 		E67305D113C388C2005CEC62 /* RemoteImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteImageView.h; sourceTree = "<group>"; };
 		E67305D213C388C2005CEC62 /* RemoteImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RemoteImageView.m; sourceTree = "<group>"; };
+		E67599D0143521BF003AE272 /* StreamPhotoViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StreamPhotoViewCell.xib; sourceTree = "<group>"; };
 		E68D5F1C142BA7FC003192AE /* UserStreamManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserStreamManager.h; path = Classes/UserStreamManager.h; sourceTree = "<group>"; };
 		E68D5F1D142BA7FC003192AE /* UserStreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UserStreamManager.m; path = Classes/UserStreamManager.m; sourceTree = "<group>"; };
 		E6AE4A9913C3A1FD00702DA3 /* ContactsStreamManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactsStreamManager.h; sourceTree = "<group>"; };
@@ -336,6 +338,7 @@
 				28AD735F0D9D9599002E5188 /* MainWindow.xib */,
 				8D1107310486CEB800E47090 /* Noticings-Info.plist */,
 				E20EF688109A4A8F001C5F05 /* UploadTimestampViewController.xib */,
+				E67599D0143521BF003AE272 /* StreamPhotoViewCell.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -531,6 +534,7 @@
 				E2CC8A6B141E9E8A00C1CF1B /* camera@2x.png in Resources */,
 				E2CC8A6D141E9EEE00C1CF1B /* photos@2x.png in Resources */,
 				E2CC8A6F141E9EFB00C1CF1B /* photos.png in Resources */,
+				E67599D1143521BF003AE272 /* StreamPhotoViewCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -615,7 +619,7 @@
 				OTHER_CFLAGS = "-DDEBUG";
 				PRODUCT_NAME = Noticings;
 				RUN_CLANG_STATIC_ANALYZER = YES;
-				SDKROOT = iphoneos4.3;
+				SDKROOT = iphoneos;
 			};
 			name = Debug;
 		};
@@ -640,7 +644,7 @@
 				OTHER_CFLAGS = "";
 				PRODUCT_NAME = Noticings;
 				RUN_CLANG_STATIC_ANALYZER = YES;
-				SDKROOT = iphoneos4.3;
+				SDKROOT = iphoneos;
 			};
 			name = Release;
 		};
@@ -701,7 +705,7 @@
 				OTHER_CFLAGS = "";
 				PRODUCT_NAME = Noticings;
 				RUN_CLANG_STATIC_ANALYZER = YES;
-				SDKROOT = iphoneos4.3;
+				SDKROOT = iphoneos;
 			};
 			name = "Ad Hoc";
 		};
@@ -737,7 +741,7 @@
 				OTHER_CFLAGS = "";
 				PRODUCT_NAME = Noticings;
 				RUN_CLANG_STATIC_ANALYZER = YES;
-				SDKROOT = iphoneos4.3;
+				SDKROOT = iphoneos;
 			};
 			name = "App Store Distribution";
 		};
@@ -778,7 +782,7 @@
 				OTHER_CFLAGS = "-DDEBUG";
 				PRODUCT_NAME = Noticings;
 				RUN_CLANG_STATIC_ANALYZER = YES;
-				SDKROOT = iphoneos4.3;
+				SDKROOT = iphoneos;
 			};
 			name = "Ad Hoc Debug";
 		};

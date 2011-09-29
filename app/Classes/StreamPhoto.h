@@ -26,6 +26,7 @@
 
 // method/properties that extract information from datails dict.
 @property (nonatomic, readonly, copy) NSString *title;
+@property (readonly) NSString* html;
 @property (readonly) NSString* description;
 @property (readonly) NSString* ownername;
 @property (readonly) NSString* ownerId;
