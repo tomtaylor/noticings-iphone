@@ -19,5 +19,6 @@
 
 @property (retain) MKMapView *mapView;
 @property (retain) StreamPhoto *photo;
+@property (retain) PhotoStreamManager *streamManager;
 
 @end

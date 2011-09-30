@@ -26,7 +26,7 @@
     self.url = loadUrl;
 
     self.image = nil;
-    self.backgroundColor = [UIColor whiteColor];
+    self.backgroundColor = [UIColor lightGrayColor];
     [self setNeedsLayout];
 
     CacheManager *manager = [CacheManager sharedCacheManager];

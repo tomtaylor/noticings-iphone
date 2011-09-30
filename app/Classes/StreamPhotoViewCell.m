@@ -18,9 +18,11 @@
     usernameView.text = photo.ownername;
     // gfx are for losers. I like unicode.
     timeagoView.text = [@"⌚" stringByAppendingString:photo.ago];
-    placeView.text = photo.placename;
     titleView.text = photo.title;
     descView.text = photo.description;
+    if (photo.hasLocation) {
+        placeView.text = photo.placename;
+    }
 
     int vis = photo.visibility;
     if (vis == StreamPhotoVisibilityPrivate) {
@@ -38,8 +40,9 @@
     [avatarView loadURL:photo.avatarURL];
     
     // resize image frame to have the right aspect.
+    // (but if it's taller than square it won't fit in the view.)
     CGRect frame = photoView.frame;
-    CGFloat height = [photo imageHeightForWidth:frame.size.width];
+    CGFloat height = MIN( [photo imageHeightForWidth:frame.size.width], 260);
     frame.size.height = height;
     photoView.frame = frame;
 

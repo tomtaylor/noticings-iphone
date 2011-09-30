@@ -16,7 +16,7 @@
 @synthesize scrollView;
 @synthesize imageView;
 
--(void)loadView;
+-(void)viewDidLoad;
 {
     self.scrollView = [[[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, 320, 480)] autorelease];
     self.scrollView.backgroundColor = [UIColor blackColor];
@@ -31,8 +31,6 @@
     [self.scrollView addSubview:self.imageView];
     self.scrollView.contentSize = self.imageView.frame.size;
 
-    self.view = self.scrollView;
-    
     // gesture management
     UITapGestureRecognizer *doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTap:)];
     UITapGestureRecognizer *twoFingerTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTwoFingerTap:)];
@@ -50,6 +48,7 @@
 
     self.navigationItem.rightBarButtonItem = externalItem;
     [externalItem release];
+    [self.view addSubview:self.scrollView];
 }
 
 -(void)openInBrowser;

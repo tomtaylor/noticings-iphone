@@ -74,6 +74,9 @@
 		E67599D1143521BF003AE272 /* StreamPhotoViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E67599D0143521BF003AE272 /* StreamPhotoViewCell.xib */; };
 		E68D5F1E142BA7FC003192AE /* UserStreamManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E68D5F1D142BA7FC003192AE /* UserStreamManager.m */; };
 		E6AE4A9B13C3A1FD00702DA3 /* ContactsStreamManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E6AE4A9A13C3A1FD00702DA3 /* ContactsStreamManager.m */; };
+		E6BF642A1435D57100A04A81 /* StreamPhotoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E6BF64281435D57100A04A81 /* StreamPhotoViewController.m */; };
+		E6BF642B1435D57100A04A81 /* StreamPhotoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E6BF64291435D57100A04A81 /* StreamPhotoViewController.xib */; };
+		E6BF642D14361F4E00A04A81 /* StreamPhotoViewController.html in Resources */ = {isa = PBXBuildFile; fileRef = E6BF642C14361F4E00A04A81 /* StreamPhotoViewController.html */; };
 		E6DE3ACB142BC3ED00E9BE0B /* ImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E6DE3ACA142BC3ED00E9BE0B /* ImageViewController.m */; };
 		E6F80E23142BE73400B7432D /* MapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E6F80E22142BE73400B7432D /* MapViewController.m */; };
 /* End PBXBuildFile section */
@@ -214,6 +217,10 @@
 		E68D5F1D142BA7FC003192AE /* UserStreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UserStreamManager.m; path = Classes/UserStreamManager.m; sourceTree = "<group>"; };
 		E6AE4A9913C3A1FD00702DA3 /* ContactsStreamManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactsStreamManager.h; sourceTree = "<group>"; };
 		E6AE4A9A13C3A1FD00702DA3 /* ContactsStreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactsStreamManager.m; sourceTree = "<group>"; };
+		E6BF64271435D57100A04A81 /* StreamPhotoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StreamPhotoViewController.h; path = Classes/StreamPhotoViewController.h; sourceTree = "<group>"; };
+		E6BF64281435D57100A04A81 /* StreamPhotoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StreamPhotoViewController.m; path = Classes/StreamPhotoViewController.m; sourceTree = "<group>"; };
+		E6BF64291435D57100A04A81 /* StreamPhotoViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = StreamPhotoViewController.xib; path = Classes/StreamPhotoViewController.xib; sourceTree = "<group>"; };
+		E6BF642C14361F4E00A04A81 /* StreamPhotoViewController.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = StreamPhotoViewController.html; sourceTree = "<group>"; };
 		E6DE3AC9142BC3ED00E9BE0B /* ImageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageViewController.h; path = Classes/ImageViewController.h; sourceTree = "<group>"; };
 		E6DE3ACA142BC3ED00E9BE0B /* ImageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ImageViewController.m; path = Classes/ImageViewController.m; sourceTree = "<group>"; };
 		E6F80E21142BE73400B7432D /* MapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapViewController.h; path = Classes/MapViewController.h; sourceTree = "<group>"; };
@@ -301,8 +308,8 @@
 				E2AC983D107FAE68007A570A /* Third Party */,
 				E6218AD413C35D6D0021CB80 /* Stream */,
 				080E96DDFE201D6D7F000001 /* Classes */,
-				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
+				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 			);
@@ -323,22 +330,24 @@
 			isa = PBXGroup;
 			children = (
 				E2CC8A6E141E9EFB00C1CF1B /* photos.png */,
-				E2CC8A6C141E9EEE00C1CF1B /* photos@2x.png */,
 				E244D467109C82AA0075CAFD /* Icon.png */,
 				E228010011C91F6100758E75 /* Icon@2x.png */,
 				E244D5DA109CA6BA0075CAFD /* tab-eye.png */,
 				E2CC8A68141E9E7800C1CF1B /* camera.png */,
+				E2CC8A6C141E9EEE00C1CF1B /* photos@2x.png */,
 				E2CC8A6A141E9E8A00C1CF1B /* camera@2x.png */,
 				E64839CC13C8EC39008DB9CE /* arrow.png */,
+				E211FACB109610A300ABAE72 /* type-280px.png */,
 				E211FAC610960D6200ABAE72 /* FlickrAuthenticationViewController.xib */,
 				E201C92113753FFD00FA5AFD /* PhotoSaveViewController.xib */,
 				E2493584137356850066EE38 /* PhotoPreviewViewController.xib */,
-				E211FACB109610A300ABAE72 /* type-280px.png */,
 				E2F553B210850EB200FE67C7 /* PhotoMapViewController.xib */,
-				28AD735F0D9D9599002E5188 /* MainWindow.xib */,
-				8D1107310486CEB800E47090 /* Noticings-Info.plist */,
 				E20EF688109A4A8F001C5F05 /* UploadTimestampViewController.xib */,
 				E67599D0143521BF003AE272 /* StreamPhotoViewCell.xib */,
+				E6BF64291435D57100A04A81 /* StreamPhotoViewController.xib */,
+				28AD735F0D9D9599002E5188 /* MainWindow.xib */,
+				8D1107310486CEB800E47090 /* Noticings-Info.plist */,
+				E6BF642C14361F4E00A04A81 /* StreamPhotoViewController.html */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -416,26 +425,28 @@
 		E6218AD413C35D6D0021CB80 /* Stream */ = {
 			isa = PBXGroup;
 			children = (
-				E6218AD513C35D7C0021CB80 /* StreamPhoto.h */,
-				E6218AD613C35D7C0021CB80 /* StreamPhoto.m */,
-				E67305D113C388C2005CEC62 /* RemoteImageView.h */,
-				E67305D213C388C2005CEC62 /* RemoteImageView.m */,
-				E6218AD713C35D7C0021CB80 /* StreamPhotoViewCell.h */,
-				E6218AD813C35D7C0021CB80 /* StreamPhotoViewCell.m */,
-				E6218AD913C35D7C0021CB80 /* StreamViewController.h */,
-				E6218ADA13C35D7C0021CB80 /* StreamViewController.m */,
-				E6DE3AC9142BC3ED00E9BE0B /* ImageViewController.h */,
-				E6DE3ACA142BC3ED00E9BE0B /* ImageViewController.m */,
 				E60912F6142B982C004861F5 /* CacheManager.h */,
 				E60912F7142B982C004861F5 /* CacheManager.m */,
-				E68D5F1C142BA7FC003192AE /* UserStreamManager.h */,
-				E68D5F1D142BA7FC003192AE /* UserStreamManager.m */,
-				E63D611E142B9D6F00884F10 /* PhotoStreamManager.h */,
-				E63D611F142B9D6F00884F10 /* PhotoStreamManager.m */,
 				E6AE4A9913C3A1FD00702DA3 /* ContactsStreamManager.h */,
 				E6AE4A9A13C3A1FD00702DA3 /* ContactsStreamManager.m */,
+				E6DE3AC9142BC3ED00E9BE0B /* ImageViewController.h */,
+				E6DE3ACA142BC3ED00E9BE0B /* ImageViewController.m */,
 				E6F80E21142BE73400B7432D /* MapViewController.h */,
 				E6F80E22142BE73400B7432D /* MapViewController.m */,
+				E63D611E142B9D6F00884F10 /* PhotoStreamManager.h */,
+				E63D611F142B9D6F00884F10 /* PhotoStreamManager.m */,
+				E67305D113C388C2005CEC62 /* RemoteImageView.h */,
+				E67305D213C388C2005CEC62 /* RemoteImageView.m */,
+				E6218AD513C35D7C0021CB80 /* StreamPhoto.h */,
+				E6218AD613C35D7C0021CB80 /* StreamPhoto.m */,
+				E6218AD713C35D7C0021CB80 /* StreamPhotoViewCell.h */,
+				E6218AD813C35D7C0021CB80 /* StreamPhotoViewCell.m */,
+				E6BF64271435D57100A04A81 /* StreamPhotoViewController.h */,
+				E6BF64281435D57100A04A81 /* StreamPhotoViewController.m */,
+				E6218AD913C35D7C0021CB80 /* StreamViewController.h */,
+				E6218ADA13C35D7C0021CB80 /* StreamViewController.m */,
+				E68D5F1C142BA7FC003192AE /* UserStreamManager.h */,
+				E68D5F1D142BA7FC003192AE /* UserStreamManager.m */,
 			);
 			name = Stream;
 			sourceTree = "<group>";
@@ -535,6 +546,8 @@
 				E2CC8A6D141E9EEE00C1CF1B /* photos@2x.png in Resources */,
 				E2CC8A6F141E9EFB00C1CF1B /* photos.png in Resources */,
 				E67599D1143521BF003AE272 /* StreamPhotoViewCell.xib in Resources */,
+				E6BF642B1435D57100A04A81 /* StreamPhotoViewController.xib in Resources */,
+				E6BF642D14361F4E00A04A81 /* StreamPhotoViewController.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -582,6 +595,7 @@
 				E68D5F1E142BA7FC003192AE /* UserStreamManager.m in Sources */,
 				E6DE3ACB142BC3ED00E9BE0B /* ImageViewController.m in Sources */,
 				E6F80E23142BE73400B7432D /* MapViewController.m in Sources */,
+				E6BF642A1435D57100A04A81 /* StreamPhotoViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

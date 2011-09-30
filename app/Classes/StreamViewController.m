@@ -12,9 +12,7 @@
 #import "CacheManager.h"
 #import "PhotoUploadCell.h"
 #import "ContactsStreamManager.h"
-#import "UserStreamManager.h"
-#import "ImageViewController.h"
-#import "MapViewController.h"
+#import "StreamPhotoViewController.h"
 
 @interface StreamViewController (Private)
 - (void)setQueueButtonState;
@@ -248,23 +246,13 @@
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
     StreamPhoto *photo = [self streamPhotoAtIndexPath:indexPath];
-    if (photo) {
-        ImageViewController *imageViewController = [[ImageViewController alloc] init];
-        //[self presentModalViewController:imageViewController animated:YES];
-        [self.navigationController pushViewController:imageViewController animated:YES];
-        [imageViewController displayPhoto:photo];
-        [imageViewController release];
-    }
-
-//    MapViewController *mapController = [[MapViewController alloc] init];
-//    [self.navigationController pushViewController:mapController animated:YES];
-//    [mapController displayPhoto:photo inManager:self.streamManager];
-//    [mapController release];
-//    
-//    UserStreamManager *manager = [[UserStreamManager alloc] initWithUser:photo.ownerId];
-//    StreamViewController *userController = [[StreamViewController alloc] initWithPhotoStreamManager:manager];
-//    userController.title = photo.ownername;
-//    [self.navigationController pushViewController:userController animated:YES];
+    if (!photo) return;
+    
+    StreamPhotoViewController *vc = [[StreamPhotoViewController alloc] init];
+    [self.navigationController pushViewController:vc animated:YES];
+    vc.streamManager = self.streamManager;
+    [vc showPhoto:photo];
+    [vc release];
 
 }
 

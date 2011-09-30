@@ -33,12 +33,13 @@
 
 - (NSString*)html;
 {
-    return [self.details valueForKeyPath:@"description._text"];
+    NSString *raw = [self.details valueForKeyPath:@"description._text"];
+    return [raw stringByReplacingOccurrencesOfString:@"\n" withString:@"<br>"];
 }
 
 - (NSString*)description;
 {
-    NSString* raw = self.html;
+    NSString *raw = [self.details valueForKeyPath:@"description._text"];
     if (raw == nil) {
         return nil;
     }
@@ -76,29 +77,34 @@
     return [[self.details valueForKey:@"longitude"] floatValue];
 }
 
-- (NSString*)placename;
+-(BOOL)hasLocation;
 {
     float lat = [[self.details valueForKey:@"latitude"] floatValue];
     float lng = [[self.details valueForKey:@"longitude"] floatValue];
-    if (lat == 0 || lng == 0) {
-        return nil;
-    }
-    return [NSString stringWithFormat:@"%.3f,%.3f", lat, lng];
+    return (lat != 0 && lng != 0);
+}
+
+- (NSString*)placename;
+{
+    return [NSString stringWithFormat:@"%.3f,%.3f", self.latitude, self.longitude];
 }
 
 - (NSURL*) mapPageURL;
 {
-    float lat = [[self.details valueForKey:@"latitude"] floatValue];
-    float lng = [[self.details valueForKey:@"longitude"] floatValue];
-    if (lat && lng) {
-        NSString *title = [self.title stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-        if (title.length == 0) {
-            title = @"Photo"; // google maps needs something
-        }
-        NSString *mapURL = [NSString stringWithFormat:@"http://maps.google.com/maps?q=%f,%f+(%@)", lat, lng, title];
-        return [NSURL URLWithString:mapURL];
+    NSString *title = [self.title stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    if (title.length == 0) {
+        title = @"Photo"; // google maps needs something
     }
-    return nil;
+    NSString *mapURL = [NSString stringWithFormat:@"http://maps.google.com/maps?q=%f,%f+(%@)", self.latitude, self.longitude, title];
+    return [NSURL URLWithString:mapURL];
+}
+
+-(NSURL*)mapImageURL;
+{
+    int scale = [UIScreen mainScreen].scale; //  1 or 2
+    NSString *mapURL = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/staticmap?sensor=false&size=310x90&center=%f,%f&zoom=13&scale=%d&markers=size:small%%7C%f,%f",
+                        self.latitude, self.longitude, scale, self.latitude, self.longitude];
+    return [NSURL URLWithString:mapURL];
 }
 
 - (NSURL*) imageURL;
@@ -187,11 +193,9 @@
 
 -(CGFloat)imageHeightForWidth:(CGFloat)width;
 {
-    static float MAX_HEIGHT = 260.0f;
     float width_m = [[self.details objectForKey:@"width_m"] floatValue];
     float height_m = [[self.details objectForKey:@"height_m"] floatValue];
-    // if it's taller than square it won't fit in the view.
-    CGFloat height = MIN( width * height_m / width_m, MAX_HEIGHT );
+    CGFloat height = width * height_m / width_m;
     return height;
 }
 

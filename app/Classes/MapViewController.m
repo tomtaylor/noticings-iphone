@@ -7,20 +7,20 @@
 //
 
 #import "MapViewController.h"
-#import "ImageViewController.h"
+#import "StreamPhotoViewController.h"
 #import "RemoteImageView.h"
 
 @implementation MapViewController
 
 @synthesize mapView;
 @synthesize photo;
+@synthesize streamManager;
 
--(void)loadView;
+-(void)viewDidLoad;
 {
-    self.mapView = [[[MKMapView alloc] initWithFrame:CGRectNull] autorelease];
-    self.view = self.mapView;
+    self.mapView = [[[MKMapView alloc] initWithFrame:CGRectMake(0, 0, 320, 480)] autorelease];
     self.mapView.delegate = self;
-    self.mapView.showsUserLocation = YES; // why the hell not.
+    self.mapView.showsUserLocation = YES; // sure, why the hell not.
 
     UIBarButtonItem *externalItem = [[UIBarButtonItem alloc] 
                                      initWithBarButtonSystemItem:UIBarButtonSystemItemAction
@@ -29,6 +29,7 @@
     
     self.navigationItem.rightBarButtonItem = externalItem;
     [externalItem release];
+    [self.view addSubview:self.mapView];
 }
 
 -(void)openInBrowser;
@@ -39,6 +40,7 @@
 -(void)displayPhoto:(StreamPhoto*)_photo inManager:(PhotoStreamManager*)manager;
 {
     self.photo = _photo;
+    self.streamManager = manager;
     self.mapView.region = MKCoordinateRegionMake(photo.coordinate, MKCoordinateSpanMake(0.02, 0.02));
     for (StreamPhoto *p in manager.photos) {
         if (p.coordinate.latitude != 0 && p.coordinate.longitude != 0) {
@@ -81,11 +83,11 @@
 - (void)mapView:(MKMapView *)sender annotationView:(MKAnnotationView *)aView calloutAccessoryControlTapped:(UIControl *)control;
 {
     if (aView.annotation.class == StreamPhoto.class) {
-        ImageViewController *imageViewController = [[ImageViewController alloc] init];
-        [self.navigationController pushViewController:imageViewController animated:YES];
-        StreamPhoto *_photo = (StreamPhoto*)aView.annotation;
-        [imageViewController displayPhoto:_photo];
-        [imageViewController release];
+        StreamPhotoViewController *vc = [[StreamPhotoViewController alloc] init];
+        [self.navigationController pushViewController:vc animated:YES];
+        vc.streamManager = self.streamManager;
+        [vc showPhoto:photo];
+        [vc release];
     }
 }
 
