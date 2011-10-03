@@ -56,8 +56,7 @@
 
 -(void)openInBrowser;
 {
-    [[UIApplication sharedApplication] openURL:photo.mobilePageURL];
-    
+    [[UIApplication sharedApplication] openURL:photo.originalImageURL];
 }
 
 -(void)displayPhoto:(StreamPhoto*)_photo;

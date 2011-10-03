@@ -117,6 +117,15 @@
     return [apiContext photoSourceURLFromDictionary:self.details size:@"b"];
 }
 
+- (NSURL*) originalImageURL;
+{
+    if ([self.details valueForKey:@"url_o"]) {
+        return [NSURL URLWithString:[self.details valueForKey:@"url_o"]];
+    } else {
+        return self.bigImageURL;
+    }
+}
+
 - (NSURL*) avatarURL;
 {
     NSString *avatarUrl;

@@ -40,6 +40,19 @@
     self.comments = nil;
     self.view.autoresizesSubviews = YES;
     [self.view addSubview:self.webView];
+
+    UIBarButtonItem *externalItem = [[UIBarButtonItem alloc] 
+                                     initWithBarButtonSystemItem:UIBarButtonSystemItemAction
+                                     target:self
+                                     action:@selector(openInBrowser)];
+    
+    self.navigationItem.rightBarButtonItem = externalItem;
+    [externalItem release];
+}
+
+-(void)openInBrowser;
+{
+    [[UIApplication sharedApplication] openURL:photo.mobilePageURL];
 }
 
 -(void)showPhoto:(StreamPhoto*)_photo;

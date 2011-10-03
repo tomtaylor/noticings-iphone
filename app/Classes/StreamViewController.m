@@ -97,6 +97,7 @@
 - (void)newPhotos;
 {
     NSLog(@"new photos");
+    [self stopLoading]; // for the pull-to-refresh thing
 	[self.tableView reloadData];
 }
 

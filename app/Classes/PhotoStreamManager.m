@@ -77,7 +77,7 @@
 
 -(NSString*)extras;
 {
-    return @"date_upload,date_taken,owner_name,icon_server,geo,path_alias,description,url_m";
+    return @"date_upload,date_taken,owner_name,icon_server,geo,path_alias,description,url_m,url_o";
 }
 
 // TODO - stolen from the uploader. refactor into base class?
