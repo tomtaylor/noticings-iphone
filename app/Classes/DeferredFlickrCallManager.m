@@ -14,6 +14,13 @@
 #import "ObjectiveFlickr.h"
 #import "ASIHTTPRequest.h"
 
+
+// leak internal signing method out from objective flickr. Yes. I am
+// a bad person.
+@interface OFFlickrAPIContext (LeakPrivateMethods)
+- (NSString *)signedQueryFromArguments:(NSDictionary *)inArguments;
+@end
+
 @implementation DeferredFlickrCallManager
 SYNTHESIZE_SINGLETON_FOR_CLASS(DeferredFlickrCallManager);
 
