@@ -11,27 +11,18 @@
 #import "StreamPhoto.h"
 #import "RemoteImageView.h"
 #import "PhotoStreamManager.h"
+#import "CacheManager.h"
 
-@interface StreamPhotoViewController : UIViewController {
-    IBOutlet RemoteImageView *avatarView;
-    IBOutlet RemoteImageView *photoView;
-    IBOutlet RemoteImageView *mapView;
-    IBOutlet UILabel *usernameView;
-    IBOutlet UILabel *placeView;
-    IBOutlet UILabel *timeagoView;
-    IBOutlet UILabel *titleView;
-    IBOutlet UIWebView *descView;
-    IBOutlet UILabel *visibilityView;
-    IBOutlet UIView *theView;
-    IBOutlet UIGestureRecognizer *tapGestureRecognizer;
+@interface StreamPhotoViewController : UIViewController <UIWebViewDelegate, DeferredImageLoader> {
 }
 
 -(void)showPhoto:(StreamPhoto*)_photo;
 -(void)updateHTML;
 
+@property (retain) UIWebView *webView;
+
 @property (retain) StreamPhoto* photo;
 @property (retain) PhotoStreamManager *streamManager;
-
 @property (retain) NSString *photoLocation;
 
 @end

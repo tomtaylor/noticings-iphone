@@ -71,12 +71,13 @@
 		E64839CB13C8EBBF008DB9CE /* PullRefreshTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E64839CA13C8EBBF008DB9CE /* PullRefreshTableViewController.m */; };
 		E64839CD13C8EC39008DB9CE /* arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = E64839CC13C8EC39008DB9CE /* arrow.png */; };
 		E671F9111439D31F0068380D /* DeferredFlickrCallManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E671F9101439D31F0068380D /* DeferredFlickrCallManager.m */; };
+		E671F9131439FBDA0068380D /* NSString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = E671F9121439FBDA0068380D /* NSString+HTML.m */; };
+		E671F9171439FC6E0068380D /* GTMNSString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = E671F9161439FC6E0068380D /* GTMNSString+HTML.m */; };
 		E67305D313C388C2005CEC62 /* RemoteImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = E67305D213C388C2005CEC62 /* RemoteImageView.m */; };
 		E67599D1143521BF003AE272 /* StreamPhotoViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E67599D0143521BF003AE272 /* StreamPhotoViewCell.xib */; };
 		E68D5F1E142BA7FC003192AE /* UserStreamManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E68D5F1D142BA7FC003192AE /* UserStreamManager.m */; };
 		E6AE4A9B13C3A1FD00702DA3 /* ContactsStreamManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E6AE4A9A13C3A1FD00702DA3 /* ContactsStreamManager.m */; };
 		E6BF642A1435D57100A04A81 /* StreamPhotoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E6BF64281435D57100A04A81 /* StreamPhotoViewController.m */; };
-		E6BF642B1435D57100A04A81 /* StreamPhotoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E6BF64291435D57100A04A81 /* StreamPhotoViewController.xib */; };
 		E6BF642D14361F4E00A04A81 /* StreamPhotoViewController.html in Resources */ = {isa = PBXBuildFile; fileRef = E6BF642C14361F4E00A04A81 /* StreamPhotoViewController.html */; };
 		E6BF64301436386700A04A81 /* PhotoLocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E6BF642F1436386700A04A81 /* PhotoLocationManager.m */; };
 		E6DE3ACB142BC3ED00E9BE0B /* ImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E6DE3ACA142BC3ED00E9BE0B /* ImageViewController.m */; };
@@ -212,8 +213,12 @@
 		E64839C913C8EBBF008DB9CE /* PullRefreshTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PullRefreshTableViewController.h; path = Classes/PullRefreshTableViewController.h; sourceTree = "<group>"; };
 		E64839CA13C8EBBF008DB9CE /* PullRefreshTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PullRefreshTableViewController.m; path = Classes/PullRefreshTableViewController.m; sourceTree = "<group>"; };
 		E64839CC13C8EC39008DB9CE /* arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = arrow.png; sourceTree = "<group>"; };
-		E671F90F1439D31F0068380D /* DeferredFlickrCallManager.h */ = {isa = PBXFileReference; fileEncoding = 4; name = DeferredFlickrCallManager.h; path = Classes/DeferredFlickrCallManager.h; sourceTree = "<group>"; };
+		E671F90F1439D31F0068380D /* DeferredFlickrCallManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeferredFlickrCallManager.h; path = Classes/DeferredFlickrCallManager.h; sourceTree = "<group>"; };
 		E671F9101439D31F0068380D /* DeferredFlickrCallManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DeferredFlickrCallManager.m; path = Classes/DeferredFlickrCallManager.m; sourceTree = "<group>"; };
+		E671F9121439FBDA0068380D /* NSString+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+HTML.m"; sourceTree = "<group>"; };
+		E671F9141439FC090068380D /* NSString+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+HTML.h"; sourceTree = "<group>"; };
+		E671F9151439FC6E0068380D /* GTMNSString+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GTMNSString+HTML.h"; sourceTree = "<group>"; };
+		E671F9161439FC6E0068380D /* GTMNSString+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GTMNSString+HTML.m"; sourceTree = "<group>"; };
 		E67305D113C388C2005CEC62 /* RemoteImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteImageView.h; sourceTree = "<group>"; };
 		E67305D213C388C2005CEC62 /* RemoteImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RemoteImageView.m; sourceTree = "<group>"; };
 		E67599D0143521BF003AE272 /* StreamPhotoViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StreamPhotoViewCell.xib; sourceTree = "<group>"; };
@@ -223,7 +228,6 @@
 		E6AE4A9A13C3A1FD00702DA3 /* ContactsStreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactsStreamManager.m; sourceTree = "<group>"; };
 		E6BF64271435D57100A04A81 /* StreamPhotoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StreamPhotoViewController.h; path = Classes/StreamPhotoViewController.h; sourceTree = "<group>"; };
 		E6BF64281435D57100A04A81 /* StreamPhotoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StreamPhotoViewController.m; path = Classes/StreamPhotoViewController.m; sourceTree = "<group>"; };
-		E6BF64291435D57100A04A81 /* StreamPhotoViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = StreamPhotoViewController.xib; path = Classes/StreamPhotoViewController.xib; sourceTree = "<group>"; };
 		E6BF642C14361F4E00A04A81 /* StreamPhotoViewController.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = StreamPhotoViewController.html; sourceTree = "<group>"; };
 		E6BF642E1436386700A04A81 /* PhotoLocationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhotoLocationManager.h; path = Classes/PhotoLocationManager.h; sourceTree = "<group>"; };
 		E6BF642F1436386700A04A81 /* PhotoLocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PhotoLocationManager.m; path = Classes/PhotoLocationManager.m; sourceTree = "<group>"; };
@@ -350,7 +354,6 @@
 				E2F553B210850EB200FE67C7 /* PhotoMapViewController.xib */,
 				E20EF688109A4A8F001C5F05 /* UploadTimestampViewController.xib */,
 				E67599D0143521BF003AE272 /* StreamPhotoViewCell.xib */,
-				E6BF64291435D57100A04A81 /* StreamPhotoViewController.xib */,
 				28AD735F0D9D9599002E5188 /* MainWindow.xib */,
 				8D1107310486CEB800E47090 /* Noticings-Info.plist */,
 				E6BF642C14361F4E00A04A81 /* StreamPhotoViewController.html */,
@@ -394,6 +397,10 @@
 				E64839C913C8EBBF008DB9CE /* PullRefreshTableViewController.h */,
 				E64839CA13C8EBBF008DB9CE /* PullRefreshTableViewController.m */,
 				E27C7E12108B9B2D0083E392 /* SynthesizeSingleton.h */,
+				E671F9151439FC6E0068380D /* GTMNSString+HTML.h */,
+				E671F9161439FC6E0068380D /* GTMNSString+HTML.m */,
+				E671F9141439FC090068380D /* NSString+HTML.h */,
+				E671F9121439FBDA0068380D /* NSString+HTML.m */,
 			);
 			name = "Third Party";
 			sourceTree = "<group>";
@@ -556,7 +563,6 @@
 				E2CC8A6D141E9EEE00C1CF1B /* photos@2x.png in Resources */,
 				E2CC8A6F141E9EFB00C1CF1B /* photos.png in Resources */,
 				E67599D1143521BF003AE272 /* StreamPhotoViewCell.xib in Resources */,
-				E6BF642B1435D57100A04A81 /* StreamPhotoViewController.xib in Resources */,
 				E6BF642D14361F4E00A04A81 /* StreamPhotoViewController.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -608,6 +614,8 @@
 				E6BF642A1435D57100A04A81 /* StreamPhotoViewController.m in Sources */,
 				E6BF64301436386700A04A81 /* PhotoLocationManager.m in Sources */,
 				E671F9111439D31F0068380D /* DeferredFlickrCallManager.m in Sources */,
+				E671F9131439FBDA0068380D /* NSString+HTML.m in Sources */,
+				E671F9171439FC6E0068380D /* GTMNSString+HTML.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

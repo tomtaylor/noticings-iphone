@@ -13,40 +13,38 @@
 #import "MapViewController.h"
 #import "StreamViewController.h"
 #import "PhotoLocationManager.h"
+#import "DeferredFlickrCallManager.h"
+
+#import "NSString+HTML.h"
 
 @implementation StreamPhotoViewController
 
-@synthesize photo, streamManager, photoLocation;
+@synthesize photo, streamManager, photoLocation, webView;
 
 -(id)init;
 {
-    self = [super initWithNibName:@"StreamPhotoViewController" bundle:nil];
-    if (self) {
-        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapPhoto:)];
-        tap.numberOfTouchesRequired = 1;
-        [self.view addGestureRecognizer:tap];
-        [tap release];
-    }
+    self = [super initWithNibName:nil bundle:nil];
     return self;
 }
 
--(CGFloat)flow:(UIView*)aView from:(CGFloat)y resize:(BOOL)resize;
+-(void)loadView;
 {
-    CGRect frame = aView.frame;
-    frame.origin.y = y;
-    aView.frame = frame;
-    if (resize)
-        [aView sizeToFit];
-    return y + aView.frame.size.height + PADDING_SIZE;
+    [super loadView];
 }
 
+-(void)viewDidLoad;
+{
+    self.webView = [[[UIWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 370)] autorelease];
+    self.webView.scalesPageToFit = NO;
+    self.webView.delegate = self;
+    [self.view addSubview:self.webView];
+}
 
 -(void)showPhoto:(StreamPhoto*)_photo;
 {
     self.photo = _photo;
+    self.title = self.photo.title; // for nav controller
     
-    usernameView.text = self.photo.ownername;
-
     if (self.photo.hasLocation) {
         self.photoLocation = self.photo.placename;
         [[PhotoLocationManager sharedPhotoLocationManager] getLocationForPhoto:photo and:^(NSString* name){
@@ -55,48 +53,45 @@
                 [self updateHTML];
             }
         }];
-
     }
-
-    titleView.text = self.photo.title;
-    [self updateHTML];
-    [photoView loadURL:self.photo.imageURL];
-    [avatarView loadURL:self.photo.avatarURL];
     
-    // resize image frame to have the right aspect.
-    CGRect frame = photoView.frame;
-    CGFloat height = [photo imageHeightForWidth:frame.size.width];
-    frame.size.height = height;
-    photoView.frame = frame;
-    
-    CGFloat y = photoView.frame.origin.y + photoView.frame.size.height + PADDING_SIZE;
+    [[CacheManager sharedCacheManager] fetchImageForURL:photo.imageURL andNotify:self];
 
     if (self.photo.hasLocation) {
-        y = [self flow:mapView from:y resize:NO];
-        [mapView loadURL:self.photo.mapImageURL];
-    } else {
-        mapView.frame = CGRectMake(0, 0, 0, 0);
+        [[CacheManager sharedCacheManager] fetchImageForURL:photo.mapImageURL andNotify:self];
     }
 
-    y = [self flow:descView from:y resize:YES];
-    
-    theView.frame = CGRectMake(0, 0, 320, y);
-    
-    UIScrollView *scrollView = (UIScrollView*)self.view;
-    [scrollView addSubview:theView];
-    scrollView.contentSize = CGSizeMake(theView.frame.size.width, y);
-    scrollView.alwaysBounceVertical = YES;
+    [self updateHTML];
 }
+
+-(void)loadedImage:(UIImage *)image cached:(BOOL)cached;
+{
+    NSLog(@"loaded image");
+    [self updateHTML];
+}
+
 
 -(void)updateHTML;
 {
+    CacheManager *cacheManager = [CacheManager sharedCacheManager];
+    
     // beginning to want an actual templating language here. :-)
     
     // Load common HTML heading. TODO - maybe cache as static string, it's a little
     // wasteful to load this all the time?
     NSString *htmlFile = [[NSBundle mainBundle] pathForResource:@"StreamPhotoViewController" ofType:@"html" inDirectory:nil];
-    NSString *html = [NSString stringWithContentsOfFile:htmlFile encoding:NSUTF8StringEncoding error:nil];
+    NSString *htmlWrapper = [NSString stringWithContentsOfFile:htmlFile encoding:NSUTF8StringEncoding error:nil];
     
+    NSString *html = @"";
+    
+    html = [html stringByAppendingFormat:@"<a href='noticings-image:nil'><img class='image' src='%@'></a>", [cacheManager urlToFilename:photo.imageURL]];
+
+    html = [html stringByAppendingFormat:@"<a href='noticings-user:nil'><img class='avatar' src='%@'></a>", [cacheManager urlToFilename:photo.avatarURL]];
+
+    html = [html stringByAppendingFormat:@"<p class='title'>%@</p>", [photo.title stringByEncodingHTMLEntities]];
+
+    html = [html stringByAppendingFormat:@"<p class='owner'>by <a href='noticings-user:nil'>%@</a></p>", [photo.ownername stringByEncodingHTMLEntities]];
+
     // Visibility
     NSString *visClass = @"public";
     NSString *visName = @"public";
@@ -109,14 +104,18 @@
     }
     html = [html stringByAppendingFormat:@"<p class='%@'>Photo is %@.</p>", visClass, visName];
 
+    html = [html stringByAppendingString:@"<div style='clear: both'></div>"];
+
     // Time ago
-    html = [html stringByAppendingFormat:@"<p class='timeago'>Taken %@ ago", self.photo.ago];
+    html = [html stringByAppendingFormat:@"<p class='timeago'>Taken %@ ago", [self.photo.ago stringByEncodingHTMLEntities]];
 
     // location (in same paragraph)
     if (self.photo.hasLocation) {
-        html = [html stringByAppendingFormat:@", in <a href='%@'>%@</a>", self.photo.mapPageURL, self.photoLocation]; // TODO - html escape!
+        html = [html stringByAppendingFormat:@", in <a href='%@'>%@</a>:</p>", self.photo.mapPageURL, [self.photoLocation stringByEncodingHTMLEntities]];
+        html = [html stringByAppendingFormat:@"<a href='noticings-map:nil'><img class='map' src='%@'></a>", [cacheManager urlToFilename:photo.mapImageURL]];
+    } else {
+        html = [html stringByAppendingString:@".</p>"];
     }
-    html = [html stringByAppendingString:@".</p>"];
 
     // description
     if (self.photo.html) {
@@ -124,67 +123,72 @@
     }
 
     NSURL *baseURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
-    [descView loadHTMLString:html baseURL:baseURL];
+    [self.webView loadHTMLString:[NSString stringWithFormat:htmlWrapper, html] baseURL:baseURL];
 }
 
 // open links in the webview using the system browser
 -(BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
+    NSLog(@"should start load %@", request);
     if (navigationType == UIWebViewNavigationTypeLinkClicked) {
+
+        if ([request.URL.scheme isEqualToString:@"noticings-image"]) {
+            ImageViewController *imageViewController = [[ImageViewController alloc] init];
+            [self.navigationController pushViewController:imageViewController animated:YES];
+            [imageViewController displayPhoto:self.photo];
+            [imageViewController release];
+            return false;
+
+        } else if ([request.URL.scheme isEqualToString:@"noticings-map"]) {
+            MapViewController *mapController = [[MapViewController alloc] init];
+            [self.navigationController pushViewController:mapController animated:YES];
+            [mapController displayPhoto:photo inManager:self.streamManager];
+            [mapController release];
+            return false;
+
+        } else if ([request.URL.scheme isEqualToString:@"noticings-user"]) {
+            UserStreamManager *manager = [[UserStreamManager alloc] initWithUser:photo.ownerId];
+            StreamViewController *userController = [[StreamViewController alloc] initWithPhotoStreamManager:manager];
+            [manager release];
+            userController.title = photo.ownername;
+            [self.navigationController pushViewController:userController animated:YES];
+            [userController release];
+            return false;
+        }
+
         [[UIApplication sharedApplication] openURL:request.URL];
         return false;
     }
+    NSLog(@"allowing through load request %@", request);
     return true;
 }
 
-- (void)tapPhoto:(UIGestureRecognizer*)tap;
-{
-    CGPoint tapPoint = [tap locationInView:self.view];
-    UIView *hit = [self.view hitTest:tapPoint withEvent:nil];
-
-    if ([hit isEqual:photoView]) {
-        ImageViewController *imageViewController = [[ImageViewController alloc] init];
-        [self.navigationController pushViewController:imageViewController animated:YES];
-        [imageViewController displayPhoto:self.photo];
-        [imageViewController release];
-
-    } else if ([hit isEqual:mapView]) {
-        MapViewController *mapController = [[MapViewController alloc] init];
-        [self.navigationController pushViewController:mapController animated:YES];
-        [mapController displayPhoto:photo inManager:self.streamManager];
-        [mapController release];
-
-    } else if ([hit isEqual:avatarView]) {
-        UserStreamManager *manager = [[UserStreamManager alloc] initWithUser:photo.ownerId];
-        StreamViewController *userController = [[StreamViewController alloc] initWithPhotoStreamManager:manager];
-        [manager release];
-        userController.title = photo.ownername;
-        [self.navigationController pushViewController:userController animated:YES];
-        [userController release];
-    }
-    
-}
+//- (void)tapPhoto:(UIGestureRecognizer*)tap;
+//{
+//    CGPoint tapPoint = [tap locationInView:self.view];
+//    UIView *hit = [self.view hitTest:tapPoint withEvent:nil];
+//
+//    if ([hit isEqual:photoView]) {
+//
+//    } else if ([hit isEqual:mapView]) {
+//
+//    } else if ([hit isEqual:avatarView]) {
+//    }
+//    
+//}
 
 - (void)didReceiveMemoryWarning
 {
-    // Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
-    
-    // Release any cached data, images, etc that aren't in use.
 }
 
 #pragma mark - View lifecycle
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
-}
-
 - (void)viewDidUnload
 {
     [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
+    self.webView.delegate = nil;
+    self.webView = nil;
+    
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -192,5 +196,15 @@
     // Return YES for supported orientations
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
+
+-(void)dealloc;
+{
+    if (self.webView) {
+        self.webView.delegate = nil;
+    }
+    self.webView = nil;
+    [super dealloc];
+}
+
 
 @end
