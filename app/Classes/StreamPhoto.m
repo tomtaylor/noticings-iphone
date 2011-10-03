@@ -53,6 +53,7 @@
     s = [s stringByReplacingOccurrencesOfString:@"&quot;" withString:@"\""];
     s = [s stringByReplacingOccurrencesOfString:@"&gt;" withString:@">"];
     s = [s stringByReplacingOccurrencesOfString:@"&lt;" withString:@"<"];
+    s = [s stringByReplacingOccurrencesOfString:@"&amp;" withString:@"&"]; // MUST BE LAST
     return s;
 }
 
@@ -87,6 +88,11 @@
 - (NSString*)placename;
 {
     return [NSString stringWithFormat:@"%.3f,%.3f", self.latitude, self.longitude];
+}
+
+- (NSString*)woeid;
+{
+    return [self.details valueForKey:@"woeid"];
 }
 
 - (NSURL*) mapPageURL;

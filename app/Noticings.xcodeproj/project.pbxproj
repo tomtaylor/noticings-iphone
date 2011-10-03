@@ -77,6 +77,7 @@
 		E6BF642A1435D57100A04A81 /* StreamPhotoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E6BF64281435D57100A04A81 /* StreamPhotoViewController.m */; };
 		E6BF642B1435D57100A04A81 /* StreamPhotoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E6BF64291435D57100A04A81 /* StreamPhotoViewController.xib */; };
 		E6BF642D14361F4E00A04A81 /* StreamPhotoViewController.html in Resources */ = {isa = PBXBuildFile; fileRef = E6BF642C14361F4E00A04A81 /* StreamPhotoViewController.html */; };
+		E6BF64301436386700A04A81 /* PhotoLocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E6BF642F1436386700A04A81 /* PhotoLocationManager.m */; };
 		E6DE3ACB142BC3ED00E9BE0B /* ImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E6DE3ACA142BC3ED00E9BE0B /* ImageViewController.m */; };
 		E6F80E23142BE73400B7432D /* MapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E6F80E22142BE73400B7432D /* MapViewController.m */; };
 /* End PBXBuildFile section */
@@ -221,6 +222,8 @@
 		E6BF64281435D57100A04A81 /* StreamPhotoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StreamPhotoViewController.m; path = Classes/StreamPhotoViewController.m; sourceTree = "<group>"; };
 		E6BF64291435D57100A04A81 /* StreamPhotoViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = StreamPhotoViewController.xib; path = Classes/StreamPhotoViewController.xib; sourceTree = "<group>"; };
 		E6BF642C14361F4E00A04A81 /* StreamPhotoViewController.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = StreamPhotoViewController.html; sourceTree = "<group>"; };
+		E6BF642E1436386700A04A81 /* PhotoLocationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhotoLocationManager.h; path = Classes/PhotoLocationManager.h; sourceTree = "<group>"; };
+		E6BF642F1436386700A04A81 /* PhotoLocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PhotoLocationManager.m; path = Classes/PhotoLocationManager.m; sourceTree = "<group>"; };
 		E6DE3AC9142BC3ED00E9BE0B /* ImageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageViewController.h; path = Classes/ImageViewController.h; sourceTree = "<group>"; };
 		E6DE3ACA142BC3ED00E9BE0B /* ImageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ImageViewController.m; path = Classes/ImageViewController.m; sourceTree = "<group>"; };
 		E6F80E21142BE73400B7432D /* MapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapViewController.h; path = Classes/MapViewController.h; sourceTree = "<group>"; };
@@ -433,6 +436,8 @@
 				E6DE3ACA142BC3ED00E9BE0B /* ImageViewController.m */,
 				E6F80E21142BE73400B7432D /* MapViewController.h */,
 				E6F80E22142BE73400B7432D /* MapViewController.m */,
+				E6BF642E1436386700A04A81 /* PhotoLocationManager.h */,
+				E6BF642F1436386700A04A81 /* PhotoLocationManager.m */,
 				E63D611E142B9D6F00884F10 /* PhotoStreamManager.h */,
 				E63D611F142B9D6F00884F10 /* PhotoStreamManager.m */,
 				E67305D113C388C2005CEC62 /* RemoteImageView.h */,
@@ -596,6 +601,7 @@
 				E6DE3ACB142BC3ED00E9BE0B /* ImageViewController.m in Sources */,
 				E6F80E23142BE73400B7432D /* MapViewController.m in Sources */,
 				E6BF642A1435D57100A04A81 /* StreamPhotoViewController.m in Sources */,
+				E6BF64301436386700A04A81 /* PhotoLocationManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

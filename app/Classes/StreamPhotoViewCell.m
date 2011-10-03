@@ -10,6 +10,7 @@
 
 #import "APIKeys.h"
 #import "ObjectiveFlickr.h"
+#import "PhotoLocationManager.h"
 
 @implementation StreamPhotoViewCell
 
@@ -22,6 +23,14 @@
     descView.text = photo.description;
     if (photo.hasLocation) {
         placeView.text = photo.placename;
+
+        [[PhotoLocationManager sharedPhotoLocationManager] getLocationForPhoto:photo and:^(NSString* name){
+            if (name) {
+                placeView.text = name;
+            }
+        }];
+    } else {
+        placeView.text = @"";
     }
 
     int vis = photo.visibility;

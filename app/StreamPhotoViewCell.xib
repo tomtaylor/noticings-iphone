@@ -45,6 +45,7 @@
 								<int key="NSvFlags">292</int>
 								<string key="NSFrame">{{5, 5}, {32, 32}}</string>
 								<reference key="NSSuperview" ref="94663175"/>
+								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="903146239"/>
 								<string key="NSReuseIdentifierKey">_NS:567</string>
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
@@ -55,6 +56,7 @@
 								<int key="NSvFlags">290</int>
 								<string key="NSFrame">{{5, 41}, {310, 310}}</string>
 								<reference key="NSSuperview" ref="94663175"/>
+								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="100512070"/>
 								<string key="NSReuseIdentifierKey">_NS:567</string>
 								<int key="IBUIContentMode">1</int>
@@ -66,6 +68,7 @@
 								<int key="NSvFlags">290</int>
 								<string key="NSFrame">{{44, 3}, {190, 21}}</string>
 								<reference key="NSSuperview" ref="94663175"/>
+								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="648773294"/>
 								<string key="NSReuseIdentifierKey">_NS:328</string>
 								<bool key="IBUIOpaque">NO</bool>
@@ -82,7 +85,6 @@
 								<int key="IBUIBaselineAdjustment">1</int>
 								<bool key="IBUIAdjustsFontSizeToFit">NO</bool>
 								<float key="IBUIMinimumFontSize">10</float>
-								<int key="IBUILineBreakMode">2</int>
 								<object class="IBUIFontDescription" key="IBUIFontDescription" id="888769467">
 									<int key="type">2</int>
 									<double key="pointSize">14</double>
@@ -96,8 +98,9 @@
 							<object class="IBUILabel" id="648773294">
 								<reference key="NSNextResponder" ref="94663175"/>
 								<int key="NSvFlags">290</int>
-								<string key="NSFrame">{{44, 18}, {198, 21}}</string>
+								<string key="NSFrame">{{44, 18}, {221, 21}}</string>
 								<reference key="NSSuperview" ref="94663175"/>
+								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="451760156"/>
 								<string key="NSReuseIdentifierKey">_NS:328</string>
 								<bool key="IBUIOpaque">NO</bool>
@@ -114,7 +117,6 @@
 								<int key="IBUIBaselineAdjustment">1</int>
 								<bool key="IBUIAdjustsFontSizeToFit">NO</bool>
 								<float key="IBUIMinimumFontSize">10</float>
-								<int key="IBUILineBreakMode">2</int>
 								<object class="IBUIFontDescription" key="IBUIFontDescription" id="117018218">
 									<int key="type">1</int>
 									<double key="pointSize">13</double>
@@ -130,6 +132,7 @@
 								<int key="NSvFlags">289</int>
 								<string key="NSFrame">{{273, 18}, {42, 21}}</string>
 								<reference key="NSSuperview" ref="94663175"/>
+								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="904552234"/>
 								<string key="NSReuseIdentifierKey">_NS:328</string>
 								<bool key="IBUIOpaque">NO</bool>
@@ -153,6 +156,7 @@
 								<int key="NSvFlags">289</int>
 								<string key="NSFrame">{{273, 3}, {42, 21}}</string>
 								<reference key="NSSuperview" ref="94663175"/>
+								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="843057186"/>
 								<string key="NSReuseIdentifierKey">_NS:328</string>
 								<bool key="IBUIOpaque">NO</bool>
@@ -183,6 +187,7 @@
 								<int key="NSvFlags">290</int>
 								<string key="NSFrame">{{5, 357}, {310, 21}}</string>
 								<reference key="NSSuperview" ref="94663175"/>
+								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="1007419005"/>
 								<string key="NSReuseIdentifierKey">_NS:328</string>
 								<bool key="IBUIOpaque">NO</bool>
@@ -204,7 +209,7 @@
 								<int key="NSvFlags">292</int>
 								<string key="NSFrame">{{5, 385}, {310, 99}}</string>
 								<reference key="NSSuperview" ref="94663175"/>
-								<reference key="NSNextKeyView"/>
+								<reference key="NSWindow"/>
 								<string key="NSReuseIdentifierKey">_NS:328</string>
 								<bool key="IBUIOpaque">NO</bool>
 								<bool key="IBUIClipsSubviews">YES</bool>
@@ -225,6 +230,7 @@
 						</array>
 						<string key="NSFrameSize">{320, 502}</string>
 						<reference key="NSSuperview" ref="373355806"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="859051715"/>
 						<string key="NSReuseIdentifierKey">_NS:395</string>
 						<object class="NSColor" key="IBUIBackgroundColor">
@@ -240,6 +246,7 @@
 				</array>
 				<string key="NSFrameSize">{320, 503}</string>
 				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="94663175"/>
 				<string key="NSReuseIdentifierKey">_NS:384</string>
 				<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -424,7 +431,97 @@
 			<nil key="sourceID"/>
 			<int key="maxID">20</int>
 		</object>
-		<object class="IBClassDescriber" key="IBDocument.Classes"/>
+		<object class="IBClassDescriber" key="IBDocument.Classes">
+			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
+				<object class="IBPartialClassDescription">
+					<string key="className">PullRefreshTableViewController</string>
+					<string key="superclassName">UITableViewController</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/PullRefreshTableViewController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">RemoteImageView</string>
+					<string key="superclassName">UIImageView</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/RemoteImageView.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">StreamPhotoViewCell</string>
+					<string key="superclassName">UITableViewCell</string>
+					<dictionary class="NSMutableDictionary" key="outlets">
+						<string key="avatarView">RemoteImageView</string>
+						<string key="descView">UILabel</string>
+						<string key="photoView">RemoteImageView</string>
+						<string key="placeView">UILabel</string>
+						<string key="timeagoView">UILabel</string>
+						<string key="titleView">UILabel</string>
+						<string key="usernameView">UILabel</string>
+						<string key="visibilityView">UILabel</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<object class="IBToOneOutletInfo" key="avatarView">
+							<string key="name">avatarView</string>
+							<string key="candidateClassName">RemoteImageView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="descView">
+							<string key="name">descView</string>
+							<string key="candidateClassName">UILabel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="photoView">
+							<string key="name">photoView</string>
+							<string key="candidateClassName">RemoteImageView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="placeView">
+							<string key="name">placeView</string>
+							<string key="candidateClassName">UILabel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="timeagoView">
+							<string key="name">timeagoView</string>
+							<string key="candidateClassName">UILabel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="titleView">
+							<string key="name">titleView</string>
+							<string key="candidateClassName">UILabel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="usernameView">
+							<string key="name">usernameView</string>
+							<string key="candidateClassName">UILabel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="visibilityView">
+							<string key="name">visibilityView</string>
+							<string key="candidateClassName">UILabel</string>
+						</object>
+					</dictionary>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/StreamPhotoViewCell.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">StreamViewController</string>
+					<string key="superclassName">PullRefreshTableViewController</string>
+					<object class="NSMutableDictionary" key="outlets">
+						<string key="NS.key.0">photoViewCell</string>
+						<string key="NS.object.0">StreamPhotoViewCell</string>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<string key="NS.key.0">photoViewCell</string>
+						<object class="IBToOneOutletInfo" key="NS.object.0">
+							<string key="name">photoViewCell</string>
+							<string key="candidateClassName">StreamPhotoViewCell</string>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/StreamViewController.h</string>
+					</object>
+				</object>
+			</array>
+		</object>
 		<int key="IBDocument.localizationMode">0</int>
 		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaTouchFramework</string>
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>

@@ -32,6 +32,7 @@
 @property (readonly) NSString* ownerId;
 @property (readonly) NSString* ago;
 @property (readonly) NSString* placename;
+@property (readonly) NSString* woeid;
 @property (readonly) int visibility;
 @property (readonly) float latitude;
 @property (readonly) float longitude;

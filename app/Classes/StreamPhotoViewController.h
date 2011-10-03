@@ -27,8 +27,11 @@
 }
 
 -(void)showPhoto:(StreamPhoto*)_photo;
+-(void)updateHTML;
 
 @property (retain) StreamPhoto* photo;
 @property (retain) PhotoStreamManager *streamManager;
+
+@property (retain) NSString *photoLocation;
 
 @end

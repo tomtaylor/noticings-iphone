@@ -12,10 +12,11 @@
 #import "ImageViewController.h"
 #import "MapViewController.h"
 #import "StreamViewController.h"
+#import "PhotoLocationManager.h"
 
 @implementation StreamPhotoViewController
 
-@synthesize photo, streamManager;
+@synthesize photo, streamManager, photoLocation;
 
 -(id)init;
 {
@@ -45,30 +46,20 @@
     self.photo = _photo;
     
     usernameView.text = self.photo.ownername;
-    // gfx are for losers. I like unicode.
-    timeagoView.text = [@"⌚" stringByAppendingString:self.photo.ago];
-    placeView.text = self.photo.placename;
+
+    if (self.photo.hasLocation) {
+        self.photoLocation = self.photo.placename;
+        [[PhotoLocationManager sharedPhotoLocationManager] getLocationForPhoto:photo and:^(NSString* name){
+            if (name) {
+                self.photoLocation = name;
+                [self updateHTML];
+            }
+        }];
+
+    }
+
     titleView.text = self.photo.title;
-    
-    if (self.photo.html) {
-        NSString *htmlFile = [[NSBundle mainBundle] pathForResource:@"StreamPhotoViewController" ofType:@"html" inDirectory:nil];
-        NSString *html = [NSString stringWithContentsOfFile:htmlFile encoding:NSUTF8StringEncoding error:nil];
-        NSURL *baseURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
-        [descView loadHTMLString:[NSString stringWithFormat:@"%@ %@", html, self.photo.html] baseURL:baseURL];
-    }
-    
-    int vis = self.photo.visibility;
-    if (vis == StreamPhotoVisibilityPrivate) {
-        visibilityView.text = @"private";
-        visibilityView.textColor = [UIColor colorWithRed:0.5 green:0 blue:0 alpha:1];
-    } else if (vis == StreamPhotoVisibilityLimited) {
-        visibilityView.text = @"limited";
-        visibilityView.textColor = [UIColor colorWithRed:0.7 green:0.7 blue:0 alpha:1];
-    } else if (vis == StreamPhotoVisibilityPublic) {
-        visibilityView.text = @"public";
-        visibilityView.textColor = [UIColor colorWithRed:0 green:0.5 blue:0 alpha:1];
-    }
-    
+    [self updateHTML];
     [photoView loadURL:self.photo.imageURL];
     [avatarView loadURL:self.photo.avatarURL];
     
@@ -83,6 +74,8 @@
     if (self.photo.hasLocation) {
         y = [self flow:mapView from:y resize:NO];
         [mapView loadURL:self.photo.mapImageURL];
+    } else {
+        mapView.frame = CGRectMake(0, 0, 0, 0);
     }
 
     y = [self flow:descView from:y resize:YES];
@@ -93,6 +86,45 @@
     [scrollView addSubview:theView];
     scrollView.contentSize = CGSizeMake(theView.frame.size.width, y);
     scrollView.alwaysBounceVertical = YES;
+}
+
+-(void)updateHTML;
+{
+    // beginning to want an actual templating language here. :-)
+    
+    // Load common HTML heading. TODO - maybe cache as static string, it's a little
+    // wasteful to load this all the time?
+    NSString *htmlFile = [[NSBundle mainBundle] pathForResource:@"StreamPhotoViewController" ofType:@"html" inDirectory:nil];
+    NSString *html = [NSString stringWithContentsOfFile:htmlFile encoding:NSUTF8StringEncoding error:nil];
+    
+    // Visibility
+    NSString *visClass = @"public";
+    NSString *visName = @"public";
+    if (self.photo.visibility == StreamPhotoVisibilityPrivate) {
+        visClass = @"private";
+        visName = @"private";
+    } else if (self.photo.visibility == StreamPhotoVisibilityLimited) {
+        visClass = @"limited";
+        visName = @"friends and family only";
+    }
+    html = [html stringByAppendingFormat:@"<p class='%@'>Photo is %@.</p>", visClass, visName];
+
+    // Time ago
+    html = [html stringByAppendingFormat:@"<p class='timeago'>Taken %@ ago", self.photo.ago];
+
+    // location (in same paragraph)
+    if (self.photo.hasLocation) {
+        html = [html stringByAppendingFormat:@", in <a href='%@'>%@</a>", self.photo.mapPageURL, self.photoLocation]; // TODO - html escape!
+    }
+    html = [html stringByAppendingString:@".</p>"];
+
+    // description
+    if (self.photo.html) {
+        html = [html stringByAppendingFormat:@"<p class='description'>%@</p>", self.photo.html];
+    }
+
+    NSURL *baseURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
+    [descView loadHTMLString:html baseURL:baseURL];
 }
 
 // open links in the webview using the system browser
@@ -124,9 +156,10 @@
     } else if ([hit isEqual:avatarView]) {
         UserStreamManager *manager = [[UserStreamManager alloc] initWithUser:photo.ownerId];
         StreamViewController *userController = [[StreamViewController alloc] initWithPhotoStreamManager:manager];
+        [manager release];
         userController.title = photo.ownername;
         [self.navigationController pushViewController:userController animated:YES];
-
+        [userController release];
     }
     
 }

@@ -98,7 +98,6 @@
 {
     NSLog(@"new photos");
 	[self.tableView reloadData];
-    [self stopLoading];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath

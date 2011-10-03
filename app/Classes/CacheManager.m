@@ -31,7 +31,7 @@ extern const NSUInteger kMaxDiskCacheSize;
         self.imageRequests = [NSMutableDictionary dictionary];
         
         self.queue = [[[NSOperationQueue alloc] init] autorelease];
-        self.queue.maxConcurrentOperationCount = 3;
+        self.queue.maxConcurrentOperationCount = 2;
         
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
         self.cacheDir = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"imageCache"];
