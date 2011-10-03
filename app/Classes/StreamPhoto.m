@@ -10,6 +10,7 @@
 
 #import "APIKeys.h"
 #import "ObjectiveFlickr.h"
+#import "NSString+HTML.h"
 
 @implementation StreamPhoto
 
@@ -26,6 +27,11 @@
 
 #pragma mark accessors / view utilities
 
+- (NSString*)flickrId;
+{
+    return [self.details valueForKeyPath:@"id"];
+}
+
 - (NSString*)title;
 {
     return [self.details valueForKeyPath:@"title"];
@@ -40,21 +46,7 @@
 - (NSString*)description;
 {
     NSString *raw = [self.details valueForKeyPath:@"description._text"];
-    if (raw == nil) {
-        return nil;
-    }
-    // strip HTML tags and their contents from the response.
-    NSRange r;
-    NSString *s = [[raw copy] autorelease];
-    while ((r = [s rangeOfString:@"<[^>]+>" options:NSRegularExpressionSearch]).location != NSNotFound) {
-        s = [s stringByReplacingCharactersInRange:r withString:@""];
-    }
-    s = [s stringByReplacingOccurrencesOfString:@"&nbsp;" withString:@"&"];
-    s = [s stringByReplacingOccurrencesOfString:@"&quot;" withString:@"\""];
-    s = [s stringByReplacingOccurrencesOfString:@"&gt;" withString:@">"];
-    s = [s stringByReplacingOccurrencesOfString:@"&lt;" withString:@"<"];
-    s = [s stringByReplacingOccurrencesOfString:@"&amp;" withString:@"&"]; // MUST BE LAST
-    return s;
+    return [raw stringByConvertingHTMLToPlainText];
 }
 
 
@@ -195,7 +187,6 @@
     }
     return StreamPhotoVisibilityPrivate;
 }
-
 
 -(CGFloat)imageHeightForWidth:(CGFloat)width;
 {

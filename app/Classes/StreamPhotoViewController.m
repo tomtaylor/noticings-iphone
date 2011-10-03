@@ -19,7 +19,7 @@
 
 @implementation StreamPhotoViewController
 
-@synthesize photo, streamManager, photoLocation, webView;
+@synthesize photo, streamManager, photoLocation, webView, comments;
 
 -(id)init;
 {
@@ -37,6 +37,7 @@
     self.webView = [[[UIWebView alloc] initWithFrame:self.view.bounds] autorelease];
     self.webView.delegate = self;
     self.webView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    self.comments = nil;
     self.view.autoresizesSubviews = YES;
     [self.view addSubview:self.webView];
 }
@@ -46,6 +47,7 @@
     self.photo = _photo;
     self.title = self.photo.title; // for nav controller
     
+    // load the location of this photo on a map
     if (self.photo.hasLocation) {
         self.photoLocation = self.photo.placename;
         [[PhotoLocationManager sharedPhotoLocationManager] getLocationForPhoto:photo and:^(NSString* name){
@@ -56,9 +58,26 @@
         }];
     }
     
+    // load comments
+    NSDictionary *args = [NSDictionary dictionaryWithObjectsAndKeys:
+                          self.photo.flickrId, @"photo_id",
+                          nil];
+    [[DeferredFlickrCallManager sharedDeferredFlickrCallManager]
+    callFlickrMethod:@"flickr.photos.comments.getList"
+    withArgs:args
+    andThen:^(NSDictionary* rsp){
+        self.comments = [rsp valueForKeyPath:@"comments.comment"];
+        if (!self.comments) {
+            self.comments = [NSArray array];
+        }
+        [self updateHTML];
+    }
+    orFail:nil];
+    
+    // load images, on the off-change we haven't got them already.
     [[CacheManager sharedCacheManager] fetchImageForURL:photo.imageURL andNotify:self];
-
     if (self.photo.hasLocation) {
+        // TODO - this wants to be in a different queue from the main flickr image loading queue
         [[CacheManager sharedCacheManager] fetchImageForURL:photo.mapImageURL andNotify:self];
     }
 
@@ -67,7 +86,6 @@
 
 -(void)loadedImage:(UIImage *)image cached:(BOOL)cached;
 {
-    NSLog(@"loaded image");
     [self updateHTML];
 }
 
@@ -85,13 +103,16 @@
     
     NSString *html = @"";
     
-    html = [html stringByAppendingFormat:@"<a href='noticings-image:nil'><img class='image' src='%@'></a>", [cacheManager urlToFilename:photo.imageURL]];
+    html = [html stringByAppendingFormat:@"<a href='noticings-image:'><img class='image' src='%@'></a>", [cacheManager urlToFilename:photo.imageURL]];
 
-    html = [html stringByAppendingFormat:@"<a href='noticings-user:nil'><img class='avatar' src='%@'></a>", [cacheManager urlToFilename:photo.avatarURL]];
+    html = [html stringByAppendingFormat:@"<a href='noticings-user:'><img class='avatar' src='%@'></a>", [cacheManager urlToFilename:photo.avatarURL]];
 
     html = [html stringByAppendingFormat:@"<p class='title'>%@</p>", [photo.title stringByEncodingHTMLEntities]];
 
-    html = [html stringByAppendingFormat:@"<p class='owner'>by <a href='noticings-user:nil'>%@</a></p>", [photo.ownername stringByEncodingHTMLEntities]];
+    html = [html stringByAppendingFormat:@"<p class='owner'>by <a href='noticings-user:'>%@</a></p>", [photo.ownername stringByEncodingHTMLEntities]];
+
+    html = [html stringByAppendingString:@"</p><div style='clear: both'></div>"];
+    
 
     // Visibility
     NSString *visClass = @"public";
@@ -103,24 +124,47 @@
         visClass = @"limited";
         visName = @"friends and family only";
     }
-    html = [html stringByAppendingFormat:@"<p class='%@'>Photo is %@.</p>", visClass, visName];
-
-    html = [html stringByAppendingString:@"<div style='clear: both'></div>"];
+    html = [html stringByAppendingFormat:@"<p class='header'>Photo is <span class='%@'>%@</span>. ", visClass, visName];
 
     // Time ago
-    html = [html stringByAppendingFormat:@"<p class='timeago'>Taken %@ ago", [self.photo.ago stringByEncodingHTMLEntities]];
+    html = [html stringByAppendingFormat:@"Taken %@ ago", [self.photo.ago stringByEncodingHTMLEntities]];
 
     // location (in same paragraph)
     if (self.photo.hasLocation) {
-        html = [html stringByAppendingFormat:@", in <a href='noticings-map:nil'>%@</a>:</p>", [self.photoLocation stringByEncodingHTMLEntities]];
-        html = [html stringByAppendingFormat:@"<a href='noticings-map:nil'><img class='map' src='%@'></a>", [cacheManager urlToFilename:photo.mapImageURL]];
+        html = [html stringByAppendingFormat:@", in <a href='noticings-map:'>%@</a>: ", [self.photoLocation stringByEncodingHTMLEntities]];
     } else {
-        html = [html stringByAppendingString:@".</p>"];
+        html = [html stringByAppendingString:@". "];
     }
+
+    html = [html stringByAppendingString:@"</p>"];
+
+    if (self.photo.hasLocation) {
+        html = [html stringByAppendingFormat:@"<a href='noticings-map:'><img class='map' src='%@'></a>", [cacheManager urlToFilename:photo.mapImageURL]];
+    }    
+
 
     // description
     if (self.photo.html) {
         html = [html stringByAppendingFormat:@"<p class='description'>%@</p>", self.photo.html];
+    }
+    
+    if (self.comments) {
+        if (self.comments.count > 0) {
+            html = [html stringByAppendingFormat:@"<p class='comments'>Comments:</p>"];
+            for (NSDictionary *comment in self.comments) {
+                // assume comment body is safe
+                html = [html stringByAppendingFormat:@"<p class='comment'><a class='author' href='noticings-user:%@:%@'>%@</a>: %@</p>",
+                        [[comment valueForKeyPath:@"author"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
+                        [[comment valueForKeyPath:@"authorname"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
+                        [[comment valueForKeyPath:@"authorname"] stringByEncodingHTMLEntities],
+                        [comment valueForKeyPath:@"_text"]
+                ];
+            }
+        } else {
+            //html = [html stringByAppendingFormat:@"<p class='comments'>No comments.</p>"];
+        }
+    } else {
+        html = [html stringByAppendingFormat:@"<p class='comments'>Loading comments...</p>"];
     }
 
     NSURL *baseURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
@@ -129,7 +173,6 @@
 
 // open links in the webview using the system browser
 -(BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
-    NSLog(@"should start load %@", request);
     if (navigationType == UIWebViewNavigationTypeLinkClicked) {
 
         if ([request.URL.scheme isEqualToString:@"noticings-image"]) {
@@ -147,10 +190,21 @@
             return false;
 
         } else if ([request.URL.scheme isEqualToString:@"noticings-user"]) {
-            UserStreamManager *manager = [[UserStreamManager alloc] initWithUser:photo.ownerId];
+            NSArray *list = [request.URL.absoluteString componentsSeparatedByString:@":"];
+            
+            UserStreamManager *manager;
+            if (list.count > 2) {
+                manager = [[UserStreamManager alloc] initWithUser:[list objectAtIndex:1]];
+            } else {
+                manager = [[UserStreamManager alloc] initWithUser:photo.ownerId];
+            }
             StreamViewController *userController = [[StreamViewController alloc] initWithPhotoStreamManager:manager];
             [manager release];
-            userController.title = photo.ownername;
+            if (list.count > 2) {
+                userController.title = [list objectAtIndex:2];
+            } else {
+                userController.title = photo.ownername;
+            }
             [self.navigationController pushViewController:userController animated:YES];
             [userController release];
             return false;
@@ -159,23 +213,8 @@
         [[UIApplication sharedApplication] openURL:request.URL];
         return false;
     }
-    NSLog(@"allowing through load request %@", request);
     return true;
 }
-
-//- (void)tapPhoto:(UIGestureRecognizer*)tap;
-//{
-//    CGPoint tapPoint = [tap locationInView:self.view];
-//    UIView *hit = [self.view hitTest:tapPoint withEvent:nil];
-//
-//    if ([hit isEqual:photoView]) {
-//
-//    } else if ([hit isEqual:mapView]) {
-//
-//    } else if ([hit isEqual:avatarView]) {
-//    }
-//    
-//}
 
 - (void)didReceiveMemoryWarning
 {
@@ -189,7 +228,6 @@
     [super viewDidUnload];
     self.webView.delegate = nil;
     self.webView = nil;
-    
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -204,6 +242,11 @@
         self.webView.delegate = nil;
     }
     self.webView = nil;
+    self.comments = nil;
+    self.photoLocation = nil;
+    self.streamManager = nil;
+    self.photo = nil;
+    
     [super dealloc];
 }
 
