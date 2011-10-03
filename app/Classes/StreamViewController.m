@@ -208,7 +208,7 @@
     if (photo) {
 
         static NSString *MyIdentifier = @"StreamPhotoViewCell";
-        StreamPhotoViewCell *cell = [tableView dequeueReusableCellWithIdentifier:MyIdentifier];
+        StreamPhotoViewCell *cell = (StreamPhotoViewCell *)[tableView dequeueReusableCellWithIdentifier:MyIdentifier];
         if (cell == nil) {
             [[NSBundle mainBundle] loadNibNamed:@"StreamPhotoViewCell" owner:self options:nil];
             cell = photoViewCell;
