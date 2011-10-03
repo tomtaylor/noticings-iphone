@@ -18,13 +18,16 @@
 
 -(void)viewDidLoad;
 {
-    self.scrollView = [[[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, 320, 480)] autorelease];
+    self.scrollView = [[[UIScrollView alloc] initWithFrame:self.view.bounds] autorelease];
     self.scrollView.backgroundColor = [UIColor blackColor];
     self.scrollView.minimumZoomScale = 1;
     self.scrollView.maximumZoomScale = 20;
     self.scrollView.delegate = self;
     self.scrollView.bouncesZoom = YES;
     self.scrollView.bounces = YES;
+    
+    self.scrollView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    self.view.autoresizesSubviews = YES;
 
     self.imageView = [[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 1024, 1024 * (480.0f/320))] autorelease];
     self.imageView.contentMode = UIViewContentModeScaleAspectFit;

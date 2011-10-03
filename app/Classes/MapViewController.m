@@ -18,9 +18,12 @@
 
 -(void)viewDidLoad;
 {
-    self.mapView = [[[MKMapView alloc] initWithFrame:CGRectMake(0, 0, 320, 480)] autorelease];
+    self.mapView = [[[MKMapView alloc] initWithFrame:self.view.bounds] autorelease];
     self.mapView.delegate = self;
     self.mapView.showsUserLocation = YES; // sure, why the hell not.
+
+    self.mapView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    self.view.autoresizesSubviews = YES;
 
     UIBarButtonItem *externalItem = [[UIBarButtonItem alloc] 
                                      initWithBarButtonSystemItem:UIBarButtonSystemItemAction

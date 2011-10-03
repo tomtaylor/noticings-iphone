@@ -34,9 +34,10 @@
 
 -(void)viewDidLoad;
 {
-    self.webView = [[[UIWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 370)] autorelease];
-    self.webView.scalesPageToFit = NO;
+    self.webView = [[[UIWebView alloc] initWithFrame:self.view.bounds] autorelease];
     self.webView.delegate = self;
+    self.webView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    self.view.autoresizesSubviews = YES;
     [self.view addSubview:self.webView];
 }
 
@@ -111,7 +112,7 @@
 
     // location (in same paragraph)
     if (self.photo.hasLocation) {
-        html = [html stringByAppendingFormat:@", in <a href='%@'>%@</a>:</p>", self.photo.mapPageURL, [self.photoLocation stringByEncodingHTMLEntities]];
+        html = [html stringByAppendingFormat:@", in <a href='noticings-map:nil'>%@</a>:</p>", [self.photoLocation stringByEncodingHTMLEntities]];
         html = [html stringByAppendingFormat:@"<a href='noticings-map:nil'><img class='map' src='%@'></a>", [cacheManager urlToFilename:photo.mapImageURL]];
     } else {
         html = [html stringByAppendingString:@".</p>"];
