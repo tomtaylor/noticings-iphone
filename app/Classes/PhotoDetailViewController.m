@@ -20,13 +20,13 @@
 
 - (id)initWithStyle:(UITableViewStyle)style {
     if (self = [super initWithStyle:style]) {
-		self.photoTitleCell = [[[EditableTextFieldCell alloc] initWithFrame:CGRectZero 
+		self.photoTitleCell = [[[EditableTextFieldCell alloc] initWithStyle:UITableViewCellStyleDefault
 															 reuseIdentifier:nil] autorelease];
 		self.photoTitleCell.textField.delegate = self;
 		self.photoTitleCell.textField.tag = PhotoTitle;
 		self.photoTitleCell.textField.returnKeyType = UIReturnKeyNext;
 		
-		self.photoTagsCell = [[[EditableTextFieldCell alloc] initWithFrame:CGRectZero 
+		self.photoTagsCell = [[[EditableTextFieldCell alloc] initWithStyle:UITableViewCellStyleDefault 
 														reuseIdentifier:nil] autorelease];
 		self.photoTagsCell.textField.delegate = self;
 		self.photoTagsCell.textField.tag = PhotoTags;
