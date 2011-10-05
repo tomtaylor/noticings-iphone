@@ -204,6 +204,13 @@ extern const NSUInteger kMaxDiskCacheSize;
     }
 }
 
+- (void)flushQueue;
+{
+    // call this when we don't care about the contents of the queue any more.
+    [self.queue cancelAllOperations];
+    // leave the listeners, though.
+}
+
 - (void)dealloc
 {
     [self.queue cancelAllOperations];

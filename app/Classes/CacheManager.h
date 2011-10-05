@@ -21,6 +21,7 @@
 -(NSString*) cachePathForFilename:(NSString*)filename;
 - (void)fetchImageForURL:(NSURL*)url withQueue:(NSOperationQueue*)customQueue andNotify:(NSObject <DeferredImageLoader>*)sender;
 - (void) flushMemoryCache;
+- (void)flushQueue;
 -(NSString*) urlToFilename:(NSURL*)url;
 
 @property (retain) NSString *cacheDir;

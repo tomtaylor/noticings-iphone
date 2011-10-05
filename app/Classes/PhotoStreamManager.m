@@ -149,6 +149,8 @@
         [self.photos addObject:photo];
     }
     [archived release];
+
+    [self precache];
     
     self.lastRefresh = [archivedLastRefresh doubleValue];
     [archivedLastRefresh release];
@@ -173,7 +175,17 @@
     [data release];
 }
 
-
+-(void)precache;
+{
+    // pre-cache images
+    CacheManager *cacheManager = [CacheManager sharedCacheManager];
+    
+    for (StreamPhoto *sp in self.photos) {
+        [cacheManager fetchImageForURL:sp.avatarURL withQueue:nil andNotify:nil];
+        [cacheManager fetchImageForURL:sp.imageURL withQueue:nil andNotify:nil];
+    }
+    
+}
 
 
 #pragma mark Flickr delegate methods
@@ -183,17 +195,13 @@
 {
     NSLog(@"completed flickr request");
     
-    CacheManager *cacheManager = [CacheManager sharedCacheManager];
-
     [self.photos removeAllObjects];
     for (NSDictionary *photo in [inResponseDictionary valueForKeyPath:@"photos.photo"]) {
         StreamPhoto *sp = [[StreamPhoto alloc] initWithDictionary:photo];
         [self.photos addObject:sp];
-        // pre-cache images
-        [cacheManager fetchImageForURL:sp.avatarURL withQueue:nil andNotify:nil];
-        [cacheManager fetchImageForURL:sp.imageURL withQueue:nil andNotify:nil];
         [sp release];
     }
+    [self precache];
     
     self.lastRefresh = [[NSDate date] timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970;
     self.inProgress = NO;

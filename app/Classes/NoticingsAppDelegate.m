@@ -12,6 +12,7 @@
 #import "ContactsStreamManager.h"
 #import "CacheManager.h"
 #import <ImageIO/ImageIO.h>
+#import "StreamViewController.h"
 
 #ifdef DEBUG
 #import "TestFlight.h"
@@ -24,6 +25,7 @@
 @synthesize tabBarController;
 @synthesize dummyViewController;
 @synthesize cameraController;
+@synthesize streamNavigationController;
 
 BOOL gLogging = FALSE;
 
@@ -155,6 +157,26 @@ BOOL gLogging = FALSE;
 - (void)applicationWillTerminate:(UIApplication *)application {
 	//[uploadQueueManager saveQueuedUploads];
 	[UIApplication sharedApplication].applicationIconBadgeNumber = [uploadQueueManager.photoUploads count];
+}
+
+#pragma mark -
+#pragma UINavigationControllerDelegate methods
+- (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated;
+{
+    if ([navigationController isEqual:self.streamNavigationController]) {
+        // whenever we push something new into the photostream view, abandon whatever we're currently trying to load.
+        [[CacheManager sharedCacheManager] flushQueue];
+
+        // and if we just pushed a photostream, force a pre-cache of it. This goes for
+        // when we go back up a level as well, bcause we'll have abandoned the precache
+        // by navigating off it.
+        // TODO - don't violate demeter here - call something on the VC, so the single-page-photo
+        // VC can also do something sensible.
+        if ([viewController.class isEqual:StreamViewController.class]) {
+            StreamViewController *svc = (StreamViewController*)viewController;
+            [svc.streamManager precache];
+        }
+    }
 }
 
 #pragma mark -

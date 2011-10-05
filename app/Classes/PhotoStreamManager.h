@@ -27,6 +27,8 @@
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didCompleteWithResponse:(NSDictionary *)inResponseDictionary;
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didFailWithError:(NSError *)inError;
 
+-(void)precache;
+
 -(void)loadCachedImageList;
 -(void)saveCachedImageList;
 
