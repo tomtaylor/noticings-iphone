@@ -13,7 +13,6 @@
 @interface ImageViewController : UIViewController <DeferredImageLoader, UIScrollViewDelegate>
 
 -(void)displayPhoto:(StreamPhoto*)photo;
--(void)loadedImage:(UIImage *)image cached:(BOOL)cached;
 
 @property (retain) StreamPhoto *photo;
 @property (retain) UIScrollView *scrollView;

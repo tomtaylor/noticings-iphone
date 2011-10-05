@@ -77,9 +77,9 @@
     }];
 }
 
--(void)loadedImage:(UIImage *)image cached:(BOOL)cached;
+-(void)loadedImage:(UIImage *)image forURL:(NSURL*)url cached:(BOOL)cached;
 {
-    NSLog(@"Loaded image %fx%f", image.size.width, image.size.height);
+    NSLog(@"Loaded image %fx%f from %@", image.size.width, image.size.height, url);
     
     if (self.imageView.image) {
         // image is already loaded. is this onr better?

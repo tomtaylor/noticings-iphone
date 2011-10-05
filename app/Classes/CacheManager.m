@@ -150,7 +150,7 @@ extern const NSUInteger kMaxDiskCacheSize;
             // in theory, we should defer this till after the fetchImage call is done. in
             // practice, we want the cached version of the image returned before the 
             // runloop gets a look-in, to avoid flickers of white.
-            [sender loadedImage:image cached:YES];
+            [sender loadedImage:image forURL:url cached:YES];
         }
         return;
     }
@@ -183,7 +183,7 @@ extern const NSUInteger kMaxDiskCacheSize;
         NSMutableArray* listeners = [self.imageRequests objectForKey:key];
         if (listeners) {
             for (NSObject <DeferredImageLoader>* sender in listeners) {
-                [sender loadedImage:image cached:NO];
+                [sender loadedImage:image forURL:url cached:NO];
             }
         }
         [self.imageRequests removeObjectForKey:key];

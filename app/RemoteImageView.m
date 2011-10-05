@@ -33,8 +33,13 @@
     [manager fetchImageForURL:loadUrl andNotify:self];
 }
 
-- (void)loadedImage:(UIImage *)image cached:(BOOL)cached;
+- (void)loadedImage:(UIImage *)image forURL:(NSURL*)loadedUrl cached:(BOOL)cached;
 {
+    if (![self.url isEqual:loadedUrl]) {
+        NSLog(@"wrong image");
+        return;
+    }
+
     if (self.image) {
         NSLog(@"image already set!");
     } else if (cached) {

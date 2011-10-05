@@ -11,7 +11,7 @@
 // protocol for delegates of loadImagefetchImageForURL:andNotify:
 @protocol DeferredImageLoader <NSObject>
 @required
--(void) loadedImage:(UIImage*)image cached:(BOOL)cached;
+-(void) loadedImage:(UIImage*)image forURL:(NSURL*)url cached:(BOOL)cached;
 @end
 
 @interface CacheManager : NSObject

@@ -103,7 +103,7 @@
     [self updateHTML];
 }
 
--(void)loadedImage:(UIImage *)image cached:(BOOL)cached;
+-(void)loadedImage:(UIImage *)image forURL:(NSURL*)url cached:(BOOL)cached;
 {
     [self updateHTML];
 }
