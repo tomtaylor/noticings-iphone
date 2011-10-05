@@ -129,7 +129,7 @@
 - (NSURL*) avatarURL;
 {
     NSString *avatarUrl;
-    if ([self.details objectForKey:@"iconserver"]) {
+    if ([self.details objectForKey:@"iconserver"] && ![[self.details objectForKey:@"iconserver"] isEqual:@"0"]) {
         avatarUrl = [NSString stringWithFormat:@"http://farm%@.static.flickr.com/%@/buddyicons/%@.jpg",
                      [self.details objectForKey:@"iconfarm"],
                      [self.details objectForKey:@"iconserver"],
