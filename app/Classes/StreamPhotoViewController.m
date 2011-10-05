@@ -17,6 +17,7 @@
 #import "TagStreamManager.h"
 
 #import "NSString+HTML.h"
+#import "NSString+URI.h"
 
 @implementation StreamPhotoViewController
 
@@ -171,7 +172,7 @@
         
         for (NSString *tag in self.photo.tags) {
             html = [html stringByAppendingFormat:@"<a class='tag' href='noticings-tag:%@'>%@</a> ",
-                    [tag stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
+                    [tag stringByEncodingForURI],
                     [tag stringByEncodingHTMLEntities]
             ];
         }
@@ -184,8 +185,8 @@
             for (NSDictionary *comment in self.comments) {
                 // assume comment body is safe
                 html = [html stringByAppendingFormat:@"<p class='comment'><a class='author' href='noticings-user:%@:%@'>%@</a>: %@</p>",
-                        [[comment valueForKeyPath:@"author"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
-                        [[comment valueForKeyPath:@"authorname"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
+                        [[comment valueForKeyPath:@"author"] stringByEncodingForURI],
+                        [[comment valueForKeyPath:@"authorname"] stringByEncodingForURI],
                         [[comment valueForKeyPath:@"authorname"] stringByEncodingHTMLEntities],
                         [comment valueForKeyPath:@"_text"]
                 ];
@@ -199,6 +200,7 @@
         html = [html stringByAppendingFormat:@"<p class='comments'>Loading comments...</p>"];
     }
 
+    // TODO - if it's already loaded, try to not disrupt the scroll position.
     NSURL *baseURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
     [self.webView loadHTMLString:[NSString stringWithFormat:htmlWrapper, html] baseURL:baseURL];
 }
@@ -226,14 +228,16 @@
             
             UserStreamManager *manager;
             if (list.count > 2) {
-                manager = [[UserStreamManager alloc] initWithUser:[list objectAtIndex:1]];
+                NSString *userId = [[list objectAtIndex:1] stringByDecodingFromURI];
+                manager = [[UserStreamManager alloc] initWithUser:userId];
             } else {
                 manager = [[UserStreamManager alloc] initWithUser:photo.ownerId];
             }
             StreamViewController *userController = [[StreamViewController alloc] initWithPhotoStreamManager:manager];
             [manager release];
             if (list.count > 2) {
-                userController.title = [list objectAtIndex:2];
+                NSString *title = [[list objectAtIndex:2] stringByDecodingFromURI];
+                userController.title = title;
             } else {
                 userController.title = photo.ownername;
             }
@@ -247,7 +251,7 @@
             if (list.count < 1) {
                 return false;
             }
-            NSString *tag = [list objectAtIndex:1];
+            NSString *tag = [[list objectAtIndex:1] stringByDecodingFromURI];
             NSLog(@"tapped tag %@", tag);
 
             TagStreamManager *manager = [[TagStreamManager alloc] initWithTag:tag];
