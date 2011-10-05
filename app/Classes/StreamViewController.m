@@ -75,7 +75,6 @@
 
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
-    [streamManager maybeRefresh];
 }
 
 - (void)viewDidUnload
@@ -94,10 +93,39 @@
     
 }
 
+-(void)viewWillAppear:(BOOL)animated;
+{
+    NSLog(@"%@ will appear", self.class);
+    [super viewWillAppear:animated];
+}
+
+-(void)viewDidAppear:(BOOL)animated;
+{
+    [super viewDidAppear:animated];
+    [self.streamManager precache];
+    [self.streamManager maybeRefresh];
+}
+
+-(void)viewWillDisappear:(BOOL)animated;
+{
+    NSLog(@"%@ will disappear", self.class);
+    [[CacheManager sharedCacheManager] flushQueue];
+    [super viewWillDisappear:animated];
+}
+
+
 - (void)newPhotos;
 {
     NSLog(@"new photos");
     [self stopLoading]; // for the pull-to-refresh thing
+
+    // are we the currently-active view controller? Precache if so.
+    if (self.isViewLoaded && self.view.window) {
+        [self.streamManager precache];
+    } else {
+        NSLog(@"Cleverly refusing to precache because I'm not visible.");
+    }
+
 	[self.tableView reloadData];
 }
 
@@ -239,6 +267,9 @@
 
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    return 400.0f;
+    
     UITableViewCell *cell = [self tableView:tableView cellForRowAtIndexPath:indexPath];
     return cell.frame.size.height + 10;
 }
@@ -248,10 +279,8 @@
     StreamPhoto *photo = [self streamPhotoAtIndexPath:indexPath];
     if (!photo) return;
     
-    StreamPhotoViewController *vc = [[StreamPhotoViewController alloc] init];
+    StreamPhotoViewController *vc = [[StreamPhotoViewController alloc] initWithPhoto:photo streamManager:self.streamManager];
     [self.navigationController pushViewController:vc animated:YES];
-    vc.streamManager = self.streamManager;
-    [vc showPhoto:photo];
     [vc release];
 
 }

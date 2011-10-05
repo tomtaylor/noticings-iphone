@@ -140,17 +140,14 @@ extern const NSUInteger kMaxDiskCacheSize;
 
 
 // return an image for the passed url. Will try the cache first.
-- (void)fetchImageForURL:(NSURL*)url withQueue:(NSOperationQueue*)customQueue andNotify:(NSObject <DeferredImageLoader>*)sender;
+- (void)fetchImageForURL:(NSURL*)url andNotify:(NSObject <DeferredImageLoader>*)sender;
 {
     UIImage *image = [self cachedImageForURL:url];
-    if (image) {
+    if (image && sender) {
         // we have a cached version. Send that first. But not till this method is done
-        if (sender) {
-            // in theory, we should defer this till after the fetchImage call is done. in
-            // practice, we want the cached version of the image returned before the 
-            // runloop gets a look-in, to avoid flickers of white.
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
             [sender loadedImage:image forURL:url cached:YES];
-        }
+        }];
         return;
     }
     
@@ -167,14 +164,16 @@ extern const NSUInteger kMaxDiskCacheSize;
         [listeners addObject:sender];
     }
     
-    if (alreadyQueued && !customQueue) {
+    if (alreadyQueued) {
         // if we're making this request on the default queue, stop here, because
         // the image has already been asked for. But custom queues exist so that
         // we can _jump_ the main queue, so ask for it again. This will result in 
         // 2 calls sometimes. Hard to fix that, though.
         return;
     }
-    
+
+    NSLog(@"need to fetch %@ for %@", url, sender.class);
+
     __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
     [request setShouldContinueWhenAppEntersBackground:YES];
     
@@ -197,18 +196,18 @@ extern const NSUInteger kMaxDiskCacheSize;
         [self.imageRequests removeObjectForKey:key];
     }];
     
-    if (customQueue) {
-        [customQueue addOperation:request];
-    } else {
-        [self.queue addOperation:request];
-    }
+    [self.queue addOperation:request];
 }
 
 - (void)flushQueue;
 {
     // call this when we don't care about the contents of the queue any more.
-    [self.queue cancelAllOperations];
-    // leave the listeners, though.
+    for (ASIHTTPRequest *op in self.queue.operations) {
+        if (!op.inProgress) {
+            [op clearDelegatesAndCancel];
+        }
+    }
+    [self.imageRequests removeAllObjects];
 }
 
 - (void)dealloc

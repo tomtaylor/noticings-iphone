@@ -16,6 +16,20 @@
 @synthesize scrollView;
 @synthesize imageView;
 
+-(id)initWithPhoto:(StreamPhoto*)_photo;
+{
+    self = [super initWithNibName:nil bundle:nil];
+    if (self) {
+        self.photo = _photo;
+    }
+    return self;
+}
+
+-(void)loadView;
+{
+    [super loadView];
+}
+
 -(void)viewDidLoad;
 {
     self.scrollView = [[[UIScrollView alloc] initWithFrame:self.view.bounds] autorelease];
@@ -59,24 +73,28 @@
     [[UIApplication sharedApplication] openURL:photo.originalImageURL];
 }
 
--(void)displayPhoto:(StreamPhoto*)_photo;
+-(void)viewWillAppear:(BOOL)animated;
 {
-    self.photo = _photo;
+    NSLog(@"%@ will appear", self.class);
+    [super viewWillAppear:animated];
+
     // ask for the big one first. if it's in the cache, it'll load, and we'll refuse to load
     // the smaller one later. otherwise, the smaller one will almost certainly be either already
     // in the cache, or load faster.
     //
     // Explicitly _don't_ load the original. Some of those are insane, and you're probably using
     // the wrong app if you care about them.
-    //
-    // Defer this to the next iteration of the runloop, so that we have a view
-    // already set up, or the scaling goes squiffy.
-    NSOperationQueue *queue = [NSOperationQueue mainQueue];
-    [queue addOperationWithBlock:^{
-        [[CacheManager sharedCacheManager] fetchImageForURL:self.photo.bigImageURL withQueue:queue andNotify:self];
-        [[CacheManager sharedCacheManager] fetchImageForURL:self.photo.imageURL withQueue:queue andNotify:self];
-    }];
+    [[CacheManager sharedCacheManager] fetchImageForURL:self.photo.bigImageURL andNotify:self];
+    [[CacheManager sharedCacheManager] fetchImageForURL:self.photo.imageURL andNotify:self];
 }
+
+-(void)viewWillDisappear:(BOOL)animated;
+{
+    NSLog(@"%@ will disappear", self.class);
+    [[CacheManager sharedCacheManager] flushQueue];
+    [super viewWillDisappear:animated];
+}
+
 
 -(void)loadedImage:(UIImage *)image forURL:(NSURL*)url cached:(BOOL)cached;
 {

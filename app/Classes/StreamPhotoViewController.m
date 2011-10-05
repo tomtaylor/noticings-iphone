@@ -21,11 +21,16 @@
 
 @implementation StreamPhotoViewController
 
-@synthesize photo, streamManager, photoLocation, webView, comments, commentsError, queue;
+@synthesize photo, streamManager, photoLocation, webView, comments, commentsError;
 
--(id)init;
+-(id)initWithPhoto:(StreamPhoto*)_photo streamManager:(PhotoStreamManager*)_streamManager;
 {
     self = [super initWithNibName:nil bundle:nil];
+    if (self) {
+        self.photo = _photo;
+        self.streamManager = _streamManager;
+        self.title = self.photo.title; // for nav controller
+    }
     return self;
 }
 
@@ -58,13 +63,18 @@
     [[UIApplication sharedApplication] openURL:photo.mobilePageURL];
 }
 
--(void)showPhoto:(StreamPhoto*)_photo;
+- (void)viewWillAppear:(BOOL)animated;
 {
-    self.photo = _photo;
-    self.title = self.photo.title; // for nav controller
-    
-    // load the location of this photo on a map
+    NSLog(@"%@ will appear", self.class);
+    [super viewWillAppear:animated];
+
+    // load images, on the off-change we haven't got them already.
+    [[CacheManager sharedCacheManager] fetchImageForURL:self.photo.imageURL andNotify:self];
+    [[CacheManager sharedCacheManager] fetchImageForURL:self.photo.avatarURL andNotify:self];
+
     if (self.photo.hasLocation) {
+        [[CacheManager sharedCacheManager] fetchImageForURL:self.photo.mapImageURL andNotify:self];
+
         self.photoLocation = self.photo.placename;
         [[PhotoLocationManager sharedPhotoLocationManager] getLocationForPhoto:photo and:^(NSString* name){
             if (name) {
@@ -78,37 +88,36 @@
     NSDictionary *args = [NSDictionary dictionaryWithObjectsAndKeys:
                           self.photo.flickrId, @"photo_id",
                           nil];
+
     [[DeferredFlickrCallManager sharedDeferredFlickrCallManager]
-    callFlickrMethod:@"flickr.photos.comments.getList"
-    withArgs:args
-    andThen:^(NSDictionary* rsp){
-        self.comments = [rsp valueForKeyPath:@"comments.comment"];
-        if (!self.comments) {
-            self.comments = [NSArray array];
-        }
-        [self updateHTML];
-    }
-    orFail:^(NSString* code, NSString *err){
-        self.commentsError = YES;
-        self.comments = nil;
-    }];
-    
-    // load images, on the off-change we haven't got them already.
-    // We use our own queue, so we can load the images for this page faster, without blocking on
-    // loading all the images currently in the queue.
-    self.queue = [[[NSOperationQueue alloc] init] autorelease];
-    self.queue.maxConcurrentOperationCount = 2;
-    [[CacheManager sharedCacheManager] fetchImageForURL:photo.imageURL withQueue:self.queue andNotify:self];
-    [[CacheManager sharedCacheManager] fetchImageForURL:photo.avatarURL withQueue:self.queue andNotify:self];
-    if (self.photo.hasLocation) {
-        [[CacheManager sharedCacheManager] fetchImageForURL:photo.mapImageURL withQueue:self.queue andNotify:self];
-    }
+     callFlickrMethod:@"flickr.photos.comments.getList"
+     withArgs:args
+     andThen:^(NSDictionary* rsp){
+         self.comments = [rsp valueForKeyPath:@"comments.comment"];
+         if (!self.comments) {
+             self.comments = [NSArray array];
+         }
+         [self updateHTML];
+     }
+     orFail:^(NSString* code, NSString *err){
+         self.commentsError = YES;
+         self.comments = nil;
+         [self updateHTML];
+     }];
 
     [self updateHTML];
 }
 
+-(void)viewWillDisappear:(BOOL)animated;
+{
+    NSLog(@"%@ will disappear", self.class);
+    [[CacheManager sharedCacheManager] flushQueue];
+    [super viewWillDisappear:animated];
+}
+
 -(void)loadedImage:(UIImage *)image forURL:(NSURL*)url cached:(BOOL)cached;
 {
+    NSLog(@"%@ has loaded an image!", self.class);
     [self updateHTML];
 }
 
@@ -211,6 +220,8 @@
     } else {
         html = [html stringByAppendingFormat:@"<p class='comments'>Loading comments...</p>"];
     }
+    html = [html stringByAppendingFormat:@"<p class='add-comment'><a href='noticings-comment:'>Add comment</a></p>"];
+    
 
     // TODO - if it's already loaded, try to not disrupt the scroll position.
     NSURL *baseURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
@@ -222,9 +233,8 @@
     if (navigationType == UIWebViewNavigationTypeLinkClicked) {
 
         if ([request.URL.scheme isEqualToString:@"noticings-image"]) {
-            ImageViewController *imageViewController = [[ImageViewController alloc] init];
+            ImageViewController *imageViewController = [[ImageViewController alloc] initWithPhoto:self.photo];
             [self.navigationController pushViewController:imageViewController animated:YES];
-            [imageViewController displayPhoto:self.photo];
             [imageViewController release];
             return false;
 
@@ -273,6 +283,15 @@
             [self.navigationController pushViewController:svc animated:YES];
             [svc release];
             return false;
+
+        } else if ([request.URL.scheme isEqualToString:@"noticings-comment"]) {
+            // TODO
+            UIViewController *commentController = [[UIViewController alloc] initWithNibName:nil bundle:nil];
+            commentController.title = @"Add comment";
+            [self.navigationController pushViewController:commentController animated:YES];
+            [commentController release];
+            return false;
+
         }
 
         [[UIApplication sharedApplication] openURL:request.URL];
@@ -311,8 +330,6 @@
     self.photoLocation = nil;
     self.streamManager = nil;
     self.photo = nil;
-    [self.queue cancelAllOperations];
-    self.queue = nil;
     [super dealloc];
 }
 

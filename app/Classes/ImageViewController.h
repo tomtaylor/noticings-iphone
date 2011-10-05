@@ -12,7 +12,7 @@
 
 @interface ImageViewController : UIViewController <DeferredImageLoader, UIScrollViewDelegate>
 
--(void)displayPhoto:(StreamPhoto*)photo;
+-(id)initWithPhoto:(StreamPhoto*)photo;
 
 @property (retain) StreamPhoto *photo;
 @property (retain) UIScrollView *scrollView;

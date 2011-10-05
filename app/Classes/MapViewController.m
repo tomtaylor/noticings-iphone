@@ -53,6 +53,19 @@
     [self performSelector:@selector(selectMainPhoto:) withObject:self.photo afterDelay:1.2];
 }
 
+-(void)viewWillAppear:(BOOL)animated;
+{
+    NSLog(@"%@ will appear", self.class);
+    [super viewWillAppear:animated];
+}
+
+-(void)viewWillDisappear:(BOOL)animated;
+{
+    NSLog(@"%@ will disappear", self.class);
+    [[CacheManager sharedCacheManager] flushQueue];
+    [super viewWillDisappear:animated];
+}
+
 -(void)selectMainPhoto:(StreamPhoto*)p;
 {
     [self.mapView selectAnnotation:self.photo animated:YES];
@@ -87,10 +100,8 @@
 {
     if (aView.annotation.class == StreamPhoto.class) {
         StreamPhoto *_photo = (StreamPhoto*)aView.annotation;
-        StreamPhotoViewController *vc = [[StreamPhotoViewController alloc] init];
+        StreamPhotoViewController *vc = [[StreamPhotoViewController alloc] initWithPhoto:_photo streamManager:streamManager];
         [self.navigationController pushViewController:vc animated:YES];
-        vc.streamManager = self.streamManager;
-        [vc showPhoto:_photo];
         [vc release];
     }
 }

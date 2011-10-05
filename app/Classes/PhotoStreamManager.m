@@ -177,12 +177,14 @@
 
 -(void)precache;
 {
+    NSLog(@"pre-caching images for %@", self.class);
+
     // pre-cache images
     CacheManager *cacheManager = [CacheManager sharedCacheManager];
     
     for (StreamPhoto *sp in self.photos) {
-        [cacheManager fetchImageForURL:sp.avatarURL withQueue:nil andNotify:nil];
-        [cacheManager fetchImageForURL:sp.imageURL withQueue:nil andNotify:nil];
+        [cacheManager fetchImageForURL:sp.avatarURL andNotify:nil];
+        [cacheManager fetchImageForURL:sp.imageURL andNotify:nil];
     }
     
 }
@@ -201,7 +203,6 @@
         [self.photos addObject:sp];
         [sp release];
     }
-    [self precache];
     
     self.lastRefresh = [[NSDate date] timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970;
     self.inProgress = NO;

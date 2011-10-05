@@ -48,15 +48,12 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(DeferredFlickrCallManager);
 
     NSString* token = [[NSUserDefaults standardUserDefaults] stringForKey:@"authToken"];
     if (token) {
-        NSLog(@"connecting to flickr with token %@", token);
         [apiContext setAuthToken:token];
     }
 
     NSMutableDictionary *newArgs = args ? [NSMutableDictionary dictionaryWithDictionary:args] : [NSMutableDictionary dictionary];
 	[newArgs setObject:method forKey:@"method"];	
-    NSLog(@"args are %@", newArgs);
 	NSString *arguments = [apiContext signedQueryFromArguments:newArgs]; // private method
-    NSLog(@"signed args are %@", arguments);
     NSURL *endpoint = [NSURL URLWithString:[apiContext RESTAPIEndpoint]];
     [apiContext release];
     
@@ -70,7 +67,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(DeferredFlickrCallManager);
     //[request setPostBody:[NSMutableData dataWithData:postData]];
     
     [request setCompletionBlock:^{
-        NSLog(@"got response calling %@", method);
+        //NSLog(@"got response to %@", method);
         NSDictionary *responseDictionary = [OFXMLMapper dictionaryMappedFromXMLData:[request responseData]];	
         NSDictionary *rsp = [responseDictionary objectForKey:@"rsp"];
         NSString *stat = [rsp objectForKey:@"stat"];
@@ -98,7 +95,6 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(DeferredFlickrCallManager);
         }
     }];
     
-    NSLog(@"Queueing %@", request);
     [self.queue addOperation:request];
     
     

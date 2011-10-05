@@ -16,7 +16,7 @@
 @interface StreamPhotoViewController : UIViewController <UIWebViewDelegate, DeferredImageLoader> {
 }
 
--(void)showPhoto:(StreamPhoto*)_photo;
+-(id)initWithPhoto:(StreamPhoto*)photo streamManager:(PhotoStreamManager*)streamManager;
 -(void)updateHTML;
 
 @property (retain) UIWebView *webView;
@@ -27,7 +27,5 @@
 
 @property (retain) NSArray *comments;
 @property (assign) BOOL commentsError;
-
-@property (retain) NSOperationQueue *queue;
 
 @end
