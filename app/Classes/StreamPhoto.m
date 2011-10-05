@@ -199,7 +199,11 @@
 
 -(NSArray*)tags;
 {
-    return [[self.details valueForKey:@"tags"] componentsSeparatedByString:@" "];
+    NSString *tags = [self.details valueForKey:@"tags"];
+    if (tags.length > 0) {
+        return [tags componentsSeparatedByString:@" "];
+    }
+    return [NSArray array];
 }
 
 
