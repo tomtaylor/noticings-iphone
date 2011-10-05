@@ -329,7 +329,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(UploadQueueManager);
 														object:[NSNumber numberWithInt:[photoUploads count]]];
 }
 
-- (void)saveQueuedUploads {
+//- (void)saveQueuedUploads {
 //	[self pauseQueue];
 //	
 //	NSLog(@"Saving queued uploads");
@@ -345,28 +345,28 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(UploadQueueManager);
 //	
 //	[[NSUserDefaults standardUserDefaults] setObject:savedUploads forKey:@"savedUploads"];
 //	[savedUploads release];
-}
+//}
 
-- (void)restoreQueuedUploads {
-	[self pauseQueue];
-	
-	NSArray *savedUploads = [[NSUserDefaults standardUserDefaults] arrayForKey:@"savedUploads"];
-	
-	if (savedUploads != nil) {
-		for (int i=0; i < [savedUploads count]; i++) {
-			NSDictionary *dict = [savedUploads objectAtIndex:i];
-			NSLog(@"Restoring from dictionary: %@", dict);
-			
-			PhotoUpload *photoUpload = [[PhotoUpload alloc] initWithDictionary:dict];
-			
-			if (photoUpload != nil) {
-				[self.photoUploads addObject:photoUpload];
-			}
-			
-			[photoUpload release];
-		}
-	}
-}
+//- (void)restoreQueuedUploads {
+//	[self pauseQueue];
+//	
+//	NSArray *savedUploads = [[NSUserDefaults standardUserDefaults] arrayForKey:@"savedUploads"];
+//	
+//	if (savedUploads != nil) {
+//		for (int i=0; i < [savedUploads count]; i++) {
+//			NSDictionary *dict = [savedUploads objectAtIndex:i];
+//			NSLog(@"Restoring from dictionary: %@", dict);
+//			
+//			PhotoUpload *photoUpload = [[PhotoUpload alloc] initWithDictionary:dict];
+//			
+//			if (photoUpload != nil) {
+//				[self.photoUploads addObject:photoUpload];
+//			}
+//			
+//			[photoUpload release];
+//		}
+//	}
+//}
 
 - (void)pauseQueue {
 	[flickrRequest cancel];

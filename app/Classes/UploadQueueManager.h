@@ -35,8 +35,8 @@ enum RequestType {
 - (void)addPhotoUploadToQueue:(PhotoUpload *)photoUpload;
 - (void)removePhotoUploadAtIndex:(NSInteger)index;
 - (void)pauseQueue;
-- (void)saveQueuedUploads;
-- (void)restoreQueuedUploads;
+//- (void)saveQueuedUploads;
+//- (void)restoreQueuedUploads;
 
 @property (nonatomic, retain) NSMutableArray *photoUploads;
 @property (nonatomic) BOOL inProgress;
