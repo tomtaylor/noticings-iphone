@@ -20,7 +20,7 @@
 {
     self.mapView = [[[MKMapView alloc] initWithFrame:self.view.bounds] autorelease];
     self.mapView.delegate = self;
-    self.mapView.showsUserLocation = YES; // sure, why the hell not.
+    self.mapView.showsUserLocation = NO;
 
     self.mapView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     self.view.autoresizesSubviews = YES;
@@ -86,10 +86,11 @@
 - (void)mapView:(MKMapView *)sender annotationView:(MKAnnotationView *)aView calloutAccessoryControlTapped:(UIControl *)control;
 {
     if (aView.annotation.class == StreamPhoto.class) {
+        StreamPhoto *_photo = (StreamPhoto*)aView.annotation;
         StreamPhotoViewController *vc = [[StreamPhotoViewController alloc] init];
         [self.navigationController pushViewController:vc animated:YES];
         vc.streamManager = self.streamManager;
-        [vc showPhoto:photo];
+        [vc showPhoto:_photo];
         [vc release];
     }
 }

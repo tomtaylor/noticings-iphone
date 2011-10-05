@@ -3,12 +3,12 @@
 	<data>
 		<int key="IBDocument.SystemTarget">1280</int>
 		<string key="IBDocument.SystemVersion">11B2118</string>
-		<string key="IBDocument.InterfaceBuilderVersion">1934</string>
+		<string key="IBDocument.InterfaceBuilderVersion">1938</string>
 		<string key="IBDocument.AppKitVersion">1138.1</string>
 		<string key="IBDocument.HIToolboxVersion">566.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
-			<string key="NS.object.0">931</string>
+			<string key="NS.object.0">933</string>
 		</object>
 		<array key="IBDocument.IntegratedClassDependencies">
 			<string>IBUITableViewCell</string>
@@ -154,7 +154,7 @@
 							<object class="IBUILabel" id="451760156">
 								<reference key="NSNextResponder" ref="94663175"/>
 								<int key="NSvFlags">289</int>
-								<string key="NSFrame">{{273, 3}, {42, 21}}</string>
+								<string key="NSFrame">{{262, 3}, {53, 21}}</string>
 								<reference key="NSSuperview" ref="94663175"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="843057186"/>
@@ -526,6 +526,6 @@
 		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaTouchFramework</string>
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
-		<string key="IBCocoaTouchPluginVersion">931</string>
+		<string key="IBCocoaTouchPluginVersion">933</string>
 	</data>
 </archive>
