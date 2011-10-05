@@ -24,6 +24,8 @@
 @property (retain) StreamPhoto* photo;
 @property (retain) PhotoStreamManager *streamManager;
 @property (retain) NSString *photoLocation;
+
 @property (retain) NSArray *comments;
+@property (assign) BOOL commentsError;
 
 @end

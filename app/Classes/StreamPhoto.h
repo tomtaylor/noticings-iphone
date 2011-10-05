@@ -47,6 +47,7 @@
 @property (readonly) NSURL* mobilePageURL;
 @property (readonly) NSURL* bigImageURL;
 @property (readonly) NSURL* originalImageURL;
+@property (readonly) NSArray* tags;
 
 // MKAnnotation
 @property (nonatomic, readonly) CLLocationCoordinate2D coordinate;

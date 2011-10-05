@@ -197,6 +197,13 @@
     return StreamPhotoVisibilityPrivate;
 }
 
+-(NSArray*)tags;
+{
+    return [[self.details valueForKey:@"tags"] componentsSeparatedByString:@" "];
+}
+
+
+
 -(CGFloat)imageHeightForWidth:(CGFloat)width;
 {
     float width_m = [[self.details objectForKey:@"width_m"] floatValue];

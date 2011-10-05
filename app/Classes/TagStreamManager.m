@@ -1,22 +1,22 @@
 //
-//  UserStreamManager.m
+//  TagStreamManager.m
 //  Noticings
 //
-//  Created by Tom Insam on 22/09/2011.
+//  Created by Tom Insam on 05/10/2011.
 //  Copyright (c) 2011 Strange Tractor Limited. All rights reserved.
 //
 
-#import "UserStreamManager.h"
+#import "TagStreamManager.h"
 
-@implementation UserStreamManager
+@implementation TagStreamManager
 
-@synthesize userId;
+@synthesize tag;
 
--(id)initWithUser:(NSString*)_userId;
+-(id)initWithTag:(NSString*)_tag;
 {
     self = [super init];
     if (self) {
-        self.userId = _userId;
+        self.tag = _tag;
         [self loadCachedImageList];
     }
     return self;
@@ -28,22 +28,22 @@
     NSDictionary *args = [NSDictionary dictionaryWithObjectsAndKeys:
                           @"50", @"per_page",
                           [self extras], @"extras",
-                          self.userId, @"user_id",
+                          self.tag, @"tags",
                           nil];
     [[self flickrRequest] callAPIMethodWithGET:@"flickr.photos.search" arguments:args];
 }
 
 -(NSString*)cacheFilename;
 {
-    if (!self.userId) {
+    if (!self.tag) {
         return @"";
     }
-    return [NSString stringWithFormat:@"user-%@", self.userId];
+    return [NSString stringWithFormat:@"tag-%@", self.tag];
 }
 
 -(void)dealloc;
 {
-    self.userId = nil;
+    self.tag = nil;
     [super dealloc];
 }
 

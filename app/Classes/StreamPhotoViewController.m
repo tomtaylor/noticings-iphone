@@ -14,12 +14,13 @@
 #import "StreamViewController.h"
 #import "PhotoLocationManager.h"
 #import "DeferredFlickrCallManager.h"
+#import "TagStreamManager.h"
 
 #import "NSString+HTML.h"
 
 @implementation StreamPhotoViewController
 
-@synthesize photo, streamManager, photoLocation, webView, comments;
+@synthesize photo, streamManager, photoLocation, webView, comments, commentsError;
 
 -(id)init;
 {
@@ -38,6 +39,7 @@
     self.webView.delegate = self;
     self.webView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     self.comments = nil;
+    self.commentsError = NO;
     self.view.autoresizesSubviews = YES;
     [self.view addSubview:self.webView];
 
@@ -85,7 +87,10 @@
         }
         [self updateHTML];
     }
-    orFail:nil];
+    orFail:^(NSString* code, NSString *err){
+        self.commentsError = YES;
+        self.comments = nil;
+    }];
     
     // load images, on the off-change we haven't got them already.
     [[CacheManager sharedCacheManager] fetchImageForURL:photo.imageURL andNotify:self];
@@ -161,9 +166,21 @@
         html = [html stringByAppendingFormat:@"<p class='description'>%@</p>", self.photo.html];
     }
     
+    if (self.photo.tags.count > 0) {
+        html = [html stringByAppendingFormat:@"<p class='tags'>Tagged "];
+        
+        for (NSString *tag in self.photo.tags) {
+            html = [html stringByAppendingFormat:@"<a class='tag' href='noticings-tag:%@'>%@</a> ",
+                    [tag stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],
+                    [tag stringByEncodingHTMLEntities]
+            ];
+        }
+        html = [html stringByAppendingFormat:@"</p>"];
+    }
+    
     if (self.comments) {
         if (self.comments.count > 0) {
-            html = [html stringByAppendingFormat:@"<p class='comments'>Comments:</p>"];
+            html = [html stringByAppendingFormat:@"<p class='comments'>%d comment(s):</p>", self.comments.count];
             for (NSDictionary *comment in self.comments) {
                 // assume comment body is safe
                 html = [html stringByAppendingFormat:@"<p class='comment'><a class='author' href='noticings-user:%@:%@'>%@</a>: %@</p>",
@@ -174,8 +191,10 @@
                 ];
             }
         } else {
-            //html = [html stringByAppendingFormat:@"<p class='comments'>No comments.</p>"];
+            html = [html stringByAppendingFormat:@"<p class='comments'>No comments.</p>"];
         }
+    } else if (self.commentsError) {
+        html = [html stringByAppendingFormat:@"<p class='comments'>Failed to load comments.</p>"];
     } else {
         html = [html stringByAppendingFormat:@"<p class='comments'>Loading comments...</p>"];
     }
@@ -220,6 +239,23 @@
             }
             [self.navigationController pushViewController:userController animated:YES];
             [userController release];
+            return false;
+
+        } else if ([request.URL.scheme isEqualToString:@"noticings-tag"]) {
+            NSArray *list = [request.URL.absoluteString componentsSeparatedByString:@":"];
+            
+            if (list.count < 1) {
+                return false;
+            }
+            NSString *tag = [list objectAtIndex:1];
+            NSLog(@"tapped tag %@", tag);
+
+            TagStreamManager *manager = [[TagStreamManager alloc] initWithTag:tag];
+            StreamViewController *svc = [[StreamViewController alloc] initWithPhotoStreamManager:manager];
+            [manager release];
+            svc.title = tag;
+            [self.navigationController pushViewController:svc animated:YES];
+            [svc release];
             return false;
         }
 
