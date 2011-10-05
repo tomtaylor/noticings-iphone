@@ -28,4 +28,6 @@
 @property (retain) NSArray *comments;
 @property (assign) BOOL commentsError;
 
+@property (retain) NSOperationQueue *queue;
+
 @end

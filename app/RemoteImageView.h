@@ -9,10 +9,9 @@
 #import <Foundation/Foundation.h>
 #import "CacheManager.h"
 
-@interface RemoteImageView : UIImageView <DeferredImageLoader> {
-}
+@interface RemoteImageView : UIImageView <DeferredImageLoader>
 
--(id)initWithFrame:(CGRect)frame;
+- (id)initWithFrame:(CGRect)frame;
 - (void)loadURL:(NSURL*)url;
 - (void)setImage:(UIImage*)theImage withAnimation:(BOOL)animate;
 

@@ -190,8 +190,8 @@
         StreamPhoto *sp = [[StreamPhoto alloc] initWithDictionary:photo];
         [self.photos addObject:sp];
         // pre-cache images
-        [cacheManager fetchImageForURL:sp.avatarURL andNotify:nil];
-        [cacheManager fetchImageForURL:sp.imageURL andNotify:nil];
+        [cacheManager fetchImageForURL:sp.avatarURL withQueue:nil andNotify:nil];
+        [cacheManager fetchImageForURL:sp.imageURL withQueue:nil andNotify:nil];
         [sp release];
     }
     

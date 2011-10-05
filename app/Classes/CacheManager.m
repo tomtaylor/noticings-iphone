@@ -140,9 +140,8 @@ extern const NSUInteger kMaxDiskCacheSize;
 
 
 // return an image for the passed url. Will try the cache first.
-- (void)fetchImageForURL:(NSURL*)url andNotify:(NSObject <DeferredImageLoader>*)sender;
+- (void)fetchImageForURL:(NSURL*)url withQueue:(NSOperationQueue*)customQueue andNotify:(NSObject <DeferredImageLoader>*)sender;
 {
-    NSString *key = [url absoluteString];
     UIImage *image = [self cachedImageForURL:url];
     if (image) {
         // we have a cached version. Send that first. But not till this method is done
@@ -155,9 +154,8 @@ extern const NSUInteger kMaxDiskCacheSize;
         return;
     }
     
-    // for any particular url, we will keep track of which senders are interested, rather
-    // than queueing it more than once.
     BOOL alreadyQueued = YES;
+    NSString *key = [url absoluteString];
     NSMutableArray* listeners = [self.imageRequests objectForKey:key];
     if (!listeners) {
         listeners = [NSMutableArray arrayWithCapacity:1];
@@ -169,7 +167,11 @@ extern const NSUInteger kMaxDiskCacheSize;
         [listeners addObject:sender];
     }
     
-    if (alreadyQueued) {
+    if (alreadyQueued && !customQueue) {
+        // if we're making this request on the default queue, stop here, because
+        // the image has already been asked for. But custom queues exist so that
+        // we can _jump_ the main queue, so ask for it again. This will result in 
+        // 2 calls sometimes. Hard to fix that, though.
         return;
     }
     
@@ -195,11 +197,18 @@ extern const NSUInteger kMaxDiskCacheSize;
         [self.imageRequests removeObjectForKey:key];
     }];
     
-    [self.queue addOperation:request];
+    if (customQueue) {
+        [customQueue addOperation:request];
+    } else {
+        [self.queue addOperation:request];
+    }
 }
 
 - (void)dealloc
 {
+    [self.queue cancelAllOperations];
+    self.queue = nil;
+    self.imageRequests = nil;
     self.imageCache = nil;
     self.cacheDir = nil;
     [super dealloc];

@@ -71,9 +71,10 @@
     //
     // Defer this to the next iteration of the runloop, so that we have a view
     // already set up, or the scaling goes squiffy.
-    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-        [[CacheManager sharedCacheManager] fetchImageForURL:self.photo.bigImageURL andNotify:self];
-        [[CacheManager sharedCacheManager] fetchImageForURL:self.photo.imageURL andNotify:self];
+    NSOperationQueue *queue = [NSOperationQueue mainQueue];
+    [queue addOperationWithBlock:^{
+        [[CacheManager sharedCacheManager] fetchImageForURL:self.photo.bigImageURL withQueue:queue andNotify:self];
+        [[CacheManager sharedCacheManager] fetchImageForURL:self.photo.imageURL withQueue:queue andNotify:self];
     }];
 }
 

@@ -24,13 +24,13 @@
 - (void)loadURL:(NSURL*)loadUrl;
 {
     self.url = loadUrl;
-
+    
     self.image = nil;
     self.backgroundColor = [UIColor lightGrayColor];
     [self setNeedsLayout];
-
+    
     CacheManager *manager = [CacheManager sharedCacheManager];
-    [manager fetchImageForURL:loadUrl andNotify:self];
+    [manager fetchImageForURL:loadUrl withQueue:nil andNotify:self];
 }
 
 - (void)loadedImage:(UIImage *)image forURL:(NSURL*)loadedUrl cached:(BOOL)cached;

@@ -21,7 +21,7 @@
 
 @implementation StreamPhotoViewController
 
-@synthesize photo, streamManager, photoLocation, webView, comments, commentsError;
+@synthesize photo, streamManager, photoLocation, webView, comments, commentsError, queue;
 
 -(id)init;
 {
@@ -94,10 +94,14 @@
     }];
     
     // load images, on the off-change we haven't got them already.
-    [[CacheManager sharedCacheManager] fetchImageForURL:photo.imageURL andNotify:self];
+    // We use our own queue, so we can load the images for this page faster, without blocking on
+    // loading all the images currently in the queue.
+    self.queue = [[[NSOperationQueue alloc] init] autorelease];
+    self.queue.maxConcurrentOperationCount = 2;
+    [[CacheManager sharedCacheManager] fetchImageForURL:photo.imageURL withQueue:self.queue andNotify:self];
+    [[CacheManager sharedCacheManager] fetchImageForURL:photo.avatarURL withQueue:self.queue andNotify:self];
     if (self.photo.hasLocation) {
-        // TODO - this wants to be in a different queue from the main flickr image loading queue
-        [[CacheManager sharedCacheManager] fetchImageForURL:photo.mapImageURL andNotify:self];
+        [[CacheManager sharedCacheManager] fetchImageForURL:photo.mapImageURL withQueue:self.queue andNotify:self];
     }
 
     [self updateHTML];
@@ -122,7 +126,12 @@
     
     NSString *html = @"";
     
-    html = [html stringByAppendingFormat:@"<a href='noticings-image:'><img class='image' src='%@'></a>", [cacheManager urlToFilename:photo.imageURL]];
+    NSString *imageFile = [cacheManager urlToFilename:photo.imageURL];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:imageFile]) {
+        html = [html stringByAppendingFormat:@"<a href='noticings-image:'><img class='image' src='%@'></a>", imageFile];
+    } else {
+        html = [html stringByAppendingFormat:@"<a href='noticings-image:'><div class='image-loading'></div></a>", imageFile];
+    }
 
     html = [html stringByAppendingFormat:@"<a href='noticings-user:'><img class='avatar' src='%@'></a>", [cacheManager urlToFilename:photo.avatarURL]];
 
@@ -158,7 +167,10 @@
     html = [html stringByAppendingString:@"</p>"];
 
     if (self.photo.hasLocation) {
-        html = [html stringByAppendingFormat:@"<a href='noticings-map:'><img class='map' src='%@'></a>", [cacheManager urlToFilename:photo.mapImageURL]];
+        NSString *mapFile = [cacheManager urlToFilename:photo.mapImageURL];
+        if ([[NSFileManager defaultManager] fileExistsAtPath:mapFile]) {
+            html = [html stringByAppendingFormat:@"<a href='noticings-map:'><img class='map' src='%@'></a>", mapFile];
+        }
     }    
 
 
@@ -299,7 +311,8 @@
     self.photoLocation = nil;
     self.streamManager = nil;
     self.photo = nil;
-    
+    [self.queue cancelAllOperations];
+    self.queue = nil;
     [super dealloc];
 }
 
