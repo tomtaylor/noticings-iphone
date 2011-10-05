@@ -179,8 +179,11 @@ static NSString *adjustPinActionSheetAddTitle = @"Add to Map";
     
     // zoom the image view to the top so we can see the uploading image.
     UINavigationController *firstNavController = [[[AppDelegate tabBarController] viewControllers] objectAtIndex:0];
-    StreamViewController *streamView = (StreamViewController*)firstNavController.topViewController;
-    [streamView.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:YES];
+    
+    // pop the photos view back to the main list, and scroll that to the top.
+    [firstNavController popToRootViewControllerAnimated:NO];
+    StreamViewController *streamView = (StreamViewController*)[firstNavController.viewControllers objectAtIndex:0];
+    [streamView.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
     
 }
 

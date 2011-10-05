@@ -153,7 +153,7 @@ BOOL gLogging = FALSE;
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
-	[uploadQueueManager saveQueuedUploads];
+	//[uploadQueueManager saveQueuedUploads];
 	[UIApplication sharedApplication].applicationIconBadgeNumber = [uploadQueueManager.photoUploads count];
 }
 
