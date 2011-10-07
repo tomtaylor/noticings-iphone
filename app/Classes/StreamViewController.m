@@ -121,6 +121,8 @@
 
     // are we the currently-active view controller? Precache if so.
     if (self.isViewLoaded && self.view.window) {
+        // flush the queue first, so we load the top images asap.
+        [[CacheManager sharedCacheManager] flushQueue];
         [self.streamManager precache];
     } else {
         NSLog(@"Cleverly refusing to precache because I'm not visible.");
@@ -267,9 +269,6 @@
 
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    return 400.0f;
-    
     UITableViewCell *cell = [self tableView:tableView cellForRowAtIndexPath:indexPath];
     return cell.frame.size.height + 10;
 }

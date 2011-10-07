@@ -293,6 +293,8 @@
             return false;
 
         }
+        
+        // TODO - match flickr.com/photos/XXX/XXX and just open photo page?
 
         [[UIApplication sharedApplication] openURL:request.URL];
         return false;
