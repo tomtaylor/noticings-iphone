@@ -19,6 +19,7 @@
 +(CacheManager *)sharedCacheManager;
 
 -(NSString*) cachePathForFilename:(NSString*)filename;
+- (UIImage *) cachedImageForURL:(NSURL*)url;
 - (void)fetchImageForURL:(NSURL*)url andNotify:(NSObject <DeferredImageLoader>*)sender;
 - (void) flushMemoryCache;
 - (void)flushQueue;

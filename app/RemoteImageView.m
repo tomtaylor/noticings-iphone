@@ -30,7 +30,12 @@
     [self setNeedsLayout];
     
     CacheManager *manager = [CacheManager sharedCacheManager];
-    [manager fetchImageForURL:loadUrl andNotify:self];
+    UIImage *cached = [manager cachedImageForURL:loadUrl];
+    if (cached) {
+        [self setImage:cached withAnimation:NO];
+    } else {
+        [manager fetchImageForURL:loadUrl andNotify:self];
+    }
 }
 
 - (void)loadedImage:(UIImage *)image forURL:(NSURL*)loadedUrl cached:(BOOL)cached;
