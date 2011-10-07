@@ -92,6 +92,7 @@
 
     [[DeferredFlickrCallManager sharedDeferredFlickrCallManager]
      callFlickrMethod:@"flickr.photos.comments.getList"
+     asPost:NO
      withArgs:args
      andThen:^(NSDictionary* rsp){
          self.comments = [rsp valueForKeyPath:@"comments.comment"];

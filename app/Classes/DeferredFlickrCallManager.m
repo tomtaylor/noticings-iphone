@@ -13,12 +13,13 @@
 #import "OFXMLMapper.h"
 #import "ObjectiveFlickr.h"
 #import "ASIHTTPRequest.h"
-
+#import "ASIFormDataRequest.h"
 
 // leak internal signing method out from objective flickr. Yes. I am
 // a bad person.
 @interface OFFlickrAPIContext (LeakPrivateMethods)
 - (NSString *)signedQueryFromArguments:(NSDictionary *)inArguments;
+- (NSArray *)signedArgumentComponentsFromArguments:(NSDictionary *)inArguments useURIEscape:(BOOL)inUseEscape;
 @end
 
 @implementation DeferredFlickrCallManager
@@ -42,7 +43,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(DeferredFlickrCallManager);
     return (!!token);
 }
 
--(void)callFlickrMethod:(NSString*)method withArgs:(NSDictionary*)args andThen:(FlickrSuccessCallback)success orFail:(FlickrFailureCallback)failure;
+-(void)callFlickrMethod:(NSString*)method asPost:(BOOL)asPost withArgs:(NSDictionary*)args andThen:(FlickrSuccessCallback)success orFail:(FlickrFailureCallback)failure;
 {
     OFFlickrAPIContext *apiContext = [[OFFlickrAPIContext alloc] initWithAPIKey:FLICKR_API_KEY sharedSecret:FLICKR_API_SECRET];
 
@@ -52,22 +53,31 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(DeferredFlickrCallManager);
     }
 
     NSMutableDictionary *newArgs = args ? [NSMutableDictionary dictionaryWithDictionary:args] : [NSMutableDictionary dictionary];
-	[newArgs setObject:method forKey:@"method"];	
-	NSString *arguments = [apiContext signedQueryFromArguments:newArgs]; // private method
-    NSURL *endpoint = [NSURL URLWithString:[apiContext RESTAPIEndpoint]];
-    [apiContext release];
+	[newArgs setObject:method forKey:@"method"];
+    NSString *endpoint = [apiContext RESTAPIEndpoint];
+   
+    __block ASIHTTPRequest *request;
     
-    // assume GET for now. We don't need post.
-    NSString *URLString = [NSString stringWithFormat:@"%@?%@", endpoint, arguments];
+    if (asPost) {
+        request = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:endpoint]];
+        NSArray *signedArgs = [apiContext signedArgumentComponentsFromArguments:newArgs useURIEscape:NO]; // private method
+        NSLog(@"Flickr: POST %@", signedArgs);
+       
+        for (NSArray *parts in signedArgs) {
+            [((ASIFormDataRequest*)request)setPostValue:[parts objectAtIndex:1] forKey:[parts objectAtIndex:0]];
+        }
 
-    __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:URLString]];
 
-    // for future reference:
-    // NSData *postData = [arguments dataUsingEncoding:NSUTF8StringEncoding];
-    //[request setPostBody:[NSMutableData dataWithData:postData]];
-    
+    } else {
+        NSString *arguments = [apiContext signedQueryFromArguments:newArgs]; // private method
+        NSString *URLString = [NSString stringWithFormat:@"%@?%@", endpoint, arguments];
+        request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:URLString]];
+
+        NSLog(@"Flickr: GET %@", arguments);
+    }
+
+
     [request setCompletionBlock:^{
-        //NSLog(@"got response to %@", method);
         NSDictionary *responseDictionary = [OFXMLMapper dictionaryMappedFromXMLData:[request responseData]];	
         NSDictionary *rsp = [responseDictionary objectForKey:@"rsp"];
         NSString *stat = [rsp objectForKey:@"stat"];
@@ -77,7 +87,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(DeferredFlickrCallManager);
             NSDictionary *err = [rsp objectForKey:@"err"];
             NSString *code = [err objectForKey:@"code"];
             NSString *msg = [err objectForKey:@"msg"];
-            NSLog(@"Failed flickr call %@(%@): %@ %@", method, args, code, msg);
+            NSLog(@"Failed flickr call %@(%@):\n  - %@ %@", method, newArgs, code, msg);
             if (failure) {
                 failure(code, msg);
             }
@@ -96,7 +106,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(DeferredFlickrCallManager);
     }];
     
     [self.queue addOperation:request];
-    
+    [apiContext release];
     
 
     

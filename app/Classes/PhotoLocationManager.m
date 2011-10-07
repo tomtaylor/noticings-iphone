@@ -65,6 +65,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(PhotoLocationManager);
     
     [[DeferredFlickrCallManager sharedDeferredFlickrCallManager]
     callFlickrMethod:@"flickr.places.getInfo"
+    asPost:NO
     withArgs:args
     andThen:^(NSDictionary* rsp) {
 
