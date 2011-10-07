@@ -8,6 +8,8 @@
 
 #import "AddCommentViewController.h"
 
+#import"DeferredFlickrCallManager.h"
+
 @implementation AddCommentViewController
 @synthesize photo, textView;
 
@@ -15,6 +17,7 @@
 {
     self = [super initWithNibName:nil bundle:nil];
     if (self) {
+        self.photo = _photo;
         self.title = @"Add comment";
     }
     return self;
@@ -49,7 +52,25 @@
 
 -(void)saveComment;
 {
-    NSLog(@"Saving comment: %@", self.textView.text);
+    self.navigationItem.rightBarButtonItem.enabled = NO;
+    NSLog(@"Saving comment on photo %@: %@", self.photo.flickrId, self.textView.text);
+    
+    NSString *method = @"flickr.photos.comments.addComment";
+    NSDictionary *args = [NSDictionary dictionaryWithObjectsAndKeys: self.photo.flickrId, @"photo_id", self.textView.text, @"comment_text", nil];
+
+    [[DeferredFlickrCallManager sharedDeferredFlickrCallManager]
+    callFlickrMethod:method
+    asPost:YES
+    withArgs:args
+    andThen:^(NSDictionary* rsp){
+        NSLog(@"comment addded!");
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+    orFail:^(NSString *code, NSString *error){
+        NSLog(@"bugger.");
+        // TODO - popup. Do something better for feedback.
+        self.navigationItem.rightBarButtonItem.enabled = YES;
+    }];
     
 }
 
