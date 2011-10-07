@@ -41,7 +41,7 @@
         isRoot = YES; // crude
     }
     
-    self.textPull = [NSString stringWithFormat:@"Pull to refresh..\nLast refresh %@", streamManager.lastRefreshDisplay];
+    self.textPull = [NSString stringWithFormat:@"Pull to refresh..\nLast refreshed %@", streamManager.lastRefreshDisplay];
     self.textRelease = @"Release to refresh..";
     self.textLoading = @"Loading..";
     self.refreshLabel.lineBreakMode = UILineBreakModeWordWrap;
@@ -105,7 +105,7 @@
 {
     [super viewDidAppear:animated];
     // in case we missed this at some point.
-    self.textPull = [NSString stringWithFormat:@"Pull to refresh..\nLast refresh %@", streamManager.lastRefreshDisplay];
+    self.textPull = [NSString stringWithFormat:@"Pull to refresh..\nLast refreshed %@", streamManager.lastRefreshDisplay];
     [self.streamManager precache];
     [self.streamManager maybeRefresh];
 }
@@ -123,7 +123,7 @@
     NSLog(@"new photos loaded for %@", self.class);
     [self stopLoading]; // for the pull-to-refresh thing
     // update refresh displayed date.
-    self.textPull = [NSString stringWithFormat:@"Pull to refresh..\nLast refresh %@", streamManager.lastRefreshDisplay];
+    self.textPull = [NSString stringWithFormat:@"Pull to refresh..\nLast refreshed %@", streamManager.lastRefreshDisplay];
 
     // are we the currently-active view controller? Precache if so.
     if (self.isViewLoaded && self.view.window) {

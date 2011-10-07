@@ -70,6 +70,9 @@
 
 -(NSString*)lastRefreshDisplay;
 {
+    if (!self.lastRefresh) {
+        return @"never";
+    }
     NSDate *refresh = [NSDate dateWithTimeIntervalSinceReferenceDate:self.lastRefresh - NSTimeIntervalSince1970];
     NSDateFormatterStyle dateStyle = NSDateFormatterShortStyle;
     NSDateFormatterStyle timeStyle = NSDateFormatterShortStyle;
