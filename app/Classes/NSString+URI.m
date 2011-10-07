@@ -26,4 +26,13 @@
     return [self stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 }
 
+- (NSString *)stringByEncodingForJavaScript;
+{
+    // wrong, but enough for our purposes.
+    NSString *temp = [self stringByReplacingOccurrencesOfString:@"\\" withString:@"\\\\"];
+    temp = [temp stringByReplacingOccurrencesOfString:@"\n" withString:@"\\n"];
+    temp = [temp stringByReplacingOccurrencesOfString:@"\"" withString:@"\\\""];
+    return temp;
+}
+
 @end

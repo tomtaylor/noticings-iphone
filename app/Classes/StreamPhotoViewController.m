@@ -68,21 +68,35 @@
 {
     NSLog(@"%@ will appear", self.class);
     [super viewWillAppear:animated];
+    
+    firstRender = TRUE;
 
-    // load images, on the off-change we haven't got them already.
-    [[CacheManager sharedCacheManager] fetchImageForURL:self.photo.imageURL andNotify:self];
-    [[CacheManager sharedCacheManager] fetchImageForURL:self.photo.avatarURL andNotify:self];
+    // load images if we haven't got them already.
+    if (![[CacheManager sharedCacheManager] cachedImageForURL:self.photo.imageURL]) {
+        [[CacheManager sharedCacheManager] fetchImageForURL:self.photo.imageURL andNotify:self];
+    }
+    if (![[CacheManager sharedCacheManager] cachedImageForURL:self.photo.avatarURL]) {
+        [[CacheManager sharedCacheManager] fetchImageForURL:self.photo.avatarURL andNotify:self];
+    }
 
     if (self.photo.hasLocation) {
-        [[CacheManager sharedCacheManager] fetchImageForURL:self.photo.mapImageURL andNotify:self];
+        if (![[CacheManager sharedCacheManager] cachedImageForURL:self.photo.mapImageURL]) {
+            [[CacheManager sharedCacheManager] fetchImageForURL:self.photo.mapImageURL andNotify:self];
+        }
+        
+        self.photoLocation = [[PhotoLocationManager sharedPhotoLocationManager] cachedLocationForPhoto:self.photo];
 
-        self.photoLocation = self.photo.placename;
-        [[PhotoLocationManager sharedPhotoLocationManager] getLocationForPhoto:photo and:^(NSString* name){
-            if (name) {
-                self.photoLocation = name;
-                [self updateHTML];
-            }
-        }];
+        if (!self.photoLocation) {
+            self.photoLocation = self.photo.placename;
+            // TODO - this is wrong. Should be caching location on photo object or something. Display instantly, don't
+            // wait for callback if it's cached
+            [[PhotoLocationManager sharedPhotoLocationManager] getLocationForPhoto:photo and:^(NSString* name){
+                if (name) {
+                    self.photoLocation = name;
+                    [self updateHTML];
+                }
+            }];
+        }
     }
     
     // load comments
@@ -106,7 +120,7 @@
          self.comments = nil;
          [self updateHTML];
      }];
-
+    
     [self updateHTML];
 }
 
@@ -130,27 +144,23 @@
     
     // beginning to want an actual templating language here. :-)
     
-    // Load common HTML heading. TODO - maybe cache as static string, it's a little
-    // wasteful to load this all the time?
-    NSString *htmlFile = [[NSBundle mainBundle] pathForResource:@"StreamPhotoViewController" ofType:@"html" inDirectory:nil];
-    NSString *htmlWrapper = [NSString stringWithContentsOfFile:htmlFile encoding:NSUTF8StringEncoding error:nil];
-    
     NSString *html = @"";
     
     NSString *imageFile = [cacheManager urlToFilename:photo.imageURL];
     if ([[NSFileManager defaultManager] fileExistsAtPath:imageFile]) {
-        html = [html stringByAppendingFormat:@"<a href='noticings-image:'><img class='image' src='%@'></a>", imageFile];
+        // TODO - work out image dimensions and hard-code them here to stop page size pop.
+        html = [html stringByAppendingFormat:@"<a href='noticings-image:'><img class=\"image\" src='%@'></a>\n\n", imageFile];
     } else {
-        html = [html stringByAppendingFormat:@"<a href='noticings-image:'><div class='image-loading'></div></a>", imageFile];
+        html = [html stringByAppendingFormat:@"<a href='noticings-image:'><div class='image-loading'></div></a>\n\n", imageFile];
     }
 
-    html = [html stringByAppendingFormat:@"<a href='noticings-user:'><img class='avatar' src='%@'></a>", [cacheManager urlToFilename:photo.avatarURL]];
+    html = [html stringByAppendingFormat:@"<a href='noticings-user:'><img class='avatar' src='%@'></a>\n", [cacheManager urlToFilename:photo.avatarURL]];
 
     html = [html stringByAppendingFormat:@"<p class='title'>%@</p>", [photo.title stringByEncodingHTMLEntities]];
 
     html = [html stringByAppendingFormat:@"<p class='owner'>by <a href='noticings-user:'>%@</a></p>", [photo.ownername stringByEncodingHTMLEntities]];
 
-    html = [html stringByAppendingString:@"</p><div style='clear: both'></div>"];
+    html = [html stringByAppendingString:@"</p><div style='clear: both'></div>\n\n"];
     
 
     // Visibility
@@ -224,10 +234,24 @@
     }
     html = [html stringByAppendingFormat:@"<p class='add-comment'><a href='noticings-comment:'>Add comment</a></p>"];
     
+    if (firstRender) {
+        // Load common HTML heading and render full content
+        // TODO - don't hit disk for every load - cache it.
+        NSLog(@"loading webview from scratch");
+        NSString *htmlFile = [[NSBundle mainBundle] pathForResource:@"StreamPhotoViewController" ofType:@"html" inDirectory:nil];
+        NSString *htmlWrapper = [NSString stringWithContentsOfFile:htmlFile encoding:NSUTF8StringEncoding error:nil];
+        NSURL *baseURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
+        [self.webView loadHTMLString:[NSString stringWithFormat:htmlWrapper, html] baseURL:baseURL];
+        firstRender = FALSE;
+        
+    } else {
+        // update HTML by replacing with JS.
+        html = [NSString stringWithFormat:@"document.getElementById('content').innerHTML = \"%@\";", [html stringByEncodingForJavaScript]];
+        NSLog(@"updating webview with JS");
+        [self.webView stringByEvaluatingJavaScriptFromString:html];
+    }
+   
 
-    // TODO - if it's already loaded, try to not disrupt the scroll position.
-    NSURL *baseURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
-    [self.webView loadHTMLString:[NSString stringWithFormat:htmlWrapper, html] baseURL:baseURL];
 }
 
 // open links in the webview using the system browser

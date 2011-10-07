@@ -45,6 +45,16 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(PhotoLocationManager);
     [_cache writeToFile:filename atomically:YES];
 }
 
+-(NSString*)cachedLocationForPhoto:(StreamPhoto*)photo;
+{
+    NSDictionary *cachedLocation = [self.cache objectForKey:photo.woeid];
+    if (cachedLocation) {
+        NSString *name = [cachedLocation valueForKeyPath:@"rsp.place.name"];
+        return name;
+    }
+    return nil;
+}
+
 
 -(void)getLocationForPhoto:(StreamPhoto*)photo and:(LocationCallbackBlock)block;
 {

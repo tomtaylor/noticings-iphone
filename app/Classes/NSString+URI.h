@@ -13,5 +13,6 @@
 
 - (NSString *)stringByEncodingForURI;
 - (NSString *)stringByDecodingFromURI;
+- (NSString *)stringByEncodingForJavaScript;
 
 @end

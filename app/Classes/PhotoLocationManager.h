@@ -16,6 +16,7 @@
 
 typedef void (^LocationCallbackBlock)(NSString* name);
 
+-(NSString*)cachedLocationForPhoto:(StreamPhoto*)photo;
 -(void)getLocationForPhoto:(StreamPhoto*)photo and:(LocationCallbackBlock)block;
 -(NSMutableDictionary*)loadCachedLocations;
 -(void)saveCachedLocations:(NSMutableDictionary*)cache;

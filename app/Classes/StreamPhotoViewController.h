@@ -14,6 +14,7 @@
 #import "CacheManager.h"
 
 @interface StreamPhotoViewController : UIViewController <UIWebViewDelegate, DeferredImageLoader> {
+    BOOL firstRender;
 }
 
 -(id)initWithPhoto:(StreamPhoto*)photo streamManager:(PhotoStreamManager*)streamManager;
