@@ -38,6 +38,7 @@
 
 @property (assign) id delegate;
 
+@property (readonly) NSString* lastRefreshDisplay;
 @end
 
 

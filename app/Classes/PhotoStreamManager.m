@@ -68,6 +68,14 @@
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
 }
 
+-(NSString*)lastRefreshDisplay;
+{
+    NSDate *refresh = [NSDate dateWithTimeIntervalSinceReferenceDate:self.lastRefresh - NSTimeIntervalSince1970];
+    NSDateFormatterStyle dateStyle = NSDateFormatterShortStyle;
+    NSDateFormatterStyle timeStyle = NSDateFormatterShortStyle;
+    return [NSDateFormatter localizedStringFromDate:refresh dateStyle:dateStyle timeStyle:timeStyle];
+}
+
 -(void)callFlickr;
 {
     // override in subclass

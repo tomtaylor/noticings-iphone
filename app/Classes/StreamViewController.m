@@ -41,9 +41,11 @@
         isRoot = YES; // crude
     }
     
-    self.textPull = @"Pull to refresh..";
+    self.textPull = [NSString stringWithFormat:@"Pull to refresh..\nLast refresh %@", streamManager.lastRefreshDisplay];
     self.textRelease = @"Release to refresh..";
     self.textLoading = @"Loading..";
+    self.refreshLabel.lineBreakMode = UILineBreakModeWordWrap;
+    self.refreshLabel.numberOfLines = 2;
     
     self.streamManager.delegate = self;
 
@@ -102,6 +104,8 @@
 -(void)viewDidAppear:(BOOL)animated;
 {
     [super viewDidAppear:animated];
+    // in case we missed this at some point.
+    self.textPull = [NSString stringWithFormat:@"Pull to refresh..\nLast refresh %@", streamManager.lastRefreshDisplay];
     [self.streamManager precache];
     [self.streamManager maybeRefresh];
 }
@@ -116,16 +120,17 @@
 
 - (void)newPhotos;
 {
-    NSLog(@"new photos");
+    NSLog(@"new photos loaded for %@", self.class);
     [self stopLoading]; // for the pull-to-refresh thing
+    // update refresh displayed date.
+    self.textPull = [NSString stringWithFormat:@"Pull to refresh..\nLast refresh %@", streamManager.lastRefreshDisplay];
 
     // are we the currently-active view controller? Precache if so.
     if (self.isViewLoaded && self.view.window) {
         // flush the queue first, so we load the top images asap.
+        NSLog(@"View is visible. Pre-caching.");
         [[CacheManager sharedCacheManager] flushQueue];
         [self.streamManager precache];
-    } else {
-        NSLog(@"Cleverly refusing to precache because I'm not visible.");
     }
 
 	[self.tableView reloadData];

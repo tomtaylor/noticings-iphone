@@ -143,11 +143,13 @@ extern const NSUInteger kMaxDiskCacheSize;
 - (void)fetchImageForURL:(NSURL*)url andNotify:(NSObject <DeferredImageLoader>*)sender;
 {
     UIImage *image = [self cachedImageForURL:url];
-    if (image && sender) {
-        // we have a cached version. Send that first. But not till this method is done
-        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-            [sender loadedImage:image forURL:url cached:YES];
-        }];
+    if (image) {
+        if (sender) {
+            // we have a cached version. Send that first. But not till this method is done
+            [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                [sender loadedImage:image forURL:url cached:YES];
+            }];
+        }
         return;
     }
     
