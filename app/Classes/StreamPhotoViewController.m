@@ -15,6 +15,7 @@
 #import "PhotoLocationManager.h"
 #import "DeferredFlickrCallManager.h"
 #import "TagStreamManager.h"
+#import "AddCommentViewController.h"
 
 #import "NSString+HTML.h"
 #import "NSString+URI.h"
@@ -185,7 +186,7 @@
 
     // description
     if (self.photo.html) {
-        html = [html stringByAppendingFormat:@"<p class='description'>%@</p>", self.photo.html];
+        html = [html stringByAppendingFormat:@"<div class='description'><p>%@</p></div>", self.photo.html];
     }
     
     if (self.photo.tags.count > 0) {
@@ -285,9 +286,7 @@
             return false;
 
         } else if ([request.URL.scheme isEqualToString:@"noticings-comment"]) {
-            // TODO
-            UIViewController *commentController = [[UIViewController alloc] initWithNibName:nil bundle:nil];
-            commentController.title = @"Add comment";
+            AddCommentViewController *commentController = [[AddCommentViewController alloc] initWithPhoto:self.photo];
             [self.navigationController pushViewController:commentController animated:YES];
             [commentController release];
             return false;

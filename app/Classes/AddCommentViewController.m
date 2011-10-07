@@ -9,22 +9,15 @@
 #import "AddCommentViewController.h"
 
 @implementation AddCommentViewController
+@synthesize photo, textView;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (id)initWithPhoto:(StreamPhoto*)_photo;
 {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    self = [super initWithNibName:nil bundle:nil];
     if (self) {
-        // Custom initialization
+        self.title = @"Add comment";
     }
     return self;
-}
-
-- (void)didReceiveMemoryWarning
-{
-    // Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-    
-    // Release any cached data, images, etc that aren't in use.
 }
 
 #pragma mark - View lifecycle
@@ -32,7 +25,32 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
+    
+    self.textView = [[[UITextView alloc] initWithFrame:self.view.bounds] autorelease];
+    self.textView.font = [UIFont systemFontOfSize:16];
+    self.textView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    self.view.autoresizesSubviews = YES;
+    [self.view addSubview:self.textView];
+
+    UIBarButtonItem *saveButton = [[UIBarButtonItem alloc] 
+                                     initWithBarButtonSystemItem:UIBarButtonSystemItemSave
+                                     target:self
+                                     action:@selector(saveComment)];
+    
+    self.navigationItem.rightBarButtonItem = saveButton;
+    [saveButton release];
+
+}
+
+- (void)viewWillAppear:(BOOL)animated;
+{
+    [self.textView becomeFirstResponder];
+}
+
+-(void)saveComment;
+{
+    NSLog(@"Saving comment: %@", self.textView.text);
+    
 }
 
 - (void)viewDidUnload
@@ -46,6 +64,13 @@
 {
     // Return YES for supported orientations
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
+-(void)dealloc;
+{
+    self.photo = nil;
+    self.textView = nil;
+    [super dealloc];
 }
 
 @end

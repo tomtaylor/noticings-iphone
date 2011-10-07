@@ -7,7 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "StreamPhoto.h"
 
 @interface AddCommentViewController : UIViewController
 
+- (id)initWithPhoto:(StreamPhoto*)_photo;
+
+@property (retain) StreamPhoto* photo;
+@property (retain) UITextView *textView;
 @end
