@@ -61,16 +61,34 @@
     UIBarButtonItem *externalItem = [[UIBarButtonItem alloc] 
         initWithBarButtonSystemItem:UIBarButtonSystemItemAction
         target:self
-        action:@selector(openInBrowser)];
+        action:@selector(externalButton)];
 
     self.navigationItem.rightBarButtonItem = externalItem;
     [externalItem release];
     [self.view addSubview:self.scrollView];
 }
 
--(void)openInBrowser;
+-(void)externalButton;
 {
-    [[UIApplication sharedApplication] openURL:photo.originalImageURL];
+    UIActionSheet *popupQuery = [[UIActionSheet alloc]
+                                 initWithTitle:@"Open original image"
+                                 delegate:self
+                                 cancelButtonTitle:nil
+                                 destructiveButtonTitle:nil
+                                 otherButtonTitles:nil];
+    [popupQuery addButtonWithTitle:@"Open in Safari"];
+    popupQuery.cancelButtonIndex = [popupQuery addButtonWithTitle:@"Cancel"];
+    popupQuery.actionSheetStyle = UIActionSheetStyleBlackOpaque;
+    [popupQuery showFromTabBar:self.tabBarController.tabBar];
+    [popupQuery release];
+}
+
+-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    NSLog(@"index is %d", buttonIndex);
+    if (buttonIndex == 0) {
+        [[UIApplication sharedApplication] openURL:photo.originalImageURL];
+    }
 }
 
 -(void)viewWillAppear:(BOOL)animated;

@@ -13,7 +13,7 @@
 #import "StreamPhoto.h"
 #import "PhotoStreamManager.h"
 
-@interface MapViewController : UIViewController <MKMapViewDelegate>
+@interface MapViewController : UIViewController <MKMapViewDelegate, UIActionSheetDelegate>
 
 -(void)displayPhoto:(StreamPhoto*)_photo inManager:(PhotoStreamManager*)manager;
 
