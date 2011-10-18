@@ -30,7 +30,7 @@
     if (self) {
         self.photo = _photo;
         self.streamManager = _streamManager;
-        self.title = self.photo.title; // for nav controller
+        self.title = [self.photo titleOrUntitled];
     }
     return self;
 }
@@ -53,16 +53,61 @@
     UIBarButtonItem *externalItem = [[UIBarButtonItem alloc] 
                                      initWithBarButtonSystemItem:UIBarButtonSystemItemAction
                                      target:self
-                                     action:@selector(openInBrowser)];
+                                     action:@selector(externalButton)];
     
     self.navigationItem.rightBarButtonItem = externalItem;
     [externalItem release];
 }
 
--(void)openInBrowser;
+-(void)externalButton;
 {
-    [[UIApplication sharedApplication] openURL:photo.mobilePageURL];
+    UIActionSheet *popupQuery = [[UIActionSheet alloc]
+                                 initWithTitle:@"Open page"
+                                 delegate:self
+                                 cancelButtonTitle:nil
+                                 destructiveButtonTitle:nil
+                                 otherButtonTitles:nil];
+
+    [popupQuery addButtonWithTitle:@"Open in Safari"];
+
+    if ([MFMailComposeViewController canSendMail]) {
+        [popupQuery addButtonWithTitle:@"Mail link to photo"];
+    }
+    popupQuery.cancelButtonIndex = [popupQuery addButtonWithTitle:@"Cancel"];
+
+    // TODO - detect IOS5 and twitter account, offer "tweet photo" button.
+
+    popupQuery.actionSheetStyle = UIActionSheetStyleBlackOpaque;
+    [popupQuery showFromTabBar:self.tabBarController.tabBar];
+    [popupQuery release];
+
+    
 }
+
+-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    NSLog(@"index is %d", buttonIndex);
+    if (buttonIndex == 0) {
+        [[UIApplication sharedApplication] openURL:photo.mobilePageURL];
+    } else if (buttonIndex == 1) {
+        if ([MFMailComposeViewController canSendMail]) {
+            MFMailComposeViewController *composer = [[MFMailComposeViewController alloc] init];
+            composer.mailComposeDelegate = self;
+            [composer setSubject:[self.photo titleOrUntitled]];
+            // TODO - get url for noticings in here?
+            NSString *body = [NSString stringWithFormat:@"\"%@\" by %@\n\n%@\n\nSent using Noticings\n", [self.photo titleOrUntitled], self.photo.ownername, self.photo.pageURL];
+            [composer setMessageBody:body isHTML:NO];
+            [self presentModalViewController:composer animated:YES];
+            [composer release];
+        }
+    }
+}
+
+
+-(void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
+    [self dismissModalViewControllerAnimated:YES];
+}
+
 
 - (void)viewWillAppear:(BOOL)animated;
 {

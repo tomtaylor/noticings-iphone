@@ -12,8 +12,10 @@
 #import "RemoteImageView.h"
 #import "PhotoStreamManager.h"
 #import "CacheManager.h"
+#import <MessageUI/MessageUI.h>
+#import <MessageUI/MFMailComposeViewController.h>
 
-@interface StreamPhotoViewController : UIViewController <UIWebViewDelegate, DeferredImageLoader> {
+@interface StreamPhotoViewController : UIViewController <UIWebViewDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate, DeferredImageLoader> {
     BOOL firstRender;
 }
 

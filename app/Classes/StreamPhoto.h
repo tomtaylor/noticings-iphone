@@ -54,5 +54,6 @@
 @property (nonatomic, readonly, copy) NSString *subtitle;
 
 -(CGFloat)imageHeightForWidth:(CGFloat)width;
+- (NSString*)titleOrUntitled;
 
 @end

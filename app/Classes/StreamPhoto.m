@@ -37,6 +37,15 @@
     return [self.details valueForKeyPath:@"title"];
 }
 
+- (NSString*)titleOrUntitled;
+{
+    if (self.title.length > 0) { 
+        return self.title;
+    }
+    return @"Untitled photo";
+}
+
+
 - (NSString*)html;
 {
     NSString *raw = [self.details valueForKeyPath:@"description._text"];
