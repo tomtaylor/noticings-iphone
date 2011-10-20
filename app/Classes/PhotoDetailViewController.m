@@ -220,7 +220,7 @@
 }
 
 - (void)cancel {
-    [self.navigationController.parentViewController dismissModalViewControllerAnimated:YES];
+    [self dismissModalViewControllerAnimated:YES];
 }
 
 - (void)privacyChanged:(UISegmentedControl *)sender

@@ -42,16 +42,13 @@ BOOL gLogging = FALSE;
 	[userDefaults registerDefaults:defaults];
 	[userDefaults synchronize];
 	
-//	uploadQueueManager = [UploadQueueManager sharedUploadQueueManager];
-//	[uploadQueueManager restoreQueuedUploads];
-
 	queueTab = [tabBarController.tabBar.items objectAtIndex:0];
 	int count = [[UploadQueueManager sharedUploadQueueManager].photoUploads count];
 	
 	if (count > 0) {
 		queueTab.badgeValue = [NSString stringWithFormat:@"%u",	count];
 	} else {
-		queueTab.badgeValue = nil;
+		queueTab.badgeValue = 0;
 	}
     
     
@@ -134,10 +131,11 @@ BOOL gLogging = FALSE;
 
 
 - (void)setDefaults {
-	NSDictionary *defaults = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithFloat:51.477811], @"lastKnownLatitude",
-							  [NSNumber numberWithFloat:-0.001475], @"lastKnownLongitude",
-							  [NSArray array], @"savedUploads",
-							  nil];
+	NSDictionary *defaults = [NSDictionary dictionaryWithObjectsAndKeys:
+                                [NSNumber numberWithFloat:51.477811], @"lastKnownLatitude",
+                                [NSNumber numberWithFloat:-0.001475], @"lastKnownLongitude",
+                                [NSArray array], @"savedUploads",
+                                nil];
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
 }
 
@@ -146,6 +144,7 @@ BOOL gLogging = FALSE;
     // something caused us to be bakgrounded. incoming call, home button, etc.
     [[CacheManager sharedCacheManager] flushMemoryCache];
     [[ContactsStreamManager sharedContactsStreamManager] resetFlickrContext];
+	[UIApplication sharedApplication].applicationIconBadgeNumber = [[UploadQueueManager sharedUploadQueueManager].photoUploads count];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application;
@@ -156,7 +155,7 @@ BOOL gLogging = FALSE;
 
 - (void)applicationWillTerminate:(UIApplication *)application {
 	//[uploadQueueManager saveQueuedUploads];
-	[UIApplication sharedApplication].applicationIconBadgeNumber = [uploadQueueManager.photoUploads count];
+	[UIApplication sharedApplication].applicationIconBadgeNumber = [[UploadQueueManager sharedUploadQueueManager].photoUploads count];
 }
 
 #pragma mark -
