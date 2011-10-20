@@ -34,7 +34,7 @@
 
 - (NSString*)title;
 {
-    return [self.details valueForKeyPath:@"title"];
+    return [[self.details valueForKeyPath:@"title"] stringByRemovingNewLinesAndWhitespace];
 }
 
 - (NSString*)titleOrUntitled;

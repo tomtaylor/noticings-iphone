@@ -110,6 +110,7 @@
 {
     [super viewDidAppear:animated];
     [self.streamManager maybeRefresh];
+	[self.tableView reloadData];
     //[self.streamManager precache];
 }
 
@@ -133,7 +134,7 @@
         // flush the queue first, so we load the top images asap.
         NSLog(@"View is visible. Pre-caching.");
         [[CacheManager sharedCacheManager] flushQueue];
-        //[self.streamManager precache];
+        [self.streamManager precache];
     }
 
 	[self.tableView reloadData];
@@ -189,6 +190,7 @@
 - (void)refresh;
 {
     [streamManager refresh];
+    [self.tableView reloadData];
 }
 
 - (void)didReceiveMemoryWarning
@@ -274,7 +276,7 @@
     if (self.streamManager.inProgress) {
         cell.textLabel.text = @"Loading photos...";
     } else {
-        cell.textLabel.text = @"No photos from your contacts";
+        cell.textLabel.text = @"No photos to display.";
     }
     cell.textLabel.textColor = [UIColor grayColor];
     cell.textLabel.font = [UIFont systemFontOfSize:14];
