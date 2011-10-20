@@ -15,6 +15,12 @@
 // protocol for delegates
 @protocol PhotoStreamDelegate <NSObject>
 - (void)newPhotos;
+@end
+
+
+// protocol for delegates
+@protocol PhotoStreamDelegate <NSObject>
+- (void)newPhotos;
 - (void)fetchedNewImage:(UIImage*)photo forURL:(NSURL*)url;
 @end
 

@@ -14,9 +14,12 @@
 #import "CacheManager.h"
 
 @implementation StreamPhotoViewCell
+@synthesize photo;
 
--(void) populateFromPhoto:(StreamPhoto*)photo;
+-(void) populateFromPhoto:(StreamPhoto*)_photo;
 {
+    self.photo = _photo;
+
     usernameView.text = photo.ownername;
     // gfx are for losers. I like unicode.
     timeagoView.text = [@"⌚" stringByAppendingString:photo.ago];
@@ -46,21 +49,6 @@
         visibilityView.textColor = [UIColor colorWithRed:0 green:0.5 blue:0 alpha:1];
     }
 
-    CacheManager *manager = [CacheManager sharedCacheManager];
-    UIImage *cached = [manager cachedImageForURL:photo.imageURL];
-    if (cached) {
-        photoView.image = cached;
-    } else {
-        photoView.image = nil; // TODO - loading spinner or something.
-    }
-
-    cached = [manager cachedImageForURL:photo.avatarURL];
-    if (cached) {
-        avatarView.image = cached;
-    } else {
-        avatarView.image = nil; // TODO - loading spinner or something.
-    }
-
     // resize image frame to have the right aspect.
     // (but if it's taller than square it won't fit in the view.)
     CGRect frame = photoView.frame;
@@ -83,7 +71,41 @@
     self.frame = frame;
 }
 
+-(void)loadImages;
+{
+    CacheManager *manager = [CacheManager sharedCacheManager];
+
+    UIImage *cached = [manager cachedImageForURL:photo.imageURL];
+    if (cached) {
+        photoView.image = cached;
+    } else {
+        photoView.image = nil; // TODO - loading spinner or something.
+        [manager fetchImageForURL:photo.imageURL andNotify:self];
+    }
+    
+    cached = [manager cachedImageForURL:photo.avatarURL];
+    if (cached) {
+        avatarView.image = cached;
+    } else {
+        avatarView.image = nil; // TODO - loading spinner or something.
+        [manager fetchImageForURL:photo.avatarURL andNotify:self];
+    }
+}
+
+
+
+-(void) loadedImage:(UIImage*)image forURL:(NSURL*)url cached:(BOOL)cached;
+{
+    if ([url isEqual:self.photo.imageURL]) {
+        photoView.image = image;
+    }
+    if ([url isEqual:photo.avatarURL]) {
+        avatarView.image = image;
+    }
+}
+
 - (void)dealloc {
+    self.photo = nil;
     [super dealloc];
 }
 

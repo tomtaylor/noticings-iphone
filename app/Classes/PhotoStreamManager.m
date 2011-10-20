@@ -160,8 +160,6 @@
     }
     [archived release];
 
-    [self precache];
-    
     self.lastRefresh = [archivedLastRefresh doubleValue];
     [archivedLastRefresh release];
 }
@@ -194,24 +192,14 @@
     
     for (StreamPhoto *sp in self.photos) {
         if (![cacheManager cachedImageForURL:sp.avatarURL]) {
-            [cacheManager fetchImageForURL:sp.avatarURL andNotify:self];
+            [cacheManager fetchImageForURL:sp.avatarURL andNotify:nil];
         }
         if (![cacheManager cachedImageForURL:sp.imageURL]) {
-            [cacheManager fetchImageForURL:sp.imageURL andNotify:self];
+            [cacheManager fetchImageForURL:sp.imageURL andNotify:nil];
         }
     }
     
 }
-
-#pragma mark CacheManager delegate methods
-
--(void) loadedImage:(UIImage*)image forURL:(NSURL*)url cached:(BOOL)cached;
-{
-    if (self.delegate) {
-        [self.delegate fetchedNewImage:image forURL:url];
-    }
-}
-
 
 #pragma mark Flickr delegate methods
 

@@ -109,10 +109,8 @@
 -(void)viewDidAppear:(BOOL)animated;
 {
     [super viewDidAppear:animated];
-    // in case we missed this at some point.
-    [self updatePullText];
-    [self.streamManager precache];
     [self.streamManager maybeRefresh];
+    //[self.streamManager precache];
 }
 
 -(void)viewWillDisappear:(BOOL)animated;
@@ -135,17 +133,9 @@
         // flush the queue first, so we load the top images asap.
         NSLog(@"View is visible. Pre-caching.");
         [[CacheManager sharedCacheManager] flushQueue];
-        [self.streamManager precache];
+        //[self.streamManager precache];
     }
 
-	[self.tableView reloadData];
-    
-}
-
-- (void)fetchedNewImage:(StreamPhoto*)photo forURL:(NSURL*)url;
-{
-    NSLog(@"Loaded a photo");
-    // TODO - ideally, only do this if the photo is one of the visible ones. Depends on the speed cost, really.
 	[self.tableView reloadData];
 }
 
@@ -233,6 +223,20 @@
     return nil;
 }
 
+-(StreamPhotoViewCell*)passiveTableCellForPhoto:(StreamPhoto*)photo;
+{
+    static NSString *MyIdentifier = @"StreamPhotoViewCell";
+    StreamPhotoViewCell *cell = (StreamPhotoViewCell *)[self.tableView dequeueReusableCellWithIdentifier:MyIdentifier];
+    if (cell == nil) {
+        [[NSBundle mainBundle] loadNibNamed:@"StreamPhotoViewCell" owner:self options:nil];
+        cell = photoViewCell;
+        photoViewCell = nil;
+    }
+    [cell populateFromPhoto:photo];
+    return cell;
+}
+
+
 #pragma mark Table view methods
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -257,19 +261,10 @@
     
     StreamPhoto *photo = [self streamPhotoAtIndexPath:indexPath];
     if (photo) {
-
-        static NSString *MyIdentifier = @"StreamPhotoViewCell";
-        StreamPhotoViewCell *cell = (StreamPhotoViewCell *)[tableView dequeueReusableCellWithIdentifier:MyIdentifier];
-        if (cell == nil) {
-            [[NSBundle mainBundle] loadNibNamed:@"StreamPhotoViewCell" owner:self options:nil];
-            cell = photoViewCell;
-            photoViewCell = nil;
-        }
-        
-        [cell populateFromPhoto:photo];
+        StreamPhotoViewCell *cell = [self passiveTableCellForPhoto:photo];
+        [cell loadImages];
         return cell;
     }
-
     
     // no photos to display. Placeholder.
     // TODO - if this is the first run, this might be because we haven't loaded any
@@ -290,8 +285,12 @@
 
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [self tableView:tableView cellForRowAtIndexPath:indexPath];
-    return cell.frame.size.height + 10;
+    StreamPhoto *photo = [self streamPhotoAtIndexPath:indexPath];
+    if (photo) {
+        UITableViewCell *cell = [self passiveTableCellForPhoto:photo];
+        return cell.frame.size.height + 10;
+    }
+    return 100;
 }
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
@@ -335,6 +334,7 @@
 - (void)dealloc {
     NSLog(@"deallocing %@", self.class);
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    self.streamManager.delegate = nil;
     self.streamManager = nil;
     [queueButton release];
     [uploadQueueManager release];

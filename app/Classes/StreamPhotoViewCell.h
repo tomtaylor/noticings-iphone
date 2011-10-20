@@ -8,10 +8,12 @@
 
 #import <Foundation/Foundation.h>
 #import "StreamPhoto.h"
+#import "CacheManager.h"
 
 #define PADDING_SIZE 4.0f
 
-@interface StreamPhotoViewCell : UITableViewCell {
+@interface StreamPhotoViewCell : UITableViewCell <DeferredImageLoader> {
+    
     IBOutlet UIImageView *avatarView;
     IBOutlet UIImageView *photoView;
     IBOutlet UILabel *usernameView;
@@ -23,5 +25,8 @@
 }
 
 -(void) populateFromPhoto:(StreamPhoto*)photo;
+-(void)loadImages;
+
+@property (retain) StreamPhoto *photo;
 
 @end

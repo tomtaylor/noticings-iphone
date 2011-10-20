@@ -21,6 +21,7 @@
 
 -(id)initWithPhotoStreamManager:(PhotoStreamManager*)manager;
 -(void)updatePullText;
+- (StreamPhoto *)streamPhotoAtIndexPath:(NSIndexPath*)indexPath;
 
 @property (retain) PhotoStreamManager *streamManager;
 
