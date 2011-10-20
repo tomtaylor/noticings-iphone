@@ -66,10 +66,12 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(UploadQueueManager);
 -(void)cancelUpload:(PhotoUpload*)upload;
 {
     if (upload.inProgress) {
-        // ...?
+        [flickrRequest cancel];
     }
     [self.photoUploads removeObject:upload];
 	[self announceQueueCount];
+    
+    [self nextStageForUploadQueue];
 }
 
 - (void)startQueueIfNeeded {
