@@ -123,12 +123,12 @@
 }
 
 
+// delegate callback method from PhotoStreamManager
 - (void)newPhotos;
 {
     NSLog(@"new photos loaded for %@", self.class);
     [self stopLoading]; // for the pull-to-refresh thing
-    // update refresh displayed date.
-    self.textPull = [NSString stringWithFormat:@"Pull to refresh..\nLast refreshed %@", streamManager.lastRefreshDisplay];
+    [self updatePullText];
 
     // are we the currently-active view controller? Precache if so.
     if (self.isViewLoaded && self.view.window) {
@@ -139,7 +139,18 @@
     }
 
 	[self.tableView reloadData];
+    
 }
+
+- (void)fetchedNewImage:(StreamPhoto*)photo forURL:(NSURL*)url;
+{
+    NSLog(@"Loaded a photo");
+    // TODO - ideally, only do this if the photo is one of the visible ones. Depends on the speed cost, really.
+	[self.tableView reloadData];
+}
+
+
+
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
 					  ofObject:(id)object

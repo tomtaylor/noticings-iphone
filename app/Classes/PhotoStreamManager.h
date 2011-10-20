@@ -9,8 +9,18 @@
 #import <Foundation/Foundation.h>
 #import "ObjectiveFlickr.h"
 #import "StreamPhoto.h"
+#import "CacheManager.h"
 
-@interface PhotoStreamManager : NSObject <OFFlickrAPIRequestDelegate> {
+
+// protocol for delegates
+@protocol PhotoStreamDelegate <NSObject>
+- (void)newPhotos;
+- (void)fetchedNewImage:(UIImage*)photo forURL:(NSURL*)url;
+@end
+
+
+
+@interface PhotoStreamManager : NSObject <OFFlickrAPIRequestDelegate, DeferredImageLoader> {
 @private
 	OFFlickrAPIRequest *flickrRequest;
 }
@@ -36,9 +46,10 @@
 @property (nonatomic) BOOL inProgress;
 @property (nonatomic) NSTimeInterval lastRefresh;
 
-@property (assign) id delegate;
+@property (assign) NSObject<PhotoStreamDelegate>* delegate;
 
 @property (readonly) NSString* lastRefreshDisplay;
 @end
+
 
 

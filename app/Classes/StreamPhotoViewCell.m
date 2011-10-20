@@ -11,6 +11,7 @@
 #import "APIKeys.h"
 #import "ObjectiveFlickr.h"
 #import "PhotoLocationManager.h"
+#import "CacheManager.h"
 
 @implementation StreamPhotoViewCell
 
@@ -45,9 +46,21 @@
         visibilityView.textColor = [UIColor colorWithRed:0 green:0.5 blue:0 alpha:1];
     }
 
-    [photoView loadURL:photo.imageURL];
-    [avatarView loadURL:photo.avatarURL];
-    
+    CacheManager *manager = [CacheManager sharedCacheManager];
+    UIImage *cached = [manager cachedImageForURL:photo.imageURL];
+    if (cached) {
+        photoView.image = cached;
+    } else {
+        photoView.image = nil; // TODO - loading spinner or something.
+    }
+
+    cached = [manager cachedImageForURL:photo.avatarURL];
+    if (cached) {
+        avatarView.image = cached;
+    } else {
+        avatarView.image = nil; // TODO - loading spinner or something.
+    }
+
     // resize image frame to have the right aspect.
     // (but if it's taller than square it won't fit in the view.)
     CGRect frame = photoView.frame;

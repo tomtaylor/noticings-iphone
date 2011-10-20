@@ -9,7 +9,6 @@
 #import <UIKit/UIKit.h>
 
 #import "StreamPhoto.h"
-#import "RemoteImageView.h"
 #import "PhotoStreamManager.h"
 #import "CacheManager.h"
 #import <MessageUI/MessageUI.h>

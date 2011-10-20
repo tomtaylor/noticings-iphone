@@ -8,13 +8,12 @@
 
 #import <Foundation/Foundation.h>
 #import "StreamPhoto.h"
-#import "RemoteImageView.h"
 
 #define PADDING_SIZE 4.0f
 
 @interface StreamPhotoViewCell : UITableViewCell {
-    IBOutlet RemoteImageView *avatarView;
-    IBOutlet RemoteImageView *photoView;
+    IBOutlet UIImageView *avatarView;
+    IBOutlet UIImageView *photoView;
     IBOutlet UILabel *usernameView;
     IBOutlet UILabel *placeView;
     IBOutlet UILabel *timeagoView;

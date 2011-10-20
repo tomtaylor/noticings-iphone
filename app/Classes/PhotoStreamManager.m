@@ -11,7 +11,6 @@
 #import "SynthesizeSingleton.h"
 #import "ASIHTTPRequest.h"
 #import "APIKeys.h"
-#import "CacheManager.h"
 
 @implementation PhotoStreamManager
 
@@ -194,10 +193,23 @@
     CacheManager *cacheManager = [CacheManager sharedCacheManager];
     
     for (StreamPhoto *sp in self.photos) {
-        [cacheManager fetchImageForURL:sp.avatarURL andNotify:nil];
-        [cacheManager fetchImageForURL:sp.imageURL andNotify:nil];
+        if (![cacheManager cachedImageForURL:sp.avatarURL]) {
+            [cacheManager fetchImageForURL:sp.avatarURL andNotify:self];
+        }
+        if (![cacheManager cachedImageForURL:sp.imageURL]) {
+            [cacheManager fetchImageForURL:sp.imageURL andNotify:self];
+        }
     }
     
+}
+
+#pragma mark CacheManager delegate methods
+
+-(void) loadedImage:(UIImage*)image forURL:(NSURL*)url cached:(BOOL)cached;
+{
+    if (self.delegate) {
+        [self.delegate fetchedNewImage:image forURL:url];
+    }
 }
 
 
@@ -214,18 +226,17 @@
         [self.photos addObject:sp];
         [sp release];
     }
+    [self saveCachedImageList];
     
     self.lastRefresh = [[NSDate date] timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970;
     self.inProgress = NO;
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     
-    NSLog(@"loaded %d photos", [self.photos count]);
 
+    NSLog(@"loaded %d photos", [self.photos count]);
     if (self.delegate) {
         [self.delegate performSelector:@selector(newPhotos)];
     }
-
-    [self saveCachedImageList];
 }
 
 - (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didFailWithError:(NSError *)inError
