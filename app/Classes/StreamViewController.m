@@ -28,6 +28,7 @@
     self = [super initWithStyle:UITableViewStylePlain];
     if (self) {
         self.streamManager = manager;
+        self.streamManager.delegate = self;
     }
     return self;
 }
@@ -35,42 +36,25 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    BOOL isRoot = NO;
+    isRoot = NO;
     if (!self.streamManager) {
+        // we were initialized from the nib, without going through the custom init above,
+        // so we must be the root controller.
         self.streamManager = [ContactsStreamManager sharedContactsStreamManager];
-        isRoot = YES; // crude
+        self.streamManager.delegate = self;
+        isRoot = YES;
     }
     
+    // hack the internals of the pull-to-refresh controller so I can display a second line.
+    // TODO - ideally, I'd display the second line in a fainter colour / not bold / something.
     self.refreshLabel.lineBreakMode = UILineBreakModeWordWrap;
     self.refreshLabel.numberOfLines = 2;
-    [self updatePullText];
     
-    self.streamManager.delegate = self;
-
     if (isRoot) {
         [[NSNotificationCenter defaultCenter] addObserver:self 
                                                  selector:@selector(uploadQueueDidChange) 
                                                      name:@"queueCount" 
                                                    object:nil];
-        
-        if (uploadQueueManager == nil) {
-            uploadQueueManager = [UploadQueueManager sharedUploadQueueManager];
-        }
-            
-        [uploadQueueManager addObserver:self
-                             forKeyPath:@"inProgress"
-                                options:(NSKeyValueObservingOptionNew)
-                                context:NULL];
-        
-        if (queueButton == nil) {
-            queueButton = [[UIBarButtonItem alloc] 
-                           initWithTitle:@"Pause Queue" 
-                           style:UIBarButtonItemStylePlain 
-                           target:self
-                           action:@selector(queueButtonPressed)];
-        }
-        
-        [self setQueueButtonState];
     }
 
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -79,18 +63,9 @@
 
 - (void)viewDidUnload
 {
-    [super viewDidUnload];
-    
     // we need to unsubscribe, in case they fire and it no longer exists
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
-    // tear this down too - it'll be reassigned and subscribed when viewDidLoad is called again
-    if (uploadQueueManager) {
-        [uploadQueueManager removeObserver:self forKeyPath:@"inProgress"];
-        [uploadQueueManager release];
-        uploadQueueManager = nil;
-    }
-    
+    [super viewDidUnload];
 }
 
 -(void)updatePullText;
@@ -102,22 +77,20 @@
 
 -(void)viewWillAppear:(BOOL)animated;
 {
-    NSLog(@"%@ will appear", self.class);
     [super viewWillAppear:animated];
+    [self updatePullText];
 }
 
 -(void)viewDidAppear:(BOOL)animated;
 {
     [super viewDidAppear:animated];
     [self.streamManager maybeRefresh];
-	[self.tableView reloadData];
-    //[self.streamManager precache];
+	[self.tableView reloadData]; // reload here to update the "no photos" message to be "loading"
 }
 
 -(void)viewWillDisappear:(BOOL)animated;
 {
-    NSLog(@"%@ will disappear", self.class);
-    [[CacheManager sharedCacheManager] flushQueue];
+    [[CacheManager sharedCacheManager] flushQueue]; // we don't need any of the pending photos any more.
     [super viewWillDisappear:animated];
 }
 
@@ -131,9 +104,7 @@
 
     // are we the currently-active view controller? Precache if so.
     if (self.isViewLoaded && self.view.window) {
-        // flush the queue first, so we load the top images asap.
         NSLog(@"View is visible. Pre-caching.");
-        [[CacheManager sharedCacheManager] flushQueue];
         [self.streamManager precache];
     }
 
@@ -141,50 +112,9 @@
 }
 
 
-
-
-- (void)observeValueForKeyPath:(NSString *)keyPath
-					  ofObject:(id)object
-                        change:(NSDictionary *)change
-                       context:(void *)context
-{
-	[self setQueueButtonState];
-}
-
 - (void)uploadQueueDidChange
 {
-    [self setQueueButtonState];
     [self.tableView reloadData];
-}
-
-- (void)setQueueButtonState
-{
-    if ([uploadQueueManager.photoUploads count] > 0) {
-        if (uploadQueueManager.inProgress) {
-            queueButton.title = @"Pause Queue";
-        } else {
-            queueButton.title = @"Start Queue";
-        }
-        if (self.navigationItem.rightBarButtonItem == nil) {
-            self.navigationItem.rightBarButtonItem = queueButton;
-        }
-    } else {
-        if (self.navigationItem.rightBarButtonItem != nil) {
-            self.navigationItem.rightBarButtonItem = nil;
-        }
-    }
-}
-
-- (void)queueButtonPressed
-{
-    if (uploadQueueManager.inProgress) {
-        [uploadQueueManager pauseQueue];
-        [self.tableView setEditing:YES animated:YES];
-    } else {
-        [self.tableView setEditing:NO animated:YES];
-        [uploadQueueManager startQueueIfNeeded];
-    }
-    [self setQueueButtonState];
 }
 
 - (void)refresh;
@@ -204,17 +134,32 @@
     if ([photos count] == 0) {
         return nil;
     }
+    
+    if (!isRoot) {
+        // for the non-root controller, just index into Photos.
+        NSInteger photoIndex = indexPath.section;
+        return [photos objectAtIndex:photoIndex];
+    }
+
+    UploadQueueManager *uploadQueueManager = [UploadQueueManager sharedUploadQueueManager];
     NSMutableArray *photoUploads = uploadQueueManager.photoUploads;
     if (indexPath.section < [photoUploads count]) {
         // upload cell
         return nil;
     }
+
     NSInteger photoIndex = indexPath.section - [photoUploads count];
     return [photos objectAtIndex:photoIndex];
 }
 
 - (PhotoUpload*)photoUploadAtIndexPath:(NSIndexPath*)indexPath;
 {
+    // only the root controller has upload cells
+    if (!isRoot) {
+        return nil;
+    }
+
+    UploadQueueManager *uploadQueueManager = [UploadQueueManager sharedUploadQueueManager];
     NSMutableArray *photoUploads = uploadQueueManager.photoUploads;
     if ([photoUploads count] == 0) {
         return nil;
@@ -225,6 +170,9 @@
     return nil;
 }
 
+// return a table cell for a photo without firing off a background "fetch the URL from flickr"
+// call. this is a nasty fudge so that I can get the cell height without causing network activity,
+// but it's a lot of overhead.
 -(StreamPhotoViewCell*)passiveTableCellForPhoto:(StreamPhoto*)photo;
 {
     static NSString *MyIdentifier = @"StreamPhotoViewCell";
@@ -244,7 +192,12 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     NSMutableArray *photos = self.streamManager.photos;
 	NSInteger photosCount = photos.count == 0 ? 1 : photos.count;
-    return photosCount + [uploadQueueManager.photoUploads count];
+    if (isRoot) {
+        UploadQueueManager *uploadQueueManager = [UploadQueueManager sharedUploadQueueManager];
+        return photosCount + [uploadQueueManager.photoUploads count];
+    } else {
+        return photosCount;
+    }
 }
 
 // Customize the number of rows in the table view.
@@ -292,7 +245,7 @@
         UITableViewCell *cell = [self passiveTableCellForPhoto:photo];
         return cell.frame.size.height + 10;
     }
-    return 100;
+    return 100; // upload cells.
 }
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
@@ -306,31 +259,6 @@
 
 }
 
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath;
-{
-    PhotoUpload *upload = [self photoUploadAtIndexPath:indexPath];
-    if (upload) {
-        return !uploadQueueManager.inProgress;
-    } else {
-        return NO;
-    }
-}
-
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-		[uploadQueueManager removePhotoUploadAtIndex:indexPath.section];
-		//[self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:YES];
-		// TOOD: use deleteRowsAtIndexPaths
-		//[self.tableView reloadData];
-    }   
-}
-
-- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    return @"Remove";
-}
-
 # pragma mark memory management
 
 - (void)dealloc {
@@ -338,8 +266,6 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     self.streamManager.delegate = nil;
     self.streamManager = nil;
-    [queueButton release];
-    [uploadQueueManager release];
     [super dealloc];
 }
 
