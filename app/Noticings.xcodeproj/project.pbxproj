@@ -63,6 +63,8 @@
 		E60912E7142B535B004861F5 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E60912E6142B535B004861F5 /* MobileCoreServices.framework */; };
 		E60912E9142B536A004861F5 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E60912E8142B536A004861F5 /* libz.dylib */; };
 		E60912F8142B982C004861F5 /* CacheManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E60912F7142B982C004861F5 /* CacheManager.m */; };
+		E6119A931450AEFA0078161F /* PhotoUploadCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E6119A921450AEFA0078161F /* PhotoUploadCell.xib */; };
+		E6119A951450B82A0078161F /* cancel.png in Resources */ = {isa = PBXBuildFile; fileRef = E6119A941450B82A0078161F /* cancel.png */; };
 		E6218ADB13C35D7C0021CB80 /* StreamPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = E6218AD613C35D7C0021CB80 /* StreamPhoto.m */; };
 		E6218ADC13C35D7C0021CB80 /* StreamPhotoViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E6218AD813C35D7C0021CB80 /* StreamPhotoViewCell.m */; };
 		E6218ADD13C35D7C0021CB80 /* StreamViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E6218ADA13C35D7C0021CB80 /* StreamViewController.m */; };
@@ -203,6 +205,8 @@
 		E60912E8142B536A004861F5 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		E60912F6142B982C004861F5 /* CacheManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CacheManager.h; path = Classes/CacheManager.h; sourceTree = "<group>"; };
 		E60912F7142B982C004861F5 /* CacheManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CacheManager.m; path = Classes/CacheManager.m; sourceTree = "<group>"; };
+		E6119A921450AEFA0078161F /* PhotoUploadCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PhotoUploadCell.xib; sourceTree = "<group>"; };
+		E6119A941450B82A0078161F /* cancel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cancel.png; sourceTree = "<group>"; };
 		E6218AD513C35D7C0021CB80 /* StreamPhoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StreamPhoto.h; path = Classes/StreamPhoto.h; sourceTree = "<group>"; };
 		E6218AD613C35D7C0021CB80 /* StreamPhoto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StreamPhoto.m; path = Classes/StreamPhoto.m; sourceTree = "<group>"; };
 		E6218AD713C35D7C0021CB80 /* StreamPhotoViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StreamPhotoViewCell.h; path = Classes/StreamPhotoViewCell.h; sourceTree = "<group>"; };
@@ -350,6 +354,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				E6119A941450B82A0078161F /* cancel.png */,
 				E6BF642C14361F4E00A04A81 /* StreamPhotoViewController.html */,
 				8D1107310486CEB800E47090 /* Noticings-Info.plist */,
 				E64839CC13C8EC39008DB9CE /* arrow.png */,
@@ -370,6 +375,7 @@
 				E201C92113753FFD00FA5AFD /* PhotoSaveViewController.xib */,
 				E67599D0143521BF003AE272 /* StreamPhotoViewCell.xib */,
 				E20EF688109A4A8F001C5F05 /* UploadTimestampViewController.xib */,
+				E6119A921450AEFA0078161F /* PhotoUploadCell.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -581,6 +587,8 @@
 				E6BF642D14361F4E00A04A81 /* StreamPhotoViewController.html in Resources */,
 				E6F5E52C143BD34C00E00E71 /* Default@2x.png in Resources */,
 				E6F5E52D143BD34C00E00E71 /* Default.png in Resources */,
+				E6119A931450AEFA0078161F /* PhotoUploadCell.xib in Resources */,
+				E6119A951450B82A0078161F /* cancel.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

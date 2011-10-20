@@ -19,10 +19,7 @@ enum RequestType {
 };
 
 @interface UploadQueueManager : NSObject <OFFlickrAPIRequestDelegate> {
-	NSMutableArray *photoUploads;
 	OFFlickrAPIRequest *flickrRequest;
-	BOOL inProgress;
-	UIBackgroundTaskIdentifier backgroundTask;
 }
 
 +(UploadQueueManager *)sharedUploadQueueManager;
@@ -33,8 +30,9 @@ enum RequestType {
 
 - (void)startQueueIfNeeded;
 - (void)addPhotoUploadToQueue:(PhotoUpload *)photoUpload;
-- (void)removePhotoUploadAtIndex:(NSInteger)index;
 - (void)pauseQueue;
+- (void)fakeUpload;
+- (void)cancelUpload:(PhotoUpload*)upload;
 //- (void)saveQueuedUploads;
 //- (void)restoreQueuedUploads;
 

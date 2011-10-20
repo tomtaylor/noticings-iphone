@@ -210,8 +210,15 @@
     
     PhotoUpload *upload = [self photoUploadAtIndexPath:indexPath];
     if (upload) {
-        PhotoUploadCell *cell = [[PhotoUploadCell alloc] initWithPhotoUpload:upload];        
-        return [cell autorelease];
+        static NSString *MyIdentifier = @"StreamPhotoUploadCell";
+        PhotoUploadCell *cell = (PhotoUploadCell *)[self.tableView dequeueReusableCellWithIdentifier:MyIdentifier];
+        if (cell == nil) {
+            [[NSBundle mainBundle] loadNibNamed:@"PhotoUploadCell" owner:self options:nil];
+            cell = photoUploadCell;
+            photoUploadCell = nil;
+        }
+        [cell displayPhotoUpload:upload];
+        return cell;
     }
     
     StreamPhoto *photo = [self streamPhotoAtIndexPath:indexPath];
@@ -250,6 +257,13 @@
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
+    PhotoUpload *upload = [self photoUploadAtIndexPath:indexPath];
+    if (upload) {
+        // just flash the cell.
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        return;
+    }
+
     StreamPhoto *photo = [self streamPhotoAtIndexPath:indexPath];
     if (!photo) return;
     

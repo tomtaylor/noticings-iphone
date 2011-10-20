@@ -36,7 +36,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(UploadQueueManager);
 {
 	self = [super init];
 	if (self != nil) {
-		photoUploads = [[NSMutableArray alloc] init];
+		self.photoUploads = [NSMutableArray arrayWithCapacity:3];
 		self.inProgress = NO;
 		self.backgroundTask = UIBackgroundTaskInvalid;
 	}
@@ -63,8 +63,12 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(UploadQueueManager);
 	[self announceQueueCount];
 }
 
-- (void)removePhotoUploadAtIndex:(NSInteger)index {
-	[self.photoUploads removeObjectAtIndex:index];
+-(void)cancelUpload:(PhotoUpload*)upload;
+{
+    if (upload.inProgress) {
+        // ...?
+    }
+    [self.photoUploads removeObject:upload];
 	[self announceQueueCount];
 }
 
@@ -387,8 +391,18 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(UploadQueueManager);
 	self.inProgress = NO;
 }
 
+- (void)fakeUpload;
+{
+    // for debugging
+    PhotoUpload *upload = [[PhotoUpload alloc] init];
+    upload.title = @"fake upload";
+    upload.timestamp = [NSDate date];
+    [self addPhotoUploadToQueue:upload];
+    [upload release];
+}
+
 - (void) dealloc {
-	[photoUploads release];
+    self.photoUploads = nil;
 	[flickrRequest cancel];
 	[flickrRequest release];
 	[super dealloc];

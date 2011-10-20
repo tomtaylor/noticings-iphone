@@ -11,9 +11,11 @@
 #import "UploadQueueManager.h"
 #import "PhotoStreamManager.h"
 #import "StreamPhotoViewCell.h"
+#import "PhotoUploadCell.h"
 
 @interface StreamViewController : PullRefreshTableViewController <PhotoStreamDelegate> {
     IBOutlet StreamPhotoViewCell *photoViewCell;
+    IBOutlet PhotoUploadCell *photoUploadCell;
     BOOL isRoot;
 }
 

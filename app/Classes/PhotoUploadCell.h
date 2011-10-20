@@ -10,13 +10,17 @@
 #import "PhotoUpload.h"
 
 
-@interface PhotoUploadCell : UITableViewCell {
-	PhotoUpload *photoUpload;
-	NSNumberFormatter *percentFormatter;
-}
+@interface PhotoUploadCell : UITableViewCell <UIActionSheetDelegate>
 
 @property (nonatomic, retain) PhotoUpload *photoUpload;
 
-- (id)initWithPhotoUpload:(PhotoUpload *)_photoUpload;
+-(void)displayPhotoUpload:(PhotoUpload *)photoUpload;
+-(IBAction)pressedCancelButton;
+
+@property (retain, nonatomic) IBOutlet UIImageView* imageView;
+@property (retain, nonatomic) IBOutlet UILabel* textLabel;
+@property (retain, nonatomic) IBOutlet UILabel* detailTextLabel;
+@property (retain, nonatomic) IBOutlet UIProgressView* progressView;
+
 
 @end

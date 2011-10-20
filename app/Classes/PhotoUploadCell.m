@@ -19,90 +19,98 @@
 
 @implementation PhotoUploadCell
 
-@synthesize photoUpload;
+@synthesize photoUpload, imageView, textLabel, detailTextLabel, progressView;
 
-- (id)initWithPhotoUpload:(PhotoUpload *)_photoUpload
+-(id)init;
 {
-	self = [super initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
-	if (self != nil) {		
-		self.photoUpload = _photoUpload;
-		
-		self.imageView.image = [UIImage imageWithCGImage:self.photoUpload.asset.thumbnail];
-		
-		if (self.photoUpload.title == nil || [self.photoUpload.title isEqualToString:@""]) {
-			self.textLabel.text = @"No title";
-		} else {
-			self.textLabel.text = self.photoUpload.title;
-		}
-        
-		percentFormatter = [[NSNumberFormatter alloc] init];
-		[percentFormatter setFormatterBehavior:NSNumberFormatterBehavior10_4];
-		[percentFormatter setPercentSymbol:@"%"];
-		[percentFormatter setNumberStyle: NSNumberFormatterPercentStyle];
-		[percentFormatter setDecimalSeparator:@"."];
-		[percentFormatter setGeneratesDecimalNumbers:TRUE];
-		[percentFormatter setMinimumFractionDigits:0];
-		[percentFormatter setMaximumFractionDigits:0];
-		[percentFormatter setRoundingMode: NSNumberFormatterRoundUp];
-		[percentFormatter setRoundingIncrement:[NSNumber numberWithFloat:0.5]];
-		
-		[self updateDetailText];
-		
-		[self.photoUpload addObserver:self
-						   forKeyPath:@"progress"
-							  options:(NSKeyValueObservingOptionNew)
-							  context:NULL];
-		
-		[self.photoUpload addObserver:self
-						   forKeyPath:@"state"
-							  options:(NSKeyValueObservingOptionNew)
-							  context:NULL];
-		
-		[[UploadQueueManager sharedUploadQueueManager] addObserver:self
-														forKeyPath:@"inProgress"
-														   options:(NSKeyValueObservingOptionNew)
-														   context:NULL];		
-	}
-	return self;
+    self = [super init];
+    if (self != nil) {
+        [[UploadQueueManager sharedUploadQueueManager] addObserver:self
+                                                        forKeyPath:@"inProgress"
+                                                           options:(NSKeyValueObservingOptionNew)
+                                                           context:NULL];		
+    }
+    return self;
 }
 
-- (void) layoutSubviews {
-    // This is a bit of a hack. The default indentation looks awful with an image in the cell, so we use indentation level to nudge the image right, but that also nudges the labels so there's an extra gap. So we have to adjust the labels back so they stay the same relative position from the image. Sigh.
-    // We could do this by moving the contentview, but that seems to result in animation glitches.
-    self.indentationWidth = 10.0f;
+-(void)displayPhotoUpload:(PhotoUpload *)_upload;
+{
+    if (self.photoUpload == _upload) {
+        return;
+    }
+
+    if (self.photoUpload) {
+        [self.photoUpload removeObserver:self forKeyPath:@"progress"];
+        [self.photoUpload removeObserver:self forKeyPath:@"state"];
+    }
     
-    if (self.editing) {
-        self.indentationLevel = 1;
+    self.photoUpload = _upload;
+    
+    if (self.photoUpload) {
+
+        self.imageView.image = [UIImage imageWithCGImage:self.photoUpload.asset.thumbnail];
+        
+        if (self.photoUpload.title == nil || [self.photoUpload.title isEqualToString:@""]) {
+            self.textLabel.text = @"No title";
+        } else {
+            self.textLabel.text = self.photoUpload.title;
+        }
+        
+        self.progressView.progress = 0;
+        
+        [self updateDetailText];
+        
+        [self.photoUpload addObserver:self
+                           forKeyPath:@"progress"
+                              options:(NSKeyValueObservingOptionNew)
+                              context:NULL];
+        
+        [self.photoUpload addObserver:self
+                           forKeyPath:@"state"
+                              options:(NSKeyValueObservingOptionNew)
+                              context:NULL];
+
     } else {
-        self.indentationLevel = 0;
+        self.imageView.image = nil;
+        self.textLabel.text = @"";
+        self.detailTextLabel.text = @"";
     }
     
-    [super layoutSubviews];
-    
-    if (self.indentationLevel > 0) {
-        self.detailTextLabel.frame = CGRectOffset(self.detailTextLabel.frame, -self.indentationWidth, 0);
-        self.textLabel.frame = CGRectOffset(self.textLabel.frame, -self.indentationWidth, 0);
-    }
-    
-    // pad the uploading image to match the rest of the view.
-    CGFloat height = self.frame.size.height;
-    CGRect imageWithPadding = CGRectMake(PADDING_SIZE, PADDING_SIZE, height - PADDING_SIZE*2, height - PADDING_SIZE*2);
-    self.imageView.bounds = imageWithPadding;
-    self.imageView.frame = imageWithPadding;
-    self.imageView.contentMode = UIViewContentModeScaleAspectFit;
 }
+
+-(IBAction)pressedCancelButton;
+{
+    UIActionSheet *popupQuery = [[UIActionSheet alloc]
+                                 initWithTitle:@"Cancel upload"
+                                 delegate:self
+                                 cancelButtonTitle:@"Continue"
+                                 destructiveButtonTitle:@"Stop upload"
+                                 otherButtonTitles:nil];
+    [popupQuery showInView:self];
+    [popupQuery release];
+}
+     
+ -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex == 0) {
+        [[UploadQueueManager sharedUploadQueueManager] cancelUpload:self.photoUpload];
+    }
+}
+     
 
 - (void)updateDetailText {
 	if ([UploadQueueManager sharedUploadQueueManager].inProgress) {
-        
         if (!self.photoUpload.inProgress) {
-            self.detailTextLabel.text = @"Queued for upload";
-            return;
+            self.detailTextLabel.text = @"Queued";
+            self.progressView.hidden = YES;
+        } else {
+            self.detailTextLabel.text = @"";
+            self.progressView.progress = [self.photoUpload.progress floatValue];
+            self.progressView.hidden = NO;
         }
-        
-        self.detailTextLabel.text = [NSString stringWithFormat:@"Uploading (%@)", [percentFormatter stringFromNumber:self.photoUpload.progress]];
 	} else {
-		self.detailTextLabel.text = @"Upload paused";
+		self.detailTextLabel.text = @"Paused";
+        self.progressView.hidden = YES;
 	}
 	
 	[self setNeedsDisplay];
@@ -113,23 +121,12 @@
                         change:(NSDictionary *)change
                        context:(void *)context
 {
-	//if ([keyPath isEqual:@"progress"]) {
     [self updateDetailText];
-	//}
 }
-
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
-    [super setSelected:selected animated:NO];    
-    [self setSelectionStyle:UITableViewCellSelectionStyleNone];
-}
-
 
 - (void)dealloc {
-	[photoUpload removeObserver:self forKeyPath:@"progress"];
-	[photoUpload removeObserver:self forKeyPath:@"state"];
+    [self displayPhotoUpload:nil];
 	[[UploadQueueManager sharedUploadQueueManager] removeObserver:self forKeyPath:@"inProgress"];
-	[photoUpload release];
-	[percentFormatter release];
     [super dealloc];
 }
 
