@@ -143,7 +143,19 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(UploadQueueManager);
     photoUpload.inProgress = YES;
 	photoUpload.progress = [NSNumber numberWithFloat:0.0f];
 	
-    NSInputStream *imageStream = [NSInputStream inputStreamWithData:[photoUpload imageData]];
+    NSData *data = [photoUpload imageData];
+    if (!data) {
+        photoUpload.inProgress = NO;
+        self.inProgress = NO;
+        
+        [[[[UIAlertView alloc] initWithTitle:@"Upload Error" 
+                                     message:[NSString stringWithFormat:@"There was a problem uploading the photo titled '%@'. The upload queue has been paused.", photoUpload.title]
+                                    delegate:nil
+                           cancelButtonTitle:@"OK" 
+                           otherButtonTitles:nil] autorelease] show];
+        return;
+    }
+    NSInputStream *imageStream = [NSInputStream inputStreamWithData:data];
     DLog(@"Input stream: %@", imageStream);
 	
 	NSDictionary *sessionInfo = [NSDictionary dictionaryWithObjectsAndKeys:
