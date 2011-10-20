@@ -8,6 +8,7 @@
 
 #import "DebugViewController.h"
 #import "CacheManager.h"
+#import "UploadQueueManager.h"
 
 enum DebugActions {
 	kNoticingsDebugClearCache = 0,
@@ -53,11 +54,16 @@ enum DebugActions {
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    UploadQueueManager *manager;
+    
     switch (indexPath.section) {
         case kNoticingsDebugClearCache:
             [[CacheManager sharedCacheManager] clearCache];
             break;
+
         case kNoticingsDebugFakeUpload:
+            manager = [UploadQueueManager sharedUploadQueueManager];
+            [manager fakeUpload];
             break;
         default:
             break;

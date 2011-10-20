@@ -85,7 +85,6 @@
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    NSLog(@"index is %d", buttonIndex);
     if (buttonIndex == 0) {
         [[UIApplication sharedApplication] openURL:photo.originalImageURL];
     }

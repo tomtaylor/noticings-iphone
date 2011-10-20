@@ -155,7 +155,8 @@ BOOL gLogging = FALSE;
 
 - (void)applicationWillTerminate:(UIApplication *)application {
 	//[uploadQueueManager saveQueuedUploads];
-	[UIApplication sharedApplication].applicationIconBadgeNumber = [[UploadQueueManager sharedUploadQueueManager].photoUploads count];
+    // clear it, because we're not storing queue state right now.
+	[UIApplication sharedApplication].applicationIconBadgeNumber = 0; // [[UploadQueueManager sharedUploadQueueManager].photoUploads count];
 }
 
 #pragma mark -
