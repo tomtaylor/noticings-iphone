@@ -18,15 +18,7 @@
 @end
 
 
-// protocol for delegates
-@protocol PhotoStreamDelegate <NSObject>
-- (void)newPhotos;
-- (void)fetchedNewImage:(UIImage*)photo forURL:(NSURL*)url;
-@end
-
-
-
-@interface PhotoStreamManager : NSObject <OFFlickrAPIRequestDelegate, DeferredImageLoader> {
+@interface PhotoStreamManager : NSObject <OFFlickrAPIRequestDelegate> {
 @private
 	OFFlickrAPIRequest *flickrRequest;
 }

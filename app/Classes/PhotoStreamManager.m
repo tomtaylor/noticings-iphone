@@ -24,7 +24,7 @@
     self = [super init];
     if (self) {
         self.photos = [NSMutableArray arrayWithCapacity:50];
-        self.inProgress = NO;
+        self.inProgress = YES;
 
         // It's worth blocking the runloop during app startup while we check
         // the cache, to avoid a flash of empty photo list.
