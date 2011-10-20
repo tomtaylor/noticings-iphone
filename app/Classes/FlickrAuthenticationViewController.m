@@ -7,7 +7,6 @@
 //
 
 #import "FlickrAuthenticationViewController.h"
-//#import "UploadQueueManager.h"
 #import "ContactsStreamManager.h"
 #import "APIKeys.h"
 

@@ -28,13 +28,11 @@
 		E244D468109C82AA0075CAFD /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = E244D467109C82AA0075CAFD /* Icon.png */; };
 		E244D479109C83CF0075CAFD /* MoreViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E244D478109C83CF0075CAFD /* MoreViewController.m */; };
 		E244D5DB109CA6BA0075CAFD /* tab-eye.png in Resources */ = {isa = PBXBuildFile; fileRef = E244D5DA109CA6BA0075CAFD /* tab-eye.png */; };
-		E2493571137343D40066EE38 /* ImageScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = E2493570137343D40066EE38 /* ImageScrollView.m */; };
 		E2493585137356850066EE38 /* PhotoPreviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E2493583137356850066EE38 /* PhotoPreviewViewController.m */; };
 		E2493586137356850066EE38 /* PhotoPreviewViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2493584137356850066EE38 /* PhotoPreviewViewController.xib */; };
 		E256C3FE108267E800948E14 /* PhotoDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E256C3FD108267E800948E14 /* PhotoDetailViewController.m */; };
 		E256C42A10826C4100948E14 /* EditableTextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E256C42910826C4100948E14 /* EditableTextFieldCell.m */; };
 		E256C4991083192D00948E14 /* EditableTextViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E256C4981083192D00948E14 /* EditableTextViewCell.m */; };
-		E27762B3109649FB00FCC1F1 /* UploadQueueViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E27762B2109649FB00FCC1F1 /* UploadQueueViewController.m */; };
 		E27762BB10964C3A00FCC1F1 /* PhotoUpload.m in Sources */ = {isa = PBXBuildFile; fileRef = E27762BA10964C3A00FCC1F1 /* PhotoUpload.m */; };
 		E2792D101097976C00F9802C /* PhotoUploadCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E2792D0F1097976C00F9802C /* PhotoUploadCell.m */; };
 		E27C7D98108B272D0083E392 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E27C7D97108B272D0083E392 /* CFNetwork.framework */; };
@@ -144,8 +142,6 @@
 		E244D477109C83CF0075CAFD /* MoreViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoreViewController.h; sourceTree = "<group>"; };
 		E244D478109C83CF0075CAFD /* MoreViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MoreViewController.m; sourceTree = "<group>"; };
 		E244D5DA109CA6BA0075CAFD /* tab-eye.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tab-eye.png"; sourceTree = "<group>"; };
-		E249356F137343D40066EE38 /* ImageScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageScrollView.h; sourceTree = "<group>"; };
-		E2493570137343D40066EE38 /* ImageScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageScrollView.m; sourceTree = "<group>"; };
 		E2493582137356840066EE38 /* PhotoPreviewViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhotoPreviewViewController.h; path = ../Noticings.xcodeproj/PhotoPreviewViewController.h; sourceTree = "<group>"; };
 		E2493583137356850066EE38 /* PhotoPreviewViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PhotoPreviewViewController.m; path = ../Noticings.xcodeproj/PhotoPreviewViewController.m; sourceTree = "<group>"; };
 		E2493584137356850066EE38 /* PhotoPreviewViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PhotoPreviewViewController.xib; path = Noticings.xcodeproj/PhotoPreviewViewController.xib; sourceTree = "<group>"; };
@@ -156,8 +152,6 @@
 		E256C42910826C4100948E14 /* EditableTextFieldCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditableTextFieldCell.m; sourceTree = "<group>"; };
 		E256C4971083192D00948E14 /* EditableTextViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditableTextViewCell.h; sourceTree = "<group>"; };
 		E256C4981083192D00948E14 /* EditableTextViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditableTextViewCell.m; sourceTree = "<group>"; };
-		E27762B1109649FB00FCC1F1 /* UploadQueueViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UploadQueueViewController.h; sourceTree = "<group>"; };
-		E27762B2109649FB00FCC1F1 /* UploadQueueViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UploadQueueViewController.m; sourceTree = "<group>"; };
 		E27762B910964C3A00FCC1F1 /* PhotoUpload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoUpload.h; sourceTree = "<group>"; };
 		E27762BA10964C3A00FCC1F1 /* PhotoUpload.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoUpload.m; sourceTree = "<group>"; };
 		E2792D0E1097976C00F9802C /* PhotoUploadCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoUploadCell.h; sourceTree = "<group>"; };
@@ -278,8 +272,6 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				E249356F137343D40066EE38 /* ImageScrollView.h */,
-				E2493570137343D40066EE38 /* ImageScrollView.m */,
 				E256C42810826C4100948E14 /* EditableTextFieldCell.h */,
 				E256C42910826C4100948E14 /* EditableTextFieldCell.m */,
 				1D3623240D0F684500981E51 /* NoticingsAppDelegate.h */,
@@ -294,8 +286,6 @@
 				E27C7E10108B9A320083E392 /* UploadQueueManager.m */,
 				E211FAC410960D6200ABAE72 /* FlickrAuthenticationViewController.h */,
 				E211FAC510960D6200ABAE72 /* FlickrAuthenticationViewController.m */,
-				E27762B1109649FB00FCC1F1 /* UploadQueueViewController.h */,
-				E27762B2109649FB00FCC1F1 /* UploadQueueViewController.m */,
 				E27762B910964C3A00FCC1F1 /* PhotoUpload.h */,
 				E27762BA10964C3A00FCC1F1 /* PhotoUpload.m */,
 				E2792D0E1097976C00F9802C /* PhotoUploadCell.h */,
@@ -604,12 +594,10 @@
 				E2F553B310850EB200FE67C7 /* PhotoMapViewController.m in Sources */,
 				E27C7E11108B9A320083E392 /* UploadQueueManager.m in Sources */,
 				E211FAC710960D6200ABAE72 /* FlickrAuthenticationViewController.m in Sources */,
-				E27762B3109649FB00FCC1F1 /* UploadQueueViewController.m in Sources */,
 				E27762BB10964C3A00FCC1F1 /* PhotoUpload.m in Sources */,
 				E2792D101097976C00F9802C /* PhotoUploadCell.m in Sources */,
 				E20EF689109A4A8F001C5F05 /* UploadTimestampViewController.m in Sources */,
 				E244D479109C83CF0075CAFD /* MoreViewController.m in Sources */,
-				E2493571137343D40066EE38 /* ImageScrollView.m in Sources */,
 				E2493585137356850066EE38 /* PhotoPreviewViewController.m in Sources */,
 				E201C92213753FFD00FA5AFD /* PhotoSaveViewController.m in Sources */,
 				E6218ADB13C35D7C0021CB80 /* StreamPhoto.m in Sources */,

@@ -7,7 +7,6 @@
 //
 
 #import "FlickrAuthenticationViewController.h"
-#import "UploadQueueManager.h"
 #import "CameraController.h"
 #import <CoreLocation/CoreLocation.h>
 #import <AssetsLibrary/AssetsLibrary.h>
@@ -16,7 +15,6 @@
 	UIWindow *window;
     UITabBarController *tabBarController;
 	FlickrAuthenticationViewController *authViewController;
-	UploadQueueManager *uploadQueueManager;
 	UITabBarItem *queueTab;
     UIViewController *dummyViewController;
     CameraController *cameraController;
