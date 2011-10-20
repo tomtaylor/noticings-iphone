@@ -16,14 +16,15 @@
 
 @interface CacheManager : NSObject
 
-+(CacheManager *)sharedCacheManager;
++ (CacheManager *) sharedCacheManager;
 
--(NSString*) cachePathForFilename:(NSString*)filename;
+- (NSString*) cachePathForFilename:(NSString*)filename;
 - (UIImage *) cachedImageForURL:(NSURL*)url;
-- (void)fetchImageForURL:(NSURL*)url andNotify:(NSObject <DeferredImageLoader>*)sender;
+- (void) fetchImageForURL:(NSURL*)url andNotify:(NSObject <DeferredImageLoader>*)sender;
 - (void) flushMemoryCache;
-- (void)flushQueue;
--(NSString*) urlToFilename:(NSURL*)url;
+- (void) flushQueue;
+- (void) clearCache;
+- (NSString*) urlToFilename:(NSURL*)url;
 
 @property (retain) NSString *cacheDir;
 @property (retain) NSMutableDictionary *imageCache;

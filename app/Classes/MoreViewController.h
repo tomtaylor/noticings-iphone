@@ -10,7 +10,8 @@
 #import "CameraController.h"
 
 @interface MoreViewController : UITableViewController {
-    CameraController *cameraController;
 }
+
+@property (retain) CameraController *cameraController;
 
 @end

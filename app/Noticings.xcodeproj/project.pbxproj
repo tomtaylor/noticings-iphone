@@ -76,6 +76,7 @@
 		E671F9171439FC6E0068380D /* GTMNSString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = E671F9161439FC6E0068380D /* GTMNSString+HTML.m */; };
 		E67599D1143521BF003AE272 /* StreamPhotoViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E67599D0143521BF003AE272 /* StreamPhotoViewCell.xib */; };
 		E68D5F1E142BA7FC003192AE /* UserStreamManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E68D5F1D142BA7FC003192AE /* UserStreamManager.m */; };
+		E69E4AE01450985500BD442B /* DebugViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E69E4ADF1450985500BD442B /* DebugViewController.m */; };
 		E6AE4A9B13C3A1FD00702DA3 /* ContactsStreamManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E6AE4A9A13C3A1FD00702DA3 /* ContactsStreamManager.m */; };
 		E6BF4A0C143C834E00FFBD67 /* NSString+URI.m in Sources */ = {isa = PBXBuildFile; fileRef = E6BF4A0B143C834E00FFBD67 /* NSString+URI.m */; };
 		E6BF642A1435D57100A04A81 /* StreamPhotoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E6BF64281435D57100A04A81 /* StreamPhotoViewController.m */; };
@@ -226,6 +227,8 @@
 		E67599D0143521BF003AE272 /* StreamPhotoViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StreamPhotoViewCell.xib; sourceTree = "<group>"; };
 		E68D5F1C142BA7FC003192AE /* UserStreamManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserStreamManager.h; path = Classes/UserStreamManager.h; sourceTree = "<group>"; };
 		E68D5F1D142BA7FC003192AE /* UserStreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UserStreamManager.m; path = Classes/UserStreamManager.m; sourceTree = "<group>"; };
+		E69E4ADE1450985500BD442B /* DebugViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugViewController.h; sourceTree = "<group>"; };
+		E69E4ADF1450985500BD442B /* DebugViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DebugViewController.m; sourceTree = "<group>"; };
 		E6AE4A9913C3A1FD00702DA3 /* ContactsStreamManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactsStreamManager.h; sourceTree = "<group>"; };
 		E6AE4A9A13C3A1FD00702DA3 /* ContactsStreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactsStreamManager.m; sourceTree = "<group>"; };
 		E6BF4A0A143C834E00FFBD67 /* NSString+URI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+URI.h"; sourceTree = "<group>"; };
@@ -302,6 +305,8 @@
 				E22C520413D4C5F700197EC5 /* CameraController.m */,
 				E6BF4A0A143C834E00FFBD67 /* NSString+URI.h */,
 				E6BF4A0B143C834E00FFBD67 /* NSString+URI.m */,
+				E69E4ADE1450985500BD442B /* DebugViewController.h */,
+				E69E4ADF1450985500BD442B /* DebugViewController.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -628,6 +633,7 @@
 				E668BBAD143BE307007ED22D /* TagStreamManager.m in Sources */,
 				E6BF4A0C143C834E00FFBD67 /* NSString+URI.m in Sources */,
 				E6461F69143F2073009407FD /* AddCommentViewController.m in Sources */,
+				E69E4AE01450985500BD442B /* DebugViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

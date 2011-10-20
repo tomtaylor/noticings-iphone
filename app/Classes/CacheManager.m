@@ -124,12 +124,25 @@ extern const NSUInteger kMaxDiskCacheSize;
 
 - (void) clearCacheForURL:(NSURL*)url;
 {
-    // TODO   
+    // TODO
 }
 
 - (void) clearCache;
 {
-    // TODO   
+    [self flushQueue];
+    [self.queue cancelAllOperations];
+    [self flushMemoryCache];
+    
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSError *error = nil;
+    for (NSString *file in [fm contentsOfDirectoryAtPath:self.cacheDir error:&error]) {
+        NSString *fullFile = [self.cacheDir stringByAppendingPathComponent:file];
+        NSLog(@"deleting %@ from cache", fullFile);
+        BOOL success = [fm removeItemAtPath:fullFile error:&error];
+        if (!success || error) {
+            NSLog(@"Fail! %@", error);
+        }
+    }
 }
 
 - (void) flushMemoryCache;

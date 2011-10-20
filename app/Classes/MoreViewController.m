@@ -8,6 +8,7 @@
 
 #import "MoreViewController.h"
 #import "FlickrAuthenticationViewController.h"
+#import "DebugViewController.h"
 
 enum Sections {
 	kNoticingsSection = 0,
@@ -17,7 +18,8 @@ enum Sections {
 };
 
 enum NoticingsSectionRows {
-	kNoticingsSectionSiteRow,
+	kNoticingsSectionSiteRow = 0,
+	kNoticingsSectionDebugRow,
 	NUM_NOTICINGS_SECTION_ROWS
 };
 
@@ -34,57 +36,19 @@ enum AppSectionRows {
 
 @implementation MoreViewController
 
+@synthesize cameraController;
 
 - (void)viewDidLoad {
-    if (!cameraController) {
-        cameraController = [[CameraController alloc] initWithBaseViewController:self];
+    if (!self.cameraController) {
+        self.cameraController = [[[CameraController alloc] initWithBaseViewController:self] autorelease];
     }
     [super viewDidLoad];
 }
 
-/*
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-}
-*/
-/*
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-}
-*/
-/*
-- (void)viewWillDisappear:(BOOL)animated {
-	[super viewWillDisappear:animated];
-}
-*/
-/*
-- (void)viewDidDisappear:(BOOL)animated {
-	[super viewDidDisappear:animated];
-}
-*/
-
-/*
-// Override to allow orientations other than the default portrait orientation.
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    // Return YES for supported orientations
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
-}
-*/
-
-- (void)didReceiveMemoryWarning {
-	// Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-	
-	// Release any cached data, images, etc that aren't in use.
-}
-
 - (void)viewDidUnload {
-    if (cameraController) {
-        [cameraController release];
-        cameraController = nil;
-    }    
+    self.cameraController = nil;
+    [super viewDidUnload];
 }
-
 
 #pragma mark Table view methods
 
@@ -124,6 +88,9 @@ enum AppSectionRows {
 			case kNoticingsSectionSiteRow:
 				cell.textLabel.text = @"Upload from Camera Roll";
 				break;
+			case kNoticingsSectionDebugRow:
+				cell.textLabel.text = @"Debug";
+				break;
 			default:
 				break;
 		}
@@ -143,6 +110,9 @@ enum AppSectionRows {
 			case kNoticingsSectionSiteRow:
 				[cameraController presentImagePicker];
 				break;
+			case kNoticingsSectionDebugRow:
+                [self.navigationController pushViewController:[[[DebugViewController alloc] initWithStyle:UITableViewStyleGrouped] autorelease] animated:YES];
+				break;
 			default:
 				break;
 		}
@@ -160,7 +130,7 @@ enum AppSectionRows {
 }
 
 - (void)dealloc {
-    [cameraController release];
+    self.cameraController = nil;
     [super dealloc];
 }
 
