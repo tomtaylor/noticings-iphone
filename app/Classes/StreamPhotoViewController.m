@@ -6,6 +6,8 @@
 //  Copyright (c) 2011 Strange Tractor Limited. All rights reserved.
 //
 
+#import "Twitter/Twitter.h"
+
 #import "StreamPhotoViewController.h"
 #import "StreamPhotoViewCell.h"
 #import "UserStreamManager.h"
@@ -31,6 +33,7 @@
         self.photo = _photo;
         self.streamManager = _streamManager;
         self.title = [self.photo titleOrUntitled];
+
     }
     return self;
 }
@@ -62,7 +65,7 @@
 -(void)externalButton;
 {
     UIActionSheet *popupQuery = [[UIActionSheet alloc]
-                                 initWithTitle:@"Open page"
+                                 initWithTitle:nil
                                  delegate:self
                                  cancelButtonTitle:nil
                                  destructiveButtonTitle:nil
@@ -70,9 +73,17 @@
 
     [popupQuery addButtonWithTitle:@"Open in Safari"];
 
+    sendMailIndex = -1;
+    sendTweetIndex = -1;
+
     if ([MFMailComposeViewController canSendMail]) {
-        [popupQuery addButtonWithTitle:@"Mail link to photo"];
+        sendMailIndex = [popupQuery addButtonWithTitle:@"Mail link to photo"];
     }
+    
+    if ([TWTweetComposeViewController canSendTweet]) {
+        sendTweetIndex = [popupQuery addButtonWithTitle:@"Tweet link to photo"];
+    }
+
     popupQuery.cancelButtonIndex = [popupQuery addButtonWithTitle:@"Cancel"];
 
     // TODO - detect IOS5 and twitter account, offer "tweet photo" button.
@@ -86,20 +97,26 @@
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    NSLog(@"index is %d", buttonIndex);
     if (buttonIndex == 0) {
         [[UIApplication sharedApplication] openURL:photo.mobilePageURL];
-    } else if (buttonIndex == 1) {
-        if ([MFMailComposeViewController canSendMail]) {
-            MFMailComposeViewController *composer = [[MFMailComposeViewController alloc] init];
-            composer.mailComposeDelegate = self;
-            [composer setSubject:[self.photo titleOrUntitled]];
-            // TODO - get url for noticings in here?
-            NSString *body = [NSString stringWithFormat:@"\"%@\" by %@\n\n%@\n\nSent using Noticings\n", [self.photo titleOrUntitled], self.photo.ownername, self.photo.pageURL];
-            [composer setMessageBody:body isHTML:NO];
-            [self presentModalViewController:composer animated:YES];
-            [composer release];
-        }
+
+    } else if (buttonIndex == sendMailIndex) {
+        MFMailComposeViewController *composer = [[MFMailComposeViewController alloc] init];
+        composer.mailComposeDelegate = self;
+        [composer setSubject:[self.photo titleOrUntitled]];
+        // TODO - get url for noticings in here?
+        NSString *body = [NSString stringWithFormat:@"\"%@\" by %@\n\n%@\n\nSent using Noticings\n", [self.photo titleOrUntitled], self.photo.ownername, self.photo.pageURL];
+        [composer setMessageBody:body isHTML:NO];
+        [self presentModalViewController:composer animated:YES];
+        [composer release];
+
+    } else if (buttonIndex == sendTweetIndex) {
+        TWTweetComposeViewController *composer = [[TWTweetComposeViewController alloc] init];
+        [composer setInitialText:[self.photo titleOrUntitled]];
+        [composer addURL:self.photo.pageURL];
+        [self presentModalViewController:composer animated:YES];
+        [composer release];
+
     }
 }
 

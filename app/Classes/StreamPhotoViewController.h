@@ -16,6 +16,9 @@
 
 @interface StreamPhotoViewController : UIViewController <UIWebViewDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate, DeferredImageLoader> {
     BOOL firstRender;
+    
+    int sendMailIndex;
+    int sendTweetIndex;
 }
 
 -(id)initWithPhoto:(StreamPhoto*)photo streamManager:(PhotoStreamManager*)streamManager;
