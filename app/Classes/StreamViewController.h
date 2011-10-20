@@ -20,6 +20,7 @@
 }
 
 -(id)initWithPhotoStreamManager:(PhotoStreamManager*)manager;
+-(void)updatePullText;
 
 @property (retain) PhotoStreamManager *streamManager;
 

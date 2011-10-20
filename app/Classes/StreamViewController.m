@@ -41,11 +41,9 @@
         isRoot = YES; // crude
     }
     
-    self.textPull = [NSString stringWithFormat:@"Pull to refresh..\nLast refreshed %@", streamManager.lastRefreshDisplay];
-    self.textRelease = @"Release to refresh..";
-    self.textLoading = @"Loading..";
     self.refreshLabel.lineBreakMode = UILineBreakModeWordWrap;
     self.refreshLabel.numberOfLines = 2;
+    [self updatePullText];
     
     self.streamManager.delegate = self;
 
@@ -95,6 +93,13 @@
     
 }
 
+-(void)updatePullText;
+{
+    self.textPull = [NSString stringWithFormat:@"Pull to refresh..\nLast refreshed %@", streamManager.lastRefreshDisplay];
+    self.textRelease = [NSString stringWithFormat:@"Release to refresh..\nLast refreshed %@", streamManager.lastRefreshDisplay];
+    self.textLoading = [NSString stringWithFormat:@"Loading..\nLast refreshed %@", streamManager.lastRefreshDisplay];
+}
+
 -(void)viewWillAppear:(BOOL)animated;
 {
     NSLog(@"%@ will appear", self.class);
@@ -105,7 +110,7 @@
 {
     [super viewDidAppear:animated];
     // in case we missed this at some point.
-    self.textPull = [NSString stringWithFormat:@"Pull to refresh..\nLast refreshed %@", streamManager.lastRefreshDisplay];
+    [self updatePullText];
     [self.streamManager precache];
     [self.streamManager maybeRefresh];
 }
