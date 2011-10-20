@@ -239,6 +239,9 @@
                        cancelButtonTitle:@"OK"
                        otherButtonTitles:nil]
       autorelease] show];
+ 
+    // call newPhotos call _anyway_, to convince the view controller that we're finished.
+    [self.delegate performSelector:@selector(newPhotos)];
 }
 
 
