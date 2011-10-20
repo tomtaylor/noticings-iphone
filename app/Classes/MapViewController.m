@@ -8,7 +8,6 @@
 
 #import "MapViewController.h"
 #import "StreamPhotoViewController.h"
-#import "RemoteImageView.h"
 
 @implementation MapViewController
 
@@ -97,18 +96,9 @@
     if (!aView) {
         aView = [[[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"MyAnnotationView"] autorelease];
         aView.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
-        aView.leftCalloutAccessoryView = [[[RemoteImageView alloc] initWithFrame:CGRectMake(0,0,30,30)] autorelease];
         aView.canShowCallout = YES;
     }
     
-    // imageURL is _way_ too big, but it has the advantage of probably already being cached
-    if (annotation.class == StreamPhoto.class) {
-        StreamPhoto *_photo = (StreamPhoto*)annotation;
-        [((RemoteImageView *)aView.leftCalloutAccessoryView) loadURL:_photo.imageURL];
-    } else {
-        // TODO - this happens because the "you are here" point is an annotation. It shouldn't
-        // get this popup at all, really.
-    }
     aView.annotation = annotation; // this is the Photo object. Yay protocols.
     
     return aView;
