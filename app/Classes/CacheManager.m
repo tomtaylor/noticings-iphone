@@ -108,7 +108,7 @@ extern const NSUInteger kMaxDiskCacheSize;
     return nil;
 }
 
-- (void) cacheImage:(UIImage *)image forURL:(NSURL*)url;
+- (void) cacheImage:(UIImage *)image fromData:(NSData*)data forURL:(NSURL*)url;
 {
     NSString *filename = [self urlToFilename:url];
     
@@ -116,8 +116,7 @@ extern const NSUInteger kMaxDiskCacheSize;
     [self.imageCache setObject:image forKey:filename];
     
     // and store on disk
-    NSData *imageData = UIImageJPEGRepresentation(image, 0.9);
-    if (![imageData writeToFile:filename atomically:TRUE]) {
+    if (![data writeToFile:filename atomically:TRUE]) {
         NSLog(@"error writing to cache");
     }
 }
@@ -197,7 +196,7 @@ extern const NSUInteger kMaxDiskCacheSize;
         // Do JPEG processing _off_ the main thread.
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
             UIImage *image = [UIImage imageWithData:data];
-            [self cacheImage:image forURL:url];
+            [self cacheImage:image fromData:data forURL:url];
             @synchronized(self) {
                 NSString *key = [url absoluteString];
                 NSMutableArray* listeners = [self.imageRequests objectForKey:key];
