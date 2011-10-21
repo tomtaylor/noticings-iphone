@@ -10,7 +10,7 @@
 #import "ObjectiveFlickr.h"
 #import "StreamPhoto.h"
 #import "CacheManager.h"
-
+#import "PhotoLocationManager.h"
 
 // protocol for delegates
 @protocol PhotoStreamDelegate <NSObject>

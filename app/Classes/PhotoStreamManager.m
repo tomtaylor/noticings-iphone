@@ -191,6 +191,7 @@
 
         // pre-cache images
         CacheManager *cacheManager = [CacheManager sharedCacheManager];
+        PhotoLocationManager *locationManager = [PhotoLocationManager sharedPhotoLocationManager];
         
         for (StreamPhoto *sp in self.photos) {
             if (![cacheManager cachedImageForURL:sp.avatarURL]) {
@@ -198,6 +199,9 @@
             }
             if (![cacheManager cachedImageForURL:sp.imageURL]) {
                 [cacheManager fetchImageForURL:sp.imageURL andNotify:nil];
+            }
+            if (![locationManager cachedLocationForPhoto:sp]) {
+                [locationManager getLocationForPhoto:sp andTell:nil];
             }
         }
 

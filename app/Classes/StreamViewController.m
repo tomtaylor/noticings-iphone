@@ -249,8 +249,10 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     StreamPhoto *photo = [self streamPhotoAtIndexPath:indexPath];
     if (photo) {
-        UITableViewCell *cell = [self passiveTableCellForPhoto:photo];
-        return cell.frame.size.height + 10;
+        CGFloat height = MIN( [photo imageHeightForWidth:self.tableView.frame.size.width], 260);
+        return height + 70;
+//        UITableViewCell *cell = [self passiveTableCellForPhoto:photo];
+//        return cell.frame.size.height + 10;
     }
     return 100; // upload cells.
 }

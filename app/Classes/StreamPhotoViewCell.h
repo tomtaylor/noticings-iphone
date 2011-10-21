@@ -9,10 +9,11 @@
 #import <Foundation/Foundation.h>
 #import "StreamPhoto.h"
 #import "CacheManager.h"
+#import "PhotoLocationManager.h"
 
 #define PADDING_SIZE 4.0f
 
-@interface StreamPhotoViewCell : UITableViewCell <DeferredImageLoader> {
+@interface StreamPhotoViewCell : UITableViewCell <DeferredImageLoader, LocationDelegate> {
     
     IBOutlet UIImageView *avatarView;
     IBOutlet UIImageView *photoView;

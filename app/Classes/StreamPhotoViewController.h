@@ -11,10 +11,12 @@
 #import "StreamPhoto.h"
 #import "PhotoStreamManager.h"
 #import "CacheManager.h"
+#import "PhotoLocationManager.h"
+
 #import <MessageUI/MessageUI.h>
 #import <MessageUI/MFMailComposeViewController.h>
 
-@interface StreamPhotoViewController : UIViewController <UIWebViewDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate, DeferredImageLoader> {
+@interface StreamPhotoViewController : UIViewController <UIWebViewDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate, DeferredImageLoader, LocationDelegate> {
     BOOL firstRender;
     
     int sendMailIndex;

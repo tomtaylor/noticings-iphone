@@ -10,7 +10,6 @@
 
 #import "APIKeys.h"
 #import "ObjectiveFlickr.h"
-#import "PhotoLocationManager.h"
 #import "CacheManager.h"
 
 @implementation StreamPhotoViewCell
@@ -24,15 +23,18 @@
     // gfx are for losers. I like unicode.
     timeagoView.text = [@"⌚" stringByAppendingString:photo.ago];
     titleView.text = photo.title;
-    descView.text = photo.description;
-    if (photo.hasLocation) {
-        placeView.text = photo.placename;
+    descView.text = @"";
+    //descView.text = photo.description;
 
-        [[PhotoLocationManager sharedPhotoLocationManager] getLocationForPhoto:photo and:^(NSString* name){
-            if (name) {
-                placeView.text = name;
-            }
-        }];
+    if (photo.hasLocation) {
+        NSString *cached = [[PhotoLocationManager sharedPhotoLocationManager] cachedLocationForPhoto:photo];
+        if (cached) {
+            placeView.text = cached;
+        } else {
+            placeView.text = photo.placename;
+            [[PhotoLocationManager sharedPhotoLocationManager] getLocationForPhoto:photo andTell:self];
+        }
+
     } else {
         placeView.text = @"";
     }
@@ -61,14 +63,18 @@
     frame.origin.y = y;
     titleView.frame = frame;
     
-    frame.origin.y = y + frame.size.height + PADDING_SIZE;
-    descView.frame = frame;
+    //frame.origin.y = y + frame.size.height + PADDING_SIZE;
+    //descView.frame = frame;
+    //[descView sizeToFit];
+    //frame = self.frame;
+    //frame.size.height = descView.frame.origin.y + descView.frame.size.height + PADDING_SIZE;
 
-    [descView sizeToFit];
-    
-    frame = self.frame;
-    frame.size.height = descView.frame.origin.y + descView.frame.size.height + PADDING_SIZE;
     self.frame = frame;
+}
+
+-(void) gotLocation:(NSString*)location forPhoto:(StreamPhoto*)photo;
+{
+    placeView.text = location;
 }
 
 -(void)loadImages;
@@ -105,6 +111,7 @@
 }
 
 - (void)dealloc {
+    NSLog(@"dealloc %@", self);
     self.photo = nil;
     [super dealloc];
 }

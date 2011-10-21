@@ -150,12 +150,7 @@
         if (!self.photoLocation) {
             self.photoLocation = self.photo.placename;
             // TODO - this is wrong. Should be caching location on photo object or something.
-            [[PhotoLocationManager sharedPhotoLocationManager] getLocationForPhoto:photo and:^(NSString* name){
-                if (name) {
-                    self.photoLocation = name;
-                    [self updateHTML];
-                }
-            }];
+            [[PhotoLocationManager sharedPhotoLocationManager] getLocationForPhoto:photo andTell:self];
         }
     }
     
@@ -181,6 +176,12 @@
          [self updateHTML];
      }];
     
+    [self updateHTML];
+}
+
+-(void) gotLocation:(NSString*)location forPhoto:(StreamPhoto*)photo;
+{
+    self.photoLocation = location;
     [self updateHTML];
 }
 
@@ -360,7 +361,6 @@
                 return false;
             }
             NSString *tag = [[list objectAtIndex:1] stringByDecodingFromURI];
-            NSLog(@"tapped tag %@", tag);
 
             TagStreamManager *manager = [[TagStreamManager alloc] initWithTag:tag];
             StreamViewController *svc = [[StreamViewController alloc] initWithPhotoStreamManager:manager];
