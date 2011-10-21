@@ -25,32 +25,37 @@
 
     
     // not showing desc so the cell is a more predictable size.
-    descView.text = @"";
+    //descView.text = @"";
     //descView.text = photo.description;
 
-    if (photo.hasLocation) {
-        NSString *cached = [[PhotoLocationManager sharedPhotoLocationManager] cachedLocationForPhoto:photo];
-        if (cached) {
-            placeView.text = [@"⊙" stringByAppendingString:cached];
-        } else {
-            placeView.text = [@"⊙" stringByAppendingString:photo.placename];
-            [[PhotoLocationManager sharedPhotoLocationManager] getLocationForPhoto:photo andTell:self];
-        }
+    hasLocationImage.hidden = !photo.hasLocation;
 
-    } else {
-        placeView.text = @"No location";
-    }
+//    if (photo.hasLocation) {
+//        NSString *cached = [[PhotoLocationManager sharedPhotoLocationManager] cachedLocationForPhoto:photo];
+//        if (cached) {
+//            placeView.text = [@"⊙" stringByAppendingString:cached];
+//        } else {
+//            placeView.text = [@"⊙" stringByAppendingString:photo.placename];
+//            [[PhotoLocationManager sharedPhotoLocationManager] getLocationForPhoto:photo andTell:self];
+//        }
+//
+//    } else {
+//        placeView.text = @"No location";
+//    }
 
     int vis = photo.visibility;
     if (vis == StreamPhotoVisibilityPrivate) {
-        visibilityView.text = @"private";
-        visibilityView.textColor = [UIColor colorWithRed:0.5 green:0 blue:0 alpha:1];
+//        visibilityView.text = @"private";
+//        visibilityView.textColor = [UIColor colorWithRed:0.5 green:0 blue:0 alpha:1];
+        privacyImage.backgroundColor = [UIColor colorWithRed:0.5 green:0 blue:0 alpha:1];
     } else if (vis == StreamPhotoVisibilityLimited) {
-        visibilityView.text = @"limited";
-        visibilityView.textColor = [UIColor colorWithRed:0.7 green:0.7 blue:0 alpha:1];
+//        visibilityView.text = @"limited";
+//        visibilityView.textColor = [UIColor colorWithRed:0.7 green:0.7 blue:0 alpha:1];
+        privacyImage.backgroundColor = [UIColor colorWithRed:0.7 green:0.7 blue:0 alpha:1];
     } else if (vis == StreamPhotoVisibilityPublic) {
-        visibilityView.text = @"public";
-        visibilityView.textColor = [UIColor colorWithRed:0 green:0.5 blue:0 alpha:1];
+//        visibilityView.text = @"public";
+//        visibilityView.textColor = [UIColor colorWithRed:0 green:0.5 blue:0 alpha:1];
+        privacyImage.backgroundColor = [UIColor colorWithRed:0 green:0.5 blue:0 alpha:1];
     }
     
     // make landscape images aspect fill and crop to frame, so we get perfect margins.
@@ -125,7 +130,7 @@
 {
     // note that this cell can be re-used, so don't overwrite the wrong location.
     if ([_photo.woeid isEqual:self.photo.woeid]) {
-        placeView.text = [@"⊙" stringByAppendingString:location];
+        //placeView.text = [@"⊙" stringByAppendingString:location];
     }
 }
 

@@ -17,12 +17,11 @@
     
     IBOutlet UIImageView *avatarView;
     IBOutlet UIImageView *photoView;
+    IBOutlet UIImageView *hasLocationImage;
+    IBOutlet UIImageView *privacyImage;
     IBOutlet UILabel *usernameView;
-    IBOutlet UILabel *placeView;
     IBOutlet UILabel *timeagoView;
     IBOutlet UILabel *titleView;
-    IBOutlet UILabel *descView;
-    IBOutlet UILabel *visibilityView;
 }
 
 +(CGFloat)cellHeightForPhoto:(StreamPhoto*)photo;
