@@ -68,9 +68,9 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(PhotoLocationManager);
     // this skips the cache. Always check the cache first, but because every time I do this,
     // I want to do something different if it's cached, we can not bother here.
     
-    // rather than always calling flickr, we'll keep track of which location requests are already outstanding,
-    // and only queue a request for a location once. Everyone else just gets added to the list of "interested
-    // parties" and will get their block called once we have a result.
+    // rather than always calling flickr, we'll keep track of which requests are already outstanding,
+    // and only queue a request once. Everyone else just gets added to the list of "interested
+    // parties" and will get called once we have a result.
     BOOL alreadyQueued = YES;
 
     @synchronized(self) {
@@ -131,7 +131,9 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(PhotoLocationManager);
     }
     orFail:^(NSString *code, NSString *err){
         NSLog(@"Failed to get location for woeid %@: %@ %@", photo.woeid, code, err);
-        [self.locationRequests removeObjectForKey:photo.woeid];
+        @synchronized(self) {
+            [self.locationRequests removeObjectForKey:photo.woeid];
+        }
     }
     ];
 

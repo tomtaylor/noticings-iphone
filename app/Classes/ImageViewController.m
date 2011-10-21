@@ -90,19 +90,46 @@
     }
 }
 
+
+-(void)scaleAndShowImage:(UIImage*)image;
+{
+    // snap back out to full zoom before loading, or sometihng odd happens with the extents.
+    self.scrollView.zoomScale = 1;
+    
+    self.imageView.image = image;
+    self.imageView.frame = self.view.frame;
+    self.scrollView.contentSize = self.imageView.frame.size;
+    
+    // knock the zoom level in a tiny tiny bit so we get bouncy edges to the scroll view.
+    self.scrollView.zoomScale = 1.001;
+}
+
+
 -(void)viewWillAppear:(BOOL)animated;
 {
     NSLog(@"%@ will appear", self.class);
     [super viewWillAppear:animated];
 
-    // ask for the big one first. if it's in the cache, it'll load, and we'll refuse to load
-    // the smaller one later. otherwise, the smaller one will almost certainly be either already
-    // in the cache, or load faster.
-    //
     // Explicitly _don't_ load the original. Some of those are insane, and you're probably using
     // the wrong app if you care about them.
+
+    // look for the big image
+    UIImage *cached = [[CacheManager sharedCacheManager] cachedImageForURL:self.photo.bigImageURL];
+    if (cached) {
+        // we already have the big image. Show it, and we're done.
+        [self scaleAndShowImage:cached];
+        return;
+    }
+
+    // WE don't have the big image. Load it.
     [[CacheManager sharedCacheManager] fetchImageForURL:self.photo.bigImageURL andNotify:self];
-    [[CacheManager sharedCacheManager] fetchImageForURL:self.photo.imageURL andNotify:self];
+
+
+    // try to load the normal as a fall-back
+    cached = [[CacheManager sharedCacheManager] cachedImageForURL:self.photo.imageURL];
+    if (cached) {
+        [self scaleAndShowImage:cached];
+    }
 }
 
 -(void)viewWillDisappear:(BOOL)animated;
@@ -124,16 +151,7 @@
             return;
         }
     }
-    
-    // snap back out to full zoom before loading, or sometihng odd happens with the extents.
-    self.scrollView.zoomScale = 1;
-
-    self.imageView.image = image;
-    self.imageView.frame = self.view.frame;
-    self.scrollView.contentSize = self.imageView.frame.size;
-
-    // knock the zoom level in a tiny tiny bit so we get bouncy edges to the scroll view.
-    self.scrollView.zoomScale = 1.001;
+    [self scaleAndShowImage:image];
 }
 
 

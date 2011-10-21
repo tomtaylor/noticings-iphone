@@ -155,41 +155,30 @@ extern const NSUInteger kMaxDiskCacheSize;
 // return an image for the passed url. Will try the cache first.
 - (void)fetchImageForURL:(NSURL*)url andNotify:(NSObject <DeferredImageLoader>*)sender;
 {
-    // TODO - slight worry - do we need to be threadsafe here? I think I call this from
-    // non-main-thread queues.
-    //
-    // THREADING IS HARD.
-    //
-    
-    UIImage *image = [self cachedImageForURL:url];
-    if (image) {
-        if (sender) {
-            // we have a cached version. Send that first. But not till this method is done
-            [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                [sender loadedImage:image forURL:url cached:YES];
-            }];
-        }
-        return;
-    }
-    
+    // always fetch the image. This doesn't check the cache - you need to do that yourself
+    // before calling, because you probably want to handle that case differently.
+
     BOOL alreadyQueued = YES;
-    NSString *key = [url absoluteString];
-    NSMutableArray* listeners = [self.imageRequests objectForKey:key];
-    if (!listeners) {
-        listeners = [NSMutableArray arrayWithCapacity:1];
-        [self.imageRequests setObject:listeners forKey:key];
-        alreadyQueued = NO;
-    }
-    if (sender) {
-        // might be nil, because we pre-cache images without nessecarily caring who gets a response
-        [listeners addObject:sender];
+
+    // rather than always calling flickr, we'll keep track of which requests are already outstanding,
+    // and only queue a request once. Everyone else just gets added to the list of "interested
+    // parties" and will get called once we have a result.
+
+    @synchronized(self) {
+        NSString *key = [url absoluteString];
+        NSMutableArray* listeners = [self.imageRequests objectForKey:key];
+        if (!listeners) {
+            listeners = [NSMutableArray arrayWithCapacity:1];
+            [self.imageRequests setObject:listeners forKey:key];
+            alreadyQueued = NO;
+        }
+        if (sender) {
+            // might be nil, because we pre-cache images without nessecarily caring who gets a response
+            [listeners addObject:sender];
+        }
     }
     
     if (alreadyQueued) {
-        // if we're making this request on the default queue, stop here, because
-        // the image has already been asked for. But custom queues exist so that
-        // we can _jump_ the main queue, so ask for it again. This will result in 
-        // 2 calls sometimes. Hard to fix that, though.
         return;
     }
 
@@ -209,25 +198,31 @@ extern const NSUInteger kMaxDiskCacheSize;
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
             UIImage *image = [UIImage imageWithData:data];
             [self cacheImage:image forURL:url];
-            NSMutableArray* listeners = [self.imageRequests objectForKey:key];
-            if (listeners != nil && listeners.count > 0) {
-                for (NSObject <DeferredImageLoader>* sender in listeners) {
-                    if (sender != nil) {
-                        // notify listeners on the main thread
-                        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                            [sender loadedImage:image forURL:url cached:NO];
-                        }];
+            @synchronized(self) {
+                NSString *key = [url absoluteString];
+                NSMutableArray* listeners = [self.imageRequests objectForKey:key];
+                if (listeners != nil && listeners.count > 0) {
+                    for (NSObject <DeferredImageLoader>* sender in listeners) {
+                        if (sender != nil) {
+                            // notify listeners _on_ the main thread
+                            [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                                [sender loadedImage:image forURL:url cached:NO];
+                            }];
+                        }
                     }
                 }
+                [self.imageRequests removeObjectForKey:key];
             }
-            [self.imageRequests removeObjectForKey:key];
         });
     }];
     
     [request setFailedBlock:^{
         NSError *error = [request error];
         NSLog(@"Failed to fetch image %@: %@", url, error);
-        [self.imageRequests removeObjectForKey:key];
+        @synchronized(self) {
+            NSString *key = [url absoluteString];
+            [self.imageRequests removeObjectForKey:key];
+        }
     }];
     
     [self.queue addOperation:request];

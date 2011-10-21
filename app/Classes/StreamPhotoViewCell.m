@@ -8,10 +8,6 @@
 
 #import "StreamPhotoViewCell.h"
 
-#import "APIKeys.h"
-#import "ObjectiveFlickr.h"
-#import "CacheManager.h"
-
 @implementation StreamPhotoViewCell
 @synthesize photo;
 
@@ -19,10 +15,14 @@
 {
     self.photo = _photo;
 
+    titleView.text = photo.title;
     usernameView.text = photo.ownername;
+
     // gfx are for losers. I like unicode.
     timeagoView.text = [@"⌚" stringByAppendingString:photo.ago];
-    titleView.text = photo.title;
+
+    
+    // not showing desc so the cell is a more predictable size.
     descView.text = @"";
     //descView.text = photo.description;
 
@@ -63,6 +63,7 @@
     frame.origin.y = y;
     titleView.frame = frame;
     
+    // not showing desc so the cell is a more predictable size.
     //frame.origin.y = y + frame.size.height + PADDING_SIZE;
     //descView.frame = frame;
     //[descView sizeToFit];
@@ -72,10 +73,6 @@
     self.frame = frame;
 }
 
--(void) gotLocation:(NSString*)location forPhoto:(StreamPhoto*)photo;
-{
-    placeView.text = location;
-}
 
 -(void)loadImages;
 {
@@ -99,7 +96,6 @@
 }
 
 
-
 -(void) loadedImage:(UIImage*)image forURL:(NSURL*)url cached:(BOOL)cached;
 {
     if ([url isEqual:self.photo.imageURL]) {
@@ -110,8 +106,17 @@
     }
 }
 
+
+-(void) gotLocation:(NSString*)location forPhoto:(StreamPhoto*)_photo;
+{
+    // note that this cell can be re-used, so don't overwrite the wrong location.
+    if ([_photo.woeid isEqual:self.photo.woeid]) {
+        placeView.text = location;
+    }
+}
+
+
 - (void)dealloc {
-    NSLog(@"dealloc %@", self);
     self.photo = nil;
     [super dealloc];
 }
