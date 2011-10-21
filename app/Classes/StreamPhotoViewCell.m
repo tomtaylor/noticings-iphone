@@ -11,6 +11,8 @@
 @implementation StreamPhotoViewCell
 @synthesize photo;
 
+#define MAX_IMAGE_HEIGHT 280
+
 -(void) populateFromPhoto:(StreamPhoto*)_photo;
 {
     self.photo = _photo;
@@ -29,14 +31,14 @@
     if (photo.hasLocation) {
         NSString *cached = [[PhotoLocationManager sharedPhotoLocationManager] cachedLocationForPhoto:photo];
         if (cached) {
-            placeView.text = cached;
+            placeView.text = [@"⊙" stringByAppendingString:cached];
         } else {
-            placeView.text = photo.placename;
+            placeView.text = [@"⊙" stringByAppendingString:photo.placename];
             [[PhotoLocationManager sharedPhotoLocationManager] getLocationForPhoto:photo andTell:self];
         }
 
     } else {
-        placeView.text = @"";
+        placeView.text = @"No location";
     }
 
     int vis = photo.visibility;
@@ -50,27 +52,39 @@
         visibilityView.text = @"public";
         visibilityView.textColor = [UIColor colorWithRed:0 green:0.5 blue:0 alpha:1];
     }
-
-    // resize image frame to have the right aspect.
-    // (but if it's taller than square it won't fit in the view.)
-    CGRect frame = photoView.frame;
-    CGFloat height = MIN( [photo imageHeightForWidth:frame.size.width], 260);
-    frame.size.height = height;
-    photoView.frame = frame;
-
-    CGFloat y = photoView.frame.origin.y + photoView.frame.size.height + PADDING_SIZE;
-    frame = titleView.frame;
-    frame.origin.y = y;
-    titleView.frame = frame;
     
-    // not showing desc so the cell is a more predictable size.
-    //frame.origin.y = y + frame.size.height + PADDING_SIZE;
-    //descView.frame = frame;
-    //[descView sizeToFit];
-    //frame = self.frame;
-    //frame.size.height = descView.frame.origin.y + descView.frame.size.height + PADDING_SIZE;
-
+    // make landscape images aspect fill and crop to frame, so we get perfect margins.
+    // or actually, images that are close enough to landscape that we'd get ugly margins.
+    if ([photo imageHeightForWidth:320] <= MAX_IMAGE_HEIGHT * 1.2) {
+        NSLog(@"photo %@ is landscape", photo);
+        photoView.contentMode = UIViewContentModeScaleAspectFill;
+    } else {
+        photoView.contentMode = UIViewContentModeScaleAspectFit;
+    }
+    
+    // all the views in the nib have the right affinity to edges and know how to scale
+    // themselves, so we just have to resize the outer frame and re-lay them out.
+    CGRect frame = self.frame;
+    frame.size.height = [StreamPhotoViewCell cellHeightForPhoto:photo];
     self.frame = frame;
+}
+
++(CGFloat)cellHeightForPhoto:(StreamPhoto*)photo;
+{
+    // the desired height of the cell is the height of the photo plus the height of the controls.
+    // all we need to do is get the outer frame right - everything else lays itself out properly.
+    // In theory, we need to be _perfect_ here - too tall or wide and images won't have the right 
+    // margins. In practice, this turns out to be hard (Why?) so I cheat be flipping the image view
+    // to "aspect fill" for landscape images, so as long as we're within 1% here everything looks
+    // fine.
+    
+    CGFloat nativeCellHeight = 377; // copy from table cell nib if you change it.
+    CGFloat roomForControls = nativeCellHeight - 310; // image in nib is 310 high. Everything else in cell must therefore be..
+
+    // ideal image height, limited to a maximum so images don't make cells bigger than the window.
+    CGFloat wantedImageHeight = MIN( [photo imageHeightForWidth:320], MAX_IMAGE_HEIGHT);
+    
+    return wantedImageHeight + roomForControls;
 }
 
 
@@ -111,7 +125,7 @@
 {
     // note that this cell can be re-used, so don't overwrite the wrong location.
     if ([_photo.woeid isEqual:self.photo.woeid]) {
-        placeView.text = location;
+        placeView.text = [@"⊙" stringByAppendingString:location];
     }
 }
 

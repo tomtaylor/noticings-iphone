@@ -25,6 +25,8 @@
     IBOutlet UILabel *visibilityView;
 }
 
++(CGFloat)cellHeightForPhoto:(StreamPhoto*)photo;
+
 -(void) populateFromPhoto:(StreamPhoto*)photo;
 -(void)loadImages;
 
