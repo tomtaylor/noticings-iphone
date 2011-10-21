@@ -25,7 +25,7 @@
 @implementation DeferredFlickrCallManager
 SYNTHESIZE_SINGLETON_FOR_CLASS(DeferredFlickrCallManager);
 
-@synthesize queue;
+@synthesize queue, xmlQueue;
 
 -(id)init;
 {
@@ -33,6 +33,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(DeferredFlickrCallManager);
     if (self) {
         self.queue = [[[NSOperationQueue alloc] init] autorelease];
         self.queue.maxConcurrentOperationCount = 2;
+        self.xmlQueue = [[[NSOperationQueue alloc] init] autorelease];
     }
     return self;
 }
@@ -78,27 +79,40 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(DeferredFlickrCallManager);
 
 
     [request setCompletionBlock:^{
-        NSDictionary *responseDictionary = [OFXMLMapper dictionaryMappedFromXMLData:[request responseData]];	
-        NSDictionary *rsp = [responseDictionary objectForKey:@"rsp"];
-        NSString *stat = [rsp objectForKey:@"stat"];
-        
-        // this also fails when (responseDictionary, rsp, stat) == nil, so it's a guranteed way of checking the result
-        if (![stat isEqualToString:@"ok"]) {
-            NSDictionary *err = [rsp objectForKey:@"err"];
-            NSString *code = [err objectForKey:@"code"];
-            NSString *msg = [err objectForKey:@"msg"];
-            NSLog(@"Failed flickr call %@(%@):\n  - %@ %@", method, newArgs, code, msg);
-            if (failure) {
-                failure(code, msg);
+        // Called on main thread! Don't block the GUI with XML parsing.
+        [request retain];
+        [xmlQueue addOperationWithBlock:^{
+            
+            NSDictionary *responseDictionary = [OFXMLMapper dictionaryMappedFromXMLData:[request responseData]];	
+            [request release];
+            NSDictionary *rsp = [responseDictionary objectForKey:@"rsp"];
+            NSString *stat = [rsp objectForKey:@"stat"];
+            
+            // this also fails when (responseDictionary, rsp, stat) == nil, so it's a guranteed way of checking the result
+            if (![stat isEqualToString:@"ok"]) {
+                NSDictionary *err = [rsp objectForKey:@"err"];
+                NSString *code = [err objectForKey:@"code"];
+                NSString *msg = [err objectForKey:@"msg"];
+                NSLog(@"Failed flickr call %@(%@):\n  - %@ %@", method, newArgs, code, msg);
+                if (failure) {
+                    // push back on main thread
+                    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                        failure(code, msg);
+                    }];
+                }
+            } else {
+                if (success) {
+                    // push back on main thread
+                    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                        success(rsp);
+                    }];
+                }
             }
-        } else {
-            if (success) {
-                success(rsp);
-            }
-        }
+        }];
     }];
     
     [request setFailedBlock:^{
+        // Called on main thread
         NSLog(@"Failed ASIHTTPRequest call %@(%@): %@", method, args, [request error]);
         if (failure) {
             failure(@"", [[request error] localizedDescription]);

@@ -20,7 +20,7 @@ extern const NSUInteger kMaxDiskCacheSize;
 
 @synthesize cacheDir;
 @synthesize imageCache;
-@synthesize queue;
+@synthesize queue, processingQueue;
 @synthesize imageRequests;
 
 - (id)init;
@@ -32,7 +32,9 @@ extern const NSUInteger kMaxDiskCacheSize;
         
         self.queue = [[[NSOperationQueue alloc] init] autorelease];
         self.queue.maxConcurrentOperationCount = 2;
-        
+
+        self.processingQueue = [[[NSOperationQueue alloc] init] autorelease];
+
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
         self.cacheDir = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"imageCache"];
         
@@ -193,16 +195,26 @@ extern const NSUInteger kMaxDiskCacheSize;
     [request setShouldContinueWhenAppEntersBackground:YES];
     
     [request setCompletionBlock:^{
-        UIImage *image = [UIImage imageWithData:[request responseData]];
-        NSLog(@"fetched image %@", url);
-        [self cacheImage:image forURL:url];
-        NSMutableArray* listeners = [self.imageRequests objectForKey:key];
-        if (listeners) {
-            for (NSObject <DeferredImageLoader>* sender in listeners) {
-                [sender loadedImage:image forURL:url cached:NO];
+        // this is called on the main thread. Do JPEG processing _off_ the main thread.
+
+        [request retain]; // need it in the processor.
+        [processingQueue addOperationWithBlock:^{
+
+            UIImage *image = [UIImage imageWithData:[request responseData]];
+            NSLog(@"fetched image %@", url);
+            [self cacheImage:image forURL:url];
+            NSMutableArray* listeners = [self.imageRequests objectForKey:key];
+            if (listeners) {
+                for (NSObject <DeferredImageLoader>* sender in listeners) {
+                    // notify listeners on the main thread
+                    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                        [sender loadedImage:image forURL:url cached:NO];
+                    }];
+                }
             }
-        }
-        [self.imageRequests removeObjectForKey:key];
+            [self.imageRequests removeObjectForKey:key];
+            [request release];
+        }];
     }];
     
     [request setFailedBlock:^{

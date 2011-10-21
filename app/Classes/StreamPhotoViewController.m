@@ -80,13 +80,12 @@
         sendMailIndex = [popupQuery addButtonWithTitle:@"Mail link to photo"];
     }
     
+    // TODO - This will probably break IOS4 devices.
     if ([TWTweetComposeViewController canSendTweet]) {
         sendTweetIndex = [popupQuery addButtonWithTitle:@"Tweet link to photo"];
     }
 
     popupQuery.cancelButtonIndex = [popupQuery addButtonWithTitle:@"Cancel"];
-
-    // TODO - detect IOS5 and twitter account, offer "tweet photo" button.
 
     popupQuery.actionSheetStyle = UIActionSheetStyleBlackOpaque;
     [popupQuery showFromTabBar:self.tabBarController.tabBar];
@@ -150,8 +149,7 @@
 
         if (!self.photoLocation) {
             self.photoLocation = self.photo.placename;
-            // TODO - this is wrong. Should be caching location on photo object or something. Display instantly, don't
-            // wait for callback if it's cached
+            // TODO - this is wrong. Should be caching location on photo object or something.
             [[PhotoLocationManager sharedPhotoLocationManager] getLocationForPhoto:photo and:^(NSString* name){
                 if (name) {
                     self.photoLocation = name;

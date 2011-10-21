@@ -186,19 +186,22 @@
 -(void)precache;
 {
     NSLog(@"pre-caching images for %@", self.class);
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
 
-    // pre-cache images
-    CacheManager *cacheManager = [CacheManager sharedCacheManager];
-    
-    for (StreamPhoto *sp in self.photos) {
-        if (![cacheManager cachedImageForURL:sp.avatarURL]) {
-            [cacheManager fetchImageForURL:sp.avatarURL andNotify:nil];
+        // pre-cache images
+        CacheManager *cacheManager = [CacheManager sharedCacheManager];
+        
+        for (StreamPhoto *sp in self.photos) {
+            if (![cacheManager cachedImageForURL:sp.avatarURL]) {
+                [cacheManager fetchImageForURL:sp.avatarURL andNotify:nil];
+            }
+            if (![cacheManager cachedImageForURL:sp.imageURL]) {
+                [cacheManager fetchImageForURL:sp.imageURL andNotify:nil];
+            }
         }
-        if (![cacheManager cachedImageForURL:sp.imageURL]) {
-            [cacheManager fetchImageForURL:sp.imageURL andNotify:nil];
-        }
-    }
-    
+
+    });    
 }
 
 #pragma mark Flickr delegate methods
