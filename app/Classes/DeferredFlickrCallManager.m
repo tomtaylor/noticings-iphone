@@ -25,7 +25,7 @@
 @implementation DeferredFlickrCallManager
 SYNTHESIZE_SINGLETON_FOR_CLASS(DeferredFlickrCallManager);
 
-@synthesize queue, xmlQueue;
+@synthesize queue;
 
 -(id)init;
 {
@@ -33,7 +33,6 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(DeferredFlickrCallManager);
     if (self) {
         self.queue = [[[NSOperationQueue alloc] init] autorelease];
         self.queue.maxConcurrentOperationCount = 2;
-        self.xmlQueue = [[[NSOperationQueue alloc] init] autorelease];
     }
     return self;
 }
@@ -79,12 +78,13 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(DeferredFlickrCallManager);
 
 
     [request setCompletionBlock:^{
+        // pull data out so we don't self-refer to request object.
+        NSData *data = [request responseData];
+        
         // Called on main thread! Don't block the GUI with XML parsing.
-        [request retain];
-        [xmlQueue addOperationWithBlock:^{
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
             
-            NSDictionary *responseDictionary = [OFXMLMapper dictionaryMappedFromXMLData:[request responseData]];	
-            [request release];
+            NSDictionary *responseDictionary = [OFXMLMapper dictionaryMappedFromXMLData:data];	
             NSDictionary *rsp = [responseDictionary objectForKey:@"rsp"];
             NSString *stat = [rsp objectForKey:@"stat"];
             
@@ -108,7 +108,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(DeferredFlickrCallManager);
                     }];
                 }
             }
-        }];
+        });
     }];
     
     [request setFailedBlock:^{
@@ -121,8 +121,6 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(DeferredFlickrCallManager);
     
     [self.queue addOperation:request];
     [apiContext release];
-    
-
     
 }
 

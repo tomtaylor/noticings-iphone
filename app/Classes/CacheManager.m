@@ -20,7 +20,7 @@ extern const NSUInteger kMaxDiskCacheSize;
 
 @synthesize cacheDir;
 @synthesize imageCache;
-@synthesize queue, processingQueue;
+@synthesize queue;
 @synthesize imageRequests;
 
 - (id)init;
@@ -29,11 +29,9 @@ extern const NSUInteger kMaxDiskCacheSize;
     if (self) {
         self.imageCache = [NSMutableDictionary dictionary];
         self.imageRequests = [NSMutableDictionary dictionary];
-        
+         
         self.queue = [[[NSOperationQueue alloc] init] autorelease];
         self.queue.maxConcurrentOperationCount = 2;
-
-        self.processingQueue = [[[NSOperationQueue alloc] init] autorelease];
 
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
         self.cacheDir = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"imageCache"];
@@ -157,6 +155,12 @@ extern const NSUInteger kMaxDiskCacheSize;
 // return an image for the passed url. Will try the cache first.
 - (void)fetchImageForURL:(NSURL*)url andNotify:(NSObject <DeferredImageLoader>*)sender;
 {
+    // TODO - slight worry - do we need to be threadsafe here? I think I call this from
+    // non-main-thread queues.
+    //
+    // THREADING IS HARD.
+    //
+    
     UIImage *image = [self cachedImageForURL:url];
     if (image) {
         if (sender) {
@@ -193,28 +197,31 @@ extern const NSUInteger kMaxDiskCacheSize;
 
     __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
     [request setShouldContinueWhenAppEntersBackground:YES];
-    
+
     [request setCompletionBlock:^{
-        // this is called on the main thread. Do JPEG processing _off_ the main thread.
+        // this is called on the main thread
+        NSLog(@"fetched image %@", url);
 
-        [request retain]; // need it in the processor.
-        [processingQueue addOperationWithBlock:^{
-
-            UIImage *image = [UIImage imageWithData:[request responseData]];
-            NSLog(@"fetched image %@", url);
+        // fetch and store this outside the block to prevent recursive retains of request object.
+        NSData *data = [request responseData];
+        
+        // Do JPEG processing _off_ the main thread.
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+            UIImage *image = [UIImage imageWithData:data];
             [self cacheImage:image forURL:url];
             NSMutableArray* listeners = [self.imageRequests objectForKey:key];
-            if (listeners) {
+            if (listeners != nil && listeners.count > 0) {
                 for (NSObject <DeferredImageLoader>* sender in listeners) {
-                    // notify listeners on the main thread
-                    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                        [sender loadedImage:image forURL:url cached:NO];
-                    }];
+                    if (sender != nil) {
+                        // notify listeners on the main thread
+                        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                            [sender loadedImage:image forURL:url cached:NO];
+                        }];
+                    }
                 }
             }
             [self.imageRequests removeObjectForKey:key];
-            [request release];
-        }];
+        });
     }];
     
     [request setFailedBlock:^{

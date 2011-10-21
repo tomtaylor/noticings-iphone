@@ -18,6 +18,5 @@ typedef void (^FlickrFailureCallback)(NSString *code, NSString *err);
 -(void)callFlickrMethod:(NSString*)method asPost:(BOOL)asPost withArgs:(NSDictionary*)args andThen:(FlickrSuccessCallback)success orFail:(FlickrFailureCallback)failure;
 
 @property (retain) NSOperationQueue *queue;
-@property (retain) NSOperationQueue *xmlQueue;
 
 @end

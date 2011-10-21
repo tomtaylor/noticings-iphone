@@ -30,7 +30,6 @@
 @property (retain) NSMutableDictionary *imageCache;
 @property (retain) NSMutableDictionary *imageRequests;
 @property (retain) NSOperationQueue *queue;
-@property (retain) NSOperationQueue *processingQueue;
 
 
 @end
