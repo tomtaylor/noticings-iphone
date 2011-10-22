@@ -77,6 +77,10 @@
 
 -(void)viewWillAppear:(BOOL)animated;
 {
+    if (isRoot) {
+        // hide navigation bar, only for root controller
+        [self.navigationController setNavigationBarHidden:YES animated:animated];
+    }
     [super viewWillAppear:animated];
     [self updatePullText];
 }
@@ -92,6 +96,10 @@
 {
     [[CacheManager sharedCacheManager] flushQueue]; // we don't need any of the pending photos any more.
     [super viewWillDisappear:animated];
+    if (isRoot) {
+        // hide navigation bar, only for root controller
+        [self.navigationController setNavigationBarHidden:NO animated:animated];
+    }
 }
 
 

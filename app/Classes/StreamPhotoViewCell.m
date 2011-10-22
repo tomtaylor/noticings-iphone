@@ -11,7 +11,7 @@
 @implementation StreamPhotoViewCell
 @synthesize photo;
 
-#define MAX_IMAGE_HEIGHT 320
+#define MAX_IMAGE_HEIGHT 360
 
 -(void) populateFromPhoto:(StreamPhoto*)_photo;
 {
