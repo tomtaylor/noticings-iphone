@@ -251,7 +251,7 @@
     if (photo) {
         return [StreamPhotoViewCell cellHeightForPhoto:photo];
     }
-    return 100; // upload cells.
+    return 60; // upload cells.
 }
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
@@ -260,6 +260,7 @@
     if (upload) {
         // just flash the cell.
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        [upload togglePause];
         return;
     }
 

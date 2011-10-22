@@ -11,7 +11,7 @@
 @implementation StreamPhotoViewCell
 @synthesize photo;
 
-#define MAX_IMAGE_HEIGHT 280
+#define MAX_IMAGE_HEIGHT 320
 
 -(void) populateFromPhoto:(StreamPhoto*)_photo;
 {
@@ -23,45 +23,20 @@
     // gfx are for losers. I like unicode.
     timeagoView.text = [@"⌚" stringByAppendingString:photo.ago];
 
-    
-    // not showing desc so the cell is a more predictable size.
-    //descView.text = @"";
-    //descView.text = photo.description;
-
     hasLocationImage.hidden = !photo.hasLocation;
-
-//    if (photo.hasLocation) {
-//        NSString *cached = [[PhotoLocationManager sharedPhotoLocationManager] cachedLocationForPhoto:photo];
-//        if (cached) {
-//            placeView.text = [@"⊙" stringByAppendingString:cached];
-//        } else {
-//            placeView.text = [@"⊙" stringByAppendingString:photo.placename];
-//            [[PhotoLocationManager sharedPhotoLocationManager] getLocationForPhoto:photo andTell:self];
-//        }
-//
-//    } else {
-//        placeView.text = @"No location";
-//    }
 
     int vis = photo.visibility;
     if (vis == StreamPhotoVisibilityPrivate) {
-//        visibilityView.text = @"private";
-//        visibilityView.textColor = [UIColor colorWithRed:0.5 green:0 blue:0 alpha:1];
-        privacyImage.backgroundColor = [UIColor colorWithRed:0.5 green:0 blue:0 alpha:1];
+        privacyImage.image = [UIImage imageNamed:@"visibility_red.png"];
     } else if (vis == StreamPhotoVisibilityLimited) {
-//        visibilityView.text = @"limited";
-//        visibilityView.textColor = [UIColor colorWithRed:0.7 green:0.7 blue:0 alpha:1];
-        privacyImage.backgroundColor = [UIColor colorWithRed:0.7 green:0.7 blue:0 alpha:1];
+        privacyImage.image = [UIImage imageNamed:@"visibility_yellow.png"];
     } else if (vis == StreamPhotoVisibilityPublic) {
-//        visibilityView.text = @"public";
-//        visibilityView.textColor = [UIColor colorWithRed:0 green:0.5 blue:0 alpha:1];
-        privacyImage.backgroundColor = [UIColor colorWithRed:0 green:0.5 blue:0 alpha:1];
+        privacyImage.image = [UIImage imageNamed:@"visibility_green.png"];
     }
     
     // make landscape images aspect fill and crop to frame, so we get perfect margins.
     // or actually, images that are close enough to landscape that we'd get ugly margins.
-    if ([photo imageHeightForWidth:320] <= MAX_IMAGE_HEIGHT * 1.2) {
-        NSLog(@"photo %@ is landscape", photo);
+    if ([photo imageHeightForWidth:320] <= MAX_IMAGE_HEIGHT * 1.0) {
         photoView.contentMode = UIViewContentModeScaleAspectFill;
     } else {
         photoView.contentMode = UIViewContentModeScaleAspectFit;
@@ -83,7 +58,7 @@
     // to "aspect fill" for landscape images, so as long as we're within 1% here everything looks
     // fine.
     
-    CGFloat nativeCellHeight = 377; // copy from table cell nib if you change it.
+    CGFloat nativeCellHeight = 370; // copy from table cell nib if you change it.
     CGFloat roomForControls = nativeCellHeight - 310; // image in nib is 310 high. Everything else in cell must therefore be..
 
     // ideal image height, limited to a maximum so images don't make cells bigger than the window.
