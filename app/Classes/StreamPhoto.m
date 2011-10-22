@@ -169,6 +169,11 @@
     return [NSURL URLWithString:urlString];
 }
 
+- (NSString*)dateupload;
+{
+    return [self.details objectForKey:@"dateupload"];
+}
+
 - (NSString*) ago;
 {
     NSTimeInterval epoch = [[NSDate date] timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970; // yeah.
@@ -180,7 +185,7 @@
     
 
     if (ago < 0) {
-        return @"0s"; // would prefer 'now', but we append 'now' sometimes. Anyway, clock drift puts uploads in the past/
+        return @"now"; // clock drift for new uploads can make this -ve
     }
 
     int seconds = ago % 60;

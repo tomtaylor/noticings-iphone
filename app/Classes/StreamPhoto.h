@@ -30,6 +30,7 @@
 @property (readonly) NSString* html;
 @property (readonly) NSString* ownername;
 @property (readonly) NSString* ownerId;
+@property (readonly) NSString* dateupload;
 @property (readonly) NSString* ago;
 @property (readonly) NSString* placename;
 @property (readonly) NSString* woeid;

@@ -152,7 +152,7 @@
     {{#isPrivate}}<span class="private">private</span>.{{/isPrivate}}
     {{#isLimited}}<span class="limited">limited</span>.{{/isLimited}}
     
-    Taken {{photo/ago}} ago{{^photo/hasLocation}}.{{/photo/hasLocation}}{{#photo/hasLocation}},{{/photo/hasLocation}}
+    Taken {{#photo/dateupload}}{{#dateHelper}}{{/dateHelper}}{{/photo/dateupload}}{{^photo/hasLocation}}.{{/photo/hasLocation}}{{#photo/hasLocation}},{{/photo/hasLocation}}
     
     {{#photo/hasLocation}}
         <br>in <a href='noticings-map:'>{{ location }}</a>:
