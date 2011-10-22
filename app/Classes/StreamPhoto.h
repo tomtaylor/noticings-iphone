@@ -48,6 +48,7 @@
 @property (readonly) NSURL* bigImageURL;
 @property (readonly) NSURL* originalImageURL;
 @property (readonly) NSArray* tags;
+@property (readonly) NSArray* humanTags;
 
 // MKAnnotation
 @property (nonatomic, readonly) CLLocationCoordinate2D coordinate;

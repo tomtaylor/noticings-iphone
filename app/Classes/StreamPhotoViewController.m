@@ -262,11 +262,11 @@ GRMustacheTemplate *template;
     [templateData setValue:[NSNumber numberWithBool:(self.photo.visibility == StreamPhotoVisibilityPublic)] forKey:@"isPublic"];
     [templateData setValue:[NSNumber numberWithBool:(self.photo.visibility == StreamPhotoVisibilityLimited)] forKey:@"isLimited"];
 
-    [templateData setValue:[NSNumber numberWithBool:(self.photo.tags.count > 0)] forKey:@"hasTags"];
+    [templateData setValue:[NSNumber numberWithBool:(self.photo.humanTags.count > 0)] forKey:@"hasTags"];
 
     [templateData setValue:[NSNumber numberWithBool:(self.comments != nil)] forKey:@"loadedComments"];
     [templateData setValue:[NSNumber numberWithBool:(self.comments.count > 0)] forKey:@"hasComments"];
-    [templateData setValue:[NSNumber numberWithBool:(self.comments == nil)] forKey:@"loadingComments"];
+    [templateData setValue:[NSNumber numberWithBool:(self.comments == nil && !self.commentsError)] forKey:@"loadingComments"];
     [templateData setValue:[NSNumber numberWithBool:(self.commentsError)] forKey:@"failedComments"];
 
     [templateData setValue:self.comments forKey:@"comments"];
@@ -280,7 +280,35 @@ GRMustacheTemplate *template;
         return result;
     })];
     [templateData setObject:pluralizeHelper forKey:@"pluralizeHelper"];
+    
+    id dateHelper = [GRMustacheBlockHelper helperWithBlock:(^(GRMustacheSection *section, id context) {
+        double timestamp = [[context valueForKey:@"description"] doubleValue];
 
+        // TODO - copied out of StreamPhoto/ago - refactor.
+        NSTimeInterval epoch = [[NSDate date] timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970; // yeah.
+        int ago = epoch - timestamp; // woooo overflow bug. I hope your friends upload at least once every 2*32 seconds!
+        if (ago < 0) {
+            return @"just now";
+        }
+        
+        int seconds = ago % 60;
+        int minutes = (ago / 60) % 60;
+        int hours = (ago / (60*60)) % 24;
+        int days = (ago / (24*60*60));
+        
+        if (days) {
+            return [NSString stringWithFormat:@"%d days ago", days];
+        }
+        if (hours) {
+            return [NSString stringWithFormat:@"%d hours ago", hours];
+        }
+        if (minutes) {
+            return [NSString stringWithFormat:@"%d minutes ago", minutes];
+        }
+        return [NSString stringWithFormat:@"%d seconds ago", seconds];
+    })];
+    [templateData setObject:dateHelper forKey:@"dateHelper"];
+    
     //NSLog(@"rendering with %@", templateData);
     NSString *rendered = [template renderObject:templateData];
     //NSLog(@"rendered as %@", rendered);

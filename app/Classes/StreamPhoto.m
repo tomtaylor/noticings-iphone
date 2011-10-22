@@ -178,6 +178,11 @@
     }
     int ago = epoch - [uploaded doubleValue]; // woooo overflow bug. I hope your friends upload at least once every 2*32 seconds!
     
+
+    if (ago < 0) {
+        return @"0s"; // would prefer 'now', but we append 'now' sometimes. Anyway, clock drift puts uploads in the past/
+    }
+
     int seconds = ago % 60;
     int minutes = (ago / 60) % 60;
     int hours = (ago / (60*60)) % 24;
@@ -213,6 +218,18 @@
         return [tags componentsSeparatedByString:@" "];
     }
     return [NSArray array];
+}
+
+-(NSArray*)humanTags;
+{
+    NSPredicate *human = [NSPredicate predicateWithBlock:^(id tag, NSDictionary *bindings) {
+        NSRange range = [((NSString*)tag) rangeOfString:@":"];
+        if (range.length > 0) {
+            return NO;
+        }
+        return YES;
+    }];
+    return [self.tags filteredArrayUsingPredicate:human];
 }
 
 

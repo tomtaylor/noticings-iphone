@@ -58,29 +58,7 @@
     [doubleTap release];
     [twoFingerTap release];
     
-    UIBarButtonItem *externalItem = [[UIBarButtonItem alloc] 
-        initWithBarButtonSystemItem:UIBarButtonSystemItemAction
-        target:self
-        action:@selector(externalButton)];
-
-    self.navigationItem.rightBarButtonItem = externalItem;
-    [externalItem release];
     [self.view addSubview:self.scrollView];
-}
-
--(void)externalButton;
-{
-    UIActionSheet *popupQuery = [[UIActionSheet alloc]
-                                 initWithTitle:@"Open original image"
-                                 delegate:self
-                                 cancelButtonTitle:nil
-                                 destructiveButtonTitle:nil
-                                 otherButtonTitles:nil];
-    [popupQuery addButtonWithTitle:@"Open in Safari"];
-    popupQuery.cancelButtonIndex = [popupQuery addButtonWithTitle:@"Cancel"];
-    popupQuery.actionSheetStyle = UIActionSheetStyleBlackOpaque;
-    [popupQuery showFromTabBar:self.tabBarController.tabBar];
-    [popupQuery release];
 }
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex

@@ -17,6 +17,7 @@
     }
     
     #image {
+        display: block;
         width: 320px;
         background: black;
         max-height: 180px;
@@ -45,7 +46,6 @@
     }
 
     img {
-        margin-bottom: 5px;
         max-width: 320px; /* helps in comments */
     }
 
@@ -65,7 +65,7 @@
     }
 
     #meta { /* photo taken 5 hours ago in barnes */
-        margin-top: 20px;
+        margin-top: 15px;
     }
     .timeago { color: #444; }
     .public { color: #279900 }
@@ -77,6 +77,7 @@
         width: 300px;
     }
 
+/* for linkable tags
     #tags {
         line-height: 33px;
     }
@@ -89,7 +90,11 @@
         color: black;
         white-space: nowrap;
     }
-
+*/
+    .tag {
+        font-style: italic;
+        color: #333;
+    }
     
     #comments {
         margin-bottom: 10px;
@@ -100,6 +105,9 @@
     }
     .author {
         font-weight: bold;
+    }
+    .date {
+        font-style: italic;
     }
     
 
@@ -129,6 +137,15 @@
 {{/photo/html}}
 
     
+{{#hasTags}}
+<div class="copy" id="tags">
+    {{#photo/humanTags}}
+    <!-- <a class='tag' href='noticings-tag:{{.}}'> --><span class="tag">#{{.}}</span> <!-- </a> -->
+    {{/photo/humanTags}}
+</div>
+{{/hasTags}}
+
+    
 <div class="copy" id="meta">
     Photo is
     {{#isPublic}}<span class="public">public</span>.{{/isPublic}}
@@ -141,21 +158,14 @@
         <br>in <a href='noticings-map:'>{{ location }}</a>:
     {{/photo/hasLocation}}
 </div>
-
     
+
 {{#photo/hasLocation}}
+{{#mapImageLoaded}}
 <a href='noticings-map:'><img id='map' src='{{ mapImageFile }}'></a>
+{{/mapImageLoaded}}
 {{/photo/hasLocation}}
 
-    
-{{#hasTags}}
-<div class="copy" id="tags">
-    Tagged
-    {{#photo/tags}}
-        <a class='tag' href='noticings-tag:{{.}}'>{{.}}</a>
-    {{/photo/tags}}
-</div>
-{{/hasTags}}
     
     
 <div class="copy" id="comments">
@@ -163,7 +173,11 @@
     {{#loadedComments}}
     {{#hasComments}}
         <h3>{{#commentCount}}{{#pluralizeHelper}}comment{{/pluralizeHelper}}{{/commentCount}}:</h3>
-        {{#comments}}<p class='comment'><a class='author' href='noticings-user:{{author}}:{{authorname}}'>{{authorname}}</a>: {{{_text}}}</p>{{/comments}}
+        {{#comments}}<p class='comment'>
+            <!-- LIMIT FEATURES! <a class='author' href='noticings-user:{{author}}:{{authorname}}'>--><span class="author">{{authorname}}</span><!-- </a> -->
+            <span class="date">({{#datecreate}}{{#dateHelper}}{{/dateHelper}}{{/datecreate}})</span>:
+            {{{_text}}}
+        </p>{{/comments}}
     {{/hasComments}}
 
     {{^hasComments}}

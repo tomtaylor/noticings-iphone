@@ -128,7 +128,6 @@
 								<string key="NSFrame">{{273, 341}, {42, 21}}</string>
 								<reference key="NSSuperview" ref="94663175"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView"/>
 								<string key="NSReuseIdentifierKey">_NS:328</string>
 								<bool key="IBUIOpaque">NO</bool>
 								<bool key="IBUIClipsSubviews">YES</bool>
@@ -156,7 +155,7 @@
 							<object class="IBUIImageView" id="404961213">
 								<reference key="NSNextResponder" ref="94663175"/>
 								<int key="NSvFlags">265</int>
-								<string key="NSFrame">{{286, 324}, {18, 13}}</string>
+								<string key="NSFrame">{{286, 326}, {18, 13}}</string>
 								<reference key="NSSuperview" ref="94663175"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="92646375"/>
@@ -172,7 +171,7 @@
 							<object class="IBUIImageView" id="92646375">
 								<reference key="NSNextResponder" ref="94663175"/>
 								<int key="NSvFlags">265</int>
-								<string key="NSFrame">{{303, 324}, {12, 12}}</string>
+								<string key="NSFrame">{{303, 327}, {12, 12}}</string>
 								<reference key="NSSuperview" ref="94663175"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="847126505"/>
