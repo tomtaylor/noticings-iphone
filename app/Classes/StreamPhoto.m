@@ -34,17 +34,18 @@
 
 - (NSString*)title;
 {
-    return [[self.details valueForKeyPath:@"title"] stringByRemovingNewLinesAndWhitespace];
-}
-
-- (NSString*)titleOrUntitled;
-{
-    if (self.title.length > 0) { 
-        return self.title;
+    NSString *title = [[self.details valueForKeyPath:@"title"] stringByRemovingNewLinesAndWhitespace];
+    if (title.length > 0) {
+        return title;
     }
-    return @"Untitled photo";
+    return @"Untitled";
 }
 
+-(BOOL)hasTitle;
+{
+    NSString *title = [[self.details valueForKeyPath:@"title"] stringByRemovingNewLinesAndWhitespace];
+    return (title.length > 0);
+}
 
 - (NSString*)html;
 {
@@ -109,7 +110,7 @@
 -(NSURL*)mapImageURL;
 {
     int scale = [UIScreen mainScreen].scale; //  1 or 2
-    NSString *mapURL = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/staticmap?sensor=false&size=310x90&center=%f,%f&zoom=13&scale=%d&markers=size:small%%7C%f,%f",
+    NSString *mapURL = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/staticmap?sensor=false&size=320x100&center=%f,%f&zoom=12&scale=%d&markers=size:small%%7C%f,%f",
                         self.latitude, self.longitude, scale, self.latitude, self.longitude];
     return [NSURL URLWithString:mapURL];
 }
@@ -239,7 +240,7 @@
 
 - (NSString*)subtitle;
 {
-    return [self.details valueForKeyPath:@"ownername"];
+    return self.ownername;
 }
 
 

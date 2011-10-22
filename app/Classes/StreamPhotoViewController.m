@@ -32,7 +32,7 @@
     if (self) {
         self.photo = _photo;
         self.streamManager = _streamManager;
-        self.title = [self.photo titleOrUntitled];
+        self.title = self.photo.title;
 
     }
     return self;
@@ -102,16 +102,25 @@
     } else if (buttonIndex == sendMailIndex) {
         MFMailComposeViewController *composer = [[MFMailComposeViewController alloc] init];
         composer.mailComposeDelegate = self;
-        [composer setSubject:[self.photo titleOrUntitled]];
+        [composer setSubject:self.photo.title];
         // TODO - get url for noticings in here?
-        NSString *body = [NSString stringWithFormat:@"\"%@\" by %@\n\n%@\n\nSent using Noticings\n", [self.photo titleOrUntitled], self.photo.ownername, self.photo.pageURL];
+        NSString *body;
+        if (self.photo.hasTitle) {
+            body = [NSString stringWithFormat:@"\"%@\" by %@\n\n%@\n\nSent using Noticings\n", self.photo.title, self.photo.ownername, self.photo.pageURL];
+        } else {
+            body = [NSString stringWithFormat:@"A photo by %@\n\n%@\n\nSent using Noticings\n", self.photo.title, self.photo.ownername, self.photo.pageURL];
+        }
         [composer setMessageBody:body isHTML:NO];
         [self presentModalViewController:composer animated:YES];
         [composer release];
 
     } else if (buttonIndex == sendTweetIndex) {
         TWTweetComposeViewController *composer = [[TWTweetComposeViewController alloc] init];
-        [composer setInitialText:[self.photo titleOrUntitled]];
+        if (self.photo.hasTitle) {
+            [composer setInitialText:self.photo.title];
+        } else {
+            [composer setInitialText:@"A photo"];
+        }
         [composer addURL:self.photo.pageURL];
         [self presentModalViewController:composer animated:YES];
         [composer release];
@@ -210,7 +219,7 @@
     NSString *imageFile = [cacheManager urlToFilename:photo.imageURL];
     if ([[NSFileManager defaultManager] fileExistsAtPath:imageFile]) {
         // TODO - work out image dimensions and hard-code them here to stop page size pop.
-        html = [html stringByAppendingFormat:@"<a href='noticings-image:'><img class=\"image\" src='%@'></a>\n\n", imageFile];
+        html = [html stringByAppendingFormat:@"<div id='image-wrapper'><a href='noticings-image:'><img class=\"image\" src='%@'></a></div>\n\n", imageFile];
     } else {
         html = [html stringByAppendingFormat:@"<a href='noticings-image:'><div class='image-loading'></div></a>\n\n", imageFile];
     }
@@ -222,8 +231,12 @@
     html = [html stringByAppendingFormat:@"<p class='owner'>by <a href='noticings-user:'>%@</a></p>", [photo.ownername stringByEncodingHTMLEntities]];
 
     html = [html stringByAppendingString:@"</p><div style='clear: both'></div>\n\n"];
-    
 
+    // description
+    if (self.photo.html) {
+        html = [html stringByAppendingFormat:@"<div class='description'><p>%@</p></div>", self.photo.html];
+    }
+    
     // Visibility
     NSString *visClass = @"public";
     NSString *visName = @"public";
@@ -256,11 +269,6 @@
     }    
 
 
-    // description
-    if (self.photo.html) {
-        html = [html stringByAppendingFormat:@"<div class='description'><p>%@</p></div>", self.photo.html];
-    }
-    
     if (self.photo.tags.count > 0) {
         html = [html stringByAppendingFormat:@"<p class='tags'>Tagged "];
         

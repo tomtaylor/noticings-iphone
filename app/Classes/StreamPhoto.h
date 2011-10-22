@@ -43,6 +43,7 @@
 @property (readonly) NSURL* mapPageURL;
 @property (readonly) NSURL* mapImageURL;
 @property (readonly) BOOL hasLocation;
+@property (readonly) BOOL hasTitle;
 @property (readonly) NSURL* pageURL;
 @property (readonly) NSURL* mobilePageURL;
 @property (readonly) NSURL* bigImageURL;
@@ -54,6 +55,5 @@
 @property (nonatomic, readonly, copy) NSString *subtitle;
 
 -(CGFloat)imageHeightForWidth:(CGFloat)width;
-- (NSString*)titleOrUntitled;
 
 @end
