@@ -80,6 +80,7 @@ GRMustacheTemplate *template;
 
     sendMailIndex = -1;
     sendTweetIndex = -1;
+    saveRollIndex = -1;
 
     if ([MFMailComposeViewController canSendMail]) {
         sendMailIndex = [popupQuery addButtonWithTitle:@"Mail link to photo"];
@@ -89,6 +90,8 @@ GRMustacheTemplate *template;
     if ([TWTweetComposeViewController canSendTweet]) {
         sendTweetIndex = [popupQuery addButtonWithTitle:@"Tweet link to photo"];
     }
+    
+    saveRollIndex = [popupQuery addButtonWithTitle:@"Save image to camera roll"];
 
     popupQuery.cancelButtonIndex = [popupQuery addButtonWithTitle:@"Cancel"];
 
@@ -129,6 +132,14 @@ GRMustacheTemplate *template;
         [composer addURL:self.photo.pageURL];
         [self presentModalViewController:composer animated:YES];
         [composer release];
+
+    } else if (buttonIndex == saveRollIndex) {
+        UIImage *image = [[CacheManager sharedCacheManager] cachedImageForURL:self.photo.imageURL];
+        if (image) {
+            UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil);
+        } else {
+            // TODO. Bugger.
+        }
 
     }
 }

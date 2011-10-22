@@ -21,6 +21,7 @@
     
     int sendMailIndex;
     int sendTweetIndex;
+    int saveRollIndex;
 }
 
 -(id)initWithPhoto:(StreamPhoto*)photo streamManager:(PhotoStreamManager*)streamManager;
