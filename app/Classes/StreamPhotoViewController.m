@@ -7,6 +7,7 @@
 //
 
 #import "Twitter/Twitter.h"
+#import "GRMustache.h"
 
 #import "StreamPhotoViewController.h"
 #import "StreamPhotoViewCell.h"
@@ -26,6 +27,9 @@
 
 @synthesize photo, streamManager, photoLocation, webView, comments, commentsError;
 
+// global template object cache
+GRMustacheTemplate *template;
+
 -(id)initWithPhoto:(StreamPhoto*)_photo streamManager:(PhotoStreamManager*)_streamManager;
 {
     self = [super initWithNibName:nil bundle:nil];
@@ -33,6 +37,7 @@
         self.photo = _photo;
         self.streamManager = _streamManager;
         self.title = self.photo.title;
+        firstRender = YES;
 
     }
     return self;
@@ -136,31 +141,33 @@
 
 - (void)viewWillAppear:(BOOL)animated;
 {
-    NSLog(@"%@ will appear", self.class);
+    NSLog(@"%@ will appear and display %@", self.class, self.photo);
     [super viewWillAppear:animated];
-    
-    firstRender = TRUE;
+
+    CacheManager *cacheManager = [CacheManager sharedCacheManager];
+    PhotoLocationManager *locationManager = [PhotoLocationManager sharedPhotoLocationManager];
 
     // load images if we haven't got them already.
-    if (![[CacheManager sharedCacheManager] cachedImageForURL:self.photo.imageURL]) {
-        [[CacheManager sharedCacheManager] fetchImageForURL:self.photo.imageURL andNotify:self];
+    if (![cacheManager cachedImageForURL:self.photo.imageURL]) {
+        [cacheManager fetchImageForURL:self.photo.imageURL andNotify:self];
     }
-    if (![[CacheManager sharedCacheManager] cachedImageForURL:self.photo.avatarURL]) {
-        [[CacheManager sharedCacheManager] fetchImageForURL:self.photo.avatarURL andNotify:self];
+    if (![cacheManager cachedImageForURL:self.photo.avatarURL]) {
+        [cacheManager fetchImageForURL:self.photo.avatarURL andNotify:self];
     }
 
     if (self.photo.hasLocation) {
-        if (![[CacheManager sharedCacheManager] cachedImageForURL:self.photo.mapImageURL]) {
-            [[CacheManager sharedCacheManager] fetchImageForURL:self.photo.mapImageURL andNotify:self];
+        if (![cacheManager cachedImageForURL:self.photo.mapImageURL]) {
+            [cacheManager fetchImageForURL:self.photo.mapImageURL andNotify:self];
         }
         
-        self.photoLocation = [[PhotoLocationManager sharedPhotoLocationManager] cachedLocationForPhoto:self.photo];
-
+        self.photoLocation = [locationManager cachedLocationForPhoto:self.photo];
         if (!self.photoLocation) {
             self.photoLocation = self.photo.placename;
-            // TODO - this is wrong. Should be caching location on photo object or something.
-            [[PhotoLocationManager sharedPhotoLocationManager] getLocationForPhoto:photo andTell:self];
+            [locationManager getLocationForPhoto:photo andTell:self];
         }
+
+    } else {
+        self.photoLocation = nil;
     }
     
     // load comments
@@ -185,7 +192,16 @@
          [self updateHTML];
      }];
     
-    [self updateHTML];
+    // if we have the template, just render it. otherwise, it'll need loading,
+    // which will take time. don't defer the appearance of the view, or it'll
+    // hang the front end.
+    if (template) {
+        [self updateHTML];
+    } else {
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            [self updateHTML];
+        }];
+    }
 }
 
 -(void) gotLocation:(NSString*)location forPhoto:(StreamPhoto*)photo;
@@ -208,114 +224,74 @@
 }
 
 
+
 -(void)updateHTML;
 {
+    if (!template) {
+        NSLog(@"first run - need to parse template.");
+        NSError *err = nil;
+        NSString *file = [[NSBundle mainBundle] pathForResource:@"StreamPhotoViewController" ofType:@"html" inDirectory:nil];
+        template = [[GRMustacheTemplate parseContentsOfFile:file error:&err] retain];
+        if (err != nil) {
+            NSLog(@"error parsing template: %@", err);
+            return;
+        }
+        NSLog(@"parsed");
+    }
+
+
     CacheManager *cacheManager = [CacheManager sharedCacheManager];
+    NSMutableDictionary *templateData = [NSMutableDictionary dictionary];
+    [templateData setValue:self.photo forKey:@"photo"];
+
+    [templateData setValue:[cacheManager urlToFilename:photo.imageURL] forKey:@"imageFile"];
+    BOOL imageLoaded = [[NSFileManager defaultManager] fileExistsAtPath:[templateData valueForKey:@"imageFile"]];
+    [templateData setValue:[NSNumber numberWithBool:imageLoaded] forKey:@"imageLoaded"];
+
+    [templateData setValue:[cacheManager urlToFilename:photo.mapImageURL] forKey:@"mapImageFile"];
+    BOOL mapImageLoaded = [[NSFileManager defaultManager] fileExistsAtPath:[templateData valueForKey:@"mapImageFile"]];
+    [templateData setValue:[NSNumber numberWithBool:mapImageLoaded] forKey:@"mapImageLoaded"];
+
+    [templateData setValue:[cacheManager urlToFilename:photo.avatarURL] forKey:@"avatarFile"];
+    BOOL avatarLoaded = [[NSFileManager defaultManager] fileExistsAtPath:[templateData valueForKey:@"avatarFile"]];
+    [templateData setValue:[NSNumber numberWithBool:avatarLoaded] forKey:@"avatarLoaded"];
+
+    [templateData setValue:self.photoLocation forKey:@"location"];
     
-    // beginning to want an actual templating language here. :-)
-    
-    NSString *html = @"";
-    
-    NSString *imageFile = [cacheManager urlToFilename:photo.imageURL];
-    if ([[NSFileManager defaultManager] fileExistsAtPath:imageFile]) {
-        // TODO - work out image dimensions and hard-code them here to stop page size pop.
-        html = [html stringByAppendingFormat:@"<div id='image-wrapper'><a href='noticings-image:'><img class=\"image\" src='%@'></a></div>\n\n", imageFile];
-    } else {
-        html = [html stringByAppendingFormat:@"<a href='noticings-image:'><div class='image-loading'></div></a>\n\n", imageFile];
-    }
+    [templateData setValue:[NSNumber numberWithBool:(self.photo.visibility == StreamPhotoVisibilityPrivate)] forKey:@"isPrivate"];
+    [templateData setValue:[NSNumber numberWithBool:(self.photo.visibility == StreamPhotoVisibilityPublic)] forKey:@"isPublic"];
+    [templateData setValue:[NSNumber numberWithBool:(self.photo.visibility == StreamPhotoVisibilityLimited)] forKey:@"isLimited"];
 
-    html = [html stringByAppendingFormat:@"<a href='noticings-user:'><img class='avatar' src='%@'></a>\n", [cacheManager urlToFilename:photo.avatarURL]];
+    [templateData setValue:[NSNumber numberWithBool:(self.photo.tags.count > 0)] forKey:@"hasTags"];
 
-    html = [html stringByAppendingFormat:@"<p class='title'>%@</p>", [photo.title stringByEncodingHTMLEntities]];
+    [templateData setValue:[NSNumber numberWithBool:(self.comments != nil)] forKey:@"loadedComments"];
+    [templateData setValue:[NSNumber numberWithBool:(self.comments.count > 0)] forKey:@"hasComments"];
+    [templateData setValue:[NSNumber numberWithBool:(self.comments == nil)] forKey:@"loadingComments"];
+    [templateData setValue:[NSNumber numberWithBool:(self.commentsError)] forKey:@"failedComments"];
 
-    html = [html stringByAppendingFormat:@"<p class='owner'>by <a href='noticings-user:'>%@</a></p>", [photo.ownername stringByEncodingHTMLEntities]];
-
-    html = [html stringByAppendingString:@"</p><div style='clear: both'></div>\n\n"];
-
-    // description
-    if (self.photo.html) {
-        html = [html stringByAppendingFormat:@"<div class='description'><p>%@</p></div>", self.photo.html];
-    }
-    
-    // Visibility
-    NSString *visClass = @"public";
-    NSString *visName = @"public";
-    if (self.photo.visibility == StreamPhotoVisibilityPrivate) {
-        visClass = @"private";
-        visName = @"private";
-    } else if (self.photo.visibility == StreamPhotoVisibilityLimited) {
-        visClass = @"limited";
-        visName = @"friends and family only";
-    }
-    html = [html stringByAppendingFormat:@"<p class='header'>Photo is <span class='%@'>%@</span>. ", visClass, visName];
-
-    // Time ago
-    html = [html stringByAppendingFormat:@"Taken %@ ago", [self.photo.ago stringByEncodingHTMLEntities]];
-
-    // location (in same paragraph)
-    if (self.photo.hasLocation) {
-        html = [html stringByAppendingFormat:@", in <a href='noticings-map:'>%@</a>: ", [self.photoLocation stringByEncodingHTMLEntities]];
-    } else {
-        html = [html stringByAppendingString:@". "];
-    }
-
-    html = [html stringByAppendingString:@"</p>"];
-
-    if (self.photo.hasLocation) {
-        NSString *mapFile = [cacheManager urlToFilename:photo.mapImageURL];
-        if ([[NSFileManager defaultManager] fileExistsAtPath:mapFile]) {
-            html = [html stringByAppendingFormat:@"<a href='noticings-map:'><img class='map' src='%@'></a>", mapFile];
-        }
-    }    
+    [templateData setValue:self.comments forKey:@"comments"];
+    [templateData setValue:[NSNumber numberWithInt:self.comments.count] forKey:@"commentCount"];
 
 
-    if (self.photo.tags.count > 0) {
-        html = [html stringByAppendingFormat:@"<p class='tags'>Tagged "];
-        
-        for (NSString *tag in self.photo.tags) {
-            html = [html stringByAppendingFormat:@"<a class='tag' href='noticings-tag:%@'>%@</a> ",
-                    [tag stringByEncodingForURI],
-                    [tag stringByEncodingHTMLEntities]
-            ];
-        }
-        html = [html stringByAppendingFormat:@"</p>"];
-    }
-    
-    if (self.comments) {
-        if (self.comments.count > 0) {
-            html = [html stringByAppendingFormat:@"<p class='comments'>%d comment(s):</p>", self.comments.count];
-            for (NSDictionary *comment in self.comments) {
-                // assume comment body is safe
-                html = [html stringByAppendingFormat:@"<p class='comment'><a class='author' href='noticings-user:%@:%@'>%@</a>: %@</p>",
-                        [[comment valueForKeyPath:@"author"] stringByEncodingForURI],
-                        [[comment valueForKeyPath:@"authorname"] stringByEncodingForURI],
-                        [[comment valueForKeyPath:@"authorname"] stringByEncodingHTMLEntities],
-                        [comment valueForKeyPath:@"_text"]
-                ];
-            }
-        } else {
-            html = [html stringByAppendingFormat:@"<p class='comments'>No comments.</p>"];
-        }
-    } else if (self.commentsError) {
-        html = [html stringByAppendingFormat:@"<p class='comments'>Failed to load comments.</p>"];
-    } else {
-        html = [html stringByAppendingFormat:@"<p class='comments'>Loading comments...</p>"];
-    }
-    html = [html stringByAppendingFormat:@"<p class='add-comment'><a href='noticings-comment:'>Add comment</a></p>"];
+    id pluralizeHelper = [GRMustacheBlockHelper helperWithBlock:(^(GRMustacheSection *section, id context) {
+        NSString *count = [context valueForKey:@"description"];
+        NSString *contents = [section renderObject:context];
+        NSString *result = [NSString stringWithFormat:@"%@ %@%@", count, contents, ([count isEqualToString:@"1"] ? @"" : @"s")];
+        return result;
+    })];
+    [templateData setObject:pluralizeHelper forKey:@"pluralizeHelper"];
+
+    //NSLog(@"rendering with %@", templateData);
+    NSString *rendered = [template renderObject:templateData];
+    //NSLog(@"rendered as %@", rendered);
     
     if (firstRender) {
-        // Load common HTML heading and render full content
-        // TODO - don't hit disk for every load - cache it.
-        NSLog(@"loading webview from scratch");
-        NSString *htmlFile = [[NSBundle mainBundle] pathForResource:@"StreamPhotoViewController" ofType:@"html" inDirectory:nil];
-        NSString *htmlWrapper = [NSString stringWithContentsOfFile:htmlFile encoding:NSUTF8StringEncoding error:nil];
         NSURL *baseURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
-        [self.webView loadHTMLString:[NSString stringWithFormat:htmlWrapper, html] baseURL:baseURL];
-        firstRender = FALSE;
-        
+        [self.webView loadHTMLString:rendered baseURL:baseURL];
+        firstRender = NO;
     } else {
         // update HTML by replacing with JS.
-        html = [NSString stringWithFormat:@"document.getElementById('content').innerHTML = \"%@\";", [html stringByEncodingForJavaScript]];
+        NSString *html = [NSString stringWithFormat:@"document.getElementsByTagName('html')[0].innerHTML = \"%@\";", [rendered stringByEncodingForJavaScript]];
         NSLog(@"updating webview with JS");
         [self.webView stringByEvaluatingJavaScriptFromString:html];
     }

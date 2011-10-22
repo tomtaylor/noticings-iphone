@@ -11,79 +11,93 @@
         width: 320px;
         overflow-x: hidden;
     }
-    #content {
-        width: 320px;
-        padding: 0px;
-        overflow-x: hidden;
+    h3 {
+        font-size: 14px;
+        font-weight: bold;
     }
     
-    #image-wrapper {
+    #image {
         width: 320px;
-        padding: 0px;
         background: black;
+        max-height: 180px;
+        min-height: 100px;
     }
 
+    #map {
+        display: block;
+        width: 320px; /* size also in StreamPhoto.m */
+        height: 100px;
+        background: #999;
+    }
+
+    /* body copy. Protect it from the edges. */
     .copy {
-        margin-bottom: 5px;
+        margin-bottom: 10px;
         margin-left: 5px;
         margin-right: 5px;
     }
+
     img {
         margin-bottom: 5px;
         max-width: 320px; /* helps in comments */
     }
-    .image {
+
+    .photo {
         display: block;
         max-width: 320px;
         max-height: 180px;
         margin-left: auto;
         margin-right: auto;
     }
-    .header {
-        margin-top: 20px;
-    }
-    .image-loading {
+    .photo-loading {
         width: 320px;
         height: 180px;
         margin-bottom: 5px;
         background: #eee;
     }
-    .map {
-        display: block;
-        width: 320px; /* size also in StreamPhoto.m */
-        height: 100px;
-        background: #999;
-    }
-    .avatar {
+
+    #avatar {
         width: 38px;
         height: 38px;
         float: left;
         margin-right: 5px;
-        margin-left: 5px;
     }
-    .title {
+    #title {
         font-weight: bold;
     }
-    .owner {
+    #owner {
         font-weight: bold;
-        color: #444;
-    }
-    .timeago {
         color: #444;
     }
 
+    #meta { /* photo taken 5 hours ago in barnes */
+        margin-top: 20px;
+    }
+    .timeago { color: #444; }
     .public { color: #279900 }
     .private { color: #990017; }
     .limited { color: #999800; }
 
-    .description {
+    #description {
         color: #333;
         width: 300px;
-        margin-bottom: 20px;
     }
 
-    .comments {
-        font-weight: bold;
+    #tags {
+        line-height: 33px;
+    }
+    .tag {
+        background: #ddd;
+        -webkit-border-radius: 10px;
+        margin-right: 1px;
+        padding: 4px 10px 6px 10px;
+        text-decoration: none;
+        color: black;
+        white-space: nowrap;
+    }
+
+    
+    #comments {
         margin-bottom: 10px;
     }
     .comment {
@@ -94,23 +108,86 @@
         font-weight: bold;
     }
     
-    .tags {
-        line-height: 33px;
-    }
-    .tag {
-        background: #ddd;
-        -webkit-border-radius: 10px;
-        margin-right: 1px;
-        padding: 4px 10px 6px 10px;
-        text-decoration: none;
-        color: black;
-    }
 
 </style>
 </head>
 <body>
-<div id="content">
-  %@
+
+{{#imageLoaded}}    
+<div id='image'><a href='noticings-image:'><img class="photo" src='{{ imageFile }}'></a></div>
+{{/imageLoaded}}
+
+{{^imageLoaded}}    
+<div id='image'><a href='noticings-image:'><div class='photo-loading'></div></a></div>
+{{/imageLoaded}}
+
+<div class="copy">
+    <a href="noticings-user:"><img id="avatar" src='{{ avatarFile }}'></a>
+    <p id="title">{{photo/title}}</p>
+    <p id='owner'>by <a href='noticings-user:'>{{photo/ownername}}</a></p>
+</div><!-- copy -->
+
+    
+{{#photo/html}}
+<div class="copy" id='description'>
+    <p>{{{photo/html}}}</p>
+</div><!-- copy -->
+{{/photo/html}}
+
+    
+<div class="copy" id="meta">
+    Photo is
+    {{#isPublic}}<span class="public">public</span>.{{/isPublic}}
+    {{#isPrivate}}<span class="private">private</span>.{{/isPrivate}}
+    {{#isLimited}}<span class="limited">limited</span>.{{/isLimited}}
+    
+    Taken {{photo/ago}} ago{{^photo/hasLocation}}.{{/photo/hasLocation}}{{#photo/hasLocation}},{{/photo/hasLocation}}
+    
+    {{#photo/hasLocation}}
+        <br>in <a href='noticings-map:'>{{ location }}</a>:
+    {{/photo/hasLocation}}
 </div>
+
+    
+{{#photo/hasLocation}}
+<a href='noticings-map:'><img id='map' src='{{ mapImageFile }}'></a>
+{{/photo/hasLocation}}
+
+    
+{{#hasTags}}
+<div class="copy" id="tags">
+    Tagged
+    {{#photo/tags}}
+        <a class='tag' href='noticings-tag:{{.}}'>{{.}}</a>
+    {{/photo/tags}}
+</div>
+{{/hasTags}}
+    
+    
+<div class="copy" id="comments">
+
+    {{#loadedComments}}
+    {{#hasComments}}
+        <h3>{{#commentCount}}{{#pluralizeHelper}}comment{{/pluralizeHelper}}{{/commentCount}}:</h3>
+        {{#comments}}<p class='comment'><a class='author' href='noticings-user:{{author}}:{{authorname}}'>{{authorname}}</a>: {{{_text}}}</p>{{/comments}}
+    {{/hasComments}}
+
+    {{^hasComments}}
+        <h3>No comments.</h3>
+    {{/hasComments}}
+    {{/loadedComments}}
+
+    {{#failedComments}}
+    <h3>Failed to load comments.</h3>
+    {{/failedComments}}
+
+    {{#loadingComments}}
+    <h3>Loading comments...</h3>
+    {{/loadingComments}}
+
+    <p class='add-comment'><a href='noticings-comment:'>Add comment</a></p>
+
+</div>
+
 </body>
 </html>
