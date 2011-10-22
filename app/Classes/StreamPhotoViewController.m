@@ -285,16 +285,16 @@ GRMustacheTemplate *template;
     NSString *rendered = [template renderObject:templateData];
     //NSLog(@"rendered as %@", rendered);
     
-    if (firstRender) {
+//    if (firstRender) {
         NSURL *baseURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
         [self.webView loadHTMLString:rendered baseURL:baseURL];
         firstRender = NO;
-    } else {
-        // update HTML by replacing with JS.
-        NSString *html = [NSString stringWithFormat:@"document.getElementsByTagName('html')[0].innerHTML = \"%@\";", [rendered stringByEncodingForJavaScript]];
-        NSLog(@"updating webview with JS");
-        [self.webView stringByEvaluatingJavaScriptFromString:html];
-    }
+//    } else {
+//        // update HTML by replacing with JS.
+//        NSString *html = [NSString stringWithFormat:@"document.getElementsByTagName('html')[0].innerHTML = \"%@\";", [rendered stringByEncodingForJavaScript]];
+//        NSLog(@"updating webview with JS");
+//        [self.webView stringByEvaluatingJavaScriptFromString:html];
+//    }
    
 
 }

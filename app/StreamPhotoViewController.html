@@ -22,6 +22,13 @@
         max-height: 180px;
         min-height: 100px;
     }
+    .photo {
+        display: block;
+        max-width: 320px;
+        max-height: 180px;
+        margin-left: auto;
+        margin-right: auto;
+    }
 
     #map {
         display: block;
@@ -32,9 +39,9 @@
 
     /* body copy. Protect it from the edges. */
     .copy {
-        margin-bottom: 10px;
-        margin-left: 5px;
-        margin-right: 5px;
+        padding: 5px;
+        width: 310px;
+        overflow-x: hidden; /* comments are awful */
     }
 
     img {
@@ -42,19 +49,6 @@
         max-width: 320px; /* helps in comments */
     }
 
-    .photo {
-        display: block;
-        max-width: 320px;
-        max-height: 180px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    .photo-loading {
-        width: 320px;
-        height: 180px;
-        margin-bottom: 5px;
-        background: #eee;
-    }
 
     #avatar {
         width: 38px;
