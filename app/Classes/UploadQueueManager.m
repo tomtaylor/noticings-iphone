@@ -399,6 +399,9 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(UploadQueueManager);
     PhotoUpload *upload = [[PhotoUpload alloc] init];
     upload.title = @"fake upload";
     upload.timestamp = [NSDate date];
+    upload.inProgress = YES;
+    upload.progress = [NSNumber numberWithFloat:0.5];
+    self.inProgress = YES;
     [self addPhotoUploadToQueue:upload];
     [upload release];
 }

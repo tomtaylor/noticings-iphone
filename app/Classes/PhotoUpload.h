@@ -59,4 +59,6 @@ enum {
 //- (NSDictionary *)asDictionary;
 - (NSData *)imageData;
 
+-(void)togglePause;
+
 @end

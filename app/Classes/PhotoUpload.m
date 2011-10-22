@@ -134,6 +134,13 @@
                           freeWhenDone:YES];  // YES means free malloc'ed buf that backs this when deallocated
 }
 
+-(void)togglePause;
+{
+    // TODO - should probably actually _DO_ something.
+    self.inProgress = !self.inProgress;
+    
+}
+
 - (void) dealloc
 {
 	[asset release];

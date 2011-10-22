@@ -64,6 +64,7 @@ enum DebugActions {
         case kNoticingsDebugFakeUpload:
             manager = [UploadQueueManager sharedUploadQueueManager];
             [manager fakeUpload];
+            [self.navigationController.tabBarController setSelectedIndex:0];
             break;
         default:
             break;

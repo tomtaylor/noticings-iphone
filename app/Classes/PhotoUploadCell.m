@@ -48,7 +48,11 @@
     
     if (self.photoUpload) {
 
-        self.imageView.image = [UIImage imageWithCGImage:self.photoUpload.asset.thumbnail];
+        if (self.photoUpload.asset) {
+            self.imageView.image = [UIImage imageWithCGImage:self.photoUpload.asset.thumbnail];
+        } else {
+            self.imageView.image = [UIImage imageNamed:@"tab-eye.png"];
+        }
         
         if (self.photoUpload.title == nil || [self.photoUpload.title isEqualToString:@""]) {
             self.textLabel.text = @"No title";
