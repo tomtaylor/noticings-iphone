@@ -20,18 +20,17 @@
     self.mapView = [[[MKMapView alloc] initWithFrame:self.view.bounds] autorelease];
     self.mapView.delegate = self;
     self.mapView.showsUserLocation = NO;
-
+    
     self.mapView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     self.view.autoresizesSubviews = YES;
-
-    UIBarButtonItem *externalItem = [[UIBarButtonItem alloc] 
-                                     initWithBarButtonSystemItem:UIBarButtonSystemItemAction
-                                     target:self
-                                     action:@selector(externalButton)];
-    
-    self.navigationItem.rightBarButtonItem = externalItem;
-    [externalItem release];
     [self.view addSubview:self.mapView];
+    
+    // button in top-right to open maps app.
+    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] 
+                                               initWithBarButtonSystemItem:UIBarButtonSystemItemAction
+                                               target:self
+                                               action:@selector(externalButton)]
+                                              autorelease];
 }
 
 -(void)externalButton;
@@ -51,7 +50,6 @@
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    NSLog(@"index is %d", buttonIndex);
     if (buttonIndex == 0) {
         [[UIApplication sharedApplication] openURL:photo.mapPageURL];
     }
@@ -61,40 +59,23 @@
 {
     self.photo = _photo;
     self.streamManager = manager;
-    self.mapView.region = MKCoordinateRegionMake(photo.coordinate, MKCoordinateSpanMake(0.02, 0.02));
-    for (StreamPhoto *p in manager.photos) {
-        if (p.coordinate.latitude != 0 && p.coordinate.longitude != 0) {
-            [self.mapView addAnnotation:p];
-        }
-    }
-    [self performSelector:@selector(selectMainPhoto:) withObject:self.photo afterDelay:1.2];
+    self.mapView.region = MKCoordinateRegionMake(photo.coordinate, MKCoordinateSpanMake(0.03, 0.03));
+    [self.mapView addAnnotation:self.photo];
+    [self performSelector:@selector(selectPhoto:) withObject:self.photo afterDelay:2];
 }
 
--(void)viewWillAppear:(BOOL)animated;
+-(void)selectPhoto:(StreamPhoto*)p;
 {
-    NSLog(@"%@ will appear", self.class);
-    [super viewWillAppear:animated];
-}
-
--(void)viewWillDisappear:(BOOL)animated;
-{
-    NSLog(@"%@ will disappear", self.class);
-    [[CacheManager sharedCacheManager] flushQueue];
-    [super viewWillDisappear:animated];
-}
-
--(void)selectMainPhoto:(StreamPhoto*)p;
-{
-    [self.mapView selectAnnotation:self.photo animated:YES];
+    [self.mapView selectAnnotation:p animated:YES];
 }
 
 
-- (MKAnnotationView *)mapView:(MKMapView *)sender viewForAnnotation:(id <MKAnnotation>)annotation
+- (MKAnnotationView *)mapView:(MKMapView *)theMap viewForAnnotation:(id <MKAnnotation>)annotation
 {
-    MKAnnotationView *aView = [sender dequeueReusableAnnotationViewWithIdentifier:@"MyAnnotationView"];
+    MKAnnotationView *aView = [theMap dequeueReusableAnnotationViewWithIdentifier:@"PhotoAnnotation"];
     
     if (!aView) {
-        aView = [[[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"MyAnnotationView"] autorelease];
+        aView = [[[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"PhotoAnnotation"] autorelease];
         aView.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
         aView.canShowCallout = YES;
     }
@@ -107,10 +88,7 @@
 - (void)mapView:(MKMapView *)sender annotationView:(MKAnnotationView *)aView calloutAccessoryControlTapped:(UIControl *)control;
 {
     if (aView.annotation.class == StreamPhoto.class) {
-        StreamPhoto *_photo = (StreamPhoto*)aView.annotation;
-        StreamPhotoViewController *vc = [[StreamPhotoViewController alloc] initWithPhoto:_photo streamManager:streamManager];
-        [self.navigationController pushViewController:vc animated:YES];
-        [vc release];
+        [self externalButton];
     }
 }
 
@@ -120,6 +98,7 @@
     self.mapView.delegate = nil;
     self.mapView = nil;
     self.photo = nil;
+    self.streamManager = nil;
     [super dealloc];
 }
 
