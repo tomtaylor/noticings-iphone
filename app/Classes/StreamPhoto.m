@@ -25,6 +25,12 @@
     return self;
 }
 
+-(NSString*)description;
+{
+    // this is the objective C introspection / toString() method
+    return [NSString stringWithFormat:@"<StreamPhoto \"%@\" by %@>", self.title, self.ownername];
+}
+
 #pragma mark accessors / view utilities
 
 - (NSString*)flickrId;
@@ -52,13 +58,6 @@
     NSString *raw = [self.details valueForKeyPath:@"description._text"];
     return [raw stringByReplacingOccurrencesOfString:@"\n" withString:@"<br>"];
 }
-
-- (NSString*)description;
-{
-    NSString *raw = [self.details valueForKeyPath:@"description._text"];
-    return [raw stringByConvertingHTMLToPlainText];
-}
-
 
 - (NSString*)ownername;
 {

@@ -28,7 +28,6 @@
 @property (nonatomic, readonly, copy) NSString *title;
 @property (readonly) NSString* flickrId;
 @property (readonly) NSString* html;
-@property (readonly) NSString* description;
 @property (readonly) NSString* ownername;
 @property (readonly) NSString* ownerId;
 @property (readonly) NSString* ago;
