@@ -193,16 +193,16 @@
     int hours = (ago / (60*60)) % 24;
     int days = (ago / (24*60*60));
     
-    if (days) {
+    if (days > 1) {
         return [NSString stringWithFormat:@"%dd", days];
     }
-    if (hours) {
-        return [NSString stringWithFormat:@"%dh", hours];
+    if (hours > 1) {
+        return [NSString stringWithFormat:@"%dh", hours + days*24];
     }
-    if (minutes) {
-        return [NSString stringWithFormat:@"%dm", minutes];
+    if (minutes > 1) {
+        return [NSString stringWithFormat:@"%dm", minutes + hours*60];
     }
-    return [NSString stringWithFormat:@"%ds", seconds];
+    return [NSString stringWithFormat:@"%ds", seconds + minutes*60];
 }
 
 -(int)visibility;

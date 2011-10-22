@@ -296,16 +296,18 @@ GRMustacheTemplate *template;
         int hours = (ago / (60*60)) % 24;
         int days = (ago / (24*60*60));
         
-        if (days) {
+        // >1 here partially to make things more precise when they're small numbers (75 mins better 
+        // than 1 hour, for instance) but mostly so I don't have to remove the 's' for the ==1 case. :-)
+        if (days > 1) {
             return [NSString stringWithFormat:@"%d days ago", days];
         }
-        if (hours) {
-            return [NSString stringWithFormat:@"%d hours ago", hours];
+        if (hours > 1) {
+            return [NSString stringWithFormat:@"%d hours ago", hours + days*24];
         }
-        if (minutes) {
-            return [NSString stringWithFormat:@"%d minutes ago", minutes];
+        if (minutes > 1) {
+            return [NSString stringWithFormat:@"%d minutes ago", minutes + hours*60];
         }
-        return [NSString stringWithFormat:@"%d seconds ago", seconds];
+        return [NSString stringWithFormat:@"%d seconds ago", seconds + minutes*60];
     })];
     [templateData setObject:dateHelper forKey:@"dateHelper"];
     
