@@ -40,7 +40,8 @@
 -(void)loadCachedImageList;
 -(void)saveCachedImageList;
 
-@property (retain) NSMutableArray* photos;
+@property (retain) NSMutableArray* rawPhotos;
+@property (readonly) NSArray* filteredPhotos;
 @property (nonatomic) BOOL inProgress;
 @property (nonatomic) NSTimeInterval lastRefresh;
 

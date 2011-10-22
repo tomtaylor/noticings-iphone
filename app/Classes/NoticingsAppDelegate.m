@@ -38,7 +38,11 @@ BOOL gLogging = FALSE;
     #endif
     
 	NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-	NSDictionary *defaults = [NSDictionary dictionaryWithObject:@"" forKey:@"defaultTags"];
+	NSDictionary *defaults = [NSDictionary dictionaryWithObjectsAndKeys:
+                              @"", @"defaultTags",
+                              [NSNumber numberWithBool:NO], @"filterInstagram", 
+                              [NSNumber numberWithBool:NO], @"askedToFilterInstagram", 
+                              nil];
 	[userDefaults registerDefaults:defaults];
 	[userDefaults synchronize];
 	
@@ -151,6 +155,14 @@ BOOL gLogging = FALSE;
 {
     // resume from background. Multitasking devices only.
     [[ContactsStreamManager sharedContactsStreamManager] maybeRefresh]; // the viewcontroller listens to this
+    
+    UINavigationController *nav = (UINavigationController*)[self.tabBarController.viewControllers objectAtIndex:0];
+
+    // if we're looking at a list of photos, reload it, in case the user defaults have changed.
+    if (nav.visibleViewController.class == StreamViewController.class) {
+        [((StreamViewController*)nav.visibleViewController).tableView reloadData];
+    }
+    
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {

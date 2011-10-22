@@ -10,8 +10,7 @@
 #import "ObjectiveFlickr.h"
 #import "PhotoStreamManager.h"
 
-@interface ContactsStreamManager : PhotoStreamManager {
-}
+@interface ContactsStreamManager : PhotoStreamManager
 
 +(ContactsStreamManager *)sharedContactsStreamManager;
 

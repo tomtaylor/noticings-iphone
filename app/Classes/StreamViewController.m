@@ -138,7 +138,7 @@
 }
 
 - (StreamPhoto *)streamPhotoAtIndexPath:(NSIndexPath*)indexPath {
-    NSMutableArray *photos = streamManager.photos;
+    NSArray *photos = streamManager.filteredPhotos;
     if ([photos count] == 0) {
         return nil;
     }
@@ -198,7 +198,7 @@
 #pragma mark Table view methods
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    NSMutableArray *photos = self.streamManager.photos;
+    NSArray *photos = self.streamManager.filteredPhotos;
 	NSInteger photosCount = photos.count == 0 ? 1 : photos.count;
     if (isRoot) {
         UploadQueueManager *uploadQueueManager = [UploadQueueManager sharedUploadQueueManager];

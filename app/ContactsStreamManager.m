@@ -23,6 +23,24 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(ContactsStreamManager);
     [[self flickrRequest] callAPIMethodWithGET:@"flickr.photos.getContactsPhotos" arguments:args];
 }
 
+-(NSArray*)filteredPhotos;
+{
+    // there's a setting that will hide instagram photos.
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"filterInstagram"]) {
+        return [super filteredPhotos];
+    }
+
+    return [self.rawPhotos filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
+        StreamPhoto *sp = (StreamPhoto*)evaluatedObject;
+        if ([sp.tags filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
+            NSString *tag = (NSString*)evaluatedObject;
+            return [tag isEqualToString:@"uploaded:by=instagram"];
+        }]].count > 0) {
+            return NO;
+        }
+        return YES;
+    }]];
+}
 
 -(NSString*)cacheFilename;
 {

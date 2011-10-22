@@ -14,7 +14,7 @@
 
 @implementation PhotoStreamManager
 
-@synthesize photos;
+@synthesize rawPhotos;
 @synthesize inProgress;
 @synthesize lastRefresh;
 @synthesize delegate;
@@ -23,7 +23,7 @@
 {
     self = [super init];
     if (self) {
-        self.photos = [NSMutableArray arrayWithCapacity:50];
+        self.rawPhotos = [NSMutableArray arrayWithCapacity:50];
         self.inProgress = NO;
 
         // It's worth blocking the runloop during app startup while we check
@@ -154,9 +154,9 @@
     [data release];
     
     // don't replace self.photos, alter, so we fire the watchers.
-    [self.photos removeAllObjects];
+    [self.rawPhotos removeAllObjects];
     for (StreamPhoto *photo in archived) {
-        [self.photos addObject:photo];
+        [self.rawPhotos addObject:photo];
     }
     [archived release];
 
@@ -175,7 +175,7 @@
     NSLog(@"Saving cached image data to %@", cache);
     NSMutableData *data = [NSMutableData new];
     NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data];
-    [archiver encodeObject:self.photos forKey:@"photos"];
+    [archiver encodeObject:self.rawPhotos forKey:@"photos"];
     [archiver encodeObject:[NSNumber numberWithDouble:self.lastRefresh] forKey:@"lastRefresh"];
     [archiver finishEncoding];
     [data writeToFile:cache atomically:YES];
@@ -193,7 +193,7 @@
         CacheManager *cacheManager = [CacheManager sharedCacheManager];
         //PhotoLocationManager *locationManager = [PhotoLocationManager sharedPhotoLocationManager];
         
-        for (StreamPhoto *sp in self.photos) {
+        for (StreamPhoto *sp in self.filteredPhotos) {
             if (![cacheManager cachedImageForURL:sp.avatarURL]) {
                 [cacheManager fetchImageForURL:sp.avatarURL andNotify:nil];
             }
@@ -208,6 +208,11 @@
     });    
 }
 
+-(NSArray*)filteredPhotos;
+{
+    return [NSArray arrayWithArray:self.rawPhotos];
+}
+
 #pragma mark Flickr delegate methods
 
 
@@ -215,10 +220,10 @@
 {
     NSLog(@"completed flickr request");
     
-    [self.photos removeAllObjects];
+    [self.rawPhotos removeAllObjects];
     for (NSDictionary *photo in [inResponseDictionary valueForKeyPath:@"photos.photo"]) {
         StreamPhoto *sp = [[StreamPhoto alloc] initWithDictionary:photo];
-        [self.photos addObject:sp];
+        [self.rawPhotos addObject:sp];
         [sp release];
     }
     [self saveCachedImageList];
@@ -228,7 +233,7 @@
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     
 
-    NSLog(@"loaded %d photos", [self.photos count]);
+    NSLog(@"loaded %d photos", [self.rawPhotos count]);
     if (self.delegate) {
         [self.delegate performSelector:@selector(newPhotos)];
     }
@@ -261,7 +266,7 @@
     flickrRequest.delegate = nil;
     [flickrRequest release];
     self.delegate = nil;
-    self.photos = nil;
+    self.rawPhotos = nil;
     [super dealloc];
 }
 
