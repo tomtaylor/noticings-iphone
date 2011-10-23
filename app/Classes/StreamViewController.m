@@ -115,10 +115,51 @@
         NSLog(@"View is visible. Pre-caching.");
         [self.streamManager precache];
     }
+    
+    // the root view controller can offer to turn on "filter instagram" if it sees
+    // photos in the list that are from instagram. This is a one-time offer, because it's
+    // a little expensive.
+    BOOL askedToFilterInstagram = [[NSUserDefaults standardUserDefaults] boolForKey:@"askedToFilterInstagram"];
+    BOOL filterInstagram = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterInstagram"];
+    if (isRoot && !askedToFilterInstagram && !filterInstagram) {
+        NSArray *instagramPhotos = [self.streamManager.rawPhotos filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
+            StreamPhoto *sp = (StreamPhoto*)evaluatedObject;
+            if ([sp.tags filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
+                NSString *tag = (NSString*)evaluatedObject;
+                return [tag isEqualToString:@"uploaded:by=instagram"];
+            }]].count > 0) {
+                return YES;
+            }
+            return NO;
+        }]];
+        if (instagramPhotos.count > 6) { // this number by hand-waving
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"oooh, Instagram."
+                                                            message:@"I seem some Instagram photos from your contacts here. If you prefer to look at them with the Real Instagram client, I can hide them from this view for you (change this back in Settings)."
+                                                           delegate:self
+                                                  cancelButtonTitle:nil
+                                                  otherButtonTitles:nil];
+            [alert addButtonWithTitle:@"Hide"];
+            [alert addButtonWithTitle:@"Show"];
+            [alert show];
+            [alert release];
+        }
+        
+        
+        // whatever happens, don't do that again.
+        [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithBool:YES] forKey:@"askedToFilterInstagram"];
+    }
 
 	[self.tableView reloadData];
 }
 
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
+{
+    NSLog(@"button %d", buttonIndex);
+    if (buttonIndex == 1) {
+        [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithBool:YES] forKey:@"filterInstagram"];
+        [self.tableView reloadData];
+    }
+}
 
 - (void)uploadQueueDidChange
 {

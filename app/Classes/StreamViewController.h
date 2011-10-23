@@ -13,7 +13,7 @@
 #import "StreamPhotoViewCell.h"
 #import "PhotoUploadCell.h"
 
-@interface StreamViewController : PullRefreshTableViewController <PhotoStreamDelegate> {
+@interface StreamViewController : PullRefreshTableViewController <PhotoStreamDelegate, UIAlertViewDelegate> {
     IBOutlet StreamPhotoViewCell *photoViewCell;
     IBOutlet PhotoUploadCell *photoUploadCell;
     BOOL isRoot;
