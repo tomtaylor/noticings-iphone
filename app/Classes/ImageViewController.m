@@ -21,6 +21,7 @@
     self = [super initWithNibName:nil bundle:nil];
     if (self) {
         self.photo = _photo;
+        self.hidesBottomBarWhenPushed = YES;
     }
     return self;
 }
@@ -32,6 +33,7 @@
 
 -(void)viewDidLoad;
 {
+    
     self.scrollView = [[[UIScrollView alloc] initWithFrame:self.view.bounds] autorelease];
     self.scrollView.backgroundColor = [UIColor blackColor];
     self.scrollView.minimumZoomScale = 1;
@@ -108,12 +110,15 @@
     if (cached) {
         [self scaleAndShowImage:cached];
     }
+    
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
 }
 
 -(void)viewWillDisappear:(BOOL)animated;
 {
     NSLog(@"%@ will disappear", self.class);
     [[CacheManager sharedCacheManager] flushQueue];
+    self.navigationController.navigationBar.barStyle = UIBarStyleDefault;
     [super viewWillDisappear:animated];
 }
 
