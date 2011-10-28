@@ -87,8 +87,10 @@ GRMustacheTemplate *template;
     }
     
     // TODO - This will probably break IOS4 devices.
-    if ([TWTweetComposeViewController canSendTweet]) {
-        sendTweetIndex = [popupQuery addButtonWithTitle:@"Tweet link to photo"];
+    if (NSClassFromString(@"TWTweetComposeViewController")) {
+        if ([TWTweetComposeViewController canSendTweet]) {
+            sendTweetIndex = [popupQuery addButtonWithTitle:@"Tweet link to photo"];
+        }
     }
     
     saveRollIndex = [popupQuery addButtonWithTitle:@"Save image to camera roll"];
