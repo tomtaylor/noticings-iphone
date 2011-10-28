@@ -7,14 +7,30 @@
 //
 
 #import "StreamPhotoViewCell.h"
+#import <QuartzCore/QuartzCore.h>
 
 @implementation StreamPhotoViewCell
 @synthesize photo;
 
 #define MAX_IMAGE_HEIGHT 360
 
+
 -(void) populateFromPhoto:(StreamPhoto*)_photo;
 {
+    UIColor *background = [UIColor colorWithWhite:0.8f alpha:1.0f];
+    UIColor *shadow = [UIColor colorWithWhite:0.6f alpha:1.0f];
+
+    CAGradientLayer *gradient = [CAGradientLayer layer];
+    gradient.frame = topBorder.bounds;
+    gradient.colors = [NSArray arrayWithObjects:(id)[background CGColor], (id)[shadow CGColor], nil];
+    [topBorder.layer insertSublayer:gradient atIndex:0];
+
+    gradient = [CAGradientLayer layer];
+    gradient.frame = bottomBorder.bounds;
+    gradient.colors = [NSArray arrayWithObjects:(id)[shadow CGColor], (id)[background CGColor], nil];
+    [bottomBorder.layer insertSublayer:gradient atIndex:0];
+    
+
     self.photo = _photo;
 
     titleView.text = photo.title;
@@ -47,6 +63,8 @@
     CGRect frame = self.frame;
     frame.size.height = [StreamPhotoViewCell cellHeightForPhoto:photo];
     self.frame = frame;
+    
+    self.contentView.backgroundColor = background;
 }
 
 +(CGFloat)cellHeightForPhoto:(StreamPhoto*)photo;
