@@ -8,6 +8,7 @@
 
 #import "PhotoUploadCell.h"
 #import "UploadQueueManager.h"
+#import <QuartzCore/QuartzCore.h>
 
 #import "StreamPhotoViewCell.h" // for PADDING constant
 @interface PhotoUploadCell (Private)
@@ -20,6 +21,7 @@
 @implementation PhotoUploadCell
 
 @synthesize photoUpload, imageView, textLabel, detailTextLabel, progressView;
+@synthesize topBorder, bottomBorder;
 
 -(id)init;
 {
@@ -79,7 +81,22 @@
         self.textLabel.text = @"";
         self.detailTextLabel.text = @"";
     }
+
+    UIColor *background = [UIColor colorWithWhite:0.8f alpha:1.0f];
+    UIColor *shadow = [UIColor colorWithWhite:0.6f alpha:1.0f];
     
+    CAGradientLayer *gradient = [CAGradientLayer layer];
+    gradient.frame = topBorder.bounds;
+    gradient.colors = [NSArray arrayWithObjects:(id)[background CGColor], (id)[shadow CGColor], nil];
+    [topBorder.layer insertSublayer:gradient atIndex:0];
+    
+    gradient = [CAGradientLayer layer];
+    gradient.frame = bottomBorder.bounds;
+    gradient.colors = [NSArray arrayWithObjects:(id)[shadow CGColor], (id)[background CGColor], nil];
+    [bottomBorder.layer insertSublayer:gradient atIndex:0];
+
+    self.contentView.backgroundColor = background;
+
 }
 
 -(IBAction)pressedCancelButton;

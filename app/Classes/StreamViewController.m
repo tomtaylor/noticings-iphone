@@ -36,6 +36,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.view.backgroundColor = [UIColor colorWithWhite:0.8f alpha:1.0f];
+    
     isRoot = NO;
     if (!self.streamManager) {
         // we were initialized from the nib, without going through the custom init above,
@@ -300,7 +302,7 @@
     if (photo) {
         return [StreamPhotoViewCell cellHeightForPhoto:photo];
     }
-    return 100; // upload cells.
+    return 81; // upload cells.
 }
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
