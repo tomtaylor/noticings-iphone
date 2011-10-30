@@ -14,7 +14,7 @@
 #import <ImageIO/ImageIO.h>
 #import "StreamViewController.h"
 
-#ifdef DEBUG
+#ifdef ADHOC
 #import "TestFlight.h"
 #import "APIKeys.h"
 #endif
@@ -33,7 +33,7 @@ BOOL gLogging = FALSE;
 #pragma mark Application lifecycle
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    #ifdef DEBUG
+    #ifdef ADHOC
     [TestFlight takeOff:TESTFLIGHT_API_KEY];
     #endif
     

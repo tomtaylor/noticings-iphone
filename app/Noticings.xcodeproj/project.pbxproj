@@ -917,7 +917,10 @@
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/GRMustache\"",
 				);
-				OTHER_CFLAGS = "-DDEBUG";
+				OTHER_CFLAGS = (
+					"-DADHOC",
+					"-DDEBUG",
+				);
 				PRODUCT_NAME = Noticings;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
