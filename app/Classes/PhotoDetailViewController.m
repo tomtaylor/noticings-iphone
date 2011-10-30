@@ -203,8 +203,12 @@
 #pragma mark Table View Delegate
 
 - (void)next {
-	self.photoUpload.title = self.photoTitleCell.textField.text; 
+	self.photoUpload.title = [self.photoTitleCell.textField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 	self.photoUpload.tags = self.photoTagsCell.textField.text;
+    
+    if (self.photoUpload.title.length == 0) {
+        self.photoUpload.title = self.photoTitleCell.textField.placeholder;
+    }
 	
 	if (self.photoUpload.timestamp == nil) {
 		UploadTimestampViewController *timestampViewController = [[UploadTimestampViewController alloc] init];

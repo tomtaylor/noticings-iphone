@@ -64,7 +64,7 @@
         color: #444;
     }
 
-    #meta { /* photo taken 5 hours ago in barnes */
+    #meta { /* photo uploaded 5 hours ago in barnes */
         margin-top: 15px;
     }
     .timeago { color: #444; }
@@ -152,7 +152,7 @@
     {{#isPrivate}}<span class="private">private</span>.{{/isPrivate}}
     {{#isLimited}}<span class="limited">limited</span>.{{/isLimited}}
     
-    Taken {{#photo/dateupload}}{{#dateHelper}}{{/dateHelper}}{{/photo/dateupload}}{{^photo/hasLocation}}.{{/photo/hasLocation}}{{#photo/hasLocation}},{{/photo/hasLocation}}
+    Uploaded {{#photo/dateupload}}{{#dateHelper}}{{/dateHelper}}{{/photo/dateupload}}{{^photo/hasLocation}}.{{/photo/hasLocation}}{{#photo/hasLocation}},{{/photo/hasLocation}}
     
     {{#photo/hasLocation}}
         <br>in <a href='noticings-map:'>{{ location }}</a>:
