@@ -23,8 +23,7 @@
     IBOutlet UILabel *timeagoView;
     IBOutlet UILabel *titleView;
 
-    IBOutlet UIView *topBorder;
-    IBOutlet UIView *bottomBorder;
+    IBOutlet UIView *frameView;
 }
 
 +(CGFloat)cellHeightForPhoto:(StreamPhoto*)photo;

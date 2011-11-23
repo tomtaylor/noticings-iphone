@@ -17,19 +17,12 @@
 
 -(void) populateFromPhoto:(StreamPhoto*)_photo;
 {
-    UIColor *background = [UIColor colorWithWhite:0.8f alpha:1.0f];
-    UIColor *shadow = [UIColor colorWithWhite:0.6f alpha:1.0f];
-
-    CAGradientLayer *gradient = [CAGradientLayer layer];
-    gradient.frame = topBorder.bounds;
-    gradient.colors = [NSArray arrayWithObjects:(id)[background CGColor], (id)[shadow CGColor], nil];
-    [topBorder.layer insertSublayer:gradient atIndex:0];
-
-    gradient = [CAGradientLayer layer];
-    gradient.frame = bottomBorder.bounds;
-    gradient.colors = [NSArray arrayWithObjects:(id)[shadow CGColor], (id)[background CGColor], nil];
-    [bottomBorder.layer insertSublayer:gradient atIndex:0];
-    
+    // drop shadow on the white photo background
+    frameView.layer.shadowOffset = CGSizeMake(0,2);
+    frameView.layer.shadowColor = [[UIColor blackColor] CGColor];
+    frameView.layer.shadowRadius = 5.0f;
+    frameView.layer.shadowOpacity = 0.6f;
+    self.contentView.backgroundColor = [UIColor colorWithWhite:0.6f alpha:1.0f];
 
     self.photo = _photo;
 
@@ -64,7 +57,6 @@
     frame.size.height = [StreamPhotoViewCell cellHeightForPhoto:photo];
     self.frame = frame;
     
-    self.contentView.backgroundColor = background;
 }
 
 +(CGFloat)cellHeightForPhoto:(StreamPhoto*)photo;
