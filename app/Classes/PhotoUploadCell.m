@@ -20,17 +20,17 @@
 
 @implementation PhotoUploadCell
 
-@synthesize photoUpload, imageView, textLabel, detailTextLabel, progressView;
+@synthesize photoUpload, imageView, textLabel, detailTextLabel, progressView, optionsButton;
 @synthesize topBorder, bottomBorder;
 
--(id)init;
-{
-    self = [super init];
-    if (self != nil) {
+- (id)initWithCoder:(NSCoder *)coder {
+    self = [super initWithCoder:coder];
+    if (self) {
         [[UploadQueueManager sharedUploadQueueManager] addObserver:self
                                                         forKeyPath:@"inProgress"
-                                                           options:(NSKeyValueObservingOptionNew)
-                                                           context:NULL];		
+                                                           options:NSKeyValueObservingOptionNew
+                                                           context:NULL];
+
     }
     return self;
 }
@@ -99,22 +99,45 @@
 
 }
 
--(IBAction)pressedCancelButton;
+- (IBAction)pressedOptionsButton;
 {
-    UIActionSheet *popupQuery = [[UIActionSheet alloc]
-                                 initWithTitle:@"Cancel upload"
-                                 delegate:self
-                                 cancelButtonTitle:@"Continue"
-                                 destructiveButtonTitle:@"Stop upload"
-                                 otherButtonTitles:nil];
+    UIActionSheet *popupQuery;
+    
+    if ([UploadQueueManager sharedUploadQueueManager].inProgress) {
+        popupQuery = [[UIActionSheet alloc]
+                      initWithTitle:@"Upload Options"
+                      delegate:self
+                      cancelButtonTitle:@"Cancel"
+                      destructiveButtonTitle:@"Remove upload"
+                      otherButtonTitles:@"Pause upload", nil];
+    } else {
+        popupQuery = [[UIActionSheet alloc]
+                      initWithTitle:@"Upload Options"
+                      delegate:self
+                      cancelButtonTitle:@"Cancel"
+                      destructiveButtonTitle:@"Remove upload"
+                      otherButtonTitles:@"Retry upload", nil];
+
+    }
+    
     [popupQuery showInView:self];
     [popupQuery release];
 }
      
  -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
+    UploadQueueManager *uploadQueueManager = [UploadQueueManager sharedUploadQueueManager];
+    
     if (buttonIndex == 0) {
-        [[UploadQueueManager sharedUploadQueueManager] cancelUpload:self.photoUpload];
+        [uploadQueueManager cancelUpload:self.photoUpload];
+    } else if (buttonIndex == 1) {
+        if (uploadQueueManager.inProgress) {
+            [uploadQueueManager pauseQueue];
+        } else {
+            [uploadQueueManager.photoUploads removeObject:self.photoUpload];
+            [uploadQueueManager.photoUploads insertObject:self.photoUpload atIndex:0];
+            [uploadQueueManager startQueueIfNeeded];
+        }
     }
 }
      

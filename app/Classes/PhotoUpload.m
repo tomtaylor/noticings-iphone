@@ -8,8 +8,16 @@
 
 #import "PhotoUpload.h"
 
+@interface PhotoUpload (Private)
++ (ALAsset *)assetForURL:(NSURL *)url;
+@end
 
 @implementation PhotoUpload
+
+enum {
+    ASSETURL_PENDINGREADS = 1,
+    ASSETURL_ALLFINISHED = 0
+};
 
 @synthesize asset;
 @synthesize progress;
@@ -50,70 +58,63 @@
 	return self;
 }
 
-//- (id)initWithDictionary:(NSDictionary *)dictionary {
-//	self = [super init];
-//	if (self != nil) {
-//		NSNumber *schema = [dictionary objectForKey:@"schema"];
-//		if (schema == nil)
-//			return nil;
-//		
-//		if ([schema intValue] < 3)
-//			return nil;
-//		
-//		// create photo from asset url
-//		ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
-//		
-//		NSURL *assetURL = [NSURL URLWithString:[dictionary objectForKey:@"assetURL"]];
-//		
-//		[library assetForURL:assetURL 
-//				 resultBlock:^(ALAsset *asset) {
-//					 Photo *newPhoto = [[Photo alloc] initWithAsset:asset];
-//					 self.photo = newPhoto;
-//					 [newPhoto release];
-//					 //NSLog(@"Restored asset");
-//					}
-//				failureBlock:^(NSError *error) {
-//					NSLog(@"Error opening asset for URL %@: %@", assetURL, error);
-//				}
-//		];
-//		
-//		[library release];
-//		
-//		NSLog(@"Restoring details");
-//		
-//		CLLocationDegrees latitude = [[dictionary objectForKey:@"latitude"] floatValue];
-//		CLLocationDegrees longitude = [[dictionary objectForKey:@"longitude"] floatValue];
-//		self.coordinate = CLLocationCoordinate2DMake(latitude, longitude);
-//		
-//		self.timestamp = [dictionary objectForKey:@"timestamp"];
-//		self.title = [dictionary objectForKey:@"title"];
-//		self.tags = [dictionary objectForKey:@"tags"];
-//		self.flickrId = [dictionary objectForKey:@"flickrId"];
-//		self.state = [dictionary objectForKey:@"state"];
-//		self.progress = [NSNumber numberWithFloat:0];
-//		
-//		NSLog(@"Restored details");
-//	}
-//	return self;
-//}
-//
-//- (NSDictionary *)asDictionary {
-//	
-//	NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:3], @"schema",
-//			self.state, @"state",
-//			[[[self.photo.asset defaultRepresentation] url] absoluteString], @"assetURL",
-//			[NSNumber numberWithFloat:self.coordinate.latitude], @"latitude",
-//			[NSNumber numberWithFloat:self.coordinate.longitude], @"longitude",
-//			self.title, @"title",
-//			self.tags, @"tags",
-//			self.flickrId, @"flickrId", // this might be nil, but that's OK because it's the last item
-//			nil];
-//	
-//	if (self.timestamp)
-//		[dict setValue:self.timestamp forKey:@"timestamp"];
-//	
-//	return dict;
-//}
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+    [coder encodeInt:4 forKey:@"version"];
+    [coder encodeObject:self.asset.defaultRepresentation.url forKey:@"assetUrl"];
+    [coder encodeConditionalObject:self.title forKey:@"title"];
+    [coder encodeConditionalObject:self.tags forKey:@"tags"];
+    [coder encodeInt:self.state forKey:@"state"];
+    [coder encodeInt:self.privacy forKey:@"privacy"];
+    [coder encodeConditionalObject:self.flickrId forKey:@"flickrId"];
+    [coder encodeConditionalObject:self.location forKey:@"location"];
+    [coder encodeConditionalObject:self.timestamp forKey:@"timestamp"];
+    [coder encodeConditionalObject:self.originalTimestamp forKey:@"originalTimestamp"];
+    
+    [coder encodeDouble:coordinate.latitude forKey:@"coordinate.latitude"];
+    [coder encodeDouble:coordinate.longitude forKey:@"coordinate.longitude"];
+    
+    [coder encodeDouble:originalCoordinate.latitude forKey:@"originalCoordinate.latitude"];
+    [coder encodeDouble:originalCoordinate.longitude forKey:@"originalCoordinate.longitude"];
+}
+
+- (id)initWithCoder:(NSCoder *)decoder
+{
+    self = [super init];
+	if (self != nil) {
+        int version = [decoder decodeIntForKey:@"version"];
+        if (version < 4) {
+            return nil;
+        }
+        
+        // create photo from asset url
+        NSURL *assetURL = [decoder decodeObjectForKey:@"assetUrl"];
+        self.asset = [PhotoUpload assetForURL:assetURL];
+        
+        self.title = [decoder decodeObjectForKey:@"title"];
+        self.tags = [decoder decodeObjectForKey:@"tags"];
+        self.state = [decoder decodeIntForKey:@"state"];
+        self.privacy = [decoder decodeIntForKey:@"privacy"];
+        self.flickrId = [decoder decodeObjectForKey:@"flickrId"];
+        self.location = [decoder decodeObjectForKey:@"location"];
+        self.timestamp = [decoder decodeObjectForKey:@"timestamp"];
+        self.originalTimestamp = [decoder decodeObjectForKey:@"originalTimestamp"];
+        
+        CLLocationCoordinate2D aCoordinate;
+        aCoordinate.latitude = [decoder decodeDoubleForKey:@"coordinate.latitude"];
+        aCoordinate.longitude = [decoder decodeDoubleForKey:@"coordinate.longitude"];
+        coordinate = aCoordinate;
+        
+        CLLocationCoordinate2D anOriginalCoordinate;
+        anOriginalCoordinate.latitude = [decoder decodeDoubleForKey:@"originalCoordinate.latitude"];
+        anOriginalCoordinate.longitude = [decoder decodeDoubleForKey:@"originalCoordinate.longitude"];
+        originalCoordinate = anOriginalCoordinate;
+                
+        self.inProgress = NO;
+		self.progress = [NSNumber numberWithFloat:0.0f];
+    }
+    return self;
+}
 
 - (NSData *)imageData
 {
@@ -139,6 +140,36 @@
     // TODO - should probably actually _DO_ something.
     self.inProgress = !self.inProgress;
     
+}
+
++ (ALAsset *)assetForURL:(NSURL *)url {
+    __block ALAsset *result = nil;
+    __block NSError *assetError = nil;
+    dispatch_semaphore_t sema = dispatch_semaphore_create(0);
+    
+    ALAssetsLibrary *assetsLibrary = [[ALAssetsLibrary alloc] init];
+    
+    [assetsLibrary assetForURL:url resultBlock:^(ALAsset *asset) {
+        result = [asset retain];
+        dispatch_semaphore_signal(sema);
+    } failureBlock:^(NSError *error) {
+        assetError = [error retain];
+        dispatch_semaphore_signal(sema);
+    }];
+    
+    if ([NSThread isMainThread]) {
+        while (!result && !assetError) {
+            [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
+        }
+    }
+    else {
+        dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
+    }
+    
+    dispatch_release(sema);
+    [assetError release];
+    
+    return [result autorelease];
 }
 
 - (void) dealloc

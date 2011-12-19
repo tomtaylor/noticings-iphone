@@ -23,7 +23,7 @@ enum {
     PhotoUploadPrivacyPublic
 };
 
-@interface PhotoUpload : NSObject <MKAnnotation> {
+@interface PhotoUpload : NSObject <MKAnnotation, NSCoding> {
 	ALAsset *asset;
 	NSString *title;
 	NSString *tags;
@@ -37,6 +37,7 @@ enum {
     CLLocationCoordinate2D originalCoordinate;
     NSDate *timestamp;
     NSDate *originalTimestamp;
+    NSConditionLock *assetReadLock;
 }
 
 @property (nonatomic, retain) ALAsset *asset;

@@ -312,6 +312,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(UploadQueueManager);
 		didFailWithError:(NSError *)inError
 {
 	PhotoUpload *photoUpload = [inRequest.sessionInfo objectForKey:@"photoUpload"];
+    DLog(@"Photo upload: %@, failed with: %@", photoUpload, inError);
     photoUpload.inProgress = NO;
 	self.inProgress = NO;
 	
@@ -347,44 +348,22 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(UploadQueueManager);
 														object:[NSNumber numberWithInt:[photoUploads count]]];
 }
 
-//- (void)saveQueuedUploads {
-//	[self pauseQueue];
-//	
-//	NSLog(@"Saving queued uploads");
-//	
-//	NSMutableArray *savedUploads = [[NSMutableArray alloc] initWithCapacity:[self.photoUploads count]];
-//
-//	for (int i = 0; i < [self.photoUploads count]; i++) {
-//		PhotoUpload *photoUpload = [self.photoUploads objectAtIndex:i];
-//		NSDictionary *dict = [photoUpload asDictionary];
-//		NSLog(@"Saving dictionary: %@", dict);
-//		[savedUploads addObject:dict];
-//	}
-//	
-//	[[NSUserDefaults standardUserDefaults] setObject:savedUploads forKey:@"savedUploads"];
-//	[savedUploads release];
-//}
+- (void)saveQueuedUploads {
+    DLog(@"Saving queued uploads");
+	[self pauseQueue];
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self.photoUploads];
+    [[NSUserDefaults standardUserDefaults] setObject:data forKey:@"savedPhotoUploads"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
 
-//- (void)restoreQueuedUploads {
-//	[self pauseQueue];
-//	
-//	NSArray *savedUploads = [[NSUserDefaults standardUserDefaults] arrayForKey:@"savedUploads"];
-//	
-//	if (savedUploads != nil) {
-//		for (int i=0; i < [savedUploads count]; i++) {
-//			NSDictionary *dict = [savedUploads objectAtIndex:i];
-//			NSLog(@"Restoring from dictionary: %@", dict);
-//			
-//			PhotoUpload *photoUpload = [[PhotoUpload alloc] initWithDictionary:dict];
-//			
-//			if (photoUpload != nil) {
-//				[self.photoUploads addObject:photoUpload];
-//			}
-//			
-//			[photoUpload release];
-//		}
-//	}
-//}
+- (void)restoreQueuedUploads {
+    DLog(@"Restoring queued uploads");
+	[self pauseQueue];
+    NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:@"savedPhotoUploads"];
+    NSArray *savedUploads = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    [self.photoUploads removeAllObjects];
+    [self.photoUploads addObjectsFromArray:savedUploads];
+}
 
 - (void)pauseQueue {
 	[flickrRequest cancel];

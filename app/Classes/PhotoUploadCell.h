@@ -14,13 +14,14 @@
 
 @property (nonatomic, retain) PhotoUpload *photoUpload;
 
--(void)displayPhotoUpload:(PhotoUpload *)photoUpload;
--(IBAction)pressedCancelButton;
+- (void)displayPhotoUpload:(PhotoUpload *)photoUpload;
+- (IBAction)pressedOptionsButton;
 
 @property (retain, nonatomic) IBOutlet UIImageView* imageView;
 @property (retain, nonatomic) IBOutlet UILabel* textLabel;
 @property (retain, nonatomic) IBOutlet UILabel* detailTextLabel;
 @property (retain, nonatomic) IBOutlet UIProgressView* progressView;
+@property (retain, nonatomic) IBOutlet UIButton* optionsButton;
 
 @property (retain, nonatomic) IBOutlet UIView* topBorder;
 @property (retain, nonatomic) IBOutlet UIView* bottomBorder;

@@ -49,7 +49,7 @@
 								<string key="NSFrame">{{0, 4}, {320, 8}}</string>
 								<reference key="NSSuperview" ref="355368372"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView" ref="791282674"/>
+								<reference key="NSNextKeyView" ref="656493229"/>
 								<string key="NSReuseIdentifierKey">_NS:196</string>
 								<object class="NSColor" key="IBUIBackgroundColor">
 									<int key="NSColorSpace">3</int>
@@ -81,6 +81,7 @@
 								<string key="NSFrame">{{0, 10}, {320, 62}}</string>
 								<reference key="NSSuperview" ref="355368372"/>
 								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView" ref="791282674"/>
 								<string key="NSReuseIdentifierKey">_NS:196</string>
 								<object class="NSColor" key="IBUIBackgroundColor">
 									<int key="NSColorSpace">3</int>
@@ -138,7 +139,7 @@
 							<object class="IBUIButton" id="1014968604">
 								<reference key="NSNextResponder" ref="355368372"/>
 								<int key="NSvFlags">292</int>
-								<string key="NSFrame">{{282, 26}, {28, 28}}</string>
+								<string key="NSFrame">{{280, 24}, {32, 32}}</string>
 								<reference key="NSSuperview" ref="355368372"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="724123682"/>
@@ -162,11 +163,11 @@
 								</object>
 								<object class="NSCustomResource" key="IBUIHighlightedImage">
 									<string key="NSClassName">NSImage</string>
-									<string key="NSResourceName">cancel_highlight.png</string>
+									<string key="NSResourceName">cog-highlight-64.png</string>
 								</object>
 								<object class="NSCustomResource" key="IBUINormalImage">
 									<string key="NSClassName">NSImage</string>
-									<string key="NSResourceName">cancel.png</string>
+									<string key="NSResourceName">cog-64.png</string>
 								</object>
 								<object class="IBUIFontDescription" key="IBUIFontDescription">
 									<int key="type">2</int>
@@ -307,13 +308,21 @@
 					<int key="connectionID">20</int>
 				</object>
 				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">optionsButton</string>
+						<reference key="source" ref="25607514"/>
+						<reference key="destination" ref="1014968604"/>
+					</object>
+					<int key="connectionID">28</int>
+				</object>
+				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchEventConnection" key="connection">
-						<string key="label">pressedCancelButton</string>
+						<string key="label">pressedOptionsButton</string>
 						<reference key="source" ref="1014968604"/>
 						<reference key="destination" ref="25607514"/>
 						<int key="IBEventType">7</int>
 					</object>
-					<int key="connectionID">16</int>
+					<int key="connectionID">27</int>
 				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -364,6 +373,7 @@
 						<int key="objectID">7</int>
 						<reference key="object" ref="1014968604"/>
 						<reference key="parent" ref="25607514"/>
+						<string key="objectName">Options Button</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">8</int>
@@ -414,7 +424,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">21</int>
+			<int key="maxID">28</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -422,13 +432,13 @@
 					<string key="className">PhotoUploadCell</string>
 					<string key="superclassName">UITableViewCell</string>
 					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">pressedCancelButton</string>
+						<string key="NS.key.0">pressedOptionsButton</string>
 						<string key="NS.object.0">id</string>
 					</object>
 					<object class="NSMutableDictionary" key="actionInfosByName">
-						<string key="NS.key.0">pressedCancelButton</string>
+						<string key="NS.key.0">pressedOptionsButton</string>
 						<object class="IBActionInfo" key="NS.object.0">
-							<string key="name">pressedCancelButton</string>
+							<string key="name">pressedOptionsButton</string>
 							<string key="candidateClassName">id</string>
 						</object>
 					</object>
@@ -436,6 +446,7 @@
 						<string key="bottomBorder">UIView</string>
 						<string key="detailTextLabel">UILabel</string>
 						<string key="imageView">UIImageView</string>
+						<string key="optionsButton">UIButton</string>
 						<string key="progressView">UIProgressView</string>
 						<string key="textLabel">UILabel</string>
 						<string key="topBorder">UIView</string>
@@ -452,6 +463,10 @@
 						<object class="IBToOneOutletInfo" key="imageView">
 							<string key="name">imageView</string>
 							<string key="candidateClassName">UIImageView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="optionsButton">
+							<string key="name">optionsButton</string>
+							<string key="candidateClassName">UIButton</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="progressView">
 							<string key="name">progressView</string>
@@ -484,13 +499,12 @@
 					<string key="superclassName">UITableViewCell</string>
 					<dictionary class="NSMutableDictionary" key="outlets">
 						<string key="avatarView">UIImageView</string>
-						<string key="bottomBorder">UIView</string>
+						<string key="frameView">UIView</string>
 						<string key="hasLocationImage">UIImageView</string>
 						<string key="photoView">UIImageView</string>
 						<string key="privacyImage">UIImageView</string>
 						<string key="timeagoView">UILabel</string>
 						<string key="titleView">UILabel</string>
-						<string key="topBorder">UIView</string>
 						<string key="usernameView">UILabel</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
@@ -498,8 +512,8 @@
 							<string key="name">avatarView</string>
 							<string key="candidateClassName">UIImageView</string>
 						</object>
-						<object class="IBToOneOutletInfo" key="bottomBorder">
-							<string key="name">bottomBorder</string>
+						<object class="IBToOneOutletInfo" key="frameView">
+							<string key="name">frameView</string>
 							<string key="candidateClassName">UIView</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="hasLocationImage">
@@ -521,10 +535,6 @@
 						<object class="IBToOneOutletInfo" key="titleView">
 							<string key="name">titleView</string>
 							<string key="candidateClassName">UILabel</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="topBorder">
-							<string key="name">topBorder</string>
-							<string key="candidateClassName">UIView</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="usernameView">
 							<string key="name">usernameView</string>
@@ -565,8 +575,8 @@
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
 		<dictionary class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
-			<string key="cancel.png">{64, 64}</string>
-			<string key="cancel_highlight.png">{64, 64}</string>
+			<string key="cog-64.png">{64, 64}</string>
+			<string key="cog-highlight-64.png">{64, 64}</string>
 		</dictionary>
 		<string key="IBCocoaTouchPluginVersion">933</string>
 	</data>

@@ -33,8 +33,8 @@ enum RequestType {
 - (void)pauseQueue;
 - (void)fakeUpload;
 - (void)cancelUpload:(PhotoUpload*)upload;
-//- (void)saveQueuedUploads;
-//- (void)restoreQueuedUploads;
+- (void)saveQueuedUploads;
+- (void)restoreQueuedUploads;
 
 @property (nonatomic, retain) NSMutableArray *photoUploads;
 @property (nonatomic) BOOL inProgress;
