@@ -46,7 +46,7 @@ BOOL gLogging = FALSE;
 	[userDefaults registerDefaults:defaults];
 	[userDefaults synchronize];
 	
-    [[UploadQueueManager sharedUploadQueueManager] restoreQueuedUploads];
+    //[[UploadQueueManager sharedUploadQueueManager] restoreQueuedUploads];
     
 	queueTab = [tabBarController.tabBar.items objectAtIndex:0];
 	int count = [[UploadQueueManager sharedUploadQueueManager].photoUploads count];
