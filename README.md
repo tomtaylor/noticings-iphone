@@ -5,21 +5,24 @@ This is the source code for the Noticings Uploader iPhone app, which is [availab
 
 [1]:http://itunes.apple.com/gb/app/noticings-uploader/id339183497?mt=8
 
+It has moved on significantly since the version that's in the App Store, and we're working towards making it a great mobile uploader and browser for any purpose.
+
 Getting started
 ---------------
 
-It's fairly standard iPhone app, designed for iOS 4.0. The only things left out are the Flickr API keys - you'll need to get your own. Put them in `FlickrAPIKeys.h`, like so:
+It's fairly standard iPhone app, designed for iOS 4.3. The only things left out are the Flickr and TestFlight API keys - you'll need to get your own. Put them in `APIKeys.h`, like so:
 
     #define FLICKR_API_KEY @"keyhere"
     #define FLICKR_API_SECRET @"secrethere"
+    #define TESTFLIGHT_API_KEY @""
 
 Contributors
 ------------
 
-* Tom Taylor (author)
+* Tom Taylor
+* Tom Insam 
 * Tom Armitage
-* Ben Terrett (logo design)
-
+* Ben Terrett
 
 Thanks
 ------
