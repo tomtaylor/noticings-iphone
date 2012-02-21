@@ -136,7 +136,7 @@
         }]];
         if (instagramPhotos.count > 6) { // this number by hand-waving
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"oooh, Instagram."
-                                                            message:@"I seem some Instagram photos from your contacts here. If you prefer to look at them with the Real Instagram client, I can hide them from this view for you (change this back in Settings)."
+                                                            message:@"I see some Instagram photos from your contacts here. If you prefer to look at them with the Real Instagram client, I can hide them from this view for you (change this back in Settings)."
                                                            delegate:self
                                                   cancelButtonTitle:nil
                                                   otherButtonTitles:nil];
