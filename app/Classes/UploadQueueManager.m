@@ -8,6 +8,12 @@
 
 #import "UploadQueueManager.h"
 #import "PhotoUpload.h"
+#import "GCOAuth.h"
+#import "NoticingsAppDelegate.h"
+#import "NSString+URI.h"
+#import "JSONKit.h"
+
+#define BOUNDRY @"------------0x834758488ASDGC78A7896SFD"
 
 @interface UploadQueueManager (Private)
 
@@ -127,170 +133,200 @@
 }
 
 - (void)uploadPhotoUpload:(PhotoUpload *)photoUpload {
-//	OFFlickrAPIRequest *request = [self flickrRequest];
-//	
-//    photoUpload.inProgress = YES;
-//	photoUpload.progress = [NSNumber numberWithFloat:0.0f];
-//	
-//    NSData *data = [photoUpload imageData];
-//    if (!data) {
-//        photoUpload.inProgress = NO;
-//        self.inProgress = NO;
-//        
-//        [[[[UIAlertView alloc] initWithTitle:@"Upload Error" 
-//                                     message:[NSString stringWithFormat:@"There was a problem uploading the photo titled '%@'. The upload queue has been paused.", photoUpload.title]
-//                                    delegate:nil
-//                           cancelButtonTitle:@"OK" 
-//                           otherButtonTitles:nil] autorelease] show];
-//        return;
-//    }
-//    NSInputStream *imageStream = [NSInputStream inputStreamWithData:data];
-//    DLog(@"Input stream: %@", imageStream);
-//	
-//	NSDictionary *sessionInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-//								 photoUpload, @"photoUpload",
-//								 [NSNumber numberWithInteger:UploadRequestType], @"requestType", 
-//								 nil];
-//
-//	NSString *uploadedTitleString;
-//	
-//	if (photoUpload.title == nil || [photoUpload.title isEqualToString:@""]) {
-//		NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-//		[dateFormatter setTimeStyle:NSDateFormatterShortStyle];
-//		[dateFormatter setDateStyle:NSDateFormatterNoStyle];
-//		uploadedTitleString = [dateFormatter stringFromDate:photoUpload.timestamp];
-//		[dateFormatter release];
-//	} else {
-//		uploadedTitleString = photoUpload.title;
-//	}
-//    
-//    NSMutableDictionary *arguments = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-//                                      uploadedTitleString, @"title", 
-//                                      photoUpload.tags, @"tags",
-//                                      nil];
-//
-//    if (photoUpload.privacy == PhotoUploadPrivacyPrivate) {
-//        [arguments setObject:@"0" forKey:@"is_public"];
-//    } else if (photoUpload.privacy == PhotoUploadPrivacyFriendsAndFamily) {
-//        [arguments setObject:@"1" forKey:@"is_friend"];
-//        [arguments setObject:@"1" forKey:@"is_family"];
-//        [arguments setObject:@"0" forKey:@"is_public"];
-//    } else {
-//        [arguments setObject:@"1" forKey:@"is_public"];
-//    }
-//		
-//	[request setSessionInfo:sessionInfo];
-//	[request uploadImageStream:imageStream 
-//			 suggestedFilename:@"noticing.jpg"
-//					  MIMEType:@"image/jpeg"
-//					 arguments:arguments
-//	 ];
+    photoUpload.inProgress = YES;
+	photoUpload.progress = [NSNumber numberWithFloat:0.0f];
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+
+        NSData *uploaddata = [photoUpload imageData];
+        if (!uploaddata) {
+            photoUpload.inProgress = NO;
+            self.inProgress = NO;
+            dispatch_async(dispatch_get_main_queue(),^{
+                [[[[UIAlertView alloc] initWithTitle:@"Upload Error" 
+                                             message:[NSString stringWithFormat:@"There was a problem uploading the photo titled '%@'. The upload queue has been paused.", photoUpload.title]
+                                            delegate:nil
+                                   cancelButtonTitle:@"OK" 
+                                   otherButtonTitles:nil] autorelease] show];
+            });
+            return;
+        }
+        
+        NSString *uploadedTitleString;
+        if (photoUpload.title == nil || [photoUpload.title isEqualToString:@""]) {
+            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+            [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
+            [dateFormatter setDateStyle:NSDateFormatterNoStyle];
+            uploadedTitleString = [dateFormatter stringFromDate:photoUpload.timestamp];
+            [dateFormatter release];
+        } else {
+            uploadedTitleString = photoUpload.title;
+        }
+        
+        NSMutableDictionary *arguments = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                          uploadedTitleString, @"title", 
+                                          photoUpload.tags, @"tags",
+                                          nil];
+
+        if (photoUpload.privacy == PhotoUploadPrivacyPrivate) {
+            [arguments setObject:@"0" forKey:@"is_public"];
+        } else if (photoUpload.privacy == PhotoUploadPrivacyFriendsAndFamily) {
+            [arguments setObject:@"1" forKey:@"is_friend"];
+            [arguments setObject:@"1" forKey:@"is_family"];
+            [arguments setObject:@"0" forKey:@"is_public"];
+        } else {
+            [arguments setObject:@"1" forKey:@"is_public"];
+        }
+        
+        NSString* token = [[NSUserDefaults standardUserDefaults] stringForKey:@"oauth_token"];
+        NSString* secret = [[NSUserDefaults standardUserDefaults] stringForKey:@"oauth_secret"];
+
+        NSURLRequest *req = [GCOAuth URLRequestForPath:@"/services/upload"
+                                        POSTParameters:arguments
+                                                scheme:@"http"
+                                                  host:@"api.flickr.com"
+                                           consumerKey:FLICKR_API_KEY
+                                        consumerSecret:FLICKR_API_SECRET
+                                           accessToken:token
+                                           tokenSecret:secret];
+
+        NSMutableURLRequest *myreq = [req mutableCopy];
+        myreq.timeoutInterval = 100;
+
+        // I DO NOT WANT TO TALK ABOUT THIS.
+        [myreq setValue:[NSString stringWithFormat:@"multipart/form-data; boundary=%@", BOUNDRY] forHTTPHeaderField:@"Content-Type"];
+        NSMutableData *postData = [NSMutableData dataWithCapacity:[uploaddata length] + 1024];
+        [arguments enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *val, BOOL *stop) {
+            [postData appendData:[[NSString stringWithFormat:@"--%@\r\n", BOUNDRY] dataUsingEncoding:NSUTF8StringEncoding]];
+            [postData appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n", [key stringByEncodingForURI]] dataUsingEncoding:NSUTF8StringEncoding]];
+            [postData appendData:[val dataUsingEncoding:NSUTF8StringEncoding]];
+            [postData appendData:[@"\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+        }];
+        [postData appendData:[[NSString stringWithFormat:@"--%@\r\n", BOUNDRY] dataUsingEncoding:NSUTF8StringEncoding]];
+        [postData appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"file.bin\"\r\n\r\n", @"photo"] dataUsingEncoding:NSUTF8StringEncoding]];
+        [postData appendData:uploaddata];
+        [postData appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n", BOUNDRY] dataUsingEncoding:NSUTF8StringEncoding]];
+
+        [myreq setHTTPBody:postData];
+        NSString *length = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
+        [myreq setValue:length forHTTPHeaderField:@"Content-Length"];
+        
+        NSHTTPURLResponse *response = nil;
+        NSError *error = nil;
+        NSData *responsedata = [NSURLConnection sendSynchronousRequest:myreq returningResponse:&response error:&error];
+        [myreq release];
+
+        if (error) {
+            dispatch_async(dispatch_get_main_queue(),^{
+                [[[[UIAlertView alloc] initWithTitle:@"Upload Error" 
+                                             message:[NSString stringWithFormat:@"There was a problem uploading the photo titled '%@'. The upload queue has been paused.", photoUpload.title]
+                                            delegate:nil
+                                   cancelButtonTitle:@"OK" 
+                                   otherButtonTitles:nil] autorelease] show];
+            });
+            return;
+        }
+
+        // response here is XML. Fuck.
+        NSString *stringBody = [[NSString alloc] initWithData:responsedata encoding:NSUTF8StringEncoding];
+        
+        // I REALLY REALLY DON'T WANT TO TALK ABOUT THIS
+        NSRange start = [stringBody rangeOfString:@"<photoid>"];
+        NSRange end = [stringBody rangeOfString:@"</photoid>"];
+        NSString *photoId = [stringBody substringWithRange:NSMakeRange(start.location + start.length, end.location - (start.location+start.length))];
+        NSLog(@"Got photo ID %@", photoId);
+        dispatch_async(dispatch_get_main_queue(),^{
+            photoUpload.flickrId = photoId;
+            photoUpload.state = PhotoUploadStateUploaded;
+            [self nextStageForPhotoUpload:photoUpload];
+        });
+
+        [stringBody release];
+    });
+
 }
 
 - (void)setTimestampForPhotoUpload:(PhotoUpload *)photoUpload {
-//    if (photoUpload.timestamp != photoUpload.originalTimestamp) {
-//        photoUpload.inProgress = YES;
-//        photoUpload.progress = [NSNumber numberWithFloat:0.95f];
-//        
-//        OFFlickrAPIRequest *request = [self flickrRequest];
-//        
-//        NSDictionary *sessionInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-//                                     photoUpload, @"photoUpload",
-//                                     [NSNumber numberWithInteger:TimestampRequestType], @"requestType", 
-//                                     nil];
-//        
-//        [request setSessionInfo:sessionInfo];
-//        
-//        NSDateFormatter *outputFormatter = [[NSDateFormatter alloc] init];
-//        [outputFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-//        NSString *timestampString = [outputFormatter stringFromDate:photoUpload.timestamp];
-//        [outputFormatter release];
-//        
-//        NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:photoUpload.flickrId, @"photo_id",
-//                                   timestampString, @"date_taken",
-//                                   nil];
-//        
-//        [request callAPIMethodWithPOST:@"flickr.photos.setDates" arguments:arguments];
-//    } else {
-//        photoUpload.state = PhotoUploadStateComplete;
-//        [self nextStageForPhotoUpload:photoUpload];
-//    }
+    if (photoUpload.timestamp != photoUpload.originalTimestamp) {
+        photoUpload.inProgress = YES;
+        photoUpload.progress = [NSNumber numberWithFloat:0.95f];
+        
+        NSDateFormatter *outputFormatter = [[NSDateFormatter alloc] init];
+        [outputFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+        NSString *timestampString = [outputFormatter stringFromDate:photoUpload.timestamp];
+        [outputFormatter release];
+        
+        NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
+                                   photoUpload.flickrId, @"photo_id",
+                                   timestampString, @"date_taken",
+                                   nil];
+        
+        DeferredFlickrCallManager *callManager = [NoticingsAppDelegate delegate].flickrCallManager;
+        [callManager callFlickrMethod:@"flickr.photos.setDates" asPost:NO withArgs:arguments andThen:^(BOOL success, NSDictionary *rsp, NSError *error) {
+            if (!success) {
+                [[[[UIAlertView alloc] initWithTitle:@"Upload Error" 
+                                             message:[NSString stringWithFormat:@"There was a problem uploading the photo titled '%@'. The upload queue has been paused.", photoUpload.title]
+                                            delegate:nil
+                                   cancelButtonTitle:@"OK" 
+                                   otherButtonTitles:nil] autorelease] show];
+                return;
+            }
+            photoUpload.state = PhotoUploadStateComplete;
+            [self nextStageForPhotoUpload:photoUpload];
+        }];
+
+    } else {
+        photoUpload.state = PhotoUploadStateComplete;
+        [self nextStageForPhotoUpload:photoUpload];
+    }
 }
 
 - (void)setLocationForPhotoUpload:(PhotoUpload *)photoUpload {
-//    photoUpload.inProgress = YES;
-//    photoUpload.progress = [NSNumber numberWithFloat:0.95f];
-//
-//    // if the coordinate differs from what was set in the asset, then we update the geodata manually
-//    if (photoUpload.coordinate.latitude != photoUpload.originalCoordinate.latitude ||
-//        photoUpload.coordinate.longitude != photoUpload.originalCoordinate.longitude) {
-//        
-//        OFFlickrAPIRequest *request = [self flickrRequest];
-//        NSDictionary *sessionInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-//                                     photoUpload, @"photoUpload",
-//                                     [NSNumber numberWithInteger:LocationRequestType], @"requestType", 
-//                                     nil];
-//        [request setSessionInfo:sessionInfo];
-//        
-//        if (CLLocationCoordinate2DIsValid(photoUpload.coordinate)) {
-//            // set the geodata manually
-//            
-//            NSNumber *latitudeNumber = [NSNumber numberWithDouble:photoUpload.coordinate.latitude];
-//            NSNumber *longitudeNumber = [NSNumber numberWithDouble:photoUpload.coordinate.longitude];
-//            
-//            DLog(@"Setting latitude to %f, longitude to %f", photoUpload.coordinate.latitude, photoUpload.coordinate.longitude);
-//            
-//            NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:photoUpload.flickrId, @"photo_id", 
-//                                       [latitudeNumber stringValue], @"lat",
-//                                       [longitudeNumber stringValue], @"lon",
-//                                       nil];
-//            
-//            [request callAPIMethodWithPOST:@"flickr.photos.geo.setLocation" arguments:arguments];
-//            return;
-//            
-//        } else if (CLLocationCoordinate2DIsValid(photoUpload.originalCoordinate)) {            
-//            // remove the geodata manually
-//            
-//            DLog(@"PhotoUpload did originally have a coordinate, but was removed the map, so removing the geodata manually.");
-//            NSDictionary *arguments = [NSDictionary dictionaryWithObject:photoUpload.flickrId forKey:@"photo_id"];
-//            [request callAPIMethodWithPOST:@"flickr.photos.geo.removeLocation" arguments:arguments];
-//            return;
-//        }
-//        
-//    }
-//    
-//    // otherwise, just jump to the next stage
-//    photoUpload.state = PhotoUploadStateLocationSet;
-//    [self nextStageForPhotoUpload:photoUpload];
+    photoUpload.inProgress = YES;
+    photoUpload.progress = [NSNumber numberWithFloat:0.95f];
+
+    // if the coordinate differs from what was set in the asset, then we update the geodata manually
+    if (photoUpload.coordinate.latitude != photoUpload.originalCoordinate.latitude ||
+        photoUpload.coordinate.longitude != photoUpload.originalCoordinate.longitude) {
+        DeferredFlickrCallManager *callManager = [NoticingsAppDelegate delegate].flickrCallManager;
+        
+        if (CLLocationCoordinate2DIsValid(photoUpload.coordinate)) {
+            // set the geodata manually
+            
+            NSNumber *latitudeNumber = [NSNumber numberWithDouble:photoUpload.coordinate.latitude];
+            NSNumber *longitudeNumber = [NSNumber numberWithDouble:photoUpload.coordinate.longitude];
+            
+            DLog(@"Setting latitude to %f, longitude to %f", photoUpload.coordinate.latitude, photoUpload.coordinate.longitude);
+            
+            NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:photoUpload.flickrId, @"photo_id", 
+                                       [latitudeNumber stringValue], @"lat",
+                                       [longitudeNumber stringValue], @"lon",
+                                       nil];
+            
+            [callManager callFlickrMethod:@"flickr.photos.geo.setLocation" asPost:NO withArgs:arguments andThen:^(BOOL success, NSDictionary *rsp, NSError *error) {
+                photoUpload.state = PhotoUploadStateLocationSet;
+                [self nextStageForPhotoUpload:photoUpload];
+            }];
+            
+        } else if (CLLocationCoordinate2DIsValid(photoUpload.originalCoordinate)) {            
+            // remove the geodata manually
+            
+            DLog(@"PhotoUpload did originally have a coordinate, but was removed the map, so removing the geodata manually.");
+            NSDictionary *arguments = [NSDictionary dictionaryWithObject:photoUpload.flickrId forKey:@"photo_id"];
+            [callManager callFlickrMethod:@"flickr.photos.geo.removeLocation" asPost:NO withArgs:arguments andThen:^(BOOL success, NSDictionary *rsp, NSError *error) {
+                photoUpload.state = PhotoUploadStateLocationSet;
+                [self nextStageForPhotoUpload:photoUpload];
+            }];
+        }
+        
+    }
+    
+    // otherwise, just jump to the next stage
+    photoUpload.state = PhotoUploadStateLocationSet;
+    [self nextStageForPhotoUpload:photoUpload];
 }
 
-//- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest 
-// didCompleteWithResponse:(NSDictionary *)inResponseDictionary
-//{
-//	PhotoUpload *photoUpload = [inRequest.sessionInfo objectForKey:@"photoUpload"];
-//	NSInteger requestType = [[inRequest.sessionInfo objectForKey:@"requestType"] integerValue];
-//    
-//    switch (requestType) {
-//        case UploadRequestType:
-//            photoUpload.flickrId = [[inResponseDictionary objectForKey:@"photoid"] textContent];
-//            photoUpload.state = PhotoUploadStateUploaded;
-//            break;
-//            
-//        case LocationRequestType:
-//            photoUpload.state = PhotoUploadStateLocationSet;
-//            break;
-//        
-//        case TimestampRequestType:
-//            photoUpload.state = PhotoUploadStateComplete;
-//            photoUpload.progress = [NSNumber numberWithFloat:1.0f];
-//            
-//        default:
-//            break;
-//    } 
-//    
-//    [self nextStageForPhotoUpload:photoUpload];
-//}
-//
+
 //- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest 
 //		didFailWithError:(NSError *)inError
 //{
