@@ -86,11 +86,9 @@
                 
             } else {
                 // not ok
-                NSDictionary *err = [rsp objectForKey:@"err"];
-                NSString *code = [err objectForKey:@"code"];
-                NSString *msg = [err objectForKey:@"msg"];
-                NSLog(@"Failed flickr call %@(%@):\n  - %@ %@", method, newArgs, code, msg);
-                callback(NO, rsp, [NSError errorWithDomain:@"flickr" code:[code integerValue] userInfo:err]);
+                NSString *code = [rsp objectForKey:@"code"];
+                NSLog(@"Failed flickr call %@(%@): %@", method, newArgs, rsp);
+                callback(NO, rsp, [NSError errorWithDomain:@"flickr" code:[code integerValue] userInfo:rsp]);
             }
         });
     }];    
