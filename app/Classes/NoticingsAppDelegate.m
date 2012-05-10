@@ -201,7 +201,7 @@ BOOL gLogging = FALSE;
                
 - (BOOL)isAuthenticated
 {
-    return [[NSUserDefaults standardUserDefaults] objectForKey:@"authToken"] != nil;
+    return [[NSUserDefaults standardUserDefaults] objectForKey:@"oauth_token"] != nil;
 }
 
 #pragma mark -

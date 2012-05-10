@@ -7,33 +7,26 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ObjectiveFlickr.h"
 #import "StreamPhoto.h"
 #import "CacheManager.h"
 #import "PhotoLocationManager.h"
+#import "DeferredFlickrCallManager.h"
 
 // protocol for delegates
 @protocol PhotoStreamDelegate <NSObject>
 - (void)newPhotos;
 @end
 
-
-@interface PhotoStreamManager : NSObject <OFFlickrAPIRequestDelegate> {
-@private
-	OFFlickrAPIRequest *flickrRequest;
-}
+@interface PhotoStreamManager : NSObject
 
 - (void)maybeRefresh;
 - (void)refresh;
 
--(void)callFlickr;
+-(void)callFlickrAnd:(FlickrCallback)callback;
+
 -(NSString*)extras;
 -(NSString*)cacheFilename;
 - (void)resetFlickrContext;
-- (OFFlickrAPIRequest *)flickrRequest;
-
-- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didCompleteWithResponse:(NSDictionary *)inResponseDictionary;
-- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didFailWithError:(NSError *)inError;
 
 -(void)precache;
 

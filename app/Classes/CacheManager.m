@@ -8,10 +8,11 @@
 
 #import "CacheManager.h"
 
+#import <CommonCrypto/CommonDigest.h>
+
 #import "SynthesizeSingleton.h"
 #import "StreamPhoto.h"
 #import "ASIHTTPRequest.h"
-#import "ObjectiveFlickr.h"
 
 @implementation CacheManager
 SYNTHESIZE_SINGLETON_FOR_CLASS(CacheManager);

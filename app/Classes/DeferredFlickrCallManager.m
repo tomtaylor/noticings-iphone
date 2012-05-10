@@ -10,17 +10,10 @@
 #import "SynthesizeSingleton.h"
 
 #import "APIKeys.h"
-#import "OFXMLMapper.h"
-#import "ObjectiveFlickr.h"
 #import "ASIHTTPRequest.h"
 #import "ASIFormDataRequest.h"
-
-// leak internal signing method out from objective flickr. Yes. I am
-// a bad person.
-@interface OFFlickrAPIContext (LeakPrivateMethods)
-- (NSString *)signedQueryFromArguments:(NSDictionary *)inArguments;
-- (NSArray *)signedArgumentComponentsFromArguments:(NSDictionary *)inArguments useURIEscape:(BOOL)inUseEscape;
-@end
+#import "GCOAuth.h"
+#import "JSONKit.h"
 
 @implementation DeferredFlickrCallManager
 SYNTHESIZE_SINGLETON_FOR_CLASS(DeferredFlickrCallManager);
@@ -39,89 +32,79 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(DeferredFlickrCallManager);
 
 -(BOOL)hasAuthentication;
 {
-    NSString* token = [[NSUserDefaults standardUserDefaults] stringForKey:@"authToken"];
+    NSString* token = [[NSUserDefaults standardUserDefaults] stringForKey:@"oauth_token"];
     return (!!token);
 }
 
--(void)callFlickrMethod:(NSString*)method asPost:(BOOL)asPost withArgs:(NSDictionary*)args andThen:(FlickrSuccessCallback)success orFail:(FlickrFailureCallback)failure;
+-(void)callFlickrMethod:(NSString*)method asPost:(BOOL)asPost withArgs:(NSDictionary*)args andThen:(FlickrCallback)callback;
 {
-    OFFlickrAPIContext *apiContext = [[OFFlickrAPIContext alloc] initWithAPIKey:FLICKR_API_KEY sharedSecret:FLICKR_API_SECRET];
-
-    NSString* token = [[NSUserDefaults standardUserDefaults] stringForKey:@"authToken"];
-    if (token) {
-        [apiContext setAuthToken:token];
-    }
-
     NSMutableDictionary *newArgs = args ? [NSMutableDictionary dictionaryWithDictionary:args] : [NSMutableDictionary dictionary];
 	[newArgs setObject:method forKey:@"method"];
-    NSString *endpoint = [apiContext RESTAPIEndpoint];
-   
-    __block ASIHTTPRequest *request;
+	[newArgs setObject:@"json" forKey:@"format"];
+    [newArgs setObject:@"1" forKey:@"nojsoncallback"];
     
+    NSString* token = [[NSUserDefaults standardUserDefaults] stringForKey:@"oauth_token"];
+    NSString* secret = [[NSUserDefaults standardUserDefaults] stringForKey:@"oauth_secret"];
+    
+    NSURLRequest *req;
     if (asPost) {
-        request = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:endpoint]];
-        NSArray *signedArgs = [apiContext signedArgumentComponentsFromArguments:newArgs useURIEscape:NO]; // private method
-        NSLog(@"Flickr: POST %@", signedArgs);
-       
-        for (NSArray *parts in signedArgs) {
-            [((ASIFormDataRequest*)request)setPostValue:[parts objectAtIndex:1] forKey:[parts objectAtIndex:0]];
-        }
-
-
+        req = [GCOAuth URLRequestForPath:@"/services/rest"
+                          POSTParameters:newArgs
+                                  scheme:@"http"
+                                    host:@"api.flickr.com"
+                             consumerKey:FLICKR_API_KEY
+                          consumerSecret:FLICKR_API_SECRET
+                             accessToken:token
+                             tokenSecret:secret];
     } else {
-        NSString *arguments = [apiContext signedQueryFromArguments:newArgs]; // private method
-        NSString *URLString = [NSString stringWithFormat:@"%@?%@", endpoint, arguments];
-        request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:URLString]];
-
-        NSLog(@"Flickr: GET %@", arguments);
+        req = [GCOAuth URLRequestForPath:@"/services/rest"
+                           GETParameters:newArgs
+                                  scheme:@"http"
+                                    host:@"api.flickr.com"
+                             consumerKey:FLICKR_API_KEY
+                          consumerSecret:FLICKR_API_SECRET
+                             accessToken:token
+                             tokenSecret:secret];
     }
-
-
-    [request setCompletionBlock:^{
-        // pull data out so we don't self-refer to request object.
-        NSData *data = [request responseData];
+    
+    
+    [self.queue addOperationWithBlock:^{
+        NSHTTPURLResponse *response = nil;
+        NSError *error = nil;
+        NSData *data = [NSURLConnection sendSynchronousRequest:req returningResponse:&response error:&error];
+        NSDictionary *rsp = [NSDictionary dictionary];
+        if (!error) {
+            rsp = [[JSONDecoder decoder] objectWithData:data error:&error];
+        }
         
-        // Called on main thread! Don't block the GUI with XML parsing.
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-            
-            NSDictionary *responseDictionary = [OFXMLMapper dictionaryMappedFromXMLData:data];	
-            NSDictionary *rsp = [responseDictionary objectForKey:@"rsp"];
-            NSString *stat = [rsp objectForKey:@"stat"];
-            
-            // this also fails when (responseDictionary, rsp, stat) == nil, so it's a guranteed way of checking the result
-            if (![stat isEqualToString:@"ok"]) {
+        dispatch_async(dispatch_get_main_queue(),^{
+            if (error) {
+                callback(NO, nil, error);
+            } else if (response.statusCode == 200 && rsp && [[rsp objectForKey:@"stat"] isEqualToString:@"ok"]) {
+                // response is ok
+                callback(YES, rsp, nil);
+                
+            } else {
+                // not ok
                 NSDictionary *err = [rsp objectForKey:@"err"];
                 NSString *code = [err objectForKey:@"code"];
                 NSString *msg = [err objectForKey:@"msg"];
                 NSLog(@"Failed flickr call %@(%@):\n  - %@ %@", method, newArgs, code, msg);
-                if (failure) {
-                    // push back on main thread
-                    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                        failure(code, msg);
-                    }];
-                }
-            } else {
-                if (success) {
-                    // push back on main thread
-                    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                        success(rsp);
-                    }];
-                }
+                callback(NO, rsp, [NSError errorWithDomain:@"flickr" code:[code integerValue] userInfo:err]);
             }
         });
-    }];
-    
-    [request setFailedBlock:^{
-        // Called on main thread
-        NSLog(@"Failed ASIHTTPRequest call %@(%@): %@", method, args, [request error]);
-        if (failure) {
-            failure(@"", [[request error] localizedDescription]);
+    }];    
+}
+
+-(void)callFlickrMethod:(NSString*)method asPost:(BOOL)asPost withArgs:(NSDictionary*)args andThen:(FlickrSuccessCallback)successCB orFail:(FlickrFailureCallback)failure;
+{
+    [self callFlickrMethod:method asPost:asPost withArgs:args andThen:^(BOOL success, NSDictionary *rsp, NSError *error) {
+        if (success) {
+            successCB(rsp);
+        } else {
+            failure([error.userInfo objectForKey:@"code"], [error.userInfo objectForKey:@"msg"]);
         }
     }];
-    
-    [self.queue addOperation:request];
-    [apiContext release];
-    
 }
 
 -(void)dealloc;

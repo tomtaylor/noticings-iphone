@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import "SynthesizeSingleton.h"
-#import "ObjectiveFlickr.h"
 #import "PhotoUpload.h"
 #import "APIKeys.h"
 
@@ -18,15 +17,11 @@ enum RequestType {
     TimestampRequestType
 };
 
-@interface UploadQueueManager : NSObject <OFFlickrAPIRequestDelegate> {
-	OFFlickrAPIRequest *flickrRequest;
-}
+@interface UploadQueueManager : NSObject
 
 +(UploadQueueManager *)sharedUploadQueueManager;
 
-- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didCompleteWithResponse:(NSDictionary *)inResponseDictionary;
-- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didFailWithError:(NSError *)inError;
-- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest imageUploadSentBytes:(NSUInteger)inSentBytes totalBytes:(NSUInteger)inTotalBytes;
+//- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest imageUploadSentBytes:(NSUInteger)inSentBytes totalBytes:(NSUInteger)inTotalBytes;
 
 - (void)startQueueIfNeeded;
 - (void)addPhotoUploadToQueue:(PhotoUpload *)photoUpload;

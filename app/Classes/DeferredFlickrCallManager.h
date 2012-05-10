@@ -12,9 +12,11 @@
 
 typedef void (^FlickrSuccessCallback)(NSDictionary *rsp);
 typedef void (^FlickrFailureCallback)(NSString *code, NSString *err);
+typedef void (^FlickrCallback)(BOOL success, NSDictionary *rsp, NSError *error);
 
 +(DeferredFlickrCallManager*)sharedDeferredFlickrCallManager;
 
+-(void)callFlickrMethod:(NSString*)method asPost:(BOOL)asPost withArgs:(NSDictionary*)args andThen:(FlickrCallback)callback;
 -(void)callFlickrMethod:(NSString*)method asPost:(BOOL)asPost withArgs:(NSDictionary*)args andThen:(FlickrSuccessCallback)success orFail:(FlickrFailureCallback)failure;
 
 @property (retain) NSOperationQueue *queue;

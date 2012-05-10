@@ -9,21 +9,35 @@
 #import "FlickrAuthenticationViewController.h"
 #import "ContactsStreamManager.h"
 #import "APIKeys.h"
+#import "GCOAuth.h"
+#import "NSString+URI.h"
+
+@interface NSString (Noticings)
+-(NSDictionary*)dictionaryByParsingAsQueryParameters;
+@end
+
+@implementation NSString (Noticings)
+
+-(NSDictionary*)dictionaryByParsingAsQueryParameters;
+{
+    NSMutableDictionary *parsed = [NSMutableDictionary dictionary];
+    [[self componentsSeparatedByString:@"&"] enumerateObjectsUsingBlock:^(NSString *obj, NSUInteger idx, BOOL *stop) {
+        NSArray *bits = [obj componentsSeparatedByString:@"="];
+        if (bits.count == 2) {
+            NSString *k = [[bits objectAtIndex:0] stringByDecodingFromURI];
+            NSString *v = [[bits objectAtIndex:1] stringByDecodingFromURI];
+            [parsed setValue:v forKey:k];
+        }
+    }];
+    return [NSDictionary dictionaryWithDictionary:parsed];
+}
+
+@end
 
 @implementation FlickrAuthenticationViewController
 
 @synthesize signInView;
 @synthesize spinnerView;
-
-- (id) init
-{
-	self = [super init];
-	if (self != nil) {
-		apiContext = [[OFFlickrAPIContext alloc] initWithAPIKey:FLICKR_API_KEY sharedSecret:FLICKR_API_SECRET];
-		[apiContext setAuthEndpoint:@"http://m.flickr.com/services/auth/"];
-	}
-	return self;
-}
 
 - (void)displaySignIn {
 	NSLog(@"displaying signin");
@@ -39,59 +53,106 @@
 
 
 - (IBAction)signIn {
-	NSURL *authUrl = [apiContext loginURLFromFrobDictionary:nil requestedPermission:OFFlickrWritePermission];
-	[[UIApplication sharedApplication] openURL:authUrl];
-}
+    [self displaySpinner];
 
-- (OFFlickrAPIRequest *)flickrRequest
-{
-	if (!flickrRequest) {
-		flickrRequest = [[OFFlickrAPIRequest alloc] initWithAPIContext:apiContext];
-		flickrRequest.delegate = self;
-	}
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
+                                @"noticings://", @"callback",
+                                nil];
+        NSURLRequest *req = [GCOAuth URLRequestForPath:@"/services/oauth/request_token"
+                                         GETParameters:params
+                                                scheme:@"http"
+                                                  host:@"www.flickr.com"
+                                           consumerKey:FLICKR_API_KEY
+                                        consumerSecret:FLICKR_API_SECRET
+                                           accessToken:nil
+                                           tokenSecret:nil];
+
+        NSHTTPURLResponse *response = nil;
+        NSError *error = nil;
+        NSData *data = [NSURLConnection sendSynchronousRequest:req returningResponse:&response error:&error];
+        NSString *body = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        if (response.statusCode != 200) {
+            dispatch_async(dispatch_get_main_queue(),^{
+                [[[[UIAlertView alloc] initWithTitle:@"Noticings"
+                                             message:@"There was a problem talking to Flickr. Try again later."
+                                            delegate:nil
+                                   cancelButtonTitle:@"OK"
+                                   otherButtonTitles:nil] autorelease] show];
+                return;
+            });
+        }
+            
+        NSDictionary *parsed = [body dictionaryByParsingAsQueryParameters];
+        [body release];
+
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setValue:[parsed objectForKey:@"oauth_token"] forKey:@"request_token"];
+        [defaults setValue:[parsed objectForKey:@"oauth_token_secret"] forKey:@"request_secret"];
+        [defaults synchronize];
+        
+        NSString *redirect = [NSString stringWithFormat:@"http://www.flickr.com/services/oauth/authorize?oauth_token=%@", [parsed objectForKey:@"oauth_token"]];
+
+        dispatch_async(dispatch_get_main_queue(),^{
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:redirect]];
+        });
+    });
+
 	
-	return flickrRequest;
 }
 
 - (void)finalizeAuthWithUrl:(NSURL *)url {
-	NSString *frob = [[url query] substringFromIndex:5];	
-	[[self flickrRequest] callAPIMethodWithGET:@"flickr.auth.getToken" arguments:[NSDictionary dictionaryWithObjectsAndKeys:frob, @"frob", nil]];
-}
+    NSString *queryString = [[url.absoluteString componentsSeparatedByString:@"?"] objectAtIndex:1];
+    NSDictionary *urlParams = [queryString dictionaryByParsingAsQueryParameters];
+    NSLog(@"incoming parsms are %@", urlParams);
 
-- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest 
- didCompleteWithResponse:(NSDictionary *)inResponseDictionary
-{
-	NSString *authToken = [[inResponseDictionary valueForKeyPath:@"auth.token"] textContent];
-	[[NSUserDefaults standardUserDefaults] setObject:authToken forKey:@"authToken"];
-	
-	NSString *userName = [inResponseDictionary valueForKeyPath:@"auth.user.username"];
-	[[NSUserDefaults standardUserDefaults] setObject:userName forKey:@"userName"];
-	
-	[[NSUserDefaults standardUserDefaults] synchronize];
+    [self displaySpinner];
     
-    [[ContactsStreamManager sharedContactsStreamManager] refresh];
-	
-	[[[[UIAlertView alloc] initWithTitle:@"Welcome to Noticings" message:@"You've been signed in." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] autorelease] show];
-	
-	[self dismissModalViewControllerAnimated:YES];
-}
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
+                                [urlParams objectForKey:@"oauth_verifier"], @"oauth_verifier",
+                                nil];
+        
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        NSURLRequest *req = [GCOAuth URLRequestForPath:@"/services/oauth/access_token"
+                                         GETParameters:params
+                                                scheme:@"http"
+                                                  host:@"www.flickr.com"
+                                           consumerKey:FLICKR_API_KEY
+                                        consumerSecret:FLICKR_API_SECRET
+                                           accessToken:[defaults valueForKey:@"request_token"]
+                                           tokenSecret:[defaults valueForKey:@"request_secret"]];
+        
+        NSHTTPURLResponse *response = nil;
+        NSError *error = nil;
+        NSData *data = [NSURLConnection sendSynchronousRequest:req returningResponse:&response error:&error];
+        NSString *body = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        if (response.statusCode != 200) {
+            dispatch_async(dispatch_get_main_queue(),^{
+                [[[[UIAlertView alloc] initWithTitle:@"Noticings"
+                                             message:@"There was a problem talking to Flickr. Try again later."
+                                            delegate:nil
+                                   cancelButtonTitle:@"OK"
+                                   otherButtonTitles:nil] autorelease] show];
+                return;
+            });
+        }
+        
+        NSDictionary *parsed = [body dictionaryByParsingAsQueryParameters];
+        [body release];
+        
+        [defaults setValue:[parsed objectForKey:@"oauth_token"] forKey:@"oauth_token"];
+        [defaults setValue:[parsed objectForKey:@"oauth_token_secret"] forKey:@"oauth_secret"];
+        [defaults setValue:[parsed objectForKey:@"username"] forKey:@"userName"];
+        [defaults setValue:[parsed objectForKey:@"fullname"] forKey:@"fullName"];
+        [defaults setValue:[parsed objectForKey:@"user_nsid"] forKey:@"nsid"];
+        [defaults synchronize];
 
-- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didFailWithError:(NSError *)inError
-{
-	[[[[UIAlertView alloc] initWithTitle:@"Flickr Authentication Failed" message:@"There was a problem signing you into Flickr. Please try again." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] autorelease] show];
-    [self displaySignIn];
+        dispatch_async(dispatch_get_main_queue(),^{
+            [self dismissModalViewControllerAnimated:YES];
+        });
+        
+    });
 }
-
-- (void) dealloc
-{
-    // ensure if we dealloc with a request inflight that we don't crash on return.
-    if (flickrRequest) {
-        flickrRequest.delegate = nil;
-    }
-	[flickrRequest release];
-	[apiContext release];
-	[super dealloc];
-}
-
 
 @end

@@ -119,7 +119,8 @@ enum AppSectionRows {
 	} else if (indexPath.section == kFlickrSection) {
 		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://m.flickr.com"]];
 	} else {
-		[[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"authToken"];
+		[[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"oauth_token"];
+		[[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"oauth_secret"];
         [[NSUserDefaults standardUserDefaults] synchronize];
 		FlickrAuthenticationViewController *authViewController = [[FlickrAuthenticationViewController alloc] init];
 		[authViewController displaySignIn];

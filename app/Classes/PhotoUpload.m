@@ -168,6 +168,7 @@ enum {
     
     dispatch_release(sema);
     [assetError release];
+    [assetsLibrary release];
     
     return [result autorelease];
 }

@@ -23,14 +23,17 @@
 }
 
 
--(void) callFlickr;
+-(void)callFlickrAnd:(FlickrCallback)callback;
 {
     NSDictionary *args = [NSDictionary dictionaryWithObjectsAndKeys:
                           @"50", @"per_page",
                           [self extras], @"extras",
                           self.userId, @"user_id",
                           nil];
-    [[self flickrRequest] callAPIMethodWithGET:@"flickr.photos.search" arguments:args];
+    [[DeferredFlickrCallManager sharedDeferredFlickrCallManager] callFlickrMethod:@"flickr.photos.search"
+                                                                           asPost:NO
+                                                                         withArgs:args
+                                                                          andThen:callback];
 }
 
 -(NSString*)cacheFilename;

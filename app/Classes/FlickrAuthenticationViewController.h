@@ -7,15 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ObjectiveFlickr.h"
 
-@interface FlickrAuthenticationViewController : UIViewController <OFFlickrAPIRequestDelegate> {
-	OFFlickrAPIContext *apiContext;
-	OFFlickrAPIRequest *flickrRequest;
-	
-	IBOutlet UIView *signInView;
-	IBOutlet UIView *spinnerView;
-}
+@interface FlickrAuthenticationViewController : UIViewController
 
 - (IBAction)signIn;
 - (void)finalizeAuthWithUrl:(NSURL *)url;

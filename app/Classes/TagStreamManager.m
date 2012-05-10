@@ -25,12 +25,12 @@
 
 -(void) callFlickr;
 {
-    NSDictionary *args = [NSDictionary dictionaryWithObjectsAndKeys:
-                          @"50", @"per_page",
-                          [self extras], @"extras",
-                          self.tag, @"tags",
-                          nil];
-    [[self flickrRequest] callAPIMethodWithGET:@"flickr.photos.search" arguments:args];
+//    NSDictionary *args = [NSDictionary dictionaryWithObjectsAndKeys:
+//                          @"50", @"per_page",
+//                          [self extras], @"extras",
+//                          self.tag, @"tags",
+//                          nil];
+//    [[self flickrRequest] callAPIMethodWithGET:@"flickr.photos.search" arguments:args];
 }
 
 -(NSString*)cacheFilename;

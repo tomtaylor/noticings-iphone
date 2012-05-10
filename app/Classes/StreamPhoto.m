@@ -9,7 +9,6 @@
 #import "StreamPhoto.h"
 
 #import "APIKeys.h"
-#import "ObjectiveFlickr.h"
 #import "NSString+HTML.h"
 
 @implementation StreamPhoto
@@ -116,14 +115,16 @@
 
 - (NSURL*) imageURL;
 {
-    OFFlickrAPIContext *apiContext = [[[OFFlickrAPIContext alloc] initWithAPIKey:FLICKR_API_KEY sharedSecret:FLICKR_API_SECRET] autorelease];
-    return [apiContext photoSourceURLFromDictionary:self.details size:nil];
+    return [NSURL URLWithString:[self.details objectForKey:@"url_m"]];
 }
 
 - (NSURL*) bigImageURL;
 {
-    OFFlickrAPIContext *apiContext = [[[OFFlickrAPIContext alloc] initWithAPIKey:FLICKR_API_KEY sharedSecret:FLICKR_API_SECRET] autorelease];
-    return [apiContext photoSourceURLFromDictionary:self.details size:@"b"];
+    NSString *big = [self.details objectForKey:@"url_b"];
+    if (!big) {
+        big = [self.details objectForKey:@"url_m"];
+    }
+    return [NSURL URLWithString:big];
 }
 
 - (NSURL*) originalImageURL;
