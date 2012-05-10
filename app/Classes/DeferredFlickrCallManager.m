@@ -65,11 +65,13 @@
                              tokenSecret:secret];
     }
     
+    NSMutableURLRequest *myreq = [req mutableCopy];
+    myreq.timeoutInterval = 100;
     
     [self.queue addOperationWithBlock:^{
         NSHTTPURLResponse *response = nil;
         NSError *error = nil;
-        NSData *data = [NSURLConnection sendSynchronousRequest:req returningResponse:&response error:&error];
+        NSData *data = [NSURLConnection sendSynchronousRequest:myreq returningResponse:&response error:&error];
         NSDictionary *rsp = [NSDictionary dictionary];
         if (!error) {
             rsp = [[JSONDecoder decoder] objectWithData:data error:&error];
