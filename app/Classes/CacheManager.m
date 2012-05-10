@@ -10,12 +10,10 @@
 
 #import <CommonCrypto/CommonDigest.h>
 
-#import "SynthesizeSingleton.h"
 #import "StreamPhoto.h"
 #import "ASIHTTPRequest.h"
 
 @implementation CacheManager
-SYNTHESIZE_SINGLETON_FOR_CLASS(CacheManager);
 
 extern const NSUInteger kMaxDiskCacheSize;
 

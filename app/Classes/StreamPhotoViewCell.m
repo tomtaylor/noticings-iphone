@@ -8,6 +8,7 @@
 
 #import "StreamPhotoViewCell.h"
 #import <QuartzCore/QuartzCore.h>
+#import "NoticingsAppDelegate.h"
 
 @implementation StreamPhotoViewCell
 @synthesize photo;
@@ -80,7 +81,7 @@
 
 -(void)loadImages;
 {
-    CacheManager *manager = [CacheManager sharedCacheManager];
+    CacheManager *manager = [NoticingsAppDelegate delegate].cacheManager;
 
     UIImage *cached = [manager cachedImageForURL:photo.imageURL];
     if (cached) {

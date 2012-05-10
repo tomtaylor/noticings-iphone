@@ -26,8 +26,6 @@
 
 @implementation UploadQueueManager
 
-SYNTHESIZE_SINGLETON_FOR_CLASS(UploadQueueManager);
-
 @synthesize photoUploads;
 @synthesize inProgress;
 @synthesize backgroundTask;

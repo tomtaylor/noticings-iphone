@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SynthesizeSingleton.h"
 #import "PhotoUpload.h"
 #import "APIKeys.h"
 
@@ -18,8 +17,6 @@ enum RequestType {
 };
 
 @interface UploadQueueManager : NSObject
-
-+(UploadQueueManager *)sharedUploadQueueManager;
 
 //- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest imageUploadSentBytes:(NSUInteger)inSentBytes totalBytes:(NSUInteger)inTotalBytes;
 

@@ -7,7 +7,6 @@
 //
 
 #import "DeferredFlickrCallManager.h"
-#import "SynthesizeSingleton.h"
 
 #import "APIKeys.h"
 #import "ASIHTTPRequest.h"
@@ -16,7 +15,6 @@
 #import "JSONKit.h"
 
 @implementation DeferredFlickrCallManager
-SYNTHESIZE_SINGLETON_FOR_CLASS(DeferredFlickrCallManager);
 
 @synthesize queue;
 

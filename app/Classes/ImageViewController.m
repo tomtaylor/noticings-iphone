@@ -7,6 +7,7 @@
 //
 
 #import "ImageViewController.h"
+#import "NoticingsAppDelegate.h"
 
 @implementation ImageViewController
 
@@ -94,7 +95,7 @@
     // the wrong app if you care about them.
 
     // look for the big image
-    UIImage *cached = [[CacheManager sharedCacheManager] cachedImageForURL:self.photo.bigImageURL];
+    UIImage *cached = [[NoticingsAppDelegate delegate].cacheManager cachedImageForURL:self.photo.bigImageURL];
     if (cached) {
         // we already have the big image. Show it, and we're done.
         [self scaleAndShowImage:cached];
@@ -102,11 +103,11 @@
     }
 
     // WE don't have the big image. Load it.
-    [[CacheManager sharedCacheManager] fetchImageForURL:self.photo.bigImageURL andNotify:self];
+    [[NoticingsAppDelegate delegate].cacheManager fetchImageForURL:self.photo.bigImageURL andNotify:self];
 
 
     // try to load the normal as a fall-back
-    cached = [[CacheManager sharedCacheManager] cachedImageForURL:self.photo.imageURL];
+    cached = [[NoticingsAppDelegate delegate].cacheManager cachedImageForURL:self.photo.imageURL];
     if (cached) {
         [self scaleAndShowImage:cached];
     }
@@ -117,7 +118,7 @@
 -(void)viewWillDisappear:(BOOL)animated;
 {
     NSLog(@"%@ will disappear", self.class);
-    [[CacheManager sharedCacheManager] flushQueue];
+    [[NoticingsAppDelegate delegate].cacheManager flushQueue];
     self.navigationController.navigationBar.barStyle = UIBarStyleDefault;
     [super viewWillDisappear:animated];
 }

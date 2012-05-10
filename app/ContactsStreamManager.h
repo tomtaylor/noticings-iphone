@@ -11,8 +11,6 @@
 
 @interface ContactsStreamManager : PhotoStreamManager
 
-+(ContactsStreamManager *)sharedContactsStreamManager;
-
 @end
 
 

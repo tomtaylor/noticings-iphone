@@ -7,6 +7,7 @@
 //
 
 #import "UserStreamManager.h"
+#import "NoticingsAppDelegate.h"
 
 @implementation UserStreamManager
 
@@ -30,7 +31,7 @@
                           [self extras], @"extras",
                           self.userId, @"user_id",
                           nil];
-    [[DeferredFlickrCallManager sharedDeferredFlickrCallManager] callFlickrMethod:@"flickr.photos.search"
+    [[NoticingsAppDelegate delegate].flickrCallManager callFlickrMethod:@"flickr.photos.search"
                                                                            asPost:NO
                                                                          withArgs:args
                                                                           andThen:callback];

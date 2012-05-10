@@ -9,15 +9,16 @@
 #import "AddCommentViewController.h"
 
 #import"DeferredFlickrCallManager.h"
+#import "NoticingsAppDelegate.h"
 
 @implementation AddCommentViewController
-@synthesize photo, textView;
+@synthesize photo = _photo, textView = _textView;
 
-- (id)initWithPhoto:(StreamPhoto*)_photo;
+- (id)initWithPhoto:(StreamPhoto*)photo;
 {
     self = [super initWithNibName:nil bundle:nil];
     if (self) {
-        self.photo = _photo;
+        self.photo = photo;
         self.title = @"Add comment";
     }
     return self;
@@ -28,11 +29,11 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.view.autoresizesSubviews = YES;
     
     self.textView = [[[UITextView alloc] initWithFrame:self.view.bounds] autorelease];
     self.textView.font = [UIFont systemFontOfSize:16];
     self.textView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-    self.view.autoresizesSubviews = YES;
     [self.view addSubview:self.textView];
 
     UIBarButtonItem *saveButton = [[UIBarButtonItem alloc] 
@@ -58,7 +59,7 @@
     NSString *method = @"flickr.photos.comments.addComment";
     NSDictionary *args = [NSDictionary dictionaryWithObjectsAndKeys: self.photo.flickrId, @"photo_id", self.textView.text, @"comment_text", nil];
 
-    [[DeferredFlickrCallManager sharedDeferredFlickrCallManager]
+    [[NoticingsAppDelegate delegate].flickrCallManager
     callFlickrMethod:method
     asPost:YES
     withArgs:args

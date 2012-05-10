@@ -127,7 +127,7 @@ static NSString *adjustPinActionSheetAddTitle = @"Add to Map";
 }
 
 - (void)mapViewDidFinishLoadingMap:(MKMapView *)mapView {
-	if ([UploadQueueManager sharedUploadQueueManager].inProgress == NO) {
+	if ([NoticingsAppDelegate delegate].uploadQueueManager.inProgress == NO) {
 		[UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 	}
 }
@@ -172,8 +172,8 @@ static NSString *adjustPinActionSheetAddTitle = @"Add to Map";
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
 	
-	[[UploadQueueManager sharedUploadQueueManager] addPhotoUploadToQueue:self.photoUpload];
-	[[UploadQueueManager sharedUploadQueueManager] startQueueIfNeeded];
+	[[NoticingsAppDelegate delegate].uploadQueueManager addPhotoUploadToQueue:self.photoUpload];
+	[[NoticingsAppDelegate delegate].uploadQueueManager startQueueIfNeeded];
     [[AppDelegate tabBarController] setSelectedIndex:0];
     [self.navigationController dismissModalViewControllerAnimated:YES];
     

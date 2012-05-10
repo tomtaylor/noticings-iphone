@@ -7,12 +7,11 @@
 //
 
 #import "ContactsStreamManager.h"
-#import "SynthesizeSingleton.h"
 #import "CacheManager.h"
 #import "DeferredFlickrCallManager.h"
+#import "NoticingsAppDelegate.h"
 
 @implementation ContactsStreamManager
-SYNTHESIZE_SINGLETON_FOR_CLASS(ContactsStreamManager);
 
 -(void)callFlickrAnd:(FlickrCallback)callback;
 {
@@ -21,7 +20,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(ContactsStreamManager);
                           [self extras], @"extras",
                           @"1", @"include_self",
                           nil];
-    [[DeferredFlickrCallManager sharedDeferredFlickrCallManager] callFlickrMethod:@"flickr.photos.getContactsPhotos"
+    [[NoticingsAppDelegate delegate].flickrCallManager callFlickrMethod:@"flickr.photos.getContactsPhotos"
                                                                            asPost:NO
                                                                          withArgs:args
                                                                           andThen:callback];

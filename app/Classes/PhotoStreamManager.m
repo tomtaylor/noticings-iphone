@@ -8,9 +8,9 @@
 
 #import "PhotoStreamManager.h"
 
-#import "SynthesizeSingleton.h"
 #import "ASIHTTPRequest.h"
 #import "APIKeys.h"
+#import "NoticingsAppDelegate.h"
 
 @implementation PhotoStreamManager
 
@@ -145,7 +145,7 @@
     }
 
     // TODO - error handling? what if the cache is bad?
-    NSString* cache = [[CacheManager sharedCacheManager] cachePathForFilename:[self cacheFilename]];
+    NSString* cache = [[NoticingsAppDelegate delegate].cacheManager cachePathForFilename:[self cacheFilename]];
     if (![[NSFileManager defaultManager] fileExistsAtPath:cache]) {
         return; // no cache
     }
@@ -175,7 +175,7 @@
         return;
     }
 
-    NSString* cache = [[CacheManager sharedCacheManager] cachePathForFilename:[self cacheFilename]];
+    NSString* cache = [[NoticingsAppDelegate delegate].cacheManager cachePathForFilename:[self cacheFilename]];
     NSLog(@"Saving cached image data to %@", cache);
     NSMutableData *data = [NSMutableData new];
     NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data];
@@ -194,7 +194,7 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
 
         // pre-cache images
-        CacheManager *cacheManager = [CacheManager sharedCacheManager];
+        CacheManager *cacheManager = [NoticingsAppDelegate delegate].cacheManager;
         //PhotoLocationManager *locationManager = [PhotoLocationManager sharedPhotoLocationManager];
         
         for (StreamPhoto *sp in self.filteredPhotos) {

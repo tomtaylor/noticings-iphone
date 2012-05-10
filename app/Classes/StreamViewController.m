@@ -13,6 +13,7 @@
 #import "PhotoUploadCell.h"
 #import "ContactsStreamManager.h"
 #import "StreamPhotoViewController.h"
+#import "NoticingsAppDelegate.h"
 
 @interface StreamViewController (Private)
 - (void)setQueueButtonState;
@@ -42,7 +43,7 @@
     if (!self.streamManager) {
         // we were initialized from the nib, without going through the custom init above,
         // so we must be the root controller.
-        self.streamManager = [ContactsStreamManager sharedContactsStreamManager];
+        self.streamManager = [NoticingsAppDelegate delegate].contactsStreamManager;
         self.streamManager.delegate = self;
         isRoot = YES;
     }
@@ -96,7 +97,7 @@
 
 -(void)viewWillDisappear:(BOOL)animated;
 {
-    [[CacheManager sharedCacheManager] flushQueue]; // we don't need any of the pending photos any more.
+    [[NoticingsAppDelegate delegate].cacheManager flushQueue]; // we don't need any of the pending photos any more.
     [super viewWillDisappear:animated];
     if (isRoot) {
         // hide navigation bar, only for root controller
@@ -177,7 +178,7 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    [[CacheManager sharedCacheManager] flushMemoryCache];
+    [[NoticingsAppDelegate delegate].cacheManager flushMemoryCache];
 }
 
 - (StreamPhoto *)streamPhotoAtIndexPath:(NSIndexPath*)indexPath {
@@ -192,7 +193,7 @@
         return [photos objectAtIndex:photoIndex];
     }
 
-    UploadQueueManager *uploadQueueManager = [UploadQueueManager sharedUploadQueueManager];
+    UploadQueueManager *uploadQueueManager = [NoticingsAppDelegate delegate].uploadQueueManager;
     NSMutableArray *photoUploads = uploadQueueManager.photoUploads;
     if (indexPath.section < [photoUploads count]) {
         // upload cell
@@ -210,7 +211,7 @@
         return nil;
     }
 
-    UploadQueueManager *uploadQueueManager = [UploadQueueManager sharedUploadQueueManager];
+    UploadQueueManager *uploadQueueManager = [NoticingsAppDelegate delegate].uploadQueueManager;
     NSMutableArray *photoUploads = uploadQueueManager.photoUploads;
     if ([photoUploads count] == 0) {
         return nil;
@@ -244,7 +245,7 @@
     NSArray *photos = self.streamManager.filteredPhotos;
 	NSInteger photosCount = photos.count == 0 ? 1 : photos.count;
     if (isRoot) {
-        UploadQueueManager *uploadQueueManager = [UploadQueueManager sharedUploadQueueManager];
+        UploadQueueManager *uploadQueueManager = [NoticingsAppDelegate delegate].uploadQueueManager;
         return photosCount + [uploadQueueManager.photoUploads count];
     } else {
         return photosCount;

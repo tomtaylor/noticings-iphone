@@ -26,11 +26,21 @@
 @synthesize dummyViewController;
 @synthesize cameraController;
 @synthesize streamNavigationController;
+@synthesize contactsStreamManager = _contactsStreamManager;
+@synthesize cacheManager = _cacheManager;
+@synthesize flickrCallManager = _flickrCallManager;
+@synthesize uploadQueueManager = _uploadQueueManager;
+@synthesize photoLocationManager = _photoLocationManager;
 
 BOOL gLogging = FALSE;
 
 #pragma mark -
 #pragma mark Application lifecycle
+
++(NoticingsAppDelegate*)delegate;
+{
+    return (NoticingsAppDelegate*)[UIApplication sharedApplication].delegate;
+}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     #ifdef ADHOC
@@ -45,11 +55,17 @@ BOOL gLogging = FALSE;
                               nil];
 	[userDefaults registerDefaults:defaults];
 	[userDefaults synchronize];
-	
-    //[[UploadQueueManager sharedUploadQueueManager] restoreQueuedUploads];
+    
+    self.contactsStreamManager = [[[ContactsStreamManager alloc] init] autorelease];
+    self.cacheManager = [[[CacheManager alloc] init] autorelease];
+    self.uploadQueueManager = [[[UploadQueueManager alloc] init] autorelease];
+    self.flickrCallManager = [[[DeferredFlickrCallManager alloc] init] autorelease];
+	self.photoLocationManager = [[[PhotoLocationManager alloc] init] autorelease];
+
+    //[[NoticingsAppDelegate delegate].uploadQueueManager restoreQueuedUploads];
     
 	queueTab = [tabBarController.tabBar.items objectAtIndex:0];
-	int count = [[UploadQueueManager sharedUploadQueueManager].photoUploads count];
+	int count = self.uploadQueueManager.photoUploads.count;
 	
 	if (count > 0) {
 		queueTab.badgeValue = [NSString stringWithFormat:@"%u",	count];
@@ -63,7 +79,7 @@ BOOL gLogging = FALSE;
                                                  name:@"queueCount" 
                                                object:nil];	
     
-    [[UploadQueueManager sharedUploadQueueManager] addObserver:self
+    [[NoticingsAppDelegate delegate].uploadQueueManager addObserver:self
                                                     forKeyPath:@"inProgress"
                                                        options:(NSKeyValueObservingOptionNew)
                                                        context:NULL];
@@ -117,7 +133,7 @@ BOOL gLogging = FALSE;
 }
 
 - (void)queueDidChange {
-	int count = [[UploadQueueManager sharedUploadQueueManager].photoUploads count];
+	int count = [[NoticingsAppDelegate delegate].uploadQueueManager.photoUploads count];
 	[UIApplication sharedApplication].applicationIconBadgeNumber = count;
 	
 	if (count > 0) {
@@ -132,7 +148,7 @@ BOOL gLogging = FALSE;
                         change:(NSDictionary *)change
                        context:(void *)context
 {
-	[UIApplication sharedApplication].networkActivityIndicatorVisible = [UploadQueueManager sharedUploadQueueManager].inProgress;
+	[UIApplication sharedApplication].networkActivityIndicatorVisible = [NoticingsAppDelegate delegate].uploadQueueManager.inProgress;
 }
 
 
@@ -148,17 +164,17 @@ BOOL gLogging = FALSE;
 - (void)applicationDidEnterBackground:(UIApplication *)application;
 {
     // something caused us to be bakgrounded. incoming call, home button, etc.
-    [[CacheManager sharedCacheManager] flushMemoryCache];
-    [[ContactsStreamManager sharedContactsStreamManager] resetFlickrContext];
+    [[NoticingsAppDelegate delegate].cacheManager flushMemoryCache];
+    [[NoticingsAppDelegate delegate].contactsStreamManager resetFlickrContext];
     
-    [[UploadQueueManager sharedUploadQueueManager] saveQueuedUploads];
-	[UIApplication sharedApplication].applicationIconBadgeNumber = [[UploadQueueManager sharedUploadQueueManager].photoUploads count];
+    [[NoticingsAppDelegate delegate].uploadQueueManager saveQueuedUploads];
+	[UIApplication sharedApplication].applicationIconBadgeNumber = [[NoticingsAppDelegate delegate].uploadQueueManager.photoUploads count];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application;
 {
     // resume from background. Multitasking devices only.
-    [[ContactsStreamManager sharedContactsStreamManager] maybeRefresh]; // the viewcontroller listens to this
+    [[NoticingsAppDelegate delegate].contactsStreamManager maybeRefresh]; // the viewcontroller listens to this
     
     UINavigationController *nav = (UINavigationController*)[self.tabBarController.viewControllers objectAtIndex:0];
 
@@ -170,9 +186,9 @@ BOOL gLogging = FALSE;
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
-	[[UploadQueueManager sharedUploadQueueManager] saveQueuedUploads];
+	[[NoticingsAppDelegate delegate].uploadQueueManager saveQueuedUploads];
     
-	[UIApplication sharedApplication].applicationIconBadgeNumber = [[UploadQueueManager sharedUploadQueueManager].photoUploads count];
+	[UIApplication sharedApplication].applicationIconBadgeNumber = [[NoticingsAppDelegate delegate].uploadQueueManager.photoUploads count];
 }
 
 #pragma mark -

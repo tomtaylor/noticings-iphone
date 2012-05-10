@@ -18,8 +18,6 @@
 
 @interface PhotoLocationManager : NSObject
 
-+(PhotoLocationManager*)sharedPhotoLocationManager;
-
 typedef void (^LocationCallbackBlock)(NSString* name);
 
 -(NSString*)cachedLocationForPhoto:(StreamPhoto*)photo;

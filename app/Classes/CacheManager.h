@@ -16,8 +16,6 @@
 
 @interface CacheManager : NSObject
 
-+ (CacheManager *) sharedCacheManager;
-
 - (NSString*) cachePathForFilename:(NSString*)filename;
 - (UIImage *) cachedImageForURL:(NSURL*)url;
 - (void) fetchImageForURL:(NSURL*)url andNotify:(NSObject <DeferredImageLoader>*)sender;

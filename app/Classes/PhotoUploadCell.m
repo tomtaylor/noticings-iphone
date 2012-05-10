@@ -9,6 +9,7 @@
 #import "PhotoUploadCell.h"
 #import "UploadQueueManager.h"
 #import <QuartzCore/QuartzCore.h>
+#import "NoticingsAppDelegate.h"
 
 #import "StreamPhotoViewCell.h" // for PADDING constant
 @interface PhotoUploadCell (Private)
@@ -26,7 +27,7 @@
 - (id)initWithCoder:(NSCoder *)coder {
     self = [super initWithCoder:coder];
     if (self) {
-        [[UploadQueueManager sharedUploadQueueManager] addObserver:self
+        [[NoticingsAppDelegate delegate].uploadQueueManager addObserver:self
                                                         forKeyPath:@"inProgress"
                                                            options:NSKeyValueObservingOptionNew
                                                            context:NULL];
@@ -103,7 +104,7 @@
 {
     UIActionSheet *popupQuery;
     
-    if ([UploadQueueManager sharedUploadQueueManager].inProgress) {
+    if ([NoticingsAppDelegate delegate].uploadQueueManager.inProgress) {
         popupQuery = [[UIActionSheet alloc]
                       initWithTitle:@"Upload Options"
                       delegate:self
@@ -126,7 +127,7 @@
      
  -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    UploadQueueManager *uploadQueueManager = [UploadQueueManager sharedUploadQueueManager];
+    UploadQueueManager *uploadQueueManager = [NoticingsAppDelegate delegate].uploadQueueManager;
     
     if (buttonIndex == 0) {
         [uploadQueueManager cancelUpload:self.photoUpload];
@@ -143,7 +144,7 @@
      
 
 - (void)updateDetailText {
-	if ([UploadQueueManager sharedUploadQueueManager].inProgress) {
+	if ([NoticingsAppDelegate delegate].uploadQueueManager.inProgress) {
         if (!self.photoUpload.inProgress) {
             self.detailTextLabel.text = @"Queued";
             self.progressView.hidden = YES;
@@ -170,7 +171,7 @@
 
 - (void)dealloc {
     [self displayPhotoUpload:nil];
-	[[UploadQueueManager sharedUploadQueueManager] removeObserver:self forKeyPath:@"inProgress"];
+	[[NoticingsAppDelegate delegate].uploadQueueManager removeObserver:self forKeyPath:@"inProgress"];
     [super dealloc];
 }
 

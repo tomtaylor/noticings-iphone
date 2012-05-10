@@ -104,8 +104,8 @@
 
 /* Begin PBXFileReference section */
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		1D3623240D0F684500981E51 /* NoticingsAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NoticingsAppDelegate.h; sourceTree = "<group>"; };
-		1D3623250D0F684500981E51 /* NoticingsAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NoticingsAppDelegate.m; sourceTree = "<group>"; };
+		1D3623240D0F684500981E51 /* NoticingsAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoticingsAppDelegate.h; path = Classes/NoticingsAppDelegate.h; sourceTree = "<group>"; };
+		1D3623250D0F684500981E51 /* NoticingsAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoticingsAppDelegate.m; path = Classes/NoticingsAppDelegate.m; sourceTree = "<group>"; };
 		1D6058910D05DD3D006BFB54 /* Noticings.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Noticings.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		2892E40F0DC94CBA00A64D0F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -151,7 +151,6 @@
 		E27C7DAC108B27D90083E392 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		E27C7E0F108B9A320083E392 /* UploadQueueManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UploadQueueManager.h; sourceTree = "<group>"; };
 		E27C7E10108B9A320083E392 /* UploadQueueManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UploadQueueManager.m; sourceTree = "<group>"; };
-		E27C7E12108B9B2D0083E392 /* SynthesizeSingleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SynthesizeSingleton.h; sourceTree = "<group>"; };
 		E280D6E8109F8DC1009F689A /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		E2A6C4EA11CA4A810065E27A /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		E2AC9A191080AD39007A570A /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -296,10 +295,9 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				E6218AD413C35D6D0021CB80 /* Stream */,
 				E256C42810826C4100948E14 /* EditableTextFieldCell.h */,
 				E256C42910826C4100948E14 /* EditableTextFieldCell.m */,
-				1D3623240D0F684500981E51 /* NoticingsAppDelegate.h */,
-				1D3623250D0F684500981E51 /* NoticingsAppDelegate.m */,
 				E256C3FC108267E800948E14 /* PhotoDetailViewController.h */,
 				E256C3FD108267E800948E14 /* PhotoDetailViewController.m */,
 				E256C4971083192D00948E14 /* EditableTextViewCell.h */,
@@ -346,9 +344,10 @@
 				E67465C2155C4258007609A4 /* Security.framework */,
 				E23B29F013F28C0600614C71 /* Entitlements.plist */,
 				E2A6C4EA11CA4A810065E27A /* Settings.bundle */,
-				E2AC983D107FAE68007A570A /* Third Party */,
-				E6218AD413C35D6D0021CB80 /* Stream */,
+				1D3623240D0F684500981E51 /* NoticingsAppDelegate.h */,
+				1D3623250D0F684500981E51 /* NoticingsAppDelegate.m */,
 				080E96DDFE201D6D7F000001 /* Classes */,
+				E2AC983D107FAE68007A570A /* Third Party */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
@@ -424,23 +423,22 @@
 		E2AC983D107FAE68007A570A /* Third Party */ = {
 			isa = PBXGroup;
 			children = (
+				E60912C6142B531A004861F5 /* ASIHTTPRequest */,
 				E67465BE155C4135007609A4 /* GCOAuth.h */,
 				E67465BF155C4135007609A4 /* GCOAuth.m */,
-				E67465C0155C4135007609A4 /* NSData+Base64.h */,
-				E67465C1155C4135007609A4 /* NSData+Base64.m */,
-				E2CC8A70141EA0D400C1CF1B /* libTestFlight.a */,
+				E6A09AC11452EE4B009199CA /* GRMustache */,
+				E671F9151439FC6E0068380D /* GTMNSString+HTML.h */,
+				E671F9161439FC6E0068380D /* GTMNSString+HTML.m */,
 				E67465B4155C3981007609A4 /* JSONKit.h */,
 				E67465B5155C3981007609A4 /* JSONKit.m */,
-				E671F9151439FC6E0068380D /* GTMNSString+HTML.h */,
+				E2CC8A70141EA0D400C1CF1B /* libTestFlight.a */,
+				E67465C0155C4135007609A4 /* NSData+Base64.h */,
+				E67465C1155C4135007609A4 /* NSData+Base64.m */,
 				E671F9141439FC090068380D /* NSString+HTML.h */,
-				E64839C913C8EBBF008DB9CE /* PullRefreshTableViewController.h */,
-				E27C7E12108B9B2D0083E392 /* SynthesizeSingleton.h */,
-				E2CC8A71141EA0D400C1CF1B /* TestFlight.h */,
-				E671F9161439FC6E0068380D /* GTMNSString+HTML.m */,
 				E671F9121439FBDA0068380D /* NSString+HTML.m */,
+				E64839C913C8EBBF008DB9CE /* PullRefreshTableViewController.h */,
 				E64839CA13C8EBBF008DB9CE /* PullRefreshTableViewController.m */,
-				E60912C6142B531A004861F5 /* ASIHTTPRequest */,
-				E6A09AC11452EE4B009199CA /* GRMustache */,
+				E2CC8A71141EA0D400C1CF1B /* TestFlight.h */,
 			);
 			name = "Third Party";
 			sourceTree = "<group>";
@@ -508,6 +506,7 @@
 				E68D5F1D142BA7FC003192AE /* UserStreamManager.m */,
 			);
 			name = Stream;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		E6A09AC11452EE4B009199CA /* GRMustache */ = {

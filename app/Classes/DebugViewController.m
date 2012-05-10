@@ -7,6 +7,7 @@
 //
 
 #import "DebugViewController.h"
+#import "NoticingsAppDelegate.h"
 #import "CacheManager.h"
 #import "UploadQueueManager.h"
 
@@ -58,11 +59,11 @@ enum DebugActions {
     
     switch (indexPath.section) {
         case kNoticingsDebugClearCache:
-            [[CacheManager sharedCacheManager] clearCache];
+            [[NoticingsAppDelegate delegate].cacheManager clearCache];
             break;
 
         case kNoticingsDebugFakeUpload:
-            manager = [UploadQueueManager sharedUploadQueueManager];
+            manager = [NoticingsAppDelegate delegate].uploadQueueManager;
             [manager fakeUpload];
             [self.navigationController.tabBarController setSelectedIndex:0];
             break;

@@ -11,13 +11,14 @@
 #import <CoreLocation/CoreLocation.h>
 #import <AssetsLibrary/AssetsLibrary.h>
 
+#import "ContactsStreamManager.h"
+#import "CacheManager.h"
+#import "UploadQueueManager.h"
+
+
 @interface NoticingsAppDelegate : NSObject <UIApplicationDelegate, UITabBarControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CLLocationManagerDelegate> {
-	UIWindow *window;
-    UITabBarController *tabBarController;
 	FlickrAuthenticationViewController *authViewController;
 	UITabBarItem *queueTab;
-    UIViewController *dummyViewController;
-    CameraController *cameraController;
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
@@ -26,6 +27,14 @@
 @property (nonatomic, retain) CameraController *cameraController;
 
 @property (nonatomic, retain) IBOutlet UINavigationController *streamNavigationController;
+
+@property (nonatomic, retain) ContactsStreamManager* contactsStreamManager;
+@property (nonatomic, retain) CacheManager *cacheManager;
+@property (nonatomic, retain) UploadQueueManager *uploadQueueManager;
+@property (nonatomic, retain) DeferredFlickrCallManager *flickrCallManager;
+@property (nonatomic, retain) PhotoLocationManager *photoLocationManager;
+
++(NoticingsAppDelegate*)delegate;
 
 - (BOOL)isAuthenticated;
 

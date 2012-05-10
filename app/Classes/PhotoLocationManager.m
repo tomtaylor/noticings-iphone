@@ -7,14 +7,13 @@
 //
 
 #import "PhotoLocationManager.h"
+#import "NoticingsAppDelegate.h"
 
-#import "SynthesizeSingleton.h"
 #import "StreamPhoto.h"
 #import "CacheManager.h"
 #import "DeferredFlickrCallManager.h"
 
 @implementation PhotoLocationManager
-SYNTHESIZE_SINGLETON_FOR_CLASS(PhotoLocationManager);
 
 @synthesize queue, cache, locationRequests;
 
@@ -33,7 +32,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(PhotoLocationManager);
 
 -(NSMutableDictionary*)loadCachedLocations;
 {
-    NSString* filename = [[CacheManager sharedCacheManager] cachePathForFilename:@"locations.cache"];
+    NSString* filename = [[NoticingsAppDelegate delegate].cacheManager cachePathForFilename:@"locations.cache"];
     if (![[NSFileManager defaultManager] fileExistsAtPath:filename]) {
         return [[[NSMutableDictionary alloc] initWithCapacity:100] autorelease];
     }
@@ -42,7 +41,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(PhotoLocationManager);
 
 -(void)saveCachedLocations:(NSMutableDictionary*)_cache;
 {
-    NSString* filename = [[CacheManager sharedCacheManager] cachePathForFilename:@"locations.cache"];
+    NSString* filename = [[NoticingsAppDelegate delegate].cacheManager cachePathForFilename:@"locations.cache"];
     [_cache writeToFile:filename atomically:YES];
 }
 
@@ -95,7 +94,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(PhotoLocationManager);
     NSDictionary *args = [NSDictionary dictionaryWithObject:photo.woeid forKey:@"woe_id"];
     NSString *woeid = photo.woeid;
     
-    [[DeferredFlickrCallManager sharedDeferredFlickrCallManager]
+    [[NoticingsAppDelegate delegate].flickrCallManager
     callFlickrMethod:@"flickr.places.getInfo"
     asPost:NO
     withArgs:args

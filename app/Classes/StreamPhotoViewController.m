@@ -8,6 +8,7 @@
 
 #import "Twitter/Twitter.h"
 #import "GRMustache.h"
+#import "NoticingsAppDelegate.h"
 
 #import "StreamPhotoViewController.h"
 #import "StreamPhotoViewCell.h"
@@ -136,7 +137,7 @@ GRMustacheTemplate *template;
         [composer release];
 
     } else if (buttonIndex == saveRollIndex) {
-        UIImage *image = [[CacheManager sharedCacheManager] cachedImageForURL:self.photo.imageURL];
+        UIImage *image = [[NoticingsAppDelegate delegate].cacheManager cachedImageForURL:self.photo.imageURL];
         if (image) {
             UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil);
         } else {
@@ -157,8 +158,8 @@ GRMustacheTemplate *template;
     NSLog(@"%@ will appear and display %@", self.class, self.photo);
     [super viewWillAppear:animated];
 
-    CacheManager *cacheManager = [CacheManager sharedCacheManager];
-    PhotoLocationManager *locationManager = [PhotoLocationManager sharedPhotoLocationManager];
+    CacheManager *cacheManager = [NoticingsAppDelegate delegate].cacheManager;
+    PhotoLocationManager *locationManager = [NoticingsAppDelegate delegate].photoLocationManager;
 
     // load images if we haven't got them already.
     if (![cacheManager cachedImageForURL:self.photo.imageURL]) {
@@ -188,7 +189,7 @@ GRMustacheTemplate *template;
                           self.photo.flickrId, @"photo_id",
                           nil];
 
-    [[DeferredFlickrCallManager sharedDeferredFlickrCallManager]
+    [[NoticingsAppDelegate delegate].flickrCallManager
      callFlickrMethod:@"flickr.photos.comments.getList"
      asPost:NO
      withArgs:args
@@ -226,7 +227,7 @@ GRMustacheTemplate *template;
 -(void)viewWillDisappear:(BOOL)animated;
 {
     NSLog(@"%@ will disappear", self.class);
-    [[CacheManager sharedCacheManager] flushQueue];
+    [[NoticingsAppDelegate delegate].cacheManager flushQueue];
     [super viewWillDisappear:animated];
 }
 
@@ -253,7 +254,7 @@ GRMustacheTemplate *template;
     }
 
 
-    CacheManager *cacheManager = [CacheManager sharedCacheManager];
+    CacheManager *cacheManager = [NoticingsAppDelegate delegate].cacheManager;
     NSMutableDictionary *templateData = [NSMutableDictionary dictionary];
     [templateData setValue:self.photo forKey:@"photo"];
 
