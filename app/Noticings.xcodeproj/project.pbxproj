@@ -295,37 +295,19 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				E691DC2F155C65AC002F3551 /* Authentication */,
 				E6218AD413C35D6D0021CB80 /* Stream */,
-				E256C42810826C4100948E14 /* EditableTextFieldCell.h */,
-				E256C42910826C4100948E14 /* EditableTextFieldCell.m */,
-				E256C3FC108267E800948E14 /* PhotoDetailViewController.h */,
-				E256C3FD108267E800948E14 /* PhotoDetailViewController.m */,
-				E256C4971083192D00948E14 /* EditableTextViewCell.h */,
-				E256C4981083192D00948E14 /* EditableTextViewCell.m */,
-				E2F553B010850EB200FE67C7 /* PhotoMapViewController.h */,
-				E2F553B110850EB200FE67C7 /* PhotoMapViewController.m */,
-				E27C7E0F108B9A320083E392 /* UploadQueueManager.h */,
-				E27C7E10108B9A320083E392 /* UploadQueueManager.m */,
-				E211FAC410960D6200ABAE72 /* FlickrAuthenticationViewController.h */,
-				E211FAC510960D6200ABAE72 /* FlickrAuthenticationViewController.m */,
-				E27762B910964C3A00FCC1F1 /* PhotoUpload.h */,
-				E27762BA10964C3A00FCC1F1 /* PhotoUpload.m */,
-				E2792D0E1097976C00F9802C /* PhotoUploadCell.h */,
-				E2792D0F1097976C00F9802C /* PhotoUploadCell.m */,
-				E20EF686109A4A8F001C5F05 /* UploadTimestampViewController.h */,
-				E20EF687109A4A8F001C5F05 /* UploadTimestampViewController.m */,
-				E244D477109C83CF0075CAFD /* MoreViewController.h */,
-				E244D478109C83CF0075CAFD /* MoreViewController.m */,
-				E2493582137356840066EE38 /* PhotoPreviewViewController.h */,
-				E2493583137356850066EE38 /* PhotoPreviewViewController.m */,
-				E201C91F13753FFD00FA5AFD /* PhotoSaveViewController.h */,
+				E691DC2E155C65A6002F3551 /* Upload */,
 				E22C520313D4C5F700197EC5 /* CameraController.h */,
-				E201C92013753FFD00FA5AFD /* PhotoSaveViewController.m */,
 				E22C520413D4C5F700197EC5 /* CameraController.m */,
-				E6BF4A0A143C834E00FFBD67 /* NSString+URI.h */,
-				E6BF4A0B143C834E00FFBD67 /* NSString+URI.m */,
 				E69E4ADE1450985500BD442B /* DebugViewController.h */,
 				E69E4ADF1450985500BD442B /* DebugViewController.m */,
+				E244D477109C83CF0075CAFD /* MoreViewController.h */,
+				E244D478109C83CF0075CAFD /* MoreViewController.m */,
+				E6BF4A0A143C834E00FFBD67 /* NSString+URI.h */,
+				E6BF4A0B143C834E00FFBD67 /* NSString+URI.m */,
+				E201C91F13753FFD00FA5AFD /* PhotoSaveViewController.h */,
+				E201C92013753FFD00FA5AFD /* PhotoSaveViewController.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -507,6 +489,40 @@
 			);
 			name = Stream;
 			path = ..;
+			sourceTree = "<group>";
+		};
+		E691DC2E155C65A6002F3551 /* Upload */ = {
+			isa = PBXGroup;
+			children = (
+				E256C42810826C4100948E14 /* EditableTextFieldCell.h */,
+				E256C42910826C4100948E14 /* EditableTextFieldCell.m */,
+				E256C4971083192D00948E14 /* EditableTextViewCell.h */,
+				E256C4981083192D00948E14 /* EditableTextViewCell.m */,
+				E2493582137356840066EE38 /* PhotoPreviewViewController.h */,
+				E2493583137356850066EE38 /* PhotoPreviewViewController.m */,
+				E256C3FC108267E800948E14 /* PhotoDetailViewController.h */,
+				E256C3FD108267E800948E14 /* PhotoDetailViewController.m */,
+				E2F553B010850EB200FE67C7 /* PhotoMapViewController.h */,
+				E2F553B110850EB200FE67C7 /* PhotoMapViewController.m */,
+				E27762B910964C3A00FCC1F1 /* PhotoUpload.h */,
+				E27762BA10964C3A00FCC1F1 /* PhotoUpload.m */,
+				E2792D0E1097976C00F9802C /* PhotoUploadCell.h */,
+				E2792D0F1097976C00F9802C /* PhotoUploadCell.m */,
+				E27C7E0F108B9A320083E392 /* UploadQueueManager.h */,
+				E27C7E10108B9A320083E392 /* UploadQueueManager.m */,
+				E20EF686109A4A8F001C5F05 /* UploadTimestampViewController.h */,
+				E20EF687109A4A8F001C5F05 /* UploadTimestampViewController.m */,
+			);
+			name = Upload;
+			sourceTree = "<group>";
+		};
+		E691DC2F155C65AC002F3551 /* Authentication */ = {
+			isa = PBXGroup;
+			children = (
+				E211FAC410960D6200ABAE72 /* FlickrAuthenticationViewController.h */,
+				E211FAC510960D6200ABAE72 /* FlickrAuthenticationViewController.m */,
+			);
+			name = Authentication;
 			sourceTree = "<group>";
 		};
 		E6A09AC11452EE4B009199CA /* GRMustache */ = {
