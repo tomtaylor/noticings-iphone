@@ -12,28 +12,6 @@
 #import "GCOAuth.h"
 #import "NSString+URI.h"
 
-@interface NSString (Noticings)
--(NSDictionary*)dictionaryByParsingAsQueryParameters;
-@end
-
-@implementation NSString (Noticings)
-
--(NSDictionary*)dictionaryByParsingAsQueryParameters;
-{
-    NSMutableDictionary *parsed = [NSMutableDictionary dictionary];
-    [[self componentsSeparatedByString:@"&"] enumerateObjectsUsingBlock:^(NSString *obj, NSUInteger idx, BOOL *stop) {
-        NSArray *bits = [obj componentsSeparatedByString:@"="];
-        if (bits.count == 2) {
-            NSString *k = [[bits objectAtIndex:0] stringByDecodingFromURI];
-            NSString *v = [[bits objectAtIndex:1] stringByDecodingFromURI];
-            [parsed setValue:v forKey:k];
-        }
-    }];
-    return [NSDictionary dictionaryWithDictionary:parsed];
-}
-
-@end
-
 @implementation FlickrAuthenticationViewController
 
 @synthesize signInView;

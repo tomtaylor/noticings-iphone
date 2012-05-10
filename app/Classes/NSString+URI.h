@@ -14,5 +14,6 @@
 - (NSString *)stringByEncodingForURI;
 - (NSString *)stringByDecodingFromURI;
 - (NSString *)stringByEncodingForJavaScript;
+- (NSDictionary*)dictionaryByParsingAsQueryParameters;
 
 @end
