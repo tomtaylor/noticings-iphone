@@ -14,6 +14,7 @@ typedef void (^FlickrSuccessCallback)(NSDictionary *rsp);
 typedef void (^FlickrFailureCallback)(NSString *code, NSString *err);
 typedef void (^FlickrCallback)(BOOL success, NSDictionary *rsp, NSError *error);
 
+-(NSDictionary *) callSynchronousFlickrMethod:(NSString*)method asPost:(BOOL)asPost withArgs:(NSDictionary*)args error:(NSError**)errorAddr;
 -(void)callFlickrMethod:(NSString*)method asPost:(BOOL)asPost withArgs:(NSDictionary*)args andThen:(FlickrCallback)callback;
 -(void)callFlickrMethod:(NSString*)method asPost:(BOOL)asPost withArgs:(NSDictionary*)args andThen:(FlickrSuccessCallback)success orFail:(FlickrFailureCallback)failure;
 

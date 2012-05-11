@@ -135,9 +135,9 @@
         if (uploadQueueManager.inProgress) {
             [uploadQueueManager pauseQueue];
         } else {
-            [uploadQueueManager.photoUploads removeObject:self.photoUpload];
-            [uploadQueueManager.photoUploads insertObject:self.photoUpload atIndex:0];
-            [uploadQueueManager startQueueIfNeeded];
+//            [uploadQueueManager.photoUploads removeObject:self.photoUpload];
+//            [uploadQueueManager.photoUploads insertObject:self.photoUpload atIndex:0];
+//            [uploadQueueManager startQueueIfNeeded];
         }
     }
 }

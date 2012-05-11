@@ -14,6 +14,7 @@
 #import "ContactsStreamManager.h"
 #import "StreamPhotoViewController.h"
 #import "NoticingsAppDelegate.h"
+#import "PhotoUploadOperation.h"
 
 @interface StreamViewController (Private)
 - (void)setQueueButtonState;
@@ -194,13 +195,13 @@
     }
 
     UploadQueueManager *uploadQueueManager = [NoticingsAppDelegate delegate].uploadQueueManager;
-    NSMutableArray *photoUploads = uploadQueueManager.photoUploads;
-    if (indexPath.section < [photoUploads count]) {
+    int photoUploads = uploadQueueManager.queue.operationCount;
+    if (indexPath.section < photoUploads) {
         // upload cell
         return nil;
     }
 
-    NSInteger photoIndex = indexPath.section - [photoUploads count];
+    NSInteger photoIndex = indexPath.section - photoUploads;
     return [photos objectAtIndex:photoIndex];
 }
 
@@ -212,12 +213,12 @@
     }
 
     UploadQueueManager *uploadQueueManager = [NoticingsAppDelegate delegate].uploadQueueManager;
-    NSMutableArray *photoUploads = uploadQueueManager.photoUploads;
-    if ([photoUploads count] == 0) {
+    NSArray *photoUploadOperations = uploadQueueManager.queue.operations;
+    if ([photoUploadOperations count] == 0) {
         return nil;
     }
-    if (indexPath.section < [photoUploads count]) {
-        return [uploadQueueManager.photoUploads objectAtIndex:indexPath.section];
+    if (indexPath.section < [photoUploadOperations count]) {
+        return ((PhotoUploadOperation*)[photoUploadOperations objectAtIndex:indexPath.section]).upload;
     }
     return nil;
 }
@@ -246,7 +247,7 @@
 	NSInteger photosCount = photos.count == 0 ? 1 : photos.count;
     if (isRoot) {
         UploadQueueManager *uploadQueueManager = [NoticingsAppDelegate delegate].uploadQueueManager;
-        return photosCount + [uploadQueueManager.photoUploads count];
+        return photosCount + uploadQueueManager.queue.operationCount;
     } else {
         return photosCount;
     }

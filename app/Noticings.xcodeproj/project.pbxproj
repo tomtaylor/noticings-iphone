@@ -69,6 +69,7 @@
 		E6218ADB13C35D7C0021CB80 /* StreamPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = E6218AD613C35D7C0021CB80 /* StreamPhoto.m */; };
 		E6218ADC13C35D7C0021CB80 /* StreamPhotoViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E6218AD813C35D7C0021CB80 /* StreamPhotoViewCell.m */; };
 		E6218ADD13C35D7C0021CB80 /* StreamViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E6218ADA13C35D7C0021CB80 /* StreamViewController.m */; };
+		E62242FE155C7DE2004B951C /* PhotoUploadOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = E62242FD155C7DE2004B951C /* PhotoUploadOperation.m */; };
 		E63D6120142B9D6F00884F10 /* PhotoStreamManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E63D611F142B9D6F00884F10 /* PhotoStreamManager.m */; };
 		E6461F69143F2073009407FD /* AddCommentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E6461F67143F2073009407FD /* AddCommentViewController.m */; };
 		E64839CB13C8EBBF008DB9CE /* PullRefreshTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E64839CA13C8EBBF008DB9CE /* PullRefreshTableViewController.m */; };
@@ -201,6 +202,8 @@
 		E6218AD813C35D7C0021CB80 /* StreamPhotoViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StreamPhotoViewCell.m; path = Classes/StreamPhotoViewCell.m; sourceTree = "<group>"; };
 		E6218AD913C35D7C0021CB80 /* StreamViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StreamViewController.h; path = Classes/StreamViewController.h; sourceTree = "<group>"; };
 		E6218ADA13C35D7C0021CB80 /* StreamViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StreamViewController.m; path = Classes/StreamViewController.m; sourceTree = "<group>"; };
+		E62242FC155C7DE2004B951C /* PhotoUploadOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoUploadOperation.h; sourceTree = "<group>"; };
+		E62242FD155C7DE2004B951C /* PhotoUploadOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoUploadOperation.m; sourceTree = "<group>"; };
 		E63D611E142B9D6F00884F10 /* PhotoStreamManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhotoStreamManager.h; path = Classes/PhotoStreamManager.h; sourceTree = "<group>"; };
 		E63D611F142B9D6F00884F10 /* PhotoStreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PhotoStreamManager.m; path = Classes/PhotoStreamManager.m; sourceTree = "<group>"; };
 		E6461F66143F2073009407FD /* AddCommentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AddCommentViewController.h; path = Classes/AddCommentViewController.h; sourceTree = "<group>"; };
@@ -510,6 +513,8 @@
 				E2792D0F1097976C00F9802C /* PhotoUploadCell.m */,
 				E27C7E0F108B9A320083E392 /* UploadQueueManager.h */,
 				E27C7E10108B9A320083E392 /* UploadQueueManager.m */,
+				E62242FC155C7DE2004B951C /* PhotoUploadOperation.h */,
+				E62242FD155C7DE2004B951C /* PhotoUploadOperation.m */,
 				E20EF686109A4A8F001C5F05 /* UploadTimestampViewController.h */,
 				E20EF687109A4A8F001C5F05 /* UploadTimestampViewController.m */,
 			);
@@ -694,6 +699,7 @@
 				E6BF4A0C143C834E00FFBD67 /* NSString+URI.m in Sources */,
 				E6461F69143F2073009407FD /* AddCommentViewController.m in Sources */,
 				E69E4AE01450985500BD442B /* DebugViewController.m in Sources */,
+				E62242FE155C7DE2004B951C /* PhotoUploadOperation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

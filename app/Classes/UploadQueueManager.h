@@ -10,15 +10,7 @@
 #import "PhotoUpload.h"
 #import "APIKeys.h"
 
-enum RequestType {
-    UploadRequestType,
-    LocationRequestType,
-    TimestampRequestType
-};
-
 @interface UploadQueueManager : NSObject
-
-//- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest imageUploadSentBytes:(NSUInteger)inSentBytes totalBytes:(NSUInteger)inTotalBytes;
 
 - (void)startQueueIfNeeded;
 - (void)addPhotoUploadToQueue:(PhotoUpload *)photoUpload;
@@ -28,9 +20,14 @@ enum RequestType {
 - (void)saveQueuedUploads;
 - (void)restoreQueuedUploads;
 
-@property (nonatomic, retain) NSMutableArray *photoUploads;
+// operation callbacks
+- (void)operationUpdated;
+- (void)uploadFailed:(PhotoUpload*)upload;
+
+//@property (nonatomic, retain) NSMutableArray *photoUploads;
 @property (nonatomic) BOOL inProgress;
 @property (nonatomic) UIBackgroundTaskIdentifier backgroundTask;
+@property (nonatomic, retain) NSOperationQueue *queue;
 
 
 

@@ -43,9 +43,9 @@ BOOL gLogging = FALSE;
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    #ifdef ADHOC
+#ifdef ADHOC
     [TestFlight takeOff:TESTFLIGHT_API_KEY];
-    #endif
+#endif
     
 	NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
 	NSDictionary *defaults = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -61,28 +61,22 @@ BOOL gLogging = FALSE;
     self.uploadQueueManager = [[[UploadQueueManager alloc] init] autorelease];
     self.flickrCallManager = [[[DeferredFlickrCallManager alloc] init] autorelease];
 	self.photoLocationManager = [[[PhotoLocationManager alloc] init] autorelease];
-
-    //[[NoticingsAppDelegate delegate].uploadQueueManager restoreQueuedUploads];
     
 	queueTab = [tabBarController.tabBar.items objectAtIndex:0];
-	int count = self.uploadQueueManager.photoUploads.count;
+	int count = self.uploadQueueManager.queue.operationCount;
 	
 	if (count > 0) {
 		queueTab.badgeValue = [NSString stringWithFormat:@"%u",	count];
+        application.applicationIconBadgeNumber = count;
 	} else {
 		queueTab.badgeValue = 0;
+        application.applicationIconBadgeNumber = 0;
 	}
-    
     
     [[NSNotificationCenter defaultCenter] addObserver:self 
                                              selector:@selector(queueDidChange) 
                                                  name:@"queueCount" 
                                                object:nil];	
-    
-    [[NoticingsAppDelegate delegate].uploadQueueManager addObserver:self
-                                                    forKeyPath:@"inProgress"
-                                                       options:(NSKeyValueObservingOptionNew)
-                                                       context:NULL];
     
     [window addSubview:[tabBarController view]];
 	[window makeKeyAndVisible];
@@ -113,7 +107,6 @@ BOOL gLogging = FALSE;
          annotation:(id)annotation
 {
     DLog(@"App launched with URL: %@", [url absoluteString]);
-    //[tabBarController dismissModalViewControllerAnimated:NO];
     
     if (tabBarController.modalViewController) {
         [tabBarController dismissModalViewControllerAnimated:NO];
@@ -133,7 +126,7 @@ BOOL gLogging = FALSE;
 }
 
 - (void)queueDidChange {
-	int count = [[NoticingsAppDelegate delegate].uploadQueueManager.photoUploads count];
+	int count = [NoticingsAppDelegate delegate].uploadQueueManager.queue.operationCount;
 	[UIApplication sharedApplication].applicationIconBadgeNumber = count;
 	
 	if (count > 0) {
@@ -141,16 +134,14 @@ BOOL gLogging = FALSE;
 	} else {
 		queueTab.badgeValue = nil;
 	}
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath
-					  ofObject:(id)object
-                        change:(NSDictionary *)change
-                       context:(void *)context
-{
 	[UIApplication sharedApplication].networkActivityIndicatorVisible = [NoticingsAppDelegate delegate].uploadQueueManager.inProgress;
-}
 
+    // reload tableview
+    UINavigationController *nav = (UINavigationController*)[self.tabBarController.viewControllers objectAtIndex:0];
+    if (nav.visibleViewController.class == StreamViewController.class) {
+        [((StreamViewController*)nav.visibleViewController).tableView reloadData];
+    }
+}
 
 - (void)setDefaults {
 	NSDictionary *defaults = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -166,9 +157,6 @@ BOOL gLogging = FALSE;
     // something caused us to be bakgrounded. incoming call, home button, etc.
     [[NoticingsAppDelegate delegate].cacheManager flushMemoryCache];
     [[NoticingsAppDelegate delegate].contactsStreamManager resetFlickrContext];
-    
-    [[NoticingsAppDelegate delegate].uploadQueueManager saveQueuedUploads];
-	[UIApplication sharedApplication].applicationIconBadgeNumber = [[NoticingsAppDelegate delegate].uploadQueueManager.photoUploads count];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application;
@@ -176,19 +164,14 @@ BOOL gLogging = FALSE;
     // resume from background. Multitasking devices only.
     [[NoticingsAppDelegate delegate].contactsStreamManager maybeRefresh]; // the viewcontroller listens to this
     
-    UINavigationController *nav = (UINavigationController*)[self.tabBarController.viewControllers objectAtIndex:0];
-
     // if we're looking at a list of photos, reload it, in case the user defaults have changed.
+    UINavigationController *nav = (UINavigationController*)[self.tabBarController.viewControllers objectAtIndex:0];
     if (nav.visibleViewController.class == StreamViewController.class) {
         [((StreamViewController*)nav.visibleViewController).tableView reloadData];
     }
-    
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
-	[[NoticingsAppDelegate delegate].uploadQueueManager saveQueuedUploads];
-    
-	[UIApplication sharedApplication].applicationIconBadgeNumber = [[NoticingsAppDelegate delegate].uploadQueueManager.photoUploads count];
 }
 
 #pragma mark -

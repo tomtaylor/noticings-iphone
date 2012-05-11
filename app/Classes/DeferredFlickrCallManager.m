@@ -34,7 +34,7 @@
     return (!!token);
 }
 
--(void)callFlickrMethod:(NSString*)method asPost:(BOOL)asPost withArgs:(NSDictionary*)args andThen:(FlickrCallback)callback;
+-(NSDictionary *) callSynchronousFlickrMethod:(NSString*)method asPost:(BOOL)asPost withArgs:(NSDictionary*)args error:(NSError**)errorAddr;
 {
     NSMutableDictionary *newArgs = args ? [NSMutableDictionary dictionaryWithDictionary:args] : [NSMutableDictionary dictionary];
 	[newArgs setObject:method forKey:@"method"];
@@ -68,30 +68,43 @@
     NSMutableURLRequest *myreq = [req mutableCopy];
     myreq.timeoutInterval = 100;
     
+    NSHTTPURLResponse *response = nil;
+    NSData *data = [NSURLConnection sendSynchronousRequest:myreq returningResponse:&response error:errorAddr];
+    [myreq release];
+    
+    if (*errorAddr) {
+        return nil;
+    }
+    NSDictionary *rsp = [[JSONDecoder decoder] objectWithData:data error:errorAddr];
+    if (*errorAddr) {
+        return nil;
+    }
+    if (!rsp) {
+        return nil;
+    }
+    if (![[rsp objectForKey:@"stat"] isEqualToString:@"ok"]) {
+        NSLog(@"Failed flickr call %@(%@): %@", method, newArgs, rsp);
+        NSString *code = [rsp objectForKey:@"code"];
+        *errorAddr = [NSError errorWithDomain:@"flickr" code:[code integerValue] userInfo:rsp];
+        return rsp;
+    }
+    return rsp;
+}
+
+-(void)callFlickrMethod:(NSString*)method asPost:(BOOL)asPost withArgs:(NSDictionary*)args andThen:(FlickrCallback)callback;
+{
     [self.queue addOperationWithBlock:^{
-        NSHTTPURLResponse *response = nil;
         NSError *error = nil;
-        NSData *data = [NSURLConnection sendSynchronousRequest:myreq returningResponse:&response error:&error];
-        NSDictionary *rsp = [NSDictionary dictionary];
-        if (!error) {
-            rsp = [[JSONDecoder decoder] objectWithData:data error:&error];
-        }
-        
+        NSDictionary *rsp = [self callSynchronousFlickrMethod:method asPost:asPost withArgs:args error:&error];
         dispatch_async(dispatch_get_main_queue(),^{
             if (error) {
-                callback(NO, nil, error);
-            } else if (response.statusCode == 200 && rsp && [[rsp objectForKey:@"stat"] isEqualToString:@"ok"]) {
-                // response is ok
-                callback(YES, rsp, nil);
-                
+                callback(NO, rsp, error);
             } else {
-                // not ok
-                NSString *code = [rsp objectForKey:@"code"];
-                NSLog(@"Failed flickr call %@(%@): %@", method, newArgs, rsp);
-                callback(NO, rsp, [NSError errorWithDomain:@"flickr" code:[code integerValue] userInfo:rsp]);
+                callback(YES, rsp, nil);
             }
         });
     }];    
+    
 }
 
 -(void)callFlickrMethod:(NSString*)method asPost:(BOOL)asPost withArgs:(NSDictionary*)args andThen:(FlickrSuccessCallback)successCB orFail:(FlickrFailureCallback)failure;
