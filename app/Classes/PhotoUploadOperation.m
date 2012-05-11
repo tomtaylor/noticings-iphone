@@ -45,11 +45,20 @@
 
 }
 
+-(void)status:(float)progress;
+{
+    // call on main thread so KVO is safe for GUI elements
+    dispatch_async(dispatch_get_main_queue(),^{
+        self.upload.progress = [NSNumber numberWithFloat:progress];
+        self.upload.inProgress = YES;
+        [self.manager operationUpdated];
+    });
+}
+
 -(void)main;
 {
     // TODO - upload with progress. Respect 'cancel'.
-    
-    self.upload.progress = [NSNumber numberWithFloat:0];
+    [self status:0];
     
     NSData *uploaddata = [self.upload imageData];
     if (!uploaddata) {
@@ -125,9 +134,9 @@
     NSError *error = nil;
     NSData *responsedata = [NSURLConnection sendSynchronousRequest:myreq returningResponse:&response error:&error];
 
-    self.upload.progress = [NSNumber numberWithFloat:0.85];
     if ([self isCancelled]) return [self backout];
-    [self.manager operationUpdated];
+    [self status:0.85];
+
 
     if (error) {
         return [self fail];
@@ -149,9 +158,8 @@
     // ##################################################
     // set timestamp
 
-    self.upload.progress = [NSNumber numberWithFloat:0.9f];
     if ([self isCancelled]) return [self backout];
-    [self.manager operationUpdated];
+    [self status:0.9];
 
     if (self.upload.timestamp != self.upload.originalTimestamp) {
         NSDateFormatter *outputFormatter = [[NSDateFormatter alloc] init];
@@ -176,9 +184,8 @@
     // ##################################################
     // set location
 
-    self.upload.progress = [NSNumber numberWithFloat:0.95f];
     if ([self isCancelled]) return [self backout];
-    [self.manager operationUpdated];
+    [self status:0.95];
     
     // if the coordinate differs from what was set in the asset, then we update the geodata manually
     if (self.upload.coordinate.latitude != self.upload.originalCoordinate.latitude ||
@@ -217,9 +224,8 @@
         
     }
     
-    self.upload.progress = [NSNumber numberWithFloat:1];
     if ([self isCancelled]) return [self backout];
-    [self.manager operationUpdated];
+    [self status:1];
 }
 
 
