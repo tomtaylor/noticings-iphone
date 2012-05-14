@@ -198,6 +198,7 @@ GRMustacheTemplate *template;
          if (!self.comments) {
              self.comments = [NSArray array];
          }
+         NSLog(@"comments are %@", self.comments);
          [self updateHTML];
      }
      orFail:^(NSString* code, NSString *err){
