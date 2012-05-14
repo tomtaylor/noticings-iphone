@@ -108,14 +108,14 @@
 -(NSURL*)mapImageURL;
 {
     int scale = [UIScreen mainScreen].scale; //  1 or 2
-    NSString *mapURL = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/staticmap?sensor=false&size=320x100&center=%f,%f&zoom=12&scale=%d&markers=size:small%%7C%f,%f",
+    NSString *mapURL = [NSString stringWithFormat:@"cache://maps.googleapis.com/maps/api/staticmap?sensor=false&size=320x100&center=%f,%f&zoom=12&scale=%d&markers=size:small%%7C%f,%f",
                         self.latitude, self.longitude, scale, self.latitude, self.longitude];
     return [NSURL URLWithString:mapURL];
 }
 
 - (NSURL*) imageURL;
 {
-    return [NSURL URLWithString:[self.details objectForKey:@"url_m"]];
+    return [NSURL URLWithString:[[self.details objectForKey:@"url_m"] stringByReplacingCharactersInRange:NSMakeRange(0, 4) withString:@"cache"]];
 }
 
 - (NSURL*) bigImageURL;
@@ -124,13 +124,13 @@
     if (!big) {
         big = [self.details objectForKey:@"url_m"];
     }
-    return [NSURL URLWithString:big];
+    return [NSURL URLWithString:[big stringByReplacingCharactersInRange:NSMakeRange(0, 4) withString:@"cache"]];
 }
 
 - (NSURL*) originalImageURL;
 {
     if ([self.details valueForKey:@"url_o"]) {
-        return [NSURL URLWithString:[self.details valueForKey:@"url_o"]];
+        return [NSURL URLWithString:[[self.details valueForKey:@"url_o"] stringByReplacingCharactersInRange:NSMakeRange(0, 4) withString:@"cache"]];
     } else {
         return self.bigImageURL;
     }
@@ -140,14 +140,14 @@
 {
     NSString *avatarUrl;
     if ([self.details objectForKey:@"iconserver"] && ![[self.details objectForKey:@"iconserver"] isEqual:@"0"]) {
-        avatarUrl = [NSString stringWithFormat:@"http://farm%@.static.flickr.com/%@/buddyicons/%@.jpg",
+        avatarUrl = [NSString stringWithFormat:@"cache://farm%@.static.flickr.com/%@/buddyicons/%@.jpg",
                      [self.details objectForKey:@"iconfarm"],
                      [self.details objectForKey:@"iconserver"],
                      [self.details objectForKey:@"owner"]
                      ];
         
     } else {
-        avatarUrl = @"http://www.flickr.com/images/buddyicon.jpg";
+        avatarUrl = @"cache://www.flickr.com/images/buddyicon.jpg";
     }
     return [NSURL URLWithString:avatarUrl];
 }
@@ -247,7 +247,6 @@
     CGFloat height = width * height_m / width_m;
     return height;
 }
-
 
 
 #pragma mark MKAnnotation

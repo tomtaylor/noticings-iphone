@@ -9,8 +9,6 @@
 #import "DeferredFlickrCallManager.h"
 
 #import "APIKeys.h"
-#import "ASIHTTPRequest.h"
-#import "ASIFormDataRequest.h"
 #import "GCOAuth.h"
 #import "JSONKit.h"
 

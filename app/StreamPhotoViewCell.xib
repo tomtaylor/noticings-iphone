@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <archive type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="8.00">
 	<data>
-		<int key="IBDocument.SystemTarget">1280</int>
-		<string key="IBDocument.SystemVersion">11C74</string>
-		<string key="IBDocument.InterfaceBuilderVersion">1938</string>
-		<string key="IBDocument.AppKitVersion">1138.23</string>
-		<string key="IBDocument.HIToolboxVersion">567.00</string>
+		<int key="IBDocument.SystemTarget">1296</int>
+		<string key="IBDocument.SystemVersion">11E53</string>
+		<string key="IBDocument.InterfaceBuilderVersion">2182</string>
+		<string key="IBDocument.AppKitVersion">1138.47</string>
+		<string key="IBDocument.HIToolboxVersion">569.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
-			<string key="NS.object.0">933</string>
+			<string key="NS.object.0">1181</string>
 		</object>
 		<array key="IBDocument.IntegratedClassDependencies">
 			<string>IBUITableViewCell</string>
@@ -35,7 +35,7 @@
 			</object>
 			<object class="IBUITableViewCell" id="373355806">
 				<reference key="NSNextResponder"/>
-				<int key="NSvFlags">268</int>
+				<int key="NSvFlags">274</int>
 				<array class="NSMutableArray" key="NSSubviews">
 					<object class="IBUIView" id="94663175">
 						<reference key="NSNextResponder" ref="373355806"/>
@@ -106,7 +106,6 @@
 								</object>
 								<nil key="IBUIHighlightedColor"/>
 								<int key="IBUIBaselineAdjustment">1</int>
-								<bool key="IBUIAdjustsFontSizeToFit">NO</bool>
 								<float key="IBUIMinimumFontSize">10</float>
 								<object class="IBUIFontDescription" key="IBUIFontDescription" id="888769467">
 									<int key="type">2</int>
@@ -117,6 +116,7 @@
 									<double key="NSSize">14</double>
 									<int key="NSfFlags">16</int>
 								</object>
+								<bool key="IBUIAdjustsFontSizeToFit">NO</bool>
 							</object>
 							<object class="IBUILabel" id="847126505">
 								<reference key="NSNextResponder" ref="94663175"/>
@@ -135,10 +135,10 @@
 								<reference key="IBUITextColor" ref="765077827"/>
 								<nil key="IBUIHighlightedColor"/>
 								<int key="IBUIBaselineAdjustment">1</int>
-								<bool key="IBUIAdjustsFontSizeToFit">NO</bool>
 								<float key="IBUIMinimumFontSize">10</float>
 								<reference key="IBUIFontDescription" ref="888769467"/>
 								<reference key="IBUIFont" ref="517953386"/>
+								<bool key="IBUIAdjustsFontSizeToFit">NO</bool>
 							</object>
 							<object class="IBUILabel" id="843057186">
 								<reference key="NSNextResponder" ref="94663175"/>
@@ -157,7 +157,6 @@
 								<reference key="IBUITextColor" ref="840458815"/>
 								<nil key="IBUIHighlightedColor"/>
 								<int key="IBUIBaselineAdjustment">1</int>
-								<bool key="IBUIAdjustsFontSizeToFit">NO</bool>
 								<float key="IBUIMinimumFontSize">10</float>
 								<int key="IBUITextAlignment">2</int>
 								<int key="IBUILineBreakMode">2</int>
@@ -170,6 +169,7 @@
 									<double key="NSSize">13</double>
 									<int key="NSfFlags">16</int>
 								</object>
+								<bool key="IBUIAdjustsFontSizeToFit">NO</bool>
 							</object>
 							<object class="IBUIImageView" id="404961213">
 								<reference key="NSNextResponder" ref="94663175"/>
@@ -412,13 +412,13 @@
 					<string key="className">PhotoUploadCell</string>
 					<string key="superclassName">UITableViewCell</string>
 					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">pressedCancelButton</string>
+						<string key="NS.key.0">pressedOptionsButton</string>
 						<string key="NS.object.0">id</string>
 					</object>
 					<object class="NSMutableDictionary" key="actionInfosByName">
-						<string key="NS.key.0">pressedCancelButton</string>
+						<string key="NS.key.0">pressedOptionsButton</string>
 						<object class="IBActionInfo" key="NS.object.0">
-							<string key="name">pressedCancelButton</string>
+							<string key="name">pressedOptionsButton</string>
 							<string key="candidateClassName">id</string>
 						</object>
 					</object>
@@ -426,6 +426,7 @@
 						<string key="bottomBorder">UIView</string>
 						<string key="detailTextLabel">UILabel</string>
 						<string key="imageView">UIImageView</string>
+						<string key="optionsButton">UIButton</string>
 						<string key="progressView">UIProgressView</string>
 						<string key="textLabel">UILabel</string>
 						<string key="topBorder">UIView</string>
@@ -442,6 +443,10 @@
 						<object class="IBToOneOutletInfo" key="imageView">
 							<string key="name">imageView</string>
 							<string key="candidateClassName">UIImageView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="optionsButton">
+							<string key="name">optionsButton</string>
+							<string key="candidateClassName">UIButton</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="progressView">
 							<string key="name">progressView</string>
@@ -473,10 +478,10 @@
 					<string key="className">StreamPhotoViewCell</string>
 					<string key="superclassName">UITableViewCell</string>
 					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="avatarView">UIImageView</string>
+						<string key="avatarView">JBAsyncImageView</string>
 						<string key="frameView">UIView</string>
 						<string key="hasLocationImage">UIImageView</string>
-						<string key="photoView">UIImageView</string>
+						<string key="photoView">JBAsyncImageView</string>
 						<string key="privacyImage">UIImageView</string>
 						<string key="timeagoView">UILabel</string>
 						<string key="titleView">UILabel</string>
@@ -485,7 +490,7 @@
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
 						<object class="IBToOneOutletInfo" key="avatarView">
 							<string key="name">avatarView</string>
-							<string key="candidateClassName">UIImageView</string>
+							<string key="candidateClassName">JBAsyncImageView</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="frameView">
 							<string key="name">frameView</string>
@@ -497,7 +502,7 @@
 						</object>
 						<object class="IBToOneOutletInfo" key="photoView">
 							<string key="name">photoView</string>
-							<string key="candidateClassName">UIImageView</string>
+							<string key="candidateClassName">JBAsyncImageView</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="privacyImage">
 							<string key="name">privacyImage</string>
@@ -547,12 +552,16 @@
 		</object>
 		<int key="IBDocument.localizationMode">0</int>
 		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaTouchFramework</string>
+		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencyDefaults">
+			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaTouchPlugin.iPhoneOS</string>
+			<real value="1296" key="NS.object.0"/>
+		</object>
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
 		<object class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
 			<string key="NS.key.0">07-map-marker.png</string>
 			<string key="NS.object.0">{16, 26}</string>
 		</object>
-		<string key="IBCocoaTouchPluginVersion">933</string>
+		<string key="IBCocoaTouchPluginVersion">1181</string>
 	</data>
 </archive>

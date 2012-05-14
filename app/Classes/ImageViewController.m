@@ -91,34 +91,35 @@
     NSLog(@"%@ will appear", self.class);
     [super viewWillAppear:animated];
 
+    
     // Explicitly _don't_ load the original. Some of those are insane, and you're probably using
     // the wrong app if you care about them.
 
-    // look for the big image
-    UIImage *cached = [[NoticingsAppDelegate delegate].cacheManager cachedImageForURL:self.photo.bigImageURL];
-    if (cached) {
-        // we already have the big image. Show it, and we're done.
-        [self scaleAndShowImage:cached];
-        return;
-    }
+    __block ImageViewController* _self = self;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSData * data = [[[NSData alloc] initWithContentsOfURL:_self.photo.imageURL] autorelease];
+        UIImage * image = [[[UIImage alloc] initWithData:data] autorelease];
+        if (image != nil) {
+            dispatch_async( dispatch_get_main_queue(), ^{
+                [_self scaleAndShowImage:image];
+            });
+        }
 
-    // WE don't have the big image. Load it.
-    [[NoticingsAppDelegate delegate].cacheManager fetchImageForURL:self.photo.bigImageURL andNotify:self];
+        data = [[[NSData alloc] initWithContentsOfURL:_self.photo.bigImageURL] autorelease];
+        image = [[[UIImage alloc] initWithData:data] autorelease];
+        if (image != nil) {
+            dispatch_async( dispatch_get_main_queue(), ^{
+                [_self scaleAndShowImage:image];
+            });
+        }
+    });
 
-
-    // try to load the normal as a fall-back
-    cached = [[NoticingsAppDelegate delegate].cacheManager cachedImageForURL:self.photo.imageURL];
-    if (cached) {
-        [self scaleAndShowImage:cached];
-    }
-    
     self.navigationController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
 }
 
 -(void)viewWillDisappear:(BOOL)animated;
 {
     NSLog(@"%@ will disappear", self.class);
-    [[NoticingsAppDelegate delegate].cacheManager flushQueue];
     self.navigationController.navigationBar.barStyle = UIBarStyleDefault;
     [super viewWillDisappear:animated];
 }

@@ -10,7 +10,7 @@
 #import "CacheManager.h"
 #import "StreamPhoto.h"
 
-@interface ImageViewController : UIViewController <DeferredImageLoader, UIScrollViewDelegate, UIActionSheetDelegate>
+@interface ImageViewController : UIViewController <UIScrollViewDelegate, UIActionSheetDelegate>
 
 -(id)initWithPhoto:(StreamPhoto*)photo;
 

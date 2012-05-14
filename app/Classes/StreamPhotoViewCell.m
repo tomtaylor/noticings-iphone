@@ -11,13 +11,15 @@
 #import "NoticingsAppDelegate.h"
 
 @implementation StreamPhotoViewCell
-@synthesize photo;
+@synthesize photo = _photo;
 
-#define MAX_IMAGE_HEIGHT 360
+#define MAX_IMAGE_HEIGHT 320
 
 
--(void) populateFromPhoto:(StreamPhoto*)_photo;
+-(void) populateFromPhoto:(StreamPhoto*)setphoto;
 {
+    DLog(@"populateFromPhoto %@", setphoto);
+    
     // drop shadow on the white photo background
 //    frameView.layer.shadowOffset = CGSizeMake(0,2);
 //    frameView.layer.shadowColor = [[UIColor blackColor] CGColor];
@@ -25,37 +27,71 @@
 //    frameView.layer.shadowOpacity = 0.6f;
     self.contentView.backgroundColor = [UIColor colorWithWhite:0.6f alpha:1.0f];
 
-    self.photo = _photo;
+    if (self.photo == setphoto) {
+        return;
+    }
 
-    titleView.text = photo.title;
-    usernameView.text = photo.ownername;
+
+    self.photo = setphoto;
+
+    titleView.text = self.photo.title;
+    usernameView.text = self.photo.ownername;
 
     // gfx are for losers. I like unicode.
-    timeagoView.text = [@"⌚" stringByAppendingString:photo.ago];
+    timeagoView.text = [@"⌚" stringByAppendingString:self.photo.ago];
 
-    hasLocationImage.hidden = !photo.hasLocation;
+    hasLocationImage.hidden = !self.photo.hasLocation;
 
-    int vis = photo.visibility;
+    int vis = self.photo.visibility;
     if (vis == StreamPhotoVisibilityPrivate) {
-        privacyImage.image = [UIImage imageNamed:@"visibility_red.png"];
+        privacyImage.image = [UIImage imageNamed:@"visibility_red"];
     } else if (vis == StreamPhotoVisibilityLimited) {
-        privacyImage.image = [UIImage imageNamed:@"visibility_yellow.png"];
+        privacyImage.image = [UIImage imageNamed:@"visibility_yellow"];
     } else if (vis == StreamPhotoVisibilityPublic) {
-        privacyImage.image = [UIImage imageNamed:@"visibility_green.png"];
+        privacyImage.image = [UIImage imageNamed:@"visibility_green"];
     }
     
-    // make landscape images aspect fill and crop to frame, so we get perfect margins.
-    // or actually, images that are close enough to landscape that we'd get ugly margins.
-    if ([photo imageHeightForWidth:320] <= MAX_IMAGE_HEIGHT * 1.0) {
-        photoView.contentMode = UIViewContentModeScaleAspectFill;
-    } else {
-        photoView.contentMode = UIViewContentModeScaleAspectFit;
-    }
-    
+    avatarView.image = [UIImage imageNamed:@"235-person"];
+    photoView.image = [UIImage imageNamed:@"photos"];
+    photoView.contentMode = UIViewContentModeCenter;
+
+    __block StreamPhotoViewCell* _self = self;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSData * data = [[[NSData alloc] initWithContentsOfURL:self.photo.imageURL] autorelease];
+        UIImage * image = [[[UIImage alloc] initWithData:data] autorelease];
+        if (image != nil) {
+            dispatch_async( dispatch_get_main_queue(), ^{
+                if (_self.photo == setphoto) {
+                    photoView.image = image;
+
+                    // make landscape images aspect fill and crop to frame, so we get perfect margins.
+                    // or actually, images that are close enough to landscape that we'd get ugly margins.
+                    if ([_self.photo imageHeightForWidth:320] <= MAX_IMAGE_HEIGHT * 0.95) {
+                        photoView.contentMode = UIViewContentModeScaleAspectFill;
+                    } else {
+                        photoView.contentMode = UIViewContentModeScaleAspectFit;
+                    }
+                }
+            });
+        }
+    });
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSData * data = [[[NSData alloc] initWithContentsOfURL:self.photo.avatarURL] autorelease];
+        UIImage * image = [[[UIImage alloc] initWithData:data] autorelease];
+        if (image != nil) {
+            dispatch_async( dispatch_get_main_queue(), ^{
+                if (_self.photo == setphoto) {
+                    avatarView.image = image;
+                }
+            });
+        }
+    });
+
     // all the views in the nib have the right affinity to edges and know how to scale
     // themselves, so we just have to resize the outer frame and re-lay them out.
     CGRect frame = self.frame;
-    frame.size.height = [StreamPhotoViewCell cellHeightForPhoto:photo];
+    frame.size.height = [StreamPhotoViewCell cellHeightForPhoto:self.photo];
     self.frame = frame;
     
 }
@@ -69,57 +105,21 @@
     // to "aspect fill" for landscape images, so as long as we're within 1% here everything looks
     // fine.
     
-    CGFloat nativeCellHeight = 370; // copy from table cell nib if you change it.
-    CGFloat roomForControls = nativeCellHeight - 310; // image in nib is 310 high. Everything else in cell must therefore be..
+    CGFloat controls = 80;
 
     // ideal image height, limited to a maximum so images don't make cells bigger than the window.
     CGFloat wantedImageHeight = MIN( [photo imageHeightForWidth:320], MAX_IMAGE_HEIGHT);
     
-    return wantedImageHeight + roomForControls;
+    return wantedImageHeight + controls;
 }
 
-
--(void)loadImages;
-{
-    CacheManager *manager = [NoticingsAppDelegate delegate].cacheManager;
-
-    UIImage *cached = [manager cachedImageForURL:photo.imageURL];
-    if (cached) {
-        photoView.image = cached;
-    } else {
-        photoView.image = nil; // TODO - loading spinner or something.
-        [manager fetchImageForURL:photo.imageURL andNotify:self];
-    }
-    
-    cached = [manager cachedImageForURL:photo.avatarURL];
-    if (cached) {
-        avatarView.image = cached;
-    } else {
-        avatarView.image = nil; // TODO - loading spinner or something.
-        [manager fetchImageForURL:photo.avatarURL andNotify:self];
-    }
-}
-
-
--(void) loadedImage:(UIImage*)image forURL:(NSURL*)url cached:(BOOL)cached;
-{
-    if ([url isEqual:self.photo.imageURL]) {
-        photoView.image = image;
-    }
-    if ([url isEqual:photo.avatarURL]) {
-        avatarView.image = image;
-    }
-}
-
-
--(void) gotLocation:(NSString*)location forPhoto:(StreamPhoto*)_photo;
+-(void) gotLocation:(NSString*)location forPhoto:(StreamPhoto*)photo;
 {
     // note that this cell can be re-used, so don't overwrite the wrong location.
-    if ([_photo.woeid isEqual:self.photo.woeid]) {
+    if ([photo.woeid isEqual:self.photo.woeid]) {
         //placeView.text = [@"⊙" stringByAppendingString:location];
     }
 }
-
 
 - (void)dealloc {
     self.photo = nil;

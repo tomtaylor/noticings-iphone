@@ -13,6 +13,7 @@
 #import "CacheManager.h"
 #import <ImageIO/ImageIO.h>
 #import "StreamViewController.h"
+#import "CacheURLProtocol.h"
 
 #ifdef ADHOC
 #import "TestFlight.h"
@@ -55,6 +56,8 @@ BOOL gLogging = FALSE;
                               nil];
 	[userDefaults registerDefaults:defaults];
 	[userDefaults synchronize];
+
+    [NSURLProtocol registerClass:[CacheURLProtocol class]];
     
     self.contactsStreamManager = [[[ContactsStreamManager alloc] init] autorelease];
     self.cacheManager = [[[CacheManager alloc] init] autorelease];
@@ -155,7 +158,6 @@ BOOL gLogging = FALSE;
 - (void)applicationDidEnterBackground:(UIApplication *)application;
 {
     // something caused us to be bakgrounded. incoming call, home button, etc.
-    [[NoticingsAppDelegate delegate].cacheManager flushMemoryCache];
     [[NoticingsAppDelegate delegate].contactsStreamManager resetFlickrContext];
 }
 

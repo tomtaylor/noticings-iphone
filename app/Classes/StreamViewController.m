@@ -98,7 +98,6 @@
 
 -(void)viewWillDisappear:(BOOL)animated;
 {
-    [[NoticingsAppDelegate delegate].cacheManager flushQueue]; // we don't need any of the pending photos any more.
     [super viewWillDisappear:animated];
     if (isRoot) {
         // hide navigation bar, only for root controller
@@ -179,7 +178,6 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    [[NoticingsAppDelegate delegate].cacheManager flushMemoryCache];
 }
 
 - (StreamPhoto *)streamPhotoAtIndexPath:(NSIndexPath*)indexPath {
@@ -277,7 +275,6 @@
     StreamPhoto *photo = [self streamPhotoAtIndexPath:indexPath];
     if (photo) {
         StreamPhotoViewCell *cell = [self passiveTableCellForPhoto:photo];
-        [cell loadImages];
         return cell;
     }
     

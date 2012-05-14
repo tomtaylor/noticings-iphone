@@ -25,10 +25,11 @@
     }
     .photo {
         display: block;
-        max-width: 320px;
-        max-height: 180px;
-        margin-left: auto;
-        margin-right: auto;
+        width: 320px;
+        height: 100px;
+        background-repeat:no-repeat;
+        background-position: 0 -50%;
+        background-size: 100% auto;
     }
 
     #map {
@@ -115,13 +116,7 @@
 </head>
 <body>
 
-{{#imageLoaded}}    
-<div id='image'><a href='noticings-image:'><img class="photo" src='{{ imageFile }}'></a></div>
-{{/imageLoaded}}
-
-{{^imageLoaded}}    
-<div id='image'><a href='noticings-image:'><div class='photo-loading'></div></a></div>
-{{/imageLoaded}}
+<div id='image'><a href='noticings-image:'><div class="photo" style="background: url({{ imageFile }})">&nbsp;</div></a></div>
 
 <div class="copy">
     <a href="noticings-user:"><img id="avatar" src='{{ avatarFile }}'></a>
@@ -161,9 +156,7 @@
     
 
 {{#photo/hasLocation}}
-{{#mapImageLoaded}}
 <a href='noticings-map:'><img id='map' src='{{ mapImageFile }}'></a>
-{{/mapImageLoaded}}
 {{/photo/hasLocation}}
 
     

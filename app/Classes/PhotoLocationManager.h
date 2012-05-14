@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import "StreamPhoto.h"
-#import "ASIHTTPRequest.h"
 
 @protocol LocationDelegate <NSObject>
 @required

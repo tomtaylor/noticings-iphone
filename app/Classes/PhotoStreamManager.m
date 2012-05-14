@@ -8,7 +8,6 @@
 
 #import "PhotoStreamManager.h"
 
-#import "ASIHTTPRequest.h"
 #import "APIKeys.h"
 #import "NoticingsAppDelegate.h"
 
@@ -54,11 +53,6 @@
         return;
     }
     
-//    if (![self flickrRequest]) {
-//        NSLog(@"No authenticated flickr connection - not refreshing.");
-//        return;
-//    }
-//    
     self.inProgress = YES;
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     
@@ -90,8 +84,6 @@
         [self saveCachedImageList];
         
         self.lastRefresh = [[NSDate date] timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970;
-        self.inProgress = NO;
-        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 
         NSLog(@"loaded %d photos", [self.rawPhotos count]);
         if (self.delegate) {
@@ -191,18 +183,17 @@
 {
     NSLog(@"pre-caching images for %@", self.class);
     
+    __block PhotoStreamManager* _self = self;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
 
         // pre-cache images
-        CacheManager *cacheManager = [NoticingsAppDelegate delegate].cacheManager;
         //PhotoLocationManager *locationManager = [PhotoLocationManager sharedPhotoLocationManager];
         
-        for (StreamPhoto *sp in self.filteredPhotos) {
-            if (![cacheManager cachedImageForURL:sp.avatarURL]) {
-                [cacheManager fetchImageForURL:sp.avatarURL andNotify:nil];
-            }
-            if (![cacheManager cachedImageForURL:sp.imageURL]) {
-                [cacheManager fetchImageForURL:sp.imageURL andNotify:nil];
+        for (StreamPhoto *sp in _self.filteredPhotos) {
+            [NSData dataWithContentsOfURL:sp.avatarURL];
+            [NSData dataWithContentsOfURL:sp.imageURL];
+            if (sp.hasLocation) {
+                [NSData dataWithContentsOfURL:sp.mapImageURL];
             }
             //if (![locationManager cachedLocationForPhoto:sp]) {
             //    [locationManager getLocationForPhoto:sp andTell:nil];
@@ -220,9 +211,6 @@
 - (void)dealloc
 {
     NSLog(@"deallocing %@", self.class);
-//    [flickrRequest cancel];
-//    flickrRequest.delegate = nil;
-//    [flickrRequest release];
     self.delegate = nil;
     self.rawPhotos = nil;
     [super dealloc];

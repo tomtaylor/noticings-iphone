@@ -8,26 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
-// protocol for delegates of loadImagefetchImageForURL:andNotify:
-@protocol DeferredImageLoader <NSObject>
-@required
--(void) loadedImage:(UIImage*)image forURL:(NSURL*)url cached:(BOOL)cached;
-@end
-
 @interface CacheManager : NSObject
 
-- (NSString*) cachePathForFilename:(NSString*)filename;
-- (UIImage *) cachedImageForURL:(NSURL*)url;
-- (void) fetchImageForURL:(NSURL*)url andNotify:(NSObject <DeferredImageLoader>*)sender;
-- (void) flushMemoryCache;
-- (void) flushQueue;
-- (void) clearCache;
+-(NSString*) cachePathForFilename:(NSString*)filename;
 - (NSString*) urlToFilename:(NSURL*)url;
+- (void) clearCache;
 
 @property (retain) NSString *cacheDir;
-@property (retain) NSMutableDictionary *imageCache;
-@property (retain) NSMutableDictionary *imageRequests;
-@property (retain) NSOperationQueue *queue;
-
 
 @end

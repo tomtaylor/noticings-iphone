@@ -54,7 +54,7 @@
         if (self.photoUpload.asset) {
             self.imageView.image = [UIImage imageWithCGImage:self.photoUpload.asset.thumbnail];
         } else {
-            self.imageView.image = [UIImage imageNamed:@"Icon.png"];
+            self.imageView.image = [UIImage imageNamed:@"Icon"];
         }
         
         if (self.photoUpload.title == nil || [self.photoUpload.title isEqualToString:@""]) {

@@ -38,8 +38,6 @@ GRMustacheTemplate *template;
         self.photo = _photo;
         self.streamManager = _streamManager;
         self.title = self.photo.title;
-        firstRender = YES;
-
     }
     return self;
 }
@@ -137,12 +135,13 @@ GRMustacheTemplate *template;
         [composer release];
 
     } else if (buttonIndex == saveRollIndex) {
-        UIImage *image = [[NoticingsAppDelegate delegate].cacheManager cachedImageForURL:self.photo.imageURL];
-        if (image) {
-            UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil);
-        } else {
-            // TODO. Bugger.
-        }
+        // TODO
+//        UIImage *image = [[NoticingsAppDelegate delegate].cacheManager cachedImageForURL:self.photo.imageURL];
+//        if (image) {
+//            UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil);
+//        } else {
+//            // TODO. Bugger.
+//        }
 
     }
 }
@@ -158,31 +157,19 @@ GRMustacheTemplate *template;
     NSLog(@"%@ will appear and display %@", self.class, self.photo);
     [super viewWillAppear:animated];
 
-    CacheManager *cacheManager = [NoticingsAppDelegate delegate].cacheManager;
     PhotoLocationManager *locationManager = [NoticingsAppDelegate delegate].photoLocationManager;
-
-    // load images if we haven't got them already.
-    if (![cacheManager cachedImageForURL:self.photo.imageURL]) {
-        [cacheManager fetchImageForURL:self.photo.imageURL andNotify:self];
-    }
-    if (![cacheManager cachedImageForURL:self.photo.avatarURL]) {
-        [cacheManager fetchImageForURL:self.photo.avatarURL andNotify:self];
-    }
-
     if (self.photo.hasLocation) {
-        if (![cacheManager cachedImageForURL:self.photo.mapImageURL]) {
-            [cacheManager fetchImageForURL:self.photo.mapImageURL andNotify:self];
-        }
-        
         self.photoLocation = [locationManager cachedLocationForPhoto:self.photo];
         if (!self.photoLocation) {
             self.photoLocation = self.photo.placename;
             [locationManager getLocationForPhoto:photo andTell:self];
         }
-
     } else {
         self.photoLocation = nil;
     }
+
+    [self updateHTML];
+
     
     // load comments
     NSDictionary *args = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -198,7 +185,6 @@ GRMustacheTemplate *template;
          if (!self.comments) {
              self.comments = [NSArray array];
          }
-         NSLog(@"comments are %@", self.comments);
          [self updateHTML];
      }
      orFail:^(NSString* code, NSString *err){
@@ -206,17 +192,6 @@ GRMustacheTemplate *template;
          self.comments = nil;
          [self updateHTML];
      }];
-    
-    // if we have the template, just render it. otherwise, it'll need loading,
-    // which will take time. don't defer the appearance of the view, or it'll
-    // hang the front end.
-    if (template) {
-        [self updateHTML];
-    } else {
-        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-            [self updateHTML];
-        }];
-    }
 }
 
 -(void) gotLocation:(NSString*)location forPhoto:(StreamPhoto*)photo;
@@ -228,7 +203,6 @@ GRMustacheTemplate *template;
 -(void)viewWillDisappear:(BOOL)animated;
 {
     NSLog(@"%@ will disappear", self.class);
-    [[NoticingsAppDelegate delegate].cacheManager flushQueue];
     [super viewWillDisappear:animated];
 }
 
@@ -255,21 +229,12 @@ GRMustacheTemplate *template;
     }
 
 
-    CacheManager *cacheManager = [NoticingsAppDelegate delegate].cacheManager;
     NSMutableDictionary *templateData = [NSMutableDictionary dictionary];
     [templateData setValue:self.photo forKey:@"photo"];
 
-    [templateData setValue:[cacheManager urlToFilename:photo.imageURL] forKey:@"imageFile"];
-    BOOL imageLoaded = [[NSFileManager defaultManager] fileExistsAtPath:[templateData valueForKey:@"imageFile"]];
-    [templateData setValue:[NSNumber numberWithBool:imageLoaded] forKey:@"imageLoaded"];
-
-    [templateData setValue:[cacheManager urlToFilename:photo.mapImageURL] forKey:@"mapImageFile"];
-    BOOL mapImageLoaded = [[NSFileManager defaultManager] fileExistsAtPath:[templateData valueForKey:@"mapImageFile"]];
-    [templateData setValue:[NSNumber numberWithBool:mapImageLoaded] forKey:@"mapImageLoaded"];
-
-    [templateData setValue:[cacheManager urlToFilename:photo.avatarURL] forKey:@"avatarFile"];
-    BOOL avatarLoaded = [[NSFileManager defaultManager] fileExistsAtPath:[templateData valueForKey:@"avatarFile"]];
-    [templateData setValue:[NSNumber numberWithBool:avatarLoaded] forKey:@"avatarLoaded"];
+    [templateData setValue:photo.imageURL.absoluteString forKey:@"imageFile"];
+    [templateData setValue:photo.mapImageURL.absoluteString forKey:@"mapImageFile"];
+    [templateData setValue:photo.avatarURL.absoluteString forKey:@"avatarFile"];
 
     [templateData setValue:self.photoLocation forKey:@"location"];
     
@@ -286,8 +251,7 @@ GRMustacheTemplate *template;
 
     [templateData setValue:self.comments forKey:@"comments"];
     [templateData setValue:[NSNumber numberWithInt:self.comments.count] forKey:@"commentCount"];
-
-
+    
     id pluralizeHelper = [GRMustacheBlockHelper helperWithBlock:(^(GRMustacheSection *section, id context) {
         NSString *count = [context valueForKey:@"description"];
         NSString *contents = [section renderObject:context];
@@ -326,22 +290,12 @@ GRMustacheTemplate *template;
     })];
     [templateData setObject:dateHelper forKey:@"dateHelper"];
     
-    //NSLog(@"rendering with %@", templateData);
+//    NSLog(@"rendering with %@", templateData);
     NSString *rendered = [template renderObject:templateData];
-    //NSLog(@"rendered as %@", rendered);
+//    NSLog(@"rendered as %@", rendered);
     
-//    if (firstRender) {
-        NSURL *baseURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
-        [self.webView loadHTMLString:rendered baseURL:baseURL];
-        firstRender = NO;
-//    } else {
-//        // update HTML by replacing with JS.
-//        NSString *html = [NSString stringWithFormat:@"document.getElementsByTagName('html')[0].innerHTML = \"%@\";", [rendered stringByEncodingForJavaScript]];
-//        NSLog(@"updating webview with JS");
-//        [self.webView stringByEvaluatingJavaScriptFromString:html];
-//    }
-   
-
+    NSURL *baseURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
+    [self.webView loadHTMLString:rendered baseURL:baseURL];
 }
 
 // open links in the webview using the system browser
@@ -427,6 +381,10 @@ GRMustacheTemplate *template;
     [super viewDidUnload];
     self.webView.delegate = nil;
     self.webView = nil;
+    self.comments = nil;
+    self.photoLocation = nil;
+    self.streamManager = nil;
+    self.photo = nil;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -437,14 +395,7 @@ GRMustacheTemplate *template;
 
 -(void)dealloc;
 {
-    if (self.webView) {
-        self.webView.delegate = nil;
-    }
-    self.webView = nil;
-    self.comments = nil;
-    self.photoLocation = nil;
-    self.streamManager = nil;
-    self.photo = nil;
+    [self viewDidUnload];
     [super dealloc];
 }
 

@@ -16,9 +16,7 @@
 #import <MessageUI/MessageUI.h>
 #import <MessageUI/MFMailComposeViewController.h>
 
-@interface StreamPhotoViewController : UIViewController <UIWebViewDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate, DeferredImageLoader, LocationDelegate> {
-    BOOL firstRender;
-    
+@interface StreamPhotoViewController : UIViewController <UIWebViewDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate, LocationDelegate> {
     int sendMailIndex;
     int sendTweetIndex;
     int saveRollIndex;
