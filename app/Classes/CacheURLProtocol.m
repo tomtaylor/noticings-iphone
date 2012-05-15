@@ -129,6 +129,7 @@
             [self respond:self.data];
         } else {
             DLog(@"Non-200 status code from HTTP response, not caching.");
+            [self respond:self.data];
         }
     } else {
         DLog(@"Not caching non-HTTP response.");

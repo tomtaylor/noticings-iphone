@@ -37,7 +37,7 @@ GRMustacheTemplate *template;
     if (self) {
         self.photo = _photo;
         self.streamManager = _streamManager;
-        self.title = self.photo.title;
+        self.title = @""; // self.photo.title;
     }
     return self;
 }
@@ -64,6 +64,23 @@ GRMustacheTemplate *template;
     
     self.navigationItem.rightBarButtonItem = externalItem;
     [externalItem release];
+
+
+    // hide the shadows
+    for (UIView* shadowView in [[[self.webView subviews] objectAtIndex:0] subviews]) {
+        [shadowView setHidden:YES];
+    }
+    [[[[[self.webView subviews] objectAtIndex:0] subviews] lastObject] setHidden:NO];
+    self.view.backgroundColor = [UIColor colorWithWhite:(255.0f - 64.0f)/255 alpha:1];
+    
+    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] 
+                                   initWithTitle: @"Photo" 
+                                   style: UIBarButtonItemStyleBordered
+                                   target: nil action: nil];
+    
+    [self.navigationItem setBackBarButtonItem: backButton];
+    [backButton release];
+
 }
 
 -(void)externalButton;
@@ -156,6 +173,7 @@ GRMustacheTemplate *template;
 {
     NSLog(@"%@ will appear and display %@", self.class, self.photo);
     [super viewWillAppear:animated];
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
 
     PhotoLocationManager *locationManager = [NoticingsAppDelegate delegate].photoLocationManager;
     if (self.photo.hasLocation) {
@@ -231,11 +249,6 @@ GRMustacheTemplate *template;
 
     NSMutableDictionary *templateData = [NSMutableDictionary dictionary];
     [templateData setValue:self.photo forKey:@"photo"];
-
-    [templateData setValue:photo.imageURL.absoluteString forKey:@"imageFile"];
-    [templateData setValue:photo.mapImageURL.absoluteString forKey:@"mapImageFile"];
-    [templateData setValue:photo.avatarURL.absoluteString forKey:@"avatarFile"];
-
     [templateData setValue:self.photoLocation forKey:@"location"];
     
     [templateData setValue:[NSNumber numberWithBool:(self.photo.visibility == StreamPhotoVisibilityPrivate)] forKey:@"isPrivate"];
@@ -279,14 +292,20 @@ GRMustacheTemplate *template;
         // than 1 hour, for instance) but mostly so I don't have to remove the 's' for the ==1 case. :-)
         if (days > 1) {
             return [NSString stringWithFormat:@"%d days ago", days];
+        } else {
+            hours += days * 24;
         }
         if (hours > 1) {
-            return [NSString stringWithFormat:@"%d hours ago", hours + days*24];
+            return [NSString stringWithFormat:@"%d hours ago", hours];
+        } else {
+            minutes += hours * 60;
         }
         if (minutes > 1) {
-            return [NSString stringWithFormat:@"%d minutes ago", minutes + hours*60];
+            return [NSString stringWithFormat:@"%d minutes ago", minutes];
+        } else {
+            seconds += minutes * 60;
         }
-        return [NSString stringWithFormat:@"%d seconds ago", seconds + minutes*60];
+        return [NSString stringWithFormat:@"%d seconds ago", seconds];
     })];
     [templateData setObject:dateHelper forKey:@"dateHelper"];
     

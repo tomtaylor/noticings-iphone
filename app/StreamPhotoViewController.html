@@ -10,105 +10,101 @@
         font-size: 14px;
         width: 320px;
         overflow-x: hidden;
+        background: #404040;
+        color: white;
     }
-    h3 {
-        font-size: 14px;
+
+    h1 {
+        display: block;
+        width: 310px;
         font-weight: bold;
+        font-size: 18px;
+        color: white;
+        padding: 10px 5px 8px 5px;
     }
-    
-    #image {
+
+    #photo {
         display: block;
         width: 320px;
-        background: black;
-        max-height: 180px;
-        min-height: 100px;
-    }
-    .photo {
-        display: block;
-        width: 320px;
-        height: 100px;
-        background-repeat:no-repeat;
-        background-position: 0 -50%;
+        height: 70px;
+        background: #444;
+        background-image: url({{{ photo/imageURL }}});
+        background-position: 0 50%;
         background-size: 100% auto;
     }
 
-    #map {
-        display: block;
-        width: 320px; /* size also in StreamPhoto.m */
-        height: 100px;
-        background: #999;
-    }
-
-    /* body copy. Protect it from the edges. */
-    .copy {
-        padding: 5px;
-        width: 310px;
-        overflow-x: hidden; /* comments are awful */
-    }
-
-    img {
-        max-width: 320px; /* helps in comments */
-    }
-
-
-    #avatar {
+    .avatar {
         width: 38px;
         height: 38px;
         float: left;
-        margin-right: 5px;
+        margin: 5px;
     }
-    #title {
-        font-weight: bold;
-    }
-    #owner {
-        font-weight: bold;
-        color: #444;
+    .rightcol {
+        display: block;
+        width: 266px;
+        padding-left: 48px;
+        margin-bottom: 15px;
     }
 
-    #meta { /* photo uploaded 5 hours ago in barnes */
-        margin-top: 15px;
+    #photometa {
+        color: #444;
+        display: block;
+        width: 320px;
+        background: white;
+        overflow: hidden;
     }
+    
+    
+    #owner {
+        font-weight: bold;
+    }
+
+    #tags {
+        font-style: italic;
+        color: #999;
+    }
+    
+    #map {
+        display: block;
+        width: 320px; /* size also in StreamPhoto.m */
+        height: 70px;
+        background: #444;
+        background-image: url({{{ photo/mapImageURL }}});
+        background-position: 0 50%;
+        background-size: 100% auto;
+    }
+
     .timeago { color: #444; }
     .public { color: #279900 }
     .private { color: #990017; }
     .limited { color: #999800; }
 
-    #description {
-        color: #333;
-        width: 300px;
-    }
 
-/* for linkable tags
-    #tags {
-        line-height: 33px;
-    }
-    .tag {
-        background: #ddd;
-        -webkit-border-radius: 10px;
-        margin-right: 1px;
-        padding: 4px 10px 6px 10px;
-        text-decoration: none;
-        color: black;
-        white-space: nowrap;
-    }
-*/
-    .tag {
-        font-style: italic;
-        color: #333;
-    }
-    
     #comments {
         margin-bottom: 10px;
+        width: 320px;
+        overflow-x: hidden;
     }
     .comment {
-        color: #333;
         margin-bottom: 15px;
     }
-    .author {
+    .comment img {
+        max-width: 266px;
+    }
+    .comment p {
+        color: #bbb;
+    }
+    .comment .author {
         font-weight: bold;
     }
-    .date {
+    .comment .date {
         font-style: italic;
+    }
+
+    #addcomment a {
+        color: white;
+        padding-top: 20px;
+        padding-bottom: 20px;
     }
     
 
@@ -116,65 +112,62 @@
 </head>
 <body>
 
-<div id='image'><a href='noticings-image:'><div class="photo" style="background: url({{ imageFile }})">&nbsp;</div></a></div>
+<h1 id="title">{{photo/title}}</h1>
 
-<div class="copy">
-    <a href="noticings-user:"><img id="avatar" src='{{ avatarFile }}'></a>
-    <p id="title">{{photo/title}}</p>
-    <p id='owner'>by <a href='noticings-user:'>{{photo/ownername}}</a></p>
-</div><!-- copy -->
+<a href='noticings-image:'><div id="photo"></div></a>
 
-    
-{{#photo/html}}
-<div class="copy" id='description'>
-    <p>{{{photo/html}}}</p>
-</div><!-- copy -->
-{{/photo/html}}
+<div id="photometa">
+    <a href="noticings-user:"><img class="avatar" src='{{ photo/avatarURL }}'></a>
+    <p id='owner' class="rightcol">by <a href='noticings-user:'>{{photo/ownername}}</a></p>
+    {{#photo/html}}
+    <p id="description" class="rightcol">{{{photo/html}}}</p>
+    {{/photo/html}}
 
-    
-{{#hasTags}}
-<div class="copy" id="tags">
-    {{#photo/humanTags}}
-    <!-- <a class='tag' href='noticings-tag:{{.}}'> --><span class="tag">#{{.}}</span> <!-- </a> -->
-    {{/photo/humanTags}}
+    {{#hasTags}}
+    <p id="tags" class="rightcol">
+        {{#photo/humanTags}}
+        <!-- <a class='tag' href='noticings-tag:{{.}}'> --><span class="tag">#{{.}}</span> <!-- </a> -->
+        {{/photo/humanTags}}
+    </p>
+    {{/hasTags}}
+
+    <p id="meta" class="rightcol">
+        Photo is
+        {{#isPublic}}<span class="public">public</span>.{{/isPublic}}
+        {{#isPrivate}}<span class="private">private</span>.{{/isPrivate}}
+        {{#isLimited}}<span class="limited">limited</span>.{{/isLimited}}
+        
+        Uploaded {{#photo/dateupload}}{{#dateHelper}}{{/dateHelper}}{{/photo/dateupload}}{{^photo/hasLocation}}.{{/photo/hasLocation}}{{#photo/hasLocation}},{{/photo/hasLocation}}
+        
+        {{#photo/hasLocation}}
+        <br>in <a href='noticings-map:'>{{ location }}</a>.
+        {{/photo/hasLocation}}
+    </p>
+
 </div>
-{{/hasTags}}
 
     
-<div class="copy" id="meta">
-    Photo is
-    {{#isPublic}}<span class="public">public</span>.{{/isPublic}}
-    {{#isPrivate}}<span class="private">private</span>.{{/isPrivate}}
-    {{#isLimited}}<span class="limited">limited</span>.{{/isLimited}}
-    
-    Uploaded {{#photo/dateupload}}{{#dateHelper}}{{/dateHelper}}{{/photo/dateupload}}{{^photo/hasLocation}}.{{/photo/hasLocation}}{{#photo/hasLocation}},{{/photo/hasLocation}}
-    
-    {{#photo/hasLocation}}
-        <br>in <a href='noticings-map:'>{{ location }}</a>:
-    {{/photo/hasLocation}}
-</div>
-    
 
-{{#photo/hasLocation}}
-<a href='noticings-map:'><img id='map' src='{{ mapImageFile }}'></a>
-{{/photo/hasLocation}}
+{{#photo/hasLocation__}}
+<a href='noticings-map:'><div id="map"></div></a>
+{{/photo/hasLocation__}}
 
-    
-    
-<div class="copy" id="comments">
+<div id="comments">
 
     {{#loadedComments}}
     {{#hasComments}}
-        <h3>{{#commentCount}}{{#pluralizeHelper}}comment{{/pluralizeHelper}}{{/commentCount}}:</h3>
-        {{#comments}}<p class='comment'>
-            <!-- LIMIT FEATURES! <a class='author' href='noticings-user:{{author}}:{{authorname}}'>--><span class="author">{{authorname}}</span><!-- </a> -->
-            <span class="date">({{#datecreate}}{{#dateHelper}}{{/dateHelper}}{{/datecreate}})</span>:
-            {{{_content}}}
-        </p>{{/comments}}
+        <h1>{{#commentCount}}{{#pluralizeHelper}}comment{{/pluralizeHelper}}{{/commentCount}}:</h1>
+        {{#comments}}<div class='comment'>
+            <img class="avatar" src="cache://farm{{iconfarm}}.static.flickr.com/{{iconserver}}/buddyicons/{{author}}.jpg">
+            <p class="author" class="rightcol">{{authorname}} <span class="date">({{#datecreate}}{{#dateHelper}}{{/dateHelper}}{{/datecreate}})</span></p>
+            <p class="body" class="rightcol">{{{_content}}}</p>
+        </div>{{/comments}}
+        <p id='addcomment' class="rightcol"><a href='noticings-comment:'>Add a comment</a></p>
     {{/hasComments}}
 
     {{^hasComments}}
-        <h3>No comments.</h3>
+        <h1>No comments.</h1>
+        <p id='addcomment' class="rightcol"><a href='noticings-comment:'>Add a comment</a></p>
     {{/hasComments}}
     {{/loadedComments}}
 
@@ -183,10 +176,9 @@
     {{/failedComments}}
 
     {{#loadingComments}}
-    <h3>Loading comments...</h3>
+<!--    <h3>Loading comments...</h3> -->
     {{/loadingComments}}
 
-    <p class='add-comment'><a href='noticings-comment:'>Add comment</a></p>
 
 </div>
 

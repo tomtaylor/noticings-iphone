@@ -54,7 +54,7 @@
 
 - (NSString*)html;
 {
-    NSString *raw = [self.details valueForKeyPath:@"description._text"];
+    NSString *raw = [self.details valueForKeyPath:@"description._content"];
     return [raw stringByReplacingOccurrencesOfString:@"\n" withString:@"<br>"];
 }
 
@@ -108,7 +108,7 @@
 -(NSURL*)mapImageURL;
 {
     int scale = [UIScreen mainScreen].scale; //  1 or 2
-    NSString *mapURL = [NSString stringWithFormat:@"cache://maps.googleapis.com/maps/api/staticmap?sensor=false&size=320x100&center=%f,%f&zoom=12&scale=%d&markers=size:small%%7C%f,%f",
+    NSString *mapURL = [NSString stringWithFormat:@"cache://maps.googleapis.com/maps/api/staticmap?sensor=false&size=320x70&center=%f,%f&zoom=12&scale=%d&markers=size:small%%7C%f,%f",
                         self.latitude, self.longitude, scale, self.latitude, self.longitude];
     return [NSURL URLWithString:mapURL];
 }

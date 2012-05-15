@@ -62,7 +62,6 @@
     }
 
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    
 }
 
 - (void)viewDidUnload
@@ -86,6 +85,7 @@
         [self.navigationController setNavigationBarHidden:YES animated:animated];
     }
     [super viewWillAppear:animated];
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     [self updatePullText];
 }
 

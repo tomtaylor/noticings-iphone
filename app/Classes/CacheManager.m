@@ -84,6 +84,21 @@ extern const NSUInteger kMaxDiskCacheSize;
     }
 }
 
+-(void)reapCache;
+{
+    NSFileManager *manager = [NSFileManager defaultManager];
+    for (NSString *subPath in [manager subpathsAtPath:self.cacheDir]) {
+        DLog(@"Found %@", subPath);
+        NSString *fullPath = [self.cacheDir stringByAppendingPathComponent:subPath];
+        NSDictionary* fileAttribs = [[NSFileManager defaultManager] attributesOfItemAtPath:fullPath error:nil];
+        NSDate *result = [fileAttribs fileCreationDate]; //or fileModificationDate
+        if ([[NSDate date] timeIntervalSinceDate:result] > 3600 * 24 * 7) {
+            DLog(@"File is more than a week old. Reaping.");
+            [manager removeItemAtPath:fullPath error:nil];
+        }
+    }
+
+}
 - (void)dealloc
 {
     self.cacheDir = nil;

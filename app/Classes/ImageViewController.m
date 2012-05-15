@@ -60,7 +60,7 @@
     [self.scrollView addGestureRecognizer:twoFingerTap];
     [doubleTap release];
     [twoFingerTap release];
-    
+
     [self.view addSubview:self.scrollView];
 }
 

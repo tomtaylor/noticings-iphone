@@ -66,7 +66,7 @@
 
                     // make landscape images aspect fill and crop to frame, so we get perfect margins.
                     // or actually, images that are close enough to landscape that we'd get ugly margins.
-                    if ([_self.photo imageHeightForWidth:320] <= MAX_IMAGE_HEIGHT * 0.95) {
+                    if ([_self.photo imageHeightForWidth:320] <= MAX_IMAGE_HEIGHT) {
                         photoView.contentMode = UIViewContentModeScaleAspectFill;
                     } else {
                         photoView.contentMode = UIViewContentModeScaleAspectFit;

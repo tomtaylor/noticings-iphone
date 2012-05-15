@@ -192,9 +192,9 @@
         for (StreamPhoto *sp in _self.filteredPhotos) {
             [NSData dataWithContentsOfURL:sp.avatarURL];
             [NSData dataWithContentsOfURL:sp.imageURL];
-            if (sp.hasLocation) {
-                [NSData dataWithContentsOfURL:sp.mapImageURL];
-            }
+//            if (sp.hasLocation) {
+//                [NSData dataWithContentsOfURL:sp.mapImageURL];
+//            }
             //if (![locationManager cachedLocationForPhoto:sp]) {
             //    [locationManager getLocationForPhoto:sp andTell:nil];
             //}
