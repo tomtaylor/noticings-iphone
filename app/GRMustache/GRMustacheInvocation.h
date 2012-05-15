@@ -1,6 +1,6 @@
 // The MIT License
 // 
-// Copyright (c) 2010 Gwendal Roué
+// Copyright (c) 2012 Gwendal Roué
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,12 +20,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if TARGET_OS_IPHONE
-#ifndef GRMUSTACHE_IPHONE_OS_VERSION_MAX_ALLOWED
-#define GRMUSTACHE_IPHONE_OS_VERSION_MAX_ALLOWED __IPHONE_OS_VERSION_MAX_ALLOWED
-#endif
-#endif
+#import <Foundation/Foundation.h>
+#import "GRMustacheAvailabilityMacros.h"
 
-#ifndef GRMUSTACHE_BLOCKS_AVAILABLE
-#define GRMUSTACHE_BLOCKS_AVAILABLE NS_BLOCKS_AVAILABLE
-#endif
+@interface GRMustacheInvocation : NSObject {
+@private
+    id _returnValue;
+    id _token;
+}
+@property (nonatomic, readonly) NSString *key AVAILABLE_GRMUSTACHE_VERSION_3_0_AND_LATER;
+@property (nonatomic, retain) id returnValue AVAILABLE_GRMUSTACHE_VERSION_3_0_AND_LATER;
+@end

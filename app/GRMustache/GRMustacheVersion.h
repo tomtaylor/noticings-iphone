@@ -1,6 +1,6 @@
 // The MIT License
 // 
-// Copyright (c) 2010 Gwendal Roué
+// Copyright (c) 2012 Gwendal Roué
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,21 +24,21 @@
 /**
  The major component of GRMustache version
  
- @since v1.0.0
+ @since v1.0
  */
-#define GRMUSTACHE_MAJOR_VERSION 1
+#define GRMUSTACHE_MAJOR_VERSION 3
 
 /**
  The minor component of GRMustache version
  
- @since v1.0.0
+ @since v1.0
  */
-#define GRMUSTACHE_MINOR_VERSION 8
+#define GRMUSTACHE_MINOR_VERSION 0
 
 /**
  The patch-level component of GRMustache version
  
- @since v1.0.0
+ @since v1.0
  */
-#define GRMUSTACHE_PATCH_VERSION 6
+#define GRMUSTACHE_PATCH_VERSION 1
 

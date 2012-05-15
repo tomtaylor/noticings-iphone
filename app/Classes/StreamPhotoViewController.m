@@ -238,7 +238,7 @@ GRMustacheTemplate *template;
         NSLog(@"first run - need to parse template.");
         NSError *err = nil;
         NSString *file = [[NSBundle mainBundle] pathForResource:@"StreamPhotoViewController" ofType:@"html" inDirectory:nil];
-        template = [[GRMustacheTemplate parseContentsOfFile:file error:&err] retain];
+        template = [[GRMustacheTemplate templateFromContentsOfFile:file error:&err] retain];
         if (err != nil) {
             NSLog(@"error parsing template: %@", err);
             return;
@@ -265,16 +265,16 @@ GRMustacheTemplate *template;
     [templateData setValue:self.comments forKey:@"comments"];
     [templateData setValue:[NSNumber numberWithInt:self.comments.count] forKey:@"commentCount"];
     
-    id pluralizeHelper = [GRMustacheBlockHelper helperWithBlock:(^(GRMustacheSection *section, id context) {
-        NSString *count = [context valueForKey:@"description"];
-        NSString *contents = [section renderObject:context];
+    id pluralizeHelper = [GRMustacheHelper helperWithBlock:(^(GRMustacheSection *section) {
+        NSString *count = [section valueForKey:@"description"];
+        NSString *contents = [section render];
         NSString *result = [NSString stringWithFormat:@"%@ %@%@", count, contents, ([count isEqualToString:@"1"] ? @"" : @"s")];
         return result;
     })];
     [templateData setObject:pluralizeHelper forKey:@"pluralizeHelper"];
     
-    id dateHelper = [GRMustacheBlockHelper helperWithBlock:(^(GRMustacheSection *section, id context) {
-        double timestamp = [[context valueForKey:@"description"] doubleValue];
+    id dateHelper = [GRMustacheHelper helperWithBlock:(^(GRMustacheSection *section) {
+        double timestamp = [[section valueForKey:@"description"] doubleValue];
 
         // TODO - copied out of StreamPhoto/ago - refactor.
         NSTimeInterval epoch = [[NSDate date] timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970; // yeah.

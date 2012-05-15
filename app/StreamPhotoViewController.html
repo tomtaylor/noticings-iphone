@@ -28,7 +28,7 @@
         width: 320px;
         height: 70px;
         background: #444;
-        background-image: url({{{ photo/imageURL }}});
+        background-image: url({{{ photo.imageURL }}});
         background-position: 0 50%;
         background-size: 100% auto;
     }
@@ -69,7 +69,7 @@
         width: 320px; /* size also in StreamPhoto.m */
         height: 70px;
         background: #444;
-        background-image: url({{{ photo/mapImageURL }}});
+        background-image: url({{{ photo.mapImageURL }}});
         background-position: 0 50%;
         background-size: 100% auto;
     }
@@ -112,22 +112,22 @@
 </head>
 <body>
 
-<h1 id="title">{{photo/title}}</h1>
+<h1 id="title">{{photo.title}}</h1>
 
 <a href='noticings-image:'><div id="photo"></div></a>
 
 <div id="photometa">
-    <a href="noticings-user:"><img class="avatar" src='{{ photo/avatarURL }}'></a>
-    <p id='owner' class="rightcol">by <a href='noticings-user:'>{{photo/ownername}}</a></p>
-    {{#photo/html}}
-    <p id="description" class="rightcol">{{{photo/html}}}</p>
-    {{/photo/html}}
+    <a href="noticings-user:"><img class="avatar" src='{{ photo.avatarURL }}'></a>
+    <p id='owner' class="rightcol">by <a href='noticings-user:'>{{photo.ownername}}</a></p>
+    {{#photo.html}}
+    <p id="description" class="rightcol">{{{photo.html}}}</p>
+    {{/photo.html}}
 
     {{#hasTags}}
     <p id="tags" class="rightcol">
-        {{#photo/humanTags}}
+        {{#photo.humanTags}}
         <!-- <a class='tag' href='noticings-tag:{{.}}'> --><span class="tag">#{{.}}</span> <!-- </a> -->
-        {{/photo/humanTags}}
+        {{/photo.humanTags}}
     </p>
     {{/hasTags}}
 
@@ -137,20 +137,20 @@
         {{#isPrivate}}<span class="private">private</span>.{{/isPrivate}}
         {{#isLimited}}<span class="limited">limited</span>.{{/isLimited}}
         
-        Uploaded {{#photo/dateupload}}{{#dateHelper}}{{/dateHelper}}{{/photo/dateupload}}{{^photo/hasLocation}}.{{/photo/hasLocation}}{{#photo/hasLocation}},{{/photo/hasLocation}}
+        Uploaded {{#photo.dateupload}}{{#dateHelper}}{{/dateHelper}}{{/photo.dateupload}}{{^photo.hasLocation}}.{{/photo.hasLocation}}{{#photo.hasLocation}},{{/photo.hasLocation}}
         
-        {{#photo/hasLocation}}
+        {{#photo.hasLocation}}
         <br>in <a href='noticings-map:'>{{ location }}</a>.
-        {{/photo/hasLocation}}
+        {{/photo.hasLocation}}
     </p>
 
 </div>
 
     
 
-{{#photo/hasLocation__}}
+{{#photo.hasLocation__}}
 <a href='noticings-map:'><div id="map"></div></a>
-{{/photo/hasLocation__}}
+{{/photo.hasLocation__}}
 
 <div id="comments">
 

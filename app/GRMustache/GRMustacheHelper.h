@@ -1,6 +1,6 @@
 // The MIT License
 // 
-// Copyright (c) 2010 Gwendal Roué
+// Copyright (c) 2012 Gwendal Roué
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,23 +21,27 @@
 // THE SOFTWARE.
 
 #import <Foundation/Foundation.h>
-#import "GRMustacheEnvironment.h"
 #import "GRMustacheAvailabilityMacros.h"
-@class GRMustacheSection;
-@class GRMustacheContext;
 
-#if GRMUSTACHE_BLOCKS_AVAILABLE
-@interface GRMustacheBlockHelper: NSObject {
-@private
-	NSString *(^block)(GRMustacheSection* section, id context);
-}
-+ (id)helperWithBlock:(NSString *(^)(GRMustacheSection* section, id context))block AVAILABLE_GRMUSTACHE_VERSION_1_5_AND_LATER;
+@class GRMustacheSection;
+
+
+// =============================================================================
+#pragma mark - <GRMustacheHelper>
+
+@protocol GRMustacheHelper<NSObject>
+@required
+- (NSString *)renderSection:(GRMustacheSection *)section AVAILABLE_GRMUSTACHE_VERSION_3_0_AND_LATER;
 @end
 
-typedef NSString *(^GRMustacheRenderingBlock)(GRMustacheSection*, GRMustacheContext*);
-id GRMustacheLambdaBlockMake(GRMustacheRenderingBlock block) AVAILABLE_GRMUSTACHE_VERSION_1_3_AND_LATER_BUT_DEPRECATED_IN_GRMUSTACHE_VERSION_1_5;
 
-typedef NSString *(^GRMustacheRenderer)(id object);
-typedef id GRMustacheLambda;
-GRMustacheLambda GRMustacheLambdaMake(NSString *(^block)(NSString *(^)(id object), id, NSString *)) AVAILABLE_GRMUSTACHE_VERSION_1_0_AND_LATER_BUT_DEPRECATED_IN_GRMUSTACHE_VERSION_1_3;
-#endif
+// =============================================================================
+#pragma mark - GRMustacheHelper
+
+#if NS_BLOCKS_AVAILABLE
+
+@interface GRMustacheHelper: NSObject<GRMustacheHelper>
++ (id)helperWithBlock:(NSString *(^)(GRMustacheSection* section))block AVAILABLE_GRMUSTACHE_VERSION_3_0_AND_LATER;
+@end
+
+#endif /* if NS_BLOCKS_AVAILABLE */

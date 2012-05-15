@@ -1,6 +1,6 @@
 // The MIT License
 // 
-// Copyright (c) 2010 Gwendal Roué
+// Copyright (c) 2012 Gwendal Roué
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,13 +23,13 @@
 #import <Foundation/Foundation.h>
 #import "GRMustacheAvailabilityMacros.h"
 
-@interface GRMustacheContext: NSObject {
-@private
-	id object;
-	GRMustacheContext *parent;
-}
-+ (id)contextWithObject:(id)object AVAILABLE_GRMUSTACHE_VERSION_1_3_AND_LATER_BUT_DEPRECATED_IN_GRMUSTACHE_VERSION_1_5;
-+ (id)contextWithObjects:(id)object, ... AVAILABLE_GRMUSTACHE_VERSION_1_3_AND_LATER_BUT_DEPRECATED_IN_GRMUSTACHE_VERSION_1_5;
-- (GRMustacheContext *)contextByAddingObject:(id)object AVAILABLE_GRMUSTACHE_VERSION_1_3_AND_LATER_BUT_DEPRECATED_IN_GRMUSTACHE_VERSION_1_5;
-- (id)valueForKey:(NSString *)key AVAILABLE_GRMUSTACHE_VERSION_1_3_AND_LATER;
+@class GRMustacheTemplate;
+@class GRMustacheInvocation;
+
+@protocol GRMustacheTemplateDelegate<NSObject>
+@optional
+- (void)templateWillRender:(GRMustacheTemplate *)template AVAILABLE_GRMUSTACHE_VERSION_3_0_AND_LATER;
+- (void)templateDidRender:(GRMustacheTemplate *)template AVAILABLE_GRMUSTACHE_VERSION_3_0_AND_LATER;
+- (void)template:(GRMustacheTemplate *)template willRenderReturnValueOfInvocation:(GRMustacheInvocation *)invocation AVAILABLE_GRMUSTACHE_VERSION_3_0_AND_LATER;
+- (void)template:(GRMustacheTemplate *)template didRenderReturnValueOfInvocation:(GRMustacheInvocation *)invocation AVAILABLE_GRMUSTACHE_VERSION_3_0_AND_LATER;
 @end
