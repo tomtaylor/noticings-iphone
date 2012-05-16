@@ -104,8 +104,10 @@
         NSString *name = [rsp valueForKeyPath:@"place.name"];
         if (!name) {
             // store a true value, at least.
-            name = @"";
+            name = @"Unknown location";
         }
+        NSString *first = [[name componentsSeparatedByString:@","] objectAtIndex:0];
+        name = [NSString stringWithFormat:@"%@, %@", first, [rsp valueForKeyPath:@"place.country._content"]];
         NSLog(@"Got location name '%@' for woeid %@", name, woeid);
         NSTimeInterval now = [[NSDate date] timeIntervalSinceReferenceDate];
         NSDictionary *cachedLocation = [NSDictionary dictionaryWithObjectsAndKeys:
