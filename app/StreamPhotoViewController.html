@@ -8,6 +8,7 @@
         padding: 0;
         font-family: "Helvetica Neue", Helvetica, sans-serif;
         font-size: 14px;
+        line-height: 20px;
         width: 320px;
         overflow-x: hidden;
         background: #404040;
@@ -19,14 +20,15 @@
         width: 310px;
         font-weight: bold;
         font-size: 18px;
+        line-height: 24px;
         color: white;
-        padding: 10px 5px 8px 5px;
+        padding: 16px 4px 12px 4px;
     }
 
     #photo {
         display: block;
         width: 320px;
-        height: 70px;
+        height: 72px;
         background: #444;
         background-image: url({{{ photo.imageURL }}});
         background-position: 0 50%;
@@ -37,26 +39,25 @@
         width: 38px;
         height: 38px;
         float: left;
-        margin: 5px;
+        margin: 4px;
     }
     .rightcol {
         display: block;
-        width: 266px;
+        width: 258px;
         padding-left: 48px;
-        margin-bottom: 15px;
+        margin-bottom: 12px;
     }
 
     #photometa {
-        color: #444;
         display: block;
-        width: 320px;
         background: white;
-        overflow: hidden;
+        color: #444;
+        padding-bottom: 8px;
     }
     
-    
-    #owner {
+    .owner {
         font-weight: bold;
+        margin-bottom: 4px;
     }
 
     #tags {
@@ -67,7 +68,7 @@
     #map {
         display: block;
         width: 320px; /* size also in StreamPhoto.m */
-        height: 70px;
+        height: 72px;
         background: #444;
         background-image: url({{{ photo.mapImageURL }}});
         background-position: 0 50%;
@@ -81,12 +82,11 @@
 
 
     #comments {
-        margin-bottom: 10px;
-        width: 320px;
-        overflow-x: hidden;
+        margin-bottom: 12px;
     }
     .comment {
-        margin-bottom: 15px;
+        margin-bottom: 12px;
+        overflow: auto; /* clear */
     }
     .comment img {
         max-width: 266px;
@@ -94,17 +94,15 @@
     .comment p {
         color: #bbb;
     }
-    .comment .author {
-        font-weight: bold;
-    }
     .comment .date {
+        font-weight: normal;
         font-style: italic;
     }
 
     #addcomment a {
         color: white;
-        padding-top: 20px;
-        padding-bottom: 20px;
+        padding-top: 24px;
+        padding-bottom: 24px;
     }
     
 
@@ -118,7 +116,7 @@
 
 <div id="photometa">
     <a href="noticings-user:"><img class="avatar" src='{{ photo.avatarURL }}'></a>
-    <p id='owner' class="rightcol">by <a href='noticings-user:'>{{photo.ownername}}</a></p>
+    <p class="owner rightcol">by <a href='noticings-user:'>{{photo.ownername}}</a></p>
     {{#photo.html}}
     <p id="description" class="rightcol">{{{photo.html}}}</p>
     {{/photo.html}}
@@ -137,10 +135,10 @@
         {{#isPrivate}}<span class="private">private</span>.{{/isPrivate}}
         {{#isLimited}}<span class="limited">limited</span>.{{/isLimited}}
         
-        Uploaded {{#photo.dateupload}}{{#dateHelper}}{{/dateHelper}}{{/photo.dateupload}}{{^photo.hasLocation}}.{{/photo.hasLocation}}{{#photo.hasLocation}},{{/photo.hasLocation}}
+        Uploaded {{#dateHelper}}{{photo.dateupload}}{{/dateHelper}}{{^photo.hasLocation}}.{{/photo.hasLocation}}{{#photo.hasLocation}},{{/photo.hasLocation}}
         
         {{#photo.hasLocation}}
-        <br>in <a href='noticings-map:'>{{ location }}</a>.
+        in <a href='noticings-map:'>{{ location }}</a>.
         {{/photo.hasLocation}}
     </p>
 
@@ -156,13 +154,16 @@
 
     {{#loadedComments}}
     {{#hasComments}}
-        <h1>{{#commentCount}}{{#pluralizeHelper}}comment{{/pluralizeHelper}}{{/commentCount}}:</h1>
-        {{#comments}}<div class='comment'>
+        <h1>{{#commentCount}}{{#pluralizeHelper}}Comment{{/pluralizeHelper}}{{/commentCount}}</h1>
+        {{#comments}}
+        <div class='comment'>
             <img class="avatar" src="cache://farm{{iconfarm}}.static.flickr.com/{{iconserver}}/buddyicons/{{author}}.jpg">
-            <p class="author" class="rightcol">{{authorname}} <span class="date">({{#datecreate}}{{#dateHelper}}{{/dateHelper}}{{/datecreate}})</span></p>
-            <p class="body" class="rightcol">{{{_content}}}</p>
-        </div>{{/comments}}
-        <p id='addcomment' class="rightcol"><a href='noticings-comment:'>Add a comment</a></p>
+            <p class="owner rightcol">{{authorname}} <span class="date">({{#dateHelper}}{{datecreate}}{{/dateHelper}})</span></p>
+            <p class="body rightcol">{{{_content}}}</p>
+        </div>
+        {{/comments}}
+
+    <p id='addcomment' class="rightcol"><a href='noticings-comment:'>Add a comment</a></p>
     {{/hasComments}}
 
     {{^hasComments}}
@@ -183,4 +184,4 @@
 </div>
 
 </body>
-</html>
+</html

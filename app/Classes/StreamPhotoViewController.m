@@ -274,22 +274,31 @@ GRMustacheTemplate *template;
     [templateData setObject:pluralizeHelper forKey:@"pluralizeHelper"];
     
     id dateHelper = [GRMustacheHelper helperWithBlock:(^(GRMustacheSection *section) {
-        double timestamp = [[section valueForKey:@"description"] doubleValue];
+        NSLog(@"section is %@", section);
+        double timestamp = [[section render] doubleValue];
 
         // TODO - copied out of StreamPhoto/ago - refactor.
         NSTimeInterval epoch = [[NSDate date] timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970; // yeah.
-        int ago = epoch - timestamp; // woooo overflow bug. I hope your friends upload at least once every 2*32 seconds!
+        int ago = epoch - timestamp;
         if (ago < 0) {
-            return @"just now";
+            return @"a moment ago";
         }
         
+        NSLog(@"ago is %f - %f = %d", epoch, timestamp, ago);
         int seconds = ago % 60;
         int minutes = (ago / 60) % 60;
         int hours = (ago / (60*60)) % 24;
         int days = (ago / (24*60*60));
+        int months = (ago / (24*60*60*30));
+        NSLog(@"%d/%d/%d/%d/%d", months, days, hours, minutes, seconds);
         
         // >1 here partially to make things more precise when they're small numbers (75 mins better 
         // than 1 hour, for instance) but mostly so I don't have to remove the 's' for the ==1 case. :-)
+        if (months > 1) {
+            return [NSString stringWithFormat:@"%d months ago", months];
+        } else {
+            days += months * 30;
+        }
         if (days > 1) {
             return [NSString stringWithFormat:@"%d days ago", days];
         } else {
@@ -309,9 +318,9 @@ GRMustacheTemplate *template;
     })];
     [templateData setObject:dateHelper forKey:@"dateHelper"];
     
-//    NSLog(@"rendering with %@", templateData);
+    NSLog(@"rendering with %@", templateData);
     NSString *rendered = [template renderObject:templateData];
-//    NSLog(@"rendered as %@", rendered);
+    NSLog(@"rendered as %@", rendered);
     
     NSURL *baseURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
     [self.webView loadHTMLString:rendered baseURL:baseURL];
