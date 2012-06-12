@@ -255,6 +255,10 @@
     DLog(@"SENT %d bytes of %d", totalBytesWritten, totalBytesExpectedToWrite);
     // we get to go up to 0.80
     [self status:(0.80 * totalBytesWritten) / totalBytesExpectedToWrite];
+
+    if ([self isCancelled]) {
+        [connection cancel];
+    }
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response;
@@ -262,6 +266,10 @@
 	// every response could mean a redirect
     DLog(@"got response");
     self.responseData = nil;
+
+    if ([self isCancelled]) {
+        [connection cancel];
+    }
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data;
@@ -271,6 +279,10 @@
         self.responseData = [NSMutableData dataWithData:data];
 	} else {
 		[self.responseData appendData:data];
+    }
+
+    if ([self isCancelled]) {
+        [connection cancel];
     }
 }
 
