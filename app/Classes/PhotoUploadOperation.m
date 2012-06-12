@@ -13,8 +13,12 @@
 
 @implementation PhotoUploadOperation
 
-@synthesize upload = _upload;
-@synthesize manager = _manager;
+@synthesize upload = _upload,
+            manager = _manager,
+            requestLock = requestLock,
+            requestFinished = _requestFinished,
+            requestFailed = _requestFailed,
+            responseData = _responseData;
 
 #define BOUNDRY @"------------0x834758488ASDGC78A7896SFD"
 
@@ -31,7 +35,7 @@
 }
 
 
--(void)fail;
+-(void)fail:(NSError*)e;
 {
     [self backout];
     dispatch_async(dispatch_get_main_queue(),^{
@@ -62,7 +66,7 @@
     
     NSData *uploaddata = [self.upload imageData];
     if (!uploaddata) {
-        return [self fail];
+        return [self fail:nil];
     }
     
     if ([self isCancelled]) return [self backout];
@@ -128,22 +132,35 @@
     [myreq setValue:length forHTTPHeaderField:@"Content-Length"];
 
     if ([self isCancelled]) return [self backout];
-    [self.manager operationUpdated];
+    [self status:0];
     
-    NSHTTPURLResponse *response = nil;
-    NSError *error = nil;
-    NSData *responsedata = [NSURLConnection sendSynchronousRequest:myreq returningResponse:&response error:&error];
-
-    if ([self isCancelled]) return [self backout];
-    [self status:0.85];
-
-
-    if (error) {
-        return [self fail];
+    // make long-running request, blocking this thread, but sending status updates
+    self.requestLock = [[[NSCondition alloc] init] autorelease];
+    [self.requestLock lock];
+    self.requestFinished = FALSE;
+    
+    __block NSURLConnection *connection;
+    // NSURLConnection needs the main thread runloop. this is annoying.
+    dispatch_async(dispatch_get_main_queue(),^{
+        connection = [[NSURLConnection alloc] initWithRequest:myreq delegate:self startImmediately:YES];
+    });
+    while (!(self.requestFinished || self.requestFailed)) {
+        DLog(@"waiting for upload to complete");
+        [self.requestLock wait];
     }
+    [connection release];
+    
+    if (self.requestFailed) return; // assume [self fail:] already called
+    if ([self isCancelled]) return [self backout];
+    if (!self.responseData) {
+        DLog(@"no data from response");
+        return [self fail:nil];
+    }
+    [self status:0.85];
     
     // response here is XML. Fuck.
-    NSString *stringBody = [[NSString alloc] initWithData:responsedata encoding:NSUTF8StringEncoding];
+    NSString *stringBody = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
+    self.responseData = nil;
     
     // I REALLY REALLY DON'T WANT TO TALK ABOUT THIS
     NSRange start = [stringBody rangeOfString:@"<photoid>"];
@@ -151,6 +168,7 @@
     NSString *photoId = [stringBody substringWithRange:NSMakeRange(start.location + start.length, end.location - (start.location+start.length))];
     NSLog(@"Got photo ID %@", photoId);
     [stringBody release];
+    
 
     self.upload.flickrId = photoId;
 
@@ -176,7 +194,7 @@
         NSError *error = nil;
         [callManager callSynchronousFlickrMethod:@"flickr.photos.setDates" asPost:YES withArgs:arguments error:&error];
         if (error) {
-            return [self fail];
+            return [self fail:error];
         }
     }
     
@@ -208,7 +226,7 @@
             NSError *error = nil;
             [callManager callSynchronousFlickrMethod:@"flickr.photos.geo.setLocation" asPost:YES withArgs:arguments error:&error];
             if (error) {
-                return [self fail];
+                return [self fail:error];
             }
             
         } else if (CLLocationCoordinate2DIsValid(self.upload.originalCoordinate)) {            
@@ -216,9 +234,10 @@
             
             DLog(@"PhotoUpload did originally have a coordinate, but was removed the map, so removing the geodata manually.");
             NSDictionary *arguments = [NSDictionary dictionaryWithObject:self.upload.flickrId forKey:@"photo_id"];
+            NSError *error = nil;
             [callManager callSynchronousFlickrMethod:@"flickr.photos.geo.removeLocation" asPost:YES withArgs:arguments error:&error];
             if (error) {
-                return [self fail];
+                return [self fail:error];
             }
         }
         
@@ -226,6 +245,50 @@
     
     if ([self isCancelled]) return [self backout];
     [self status:1];
+}
+
+
+#pragma mark NSURLConnection data delegate methods
+
+- (void)connection:(NSURLConnection *)connection didSendBodyData:(NSInteger)bytesWritten totalBytesWritten:(NSInteger)totalBytesWritten totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite
+{
+    DLog(@"SENT %d bytes of %d", totalBytesWritten, totalBytesExpectedToWrite);
+    // we get to go up to 0.80
+    [self status:(0.80 * totalBytesWritten) / totalBytesExpectedToWrite];
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response;
+{
+	// every response could mean a redirect
+    DLog(@"got response");
+    self.responseData = nil;
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data;
+{
+    DLog(@"got data in response to upload");
+	if (!self.responseData) {
+        self.responseData = [NSMutableData dataWithData:data];
+	} else {
+		[self.responseData appendData:data];
+    }
+}
+
+// all worked
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection;
+{
+    DLog(@"upload complete");
+    self.requestFinished = YES;
+    [self.requestLock signal];
+}
+
+// and error occured
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error;
+{
+    DLog(@"upload failed");
+    self.requestFailed = YES;
+    [self fail:error];
+    [self.requestLock signal];
 }
 
 
