@@ -19,19 +19,9 @@
 -(void) populateFromPhoto:(StreamPhoto*)setphoto;
 {
     DLog(@"populateFromPhoto %@", setphoto);
-    
-    // drop shadow on the white photo background
-//    frameView.layer.shadowOffset = CGSizeMake(0,2);
-//    frameView.layer.shadowColor = [[UIColor blackColor] CGColor];
-//    frameView.layer.shadowRadius = 5.0f;
-//    frameView.layer.shadowOpacity = 0.6f;
-    self.contentView.backgroundColor = [UIColor colorWithWhite:0.6f alpha:1.0f];
-
     if (self.photo == setphoto) {
         return;
     }
-
-
     self.photo = setphoto;
 
     titleView.text = self.photo.title;

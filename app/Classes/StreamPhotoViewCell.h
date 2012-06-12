@@ -22,7 +22,6 @@
     IBOutlet UILabel *usernameView;
     IBOutlet UILabel *timeagoView;
     IBOutlet UILabel *titleView;
-
     IBOutlet UIView *frameView;
 }
 

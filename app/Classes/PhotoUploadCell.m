@@ -8,45 +8,22 @@
 
 #import "PhotoUploadCell.h"
 #import "UploadQueueManager.h"
-#import <QuartzCore/QuartzCore.h>
 #import "NoticingsAppDelegate.h"
-
-#import "StreamPhotoViewCell.h" // for PADDING constant
-@interface PhotoUploadCell (Private)
-
-- (void)updateDetailText;
-
-@end
-
 
 @implementation PhotoUploadCell
 
-@synthesize photoUpload, imageView, textLabel, detailTextLabel, progressView, optionsButton;
-@synthesize topBorder, bottomBorder;
-
-- (id)initWithCoder:(NSCoder *)coder {
-    self = [super initWithCoder:coder];
-    if (self) {
-        [[NoticingsAppDelegate delegate].uploadQueueManager addObserver:self
-                                                        forKeyPath:@"inProgress"
-                                                           options:NSKeyValueObservingOptionNew
-                                                           context:NULL];
-
-    }
-    return self;
-}
+@synthesize photoUpload, imageView, textLabel, detailTextLabel, progressView;
 
 -(void)displayPhotoUpload:(PhotoUpload *)_upload;
 {
     if (self.photoUpload == _upload) {
         return;
     }
-
     if (self.photoUpload) {
-        [self.photoUpload removeObserver:self forKeyPath:@"progress"];
+        [self.photoUpload removeObserver:self forKeyPath:@"inProgress"];
         [self.photoUpload removeObserver:self forKeyPath:@"state"];
     }
-    
+
     self.photoUpload = _upload;
     
     if (self.photoUpload) {
@@ -68,7 +45,7 @@
         [self updateDetailText];
         
         [self.photoUpload addObserver:self
-                           forKeyPath:@"progress"
+                           forKeyPath:@"inProgress"
                               options:(NSKeyValueObservingOptionNew)
                               context:NULL];
         
@@ -83,65 +60,7 @@
         self.detailTextLabel.text = @"";
     }
 
-    UIColor *background = [UIColor colorWithWhite:0.8f alpha:1.0f];
-    UIColor *shadow = [UIColor colorWithWhite:0.6f alpha:1.0f];
-    
-    CAGradientLayer *gradient = [CAGradientLayer layer];
-    gradient.frame = topBorder.bounds;
-    gradient.colors = [NSArray arrayWithObjects:(id)[background CGColor], (id)[shadow CGColor], nil];
-    [topBorder.layer insertSublayer:gradient atIndex:0];
-    
-    gradient = [CAGradientLayer layer];
-    gradient.frame = bottomBorder.bounds;
-    gradient.colors = [NSArray arrayWithObjects:(id)[shadow CGColor], (id)[background CGColor], nil];
-    [bottomBorder.layer insertSublayer:gradient atIndex:0];
-
-    self.contentView.backgroundColor = background;
-
 }
-
-- (IBAction)pressedOptionsButton;
-{
-    UIActionSheet *popupQuery;
-    
-    if ([NoticingsAppDelegate delegate].uploadQueueManager.inProgress) {
-        popupQuery = [[UIActionSheet alloc]
-                      initWithTitle:@"Upload Options"
-                      delegate:self
-                      cancelButtonTitle:@"Cancel"
-                      destructiveButtonTitle:@"Remove upload"
-                      otherButtonTitles:@"Pause upload", nil];
-    } else {
-        popupQuery = [[UIActionSheet alloc]
-                      initWithTitle:@"Upload Options"
-                      delegate:self
-                      cancelButtonTitle:@"Cancel"
-                      destructiveButtonTitle:@"Remove upload"
-                      otherButtonTitles:@"Retry upload", nil];
-
-    }
-    
-    [popupQuery showInView:self];
-    [popupQuery release];
-}
-     
- -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    UploadQueueManager *uploadQueueManager = [NoticingsAppDelegate delegate].uploadQueueManager;
-    
-    if (buttonIndex == 0) {
-        [uploadQueueManager cancelUpload:self.photoUpload];
-    } else if (buttonIndex == 1) {
-        if (uploadQueueManager.inProgress) {
-            [uploadQueueManager pauseQueue];
-        } else {
-//            [uploadQueueManager.photoUploads removeObject:self.photoUpload];
-//            [uploadQueueManager.photoUploads insertObject:self.photoUpload atIndex:0];
-//            [uploadQueueManager startQueueIfNeeded];
-        }
-    }
-}
-     
 
 - (void)updateDetailText {
 	if ([NoticingsAppDelegate delegate].uploadQueueManager.inProgress) {

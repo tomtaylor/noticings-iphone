@@ -107,6 +107,8 @@
 
 - (void)operationUpdated;
 {
+    // TODO - do we need to do this - use KVO on upload objects to update UI, this should only be to
+    // indicate that the nmber of uploads has changed
 	[[NSNotificationCenter defaultCenter] postNotificationName:@"queueCount" object:[NSNumber numberWithInt:self.queue.operationCount]];
 }
 
