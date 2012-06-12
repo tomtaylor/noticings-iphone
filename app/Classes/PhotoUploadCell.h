@@ -20,5 +20,6 @@
 @property (retain, nonatomic) IBOutlet UILabel* textLabel;
 @property (retain, nonatomic) IBOutlet UILabel* detailTextLabel;
 @property (retain, nonatomic) IBOutlet UIProgressView* progressView;
+@property (retain, nonatomic) IBOutlet UIImage *notAButton;
 
 @end

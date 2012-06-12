@@ -131,19 +131,11 @@ BOOL gLogging = FALSE;
 - (void)queueDidChange {
 	int count = [NoticingsAppDelegate delegate].uploadQueueManager.queue.operationCount;
 	[UIApplication sharedApplication].applicationIconBadgeNumber = count;
-	
 	if (count > 0) {
 		queueTab.badgeValue = [NSString stringWithFormat:@"%u",	count];
 	} else {
 		queueTab.badgeValue = nil;
 	}
-	[UIApplication sharedApplication].networkActivityIndicatorVisible = [NoticingsAppDelegate delegate].uploadQueueManager.inProgress;
-
-    // reload tableview
-    UINavigationController *nav = (UINavigationController*)[self.tabBarController.viewControllers objectAtIndex:0];
-    if (nav.visibleViewController.class == StreamViewController.class) {
-        [((StreamViewController*)nav.visibleViewController).tableView reloadData];
-    }
 }
 
 - (void)setDefaults {

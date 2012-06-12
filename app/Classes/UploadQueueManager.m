@@ -17,7 +17,6 @@
 @implementation UploadQueueManager
 
 //@synthesize photoUploads = _photoUploads;
-@synthesize inProgress = _inProgress;
 @synthesize backgroundTask = _backgroundTask;
 @synthesize queue = _queue;
 
@@ -28,18 +27,15 @@
 		self.backgroundTask = UIBackgroundTaskInvalid;
         self.queue = [[[NSOperationQueue alloc] init] autorelease];
         self.queue.maxConcurrentOperationCount = 1;
-        [self.queue addObserver:self forKeyPath:@"operations" options:NSKeyValueObservingOptionNew context:nil];
-        [self.queue addObserver:self forKeyPath:@"suspended" options:NSKeyValueObservingOptionNew context:nil];
-        self.inProgress = FALSE;
+        [self.queue addObserver:self forKeyPath:@"operationCount" options:NSKeyValueObservingOptionNew context:nil];
         [self restoreQueuedUploads];
 	}
 	return self;
 }
 
+// queue has changed
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context;
 {
-    self.inProgress = self.queue.operationCount > 0 && ![self.queue isSuspended];
-
 	[[NSNotificationCenter defaultCenter] postNotificationName:@"queueCount" object:[NSNumber numberWithInt:self.queue.operationCount]];
 }
 
@@ -51,15 +47,15 @@
 
 -(void)cancelUpload:(PhotoUpload*)upload;
 {
+    DLog(@"cancelling %@", upload);
     for (PhotoUploadOperation *op in self.queue.operations) {
+        DLog(@"considering %@", op.upload);
         if ([op.upload isEqual:upload]) {
+            DLog(@"found that upload in queue");
             [op cancel];
+            [op.requestLock signal];
         }
     }
-}
-
-- (void)startQueueIfNeeded {
-    [self.queue setSuspended:NO];
 }
 
 - (void)startBackgroundTaskIfNeeded {
@@ -100,16 +96,10 @@
 	}
 
     // operation is complete, having failed. Add a new one to the bottom of the queue, and suspend it.
-    PhotoUploadOperation *op = [[PhotoUploadOperation alloc] initWithPhotoUpload:upload manager:self];
-    [self.queue addOperation:op];
-    [op release];
-}
-
-- (void)operationUpdated;
-{
-    // TODO - do we need to do this - use KVO on upload objects to update UI, this should only be to
-    // indicate that the nmber of uploads has changed
-	[[NSNotificationCenter defaultCenter] postNotificationName:@"queueCount" object:[NSNumber numberWithInt:self.queue.operationCount]];
+    // TODO - need paused uploads for this
+//    PhotoUploadOperation *op = [[PhotoUploadOperation alloc] initWithPhotoUpload:upload manager:self];    
+//    [self.queue addOperation:op];
+//    [op release];
 }
 
 - (void)saveQueuedUploads {
@@ -129,19 +119,12 @@
 //    [self.photoUploads addObjectsFromArray:savedUploads];
 }
 
-- (void)pauseQueue {
-    [self.queue setSuspended:YES];
-}
-
 - (void)fakeUpload;
 {
     // for debugging
     PhotoUpload *upload = [[PhotoUpload alloc] init];
-    upload.title = @"fake upload";
+    upload.title = @"-- fake upload --";
     upload.timestamp = [NSDate date];
-    upload.inProgress = YES;
-    upload.progress = [NSNumber numberWithFloat:0.5];
-    self.inProgress = YES;
     [self addPhotoUploadToQueue:upload];
     [upload release];
 }

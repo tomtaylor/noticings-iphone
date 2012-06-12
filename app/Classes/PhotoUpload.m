@@ -22,7 +22,6 @@ enum {
 @synthesize asset;
 @synthesize progress;
 @synthesize inProgress;
-@synthesize state;
 @synthesize privacy;
 @synthesize flickrId;
 @synthesize title;
@@ -38,11 +37,10 @@ enum {
 	self = [super init];
 	if (self != nil) {
 		self.asset = _asset;
-		self.state = PhotoUploadStatePendingUpload;
-        self.inProgress = NO;
+        self.inProgress = FALSE;
 		self.progress = [NSNumber numberWithFloat:0.0f];
+
         self.privacy = PhotoUploadPrivacyPublic;
-        
         self.location = [asset valueForProperty:ALAssetPropertyLocation];
         self.originalTimestamp = [asset valueForProperty:ALAssetPropertyDate];
         self.timestamp = [asset valueForProperty:ALAssetPropertyDate];
@@ -64,7 +62,6 @@ enum {
     [coder encodeObject:self.asset.defaultRepresentation.url forKey:@"assetUrl"];
     [coder encodeConditionalObject:self.title forKey:@"title"];
     [coder encodeConditionalObject:self.tags forKey:@"tags"];
-    [coder encodeInt:self.state forKey:@"state"];
     [coder encodeInt:self.privacy forKey:@"privacy"];
     [coder encodeConditionalObject:self.flickrId forKey:@"flickrId"];
     [coder encodeConditionalObject:self.location forKey:@"location"];
@@ -93,7 +90,6 @@ enum {
         
         self.title = [decoder decodeObjectForKey:@"title"];
         self.tags = [decoder decodeObjectForKey:@"tags"];
-        self.state = [decoder decodeIntForKey:@"state"];
         self.privacy = [decoder decodeIntForKey:@"privacy"];
         self.flickrId = [decoder decodeObjectForKey:@"flickrId"];
         self.location = [decoder decodeObjectForKey:@"location"];
@@ -133,13 +129,6 @@ enum {
     return [NSData dataWithBytesNoCopy:buffer 
                                 length:[representation size]          
                           freeWhenDone:YES];  // YES means free malloc'ed buf that backs this when deallocated
-}
-
--(void)togglePause;
-{
-    // TODO - should probably actually _DO_ something.
-    self.inProgress = !self.inProgress;
-    
 }
 
 + (ALAsset *)assetForURL:(NSURL *)url {

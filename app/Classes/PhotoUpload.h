@@ -11,33 +11,12 @@
 #import <AssetsLibrary/AssetsLibrary.h>
 
 enum {
-    PhotoUploadStatePendingUpload,
-    PhotoUploadStateUploaded,
-    PhotoUploadStateLocationSet,
-    PhotoUploadStateComplete
-};
-
-enum {
     PhotoUploadPrivacyPrivate,
     PhotoUploadPrivacyFriendsAndFamily,
     PhotoUploadPrivacyPublic
 };
 
 @interface PhotoUpload : NSObject <MKAnnotation, NSCoding> {
-	ALAsset *asset;
-	NSString *title;
-	NSString *tags;
-	NSNumber *progress;
-    BOOL inProgress;
-	NSInteger state;
-    NSInteger privacy;
-	NSString *flickrId;
-    CLLocation *location;
-	CLLocationCoordinate2D coordinate;
-    CLLocationCoordinate2D originalCoordinate;
-    NSDate *timestamp;
-    NSDate *originalTimestamp;
-    NSConditionLock *assetReadLock;
 }
 
 @property (nonatomic, retain) ALAsset *asset;
@@ -45,7 +24,6 @@ enum {
 @property (nonatomic, retain) NSString *tags;
 @property (nonatomic, retain) NSNumber *progress;
 @property (nonatomic) BOOL inProgress;
-@property (nonatomic) NSInteger state;
 @property (nonatomic) NSInteger privacy;
 @property (nonatomic, retain) NSString *flickrId;
 @property (nonatomic, retain) CLLocation *location;
@@ -59,7 +37,5 @@ enum {
 //- (id)initWithDictionary:(NSDictionary *)dictionary;
 //- (NSDictionary *)asDictionary;
 - (NSData *)imageData;
-
--(void)togglePause;
 
 @end

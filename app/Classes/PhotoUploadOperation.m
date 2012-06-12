@@ -55,22 +55,22 @@
     dispatch_async(dispatch_get_main_queue(),^{
         self.upload.progress = [NSNumber numberWithFloat:progress];
         self.upload.inProgress = YES;
-        [self.manager operationUpdated];
     });
 }
 
 -(void)main;
 {
-    // TODO - upload with progress. Respect 'cancel'.
+    // start us off
     [self status:0];
     
     NSData *uploaddata = [self.upload imageData];
     if (!uploaddata) {
+        DLog(@"no image data for upload");
         return [self fail:nil];
     }
     
     if ([self isCancelled]) return [self backout];
-    [self.manager operationUpdated];
+    [self status:0.05];
     
     NSString *uploadedTitleString;
     if (self.upload.title == nil || [self.upload.title isEqualToString:@""]) {
@@ -132,22 +132,24 @@
     [myreq setValue:length forHTTPHeaderField:@"Content-Length"];
 
     if ([self isCancelled]) return [self backout];
-    [self status:0];
+    [self status:0.05];
     
     // make long-running request, blocking this thread, but sending status updates
     self.requestLock = [[[NSCondition alloc] init] autorelease];
     [self.requestLock lock];
     self.requestFinished = FALSE;
     
-    __block NSURLConnection *connection;
+    __block NSURLConnection *connection = nil;
     // NSURLConnection needs the main thread runloop. this is annoying.
     dispatch_async(dispatch_get_main_queue(),^{
         connection = [[NSURLConnection alloc] initWithRequest:myreq delegate:self startImmediately:YES];
     });
-    while (!(self.requestFinished || self.requestFailed)) {
+    while (!(self.requestFinished || self.requestFailed || self.isCancelled)) {
         DLog(@"waiting for upload to complete");
         [self.requestLock wait];
     }
+    [self.requestLock unlock];
+    self.requestLock = nil;
     [connection release];
     
     if (self.requestFailed) return; // assume [self fail:] already called

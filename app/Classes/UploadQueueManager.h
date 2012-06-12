@@ -12,20 +12,14 @@
 
 @interface UploadQueueManager : NSObject
 
-- (void)startQueueIfNeeded;
 - (void)addPhotoUploadToQueue:(PhotoUpload *)photoUpload;
-- (void)pauseQueue;
-- (void)fakeUpload;
 - (void)cancelUpload:(PhotoUpload*)upload;
 - (void)saveQueuedUploads;
 - (void)restoreQueuedUploads;
 
 // operation callbacks
-- (void)operationUpdated;
 - (void)uploadFailed:(PhotoUpload*)upload;
 
-//@property (nonatomic, retain) NSMutableArray *photoUploads;
-@property (nonatomic) BOOL inProgress;
 @property (nonatomic) UIBackgroundTaskIdentifier backgroundTask;
 @property (nonatomic, retain) NSOperationQueue *queue;
 

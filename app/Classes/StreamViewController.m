@@ -308,9 +308,8 @@
 {
     PhotoUpload *upload = [self photoUploadAtIndexPath:indexPath];
     if (upload) {
-        // just flash the cell.
-        [tableView deselectRowAtIndexPath:indexPath animated:YES];
-        [upload togglePause];
+        DLog(@"cancelling upload %@", upload);
+        [[NoticingsAppDelegate delegate].uploadQueueManager cancelUpload:upload];
         return;
     }
 

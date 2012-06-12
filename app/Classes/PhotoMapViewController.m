@@ -127,9 +127,7 @@ static NSString *adjustPinActionSheetAddTitle = @"Add to Map";
 }
 
 - (void)mapViewDidFinishLoadingMap:(MKMapView *)mapView {
-	if ([NoticingsAppDelegate delegate].uploadQueueManager.inProgress == NO) {
-		[UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-	}
+//    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 }
 
 - (void)locationManager:(CLLocationManager *)manager 
@@ -173,14 +171,11 @@ static NSString *adjustPinActionSheetAddTitle = @"Add to Map";
     }
 	
 	[[NoticingsAppDelegate delegate].uploadQueueManager addPhotoUploadToQueue:self.photoUpload];
-	[[NoticingsAppDelegate delegate].uploadQueueManager startQueueIfNeeded];
     [[AppDelegate tabBarController] setSelectedIndex:0];
     [self.navigationController dismissModalViewControllerAnimated:YES];
     
-    // zoom the image view to the top so we can see the uploading image.
+    // pop the photos view back to the main list, and scroll that to the top so we see the upload progress
     UINavigationController *firstNavController = [[[AppDelegate tabBarController] viewControllers] objectAtIndex:0];
-    
-    // pop the photos view back to the main list, and scroll that to the top.
     [firstNavController popToRootViewControllerAnimated:NO];
     StreamViewController *streamView = (StreamViewController*)[firstNavController.viewControllers objectAtIndex:0];
     [streamView.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];

@@ -98,8 +98,8 @@
 
 /* Begin PBXFileReference section */
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		1D3623240D0F684500981E51 /* NoticingsAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NoticingsAppDelegate.h; path = Classes/NoticingsAppDelegate.h; sourceTree = "<group>"; };
-		1D3623250D0F684500981E51 /* NoticingsAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NoticingsAppDelegate.m; path = Classes/NoticingsAppDelegate.m; sourceTree = "<group>"; };
+		1D3623240D0F684500981E51 /* NoticingsAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NoticingsAppDelegate.h; sourceTree = "<group>"; };
+		1D3623250D0F684500981E51 /* NoticingsAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NoticingsAppDelegate.m; sourceTree = "<group>"; };
 		1D6058910D05DD3D006BFB54 /* Noticings.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Noticings.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		2892E40F0DC94CBA00A64D0F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -162,8 +162,8 @@
 		E2F553B210850EB200FE67C7 /* PhotoMapViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = PhotoMapViewController.xib; path = Classes/PhotoMapViewController.xib; sourceTree = "<group>"; };
 		E604314A144DD370002A5546 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		E60912E6142B535B004861F5 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
-		E60912F6142B982C004861F5 /* CacheManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CacheManager.h; path = Classes/CacheManager.h; sourceTree = "<group>"; };
-		E60912F7142B982C004861F5 /* CacheManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CacheManager.m; path = Classes/CacheManager.m; sourceTree = "<group>"; };
+		E60912F6142B982C004861F5 /* CacheManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheManager.h; sourceTree = "<group>"; };
+		E60912F7142B982C004861F5 /* CacheManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CacheManager.m; sourceTree = "<group>"; };
 		E6119A921450AEFA0078161F /* PhotoUploadCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PhotoUploadCell.xib; sourceTree = "<group>"; };
 		E6119A941450B82A0078161F /* cancel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cancel.png; sourceTree = "<group>"; };
 		E6218AD513C35D7C0021CB80 /* StreamPhoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StreamPhoto.h; path = Classes/StreamPhoto.h; sourceTree = "<group>"; };
@@ -188,8 +188,8 @@
 		E662D77A1450D557002628AD /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
 		E668BBAB143BE307007ED22D /* TagStreamManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TagStreamManager.h; path = Classes/TagStreamManager.h; sourceTree = "<group>"; };
 		E668BBAC143BE307007ED22D /* TagStreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TagStreamManager.m; path = Classes/TagStreamManager.m; sourceTree = "<group>"; };
-		E671F90F1439D31F0068380D /* DeferredFlickrCallManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeferredFlickrCallManager.h; path = Classes/DeferredFlickrCallManager.h; sourceTree = "<group>"; };
-		E671F9101439D31F0068380D /* DeferredFlickrCallManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DeferredFlickrCallManager.m; path = Classes/DeferredFlickrCallManager.m; sourceTree = "<group>"; };
+		E671F90F1439D31F0068380D /* DeferredFlickrCallManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeferredFlickrCallManager.h; sourceTree = "<group>"; };
+		E671F9101439D31F0068380D /* DeferredFlickrCallManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeferredFlickrCallManager.m; sourceTree = "<group>"; };
 		E671F9121439FBDA0068380D /* NSString+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+HTML.m"; sourceTree = "<group>"; };
 		E671F9141439FC090068380D /* NSString+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+HTML.h"; sourceTree = "<group>"; };
 		E671F9151439FC6E0068380D /* GTMNSString+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GTMNSString+HTML.h"; sourceTree = "<group>"; };
@@ -224,8 +224,8 @@
 		E6BF64271435D57100A04A81 /* StreamPhotoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StreamPhotoViewController.h; path = Classes/StreamPhotoViewController.h; sourceTree = "<group>"; };
 		E6BF64281435D57100A04A81 /* StreamPhotoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StreamPhotoViewController.m; path = Classes/StreamPhotoViewController.m; sourceTree = "<group>"; };
 		E6BF642C14361F4E00A04A81 /* StreamPhotoViewController.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = StreamPhotoViewController.html; sourceTree = "<group>"; };
-		E6BF642E1436386700A04A81 /* PhotoLocationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhotoLocationManager.h; path = Classes/PhotoLocationManager.h; sourceTree = "<group>"; };
-		E6BF642F1436386700A04A81 /* PhotoLocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PhotoLocationManager.m; path = Classes/PhotoLocationManager.m; sourceTree = "<group>"; };
+		E6BF642E1436386700A04A81 /* PhotoLocationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoLocationManager.h; sourceTree = "<group>"; };
+		E6BF642F1436386700A04A81 /* PhotoLocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoLocationManager.m; sourceTree = "<group>"; };
 		E6D03F6C14522E52005DDB6E /* 07-map-marker.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "07-map-marker.png"; sourceTree = "<group>"; };
 		E6D03F7814524615005DDB6E /* visibility_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = visibility_green.png; sourceTree = "<group>"; };
 		E6D03F7914524615005DDB6E /* visibility_red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = visibility_red.png; sourceTree = "<group>"; };
@@ -269,21 +269,19 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				E677D79C1587CF49006A34CF /* Network */,
 				E691DC2F155C65AC002F3551 /* Authentication */,
 				E6218AD413C35D6D0021CB80 /* Stream */,
+				E677D79E1587D00F006A34CF /* Camera */,
 				E691DC2E155C65A6002F3551 /* Upload */,
-				E22C520313D4C5F700197EC5 /* CameraController.h */,
-				E22C520413D4C5F700197EC5 /* CameraController.m */,
 				E69E4ADE1450985500BD442B /* DebugViewController.h */,
 				E69E4ADF1450985500BD442B /* DebugViewController.m */,
 				E244D477109C83CF0075CAFD /* MoreViewController.h */,
 				E244D478109C83CF0075CAFD /* MoreViewController.m */,
 				E6BF4A0A143C834E00FFBD67 /* NSString+URI.h */,
 				E6BF4A0B143C834E00FFBD67 /* NSString+URI.m */,
-				E201C91F13753FFD00FA5AFD /* PhotoSaveViewController.h */,
-				E201C92013753FFD00FA5AFD /* PhotoSaveViewController.m */,
-				E62D742915618E9000A418BC /* CacheURLProtocol.h */,
-				E62D742A15618E9000A418BC /* CacheURLProtocol.m */,
+				1D3623240D0F684500981E51 /* NoticingsAppDelegate.h */,
+				1D3623250D0F684500981E51 /* NoticingsAppDelegate.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -302,8 +300,6 @@
 				E67465C2155C4258007609A4 /* Security.framework */,
 				E23B29F013F28C0600614C71 /* Entitlements.plist */,
 				E2A6C4EA11CA4A810065E27A /* Settings.bundle */,
-				1D3623240D0F684500981E51 /* NoticingsAppDelegate.h */,
-				1D3623250D0F684500981E51 /* NoticingsAppDelegate.m */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				E2AC983D107FAE68007A570A /* Third Party */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
@@ -405,22 +401,20 @@
 		E6218AD413C35D6D0021CB80 /* Stream */ = {
 			isa = PBXGroup;
 			children = (
-				E6461F66143F2073009407FD /* AddCommentViewController.h */,
-				E6461F67143F2073009407FD /* AddCommentViewController.m */,
-				E60912F6142B982C004861F5 /* CacheManager.h */,
-				E60912F7142B982C004861F5 /* CacheManager.m */,
+				E63D611E142B9D6F00884F10 /* PhotoStreamManager.h */,
+				E63D611F142B9D6F00884F10 /* PhotoStreamManager.m */,
 				E6AE4A9913C3A1FD00702DA3 /* ContactsStreamManager.h */,
 				E6AE4A9A13C3A1FD00702DA3 /* ContactsStreamManager.m */,
-				E671F90F1439D31F0068380D /* DeferredFlickrCallManager.h */,
-				E671F9101439D31F0068380D /* DeferredFlickrCallManager.m */,
+				E668BBAB143BE307007ED22D /* TagStreamManager.h */,
+				E668BBAC143BE307007ED22D /* TagStreamManager.m */,
+				E68D5F1C142BA7FC003192AE /* UserStreamManager.h */,
+				E68D5F1D142BA7FC003192AE /* UserStreamManager.m */,
+				E6461F66143F2073009407FD /* AddCommentViewController.h */,
+				E6461F67143F2073009407FD /* AddCommentViewController.m */,
 				E6DE3AC9142BC3ED00E9BE0B /* ImageViewController.h */,
 				E6DE3ACA142BC3ED00E9BE0B /* ImageViewController.m */,
 				E6F80E21142BE73400B7432D /* MapViewController.h */,
 				E6F80E22142BE73400B7432D /* MapViewController.m */,
-				E6BF642E1436386700A04A81 /* PhotoLocationManager.h */,
-				E6BF642F1436386700A04A81 /* PhotoLocationManager.m */,
-				E63D611E142B9D6F00884F10 /* PhotoStreamManager.h */,
-				E63D611F142B9D6F00884F10 /* PhotoStreamManager.m */,
 				E6218AD513C35D7C0021CB80 /* StreamPhoto.h */,
 				E6218AD613C35D7C0021CB80 /* StreamPhoto.m */,
 				E6218AD713C35D7C0021CB80 /* StreamPhotoViewCell.h */,
@@ -429,13 +423,35 @@
 				E6BF64281435D57100A04A81 /* StreamPhotoViewController.m */,
 				E6218AD913C35D7C0021CB80 /* StreamViewController.h */,
 				E6218ADA13C35D7C0021CB80 /* StreamViewController.m */,
-				E668BBAB143BE307007ED22D /* TagStreamManager.h */,
-				E668BBAC143BE307007ED22D /* TagStreamManager.m */,
-				E68D5F1C142BA7FC003192AE /* UserStreamManager.h */,
-				E68D5F1D142BA7FC003192AE /* UserStreamManager.m */,
 			);
 			name = Stream;
 			path = ..;
+			sourceTree = "<group>";
+		};
+		E677D79C1587CF49006A34CF /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				E62D742915618E9000A418BC /* CacheURLProtocol.h */,
+				E62D742A15618E9000A418BC /* CacheURLProtocol.m */,
+				E671F90F1439D31F0068380D /* DeferredFlickrCallManager.h */,
+				E671F9101439D31F0068380D /* DeferredFlickrCallManager.m */,
+				E60912F6142B982C004861F5 /* CacheManager.h */,
+				E60912F7142B982C004861F5 /* CacheManager.m */,
+				E6BF642E1436386700A04A81 /* PhotoLocationManager.h */,
+				E6BF642F1436386700A04A81 /* PhotoLocationManager.m */,
+			);
+			name = Network;
+			sourceTree = "<group>";
+		};
+		E677D79E1587D00F006A34CF /* Camera */ = {
+			isa = PBXGroup;
+			children = (
+				E201C91F13753FFD00FA5AFD /* PhotoSaveViewController.h */,
+				E201C92013753FFD00FA5AFD /* PhotoSaveViewController.m */,
+				E22C520313D4C5F700197EC5 /* CameraController.h */,
+				E22C520413D4C5F700197EC5 /* CameraController.m */,
+			);
+			name = Camera;
 			sourceTree = "<group>";
 		};
 		E691DC2E155C65A6002F3551 /* Upload */ = {

@@ -12,7 +12,7 @@
 
 @implementation PhotoUploadCell
 
-@synthesize photoUpload, imageView, textLabel, detailTextLabel, progressView;
+@synthesize photoUpload, imageView, textLabel, detailTextLabel, progressView, notAButton;
 
 -(void)displayPhotoUpload:(PhotoUpload *)_upload;
 {
@@ -21,13 +21,11 @@
     }
     if (self.photoUpload) {
         [self.photoUpload removeObserver:self forKeyPath:@"inProgress"];
-        [self.photoUpload removeObserver:self forKeyPath:@"state"];
     }
 
     self.photoUpload = _upload;
     
     if (self.photoUpload) {
-
         if (self.photoUpload.asset) {
             self.imageView.image = [UIImage imageWithCGImage:self.photoUpload.asset.thumbnail];
         } else {
@@ -49,11 +47,6 @@
                               options:(NSKeyValueObservingOptionNew)
                               context:NULL];
         
-        [self.photoUpload addObserver:self
-                           forKeyPath:@"state"
-                              options:(NSKeyValueObservingOptionNew)
-                              context:NULL];
-
     } else {
         self.imageView.image = nil;
         self.textLabel.text = @"";
@@ -63,20 +56,15 @@
 }
 
 - (void)updateDetailText {
-	if ([NoticingsAppDelegate delegate].uploadQueueManager.inProgress) {
-        if (!self.photoUpload.inProgress) {
-            self.detailTextLabel.text = @"Queued";
-            self.progressView.hidden = YES;
-        } else {
-            self.detailTextLabel.text = @"";
-            self.progressView.progress = [self.photoUpload.progress floatValue];
-            self.progressView.hidden = NO;
-        }
-	} else {
-		self.detailTextLabel.text = @"Paused";
+    if (self.photoUpload.inProgress) {
+        self.detailTextLabel.text = @"";
+        self.progressView.progress = [self.photoUpload.progress floatValue];
+        self.progressView.hidden = NO;
+        return;
+    } else {
         self.progressView.hidden = YES;
-	}
-	
+        self.detailTextLabel.text = @"Queued";
+    }
 	[self setNeedsDisplay];
 }
 
@@ -90,7 +78,6 @@
 
 - (void)dealloc {
     [self displayPhotoUpload:nil];
-	[[NoticingsAppDelegate delegate].uploadQueueManager removeObserver:self forKeyPath:@"inProgress"];
     [super dealloc];
 }
 

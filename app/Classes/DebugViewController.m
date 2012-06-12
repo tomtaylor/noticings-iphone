@@ -55,18 +55,12 @@ enum DebugActions {
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UploadQueueManager *manager;
     
     switch (indexPath.section) {
         case kNoticingsDebugClearCache:
             [[NoticingsAppDelegate delegate].cacheManager clearCache];
             break;
 
-        case kNoticingsDebugFakeUpload:
-            manager = [NoticingsAppDelegate delegate].uploadQueueManager;
-            [manager fakeUpload];
-            [self.navigationController.tabBarController setSelectedIndex:0];
-            break;
         default:
             break;
     }
