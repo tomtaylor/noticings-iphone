@@ -77,6 +77,9 @@
 		E67465C6155C448F007609A4 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = E67465C1155C4135007609A4 /* NSData+Base64.m */; };
 		E67465C7155C5D42007609A4 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = E67465B5155C3981007609A4 /* JSONKit.m */; };
 		E67599D1143521BF003AE272 /* StreamPhotoViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E67599D0143521BF003AE272 /* StreamPhotoViewCell.xib */; };
+		E67C8C96158CD692008D3769 /* UIColor+Hex.m in Sources */ = {isa = PBXBuildFile; fileRef = E67C8C95158CD692008D3769 /* UIColor+Hex.m */; };
+		E67C8C9A158CD8F3008D3769 /* 09-chat-2.png in Resources */ = {isa = PBXBuildFile; fileRef = E67C8C98158CD8F3008D3769 /* 09-chat-2.png */; };
+		E67C8C9B158CD8F3008D3769 /* 09-chat-2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E67C8C99158CD8F3008D3769 /* 09-chat-2@2x.png */; };
 		E68D5F1E142BA7FC003192AE /* UserStreamManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E68D5F1D142BA7FC003192AE /* UserStreamManager.m */; };
 		E69E4AE01450985500BD442B /* DebugViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E69E4ADF1450985500BD442B /* DebugViewController.m */; };
 		E6AE4A9B13C3A1FD00702DA3 /* ContactsStreamManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E6AE4A9A13C3A1FD00702DA3 /* ContactsStreamManager.m */; };
@@ -202,6 +205,10 @@
 		E67465C1155C4135007609A4 /* NSData+Base64.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSData+Base64.m"; sourceTree = "<group>"; };
 		E67465C2155C4258007609A4 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		E67599D0143521BF003AE272 /* StreamPhotoViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StreamPhotoViewCell.xib; sourceTree = "<group>"; };
+		E67C8C94158CD692008D3769 /* UIColor+Hex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Hex.h"; sourceTree = "<group>"; };
+		E67C8C95158CD692008D3769 /* UIColor+Hex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Hex.m"; sourceTree = "<group>"; };
+		E67C8C98158CD8F3008D3769 /* 09-chat-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "09-chat-2.png"; sourceTree = "<group>"; };
+		E67C8C99158CD8F3008D3769 /* 09-chat-2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "09-chat-2@2x.png"; sourceTree = "<group>"; };
 		E68D5F1C142BA7FC003192AE /* UserStreamManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserStreamManager.h; path = Classes/UserStreamManager.h; sourceTree = "<group>"; };
 		E68D5F1D142BA7FC003192AE /* UserStreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UserStreamManager.m; path = Classes/UserStreamManager.m; sourceTree = "<group>"; };
 		E69E4ADE1450985500BD442B /* DebugViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugViewController.h; sourceTree = "<group>"; };
@@ -323,6 +330,8 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				E67C8C98158CD8F3008D3769 /* 09-chat-2.png */,
+				E67C8C99158CD8F3008D3769 /* 09-chat-2@2x.png */,
 				E2B19C1A149EE0FE00B8862A /* cog-64.png */,
 				E2B19C1B149EE0FE00B8862A /* cog-highlight-64.png */,
 				E6D03F7714524615005DDB6E /* visibility */,
@@ -379,6 +388,8 @@
 		E2AC983D107FAE68007A570A /* Third Party */ = {
 			isa = PBXGroup;
 			children = (
+				E67C8C94158CD692008D3769 /* UIColor+Hex.h */,
+				E67C8C95158CD692008D3769 /* UIColor+Hex.m */,
 				E67465BE155C4135007609A4 /* GCOAuth.h */,
 				E67465BF155C4135007609A4 /* GCOAuth.m */,
 				E6A09AC11452EE4B009199CA /* GRMustache */,
@@ -603,6 +614,8 @@
 				E2B19C1D149EE0FE00B8862A /* cog-highlight-64.png in Resources */,
 				E62D74321561AF7E00A418BC /* 253-person.png in Resources */,
 				E62D74331561AF7E00A418BC /* 253-person@2x.png in Resources */,
+				E67C8C9A158CD8F3008D3769 /* 09-chat-2.png in Resources */,
+				E67C8C9B158CD8F3008D3769 /* 09-chat-2@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -652,6 +665,7 @@
 				E69E4AE01450985500BD442B /* DebugViewController.m in Sources */,
 				E62242FE155C7DE2004B951C /* PhotoUploadOperation.m in Sources */,
 				E62D742B15618E9000A418BC /* CacheURLProtocol.m in Sources */,
+				E67C8C96158CD692008D3769 /* UIColor+Hex.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

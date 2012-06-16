@@ -23,6 +23,7 @@
 
 #import "NSString+HTML.h"
 #import "NSString+URI.h"
+#import "UIColor+Hex.h"
 
 @implementation StreamPhotoViewController
 
@@ -71,7 +72,8 @@ GRMustacheTemplate *template;
         [shadowView setHidden:YES];
     }
     [[[[[self.webView subviews] objectAtIndex:0] subviews] lastObject] setHidden:NO];
-    self.view.backgroundColor = [UIColor colorWithWhite:(255.0f - 64.0f)/255 alpha:1];
+    self.view.backgroundColor = [UIColor colorWithCSS:@"#404040"];
+    self.webView.backgroundColor = self.view.backgroundColor;
     
     UIBarButtonItem *backButton = [[UIBarButtonItem alloc] 
                                    initWithTitle: @"Photo" 

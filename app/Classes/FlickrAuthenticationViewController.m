@@ -118,6 +118,7 @@
         
         NSDictionary *parsed = [body dictionaryByParsingAsQueryParameters];
         [body release];
+        DLog(@"got user data %@", parsed);
         
         [defaults setValue:[parsed objectForKey:@"oauth_token"] forKey:@"oauth_token"];
         [defaults setValue:[parsed objectForKey:@"oauth_token_secret"] forKey:@"oauth_secret"];

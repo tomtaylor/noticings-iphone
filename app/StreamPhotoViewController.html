@@ -41,6 +41,13 @@
         float: left;
         margin: 4px;
     }
+    .icon {
+        width: 24px;
+        height: 22px;
+        float: left;
+        margin: 4px;
+        padding-left: 14px;
+    }
     .rightcol {
         display: block;
         width: 258px;
@@ -154,7 +161,7 @@
 
     {{#loadedComments}}
     {{#hasComments}}
-        <h1>{{#commentCount}}{{#pluralizeHelper}}Comment{{/pluralizeHelper}}{{/commentCount}}</h1>
+        <!-- <div class="rightcol">{{#commentCount}}{{#pluralizeHelper}}Comment{{/pluralizeHelper}}{{/commentCount}}</div> -->
         {{#comments}}
         <div class='comment'>
             <img class="avatar" src="cache://farm{{iconfarm}}.static.flickr.com/{{iconserver}}/buddyicons/{{author}}.jpg">
@@ -163,11 +170,13 @@
         </div>
         {{/comments}}
 
+    <a href='noticings-comment:'><img class="icon" src="09-chat-2@2x.png"></a>
     <p id='addcomment' class="rightcol"><a href='noticings-comment:'>Add a comment</a></p>
     {{/hasComments}}
 
     {{^hasComments}}
-        <h1>No comments.</h1>
+        <a href='noticings-comment:'><img class="icon" src="09-chat-2@2x.png"></a>
+        <!-- <div class="rightcol">No comments.</div> -->
         <p id='addcomment' class="rightcol"><a href='noticings-comment:'>Add a comment</a></p>
     {{/hasComments}}
     {{/loadedComments}}
