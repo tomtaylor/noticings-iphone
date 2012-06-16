@@ -23,7 +23,7 @@
 
 @implementation StreamViewController
 
-@synthesize streamManager;
+@synthesize streamManager, maybeCancel;
 
 -(id)initWithPhotoStreamManager:(PhotoStreamManager*)manager;
 {
@@ -306,20 +306,40 @@
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    PhotoUpload *upload = [self photoUploadAtIndexPath:indexPath];
-    if (upload) {
-        DLog(@"cancelling upload %@", upload);
-        [[NoticingsAppDelegate delegate].uploadQueueManager cancelUpload:upload];
+
+    StreamPhoto *photo = [self streamPhotoAtIndexPath:indexPath];
+    if (photo) {
+        StreamPhotoViewController *vc = [[StreamPhotoViewController alloc] initWithPhoto:photo streamManager:self.streamManager];
+        [self.navigationController pushViewController:vc animated:YES];
+        [vc release];
         return;
     }
 
-    StreamPhoto *photo = [self streamPhotoAtIndexPath:indexPath];
-    if (!photo) return;
+    PhotoUpload *upload = [self photoUploadAtIndexPath:indexPath];
+    if (upload) {
+        DLog(@"maybe cancelling upload %@", upload);
+        self.maybeCancel = upload;
+        UIActionSheet *popupQuery = [[UIActionSheet alloc]
+                                     initWithTitle:nil
+                                     delegate:self
+                                     cancelButtonTitle:@"Continue"
+                                     destructiveButtonTitle:@"Cancel upload"
+                                     otherButtonTitles:nil];
+        
+        popupQuery.actionSheetStyle = UIActionSheetStyleBlackOpaque;
+        [popupQuery showFromTabBar:self.tabBarController.tabBar];
+        [popupQuery release];
+        return;
+    }
     
-    StreamPhotoViewController *vc = [[StreamPhotoViewController alloc] initWithPhoto:photo streamManager:self.streamManager];
-    [self.navigationController pushViewController:vc animated:YES];
-    [vc release];
+}
 
+-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex != actionSheet.cancelButtonIndex && self.maybeCancel) {
+        [[NoticingsAppDelegate delegate].uploadQueueManager cancelUpload:self.maybeCancel];
+    }
+    self.maybeCancel = nil;
 }
 
 # pragma mark memory management
