@@ -320,7 +320,7 @@ GRMustacheTemplate *template;
     
     NSLog(@"rendering with %@", templateData);
     NSString *rendered = [template renderObject:templateData];
-    NSLog(@"rendered as %@", rendered);
+//    NSLog(@"rendered as %@", rendered);
     
     NSURL *baseURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
     [self.webView loadHTMLString:rendered baseURL:baseURL];
