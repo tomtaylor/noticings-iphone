@@ -46,7 +46,6 @@
 								<int key="NSvFlags">274</int>
 								<string key="NSFrame">{{0, 12}, {320, 367}}</string>
 								<reference key="NSSuperview" ref="94663175"/>
-								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="904552234"/>
 								<string key="NSReuseIdentifierKey">_NS:196</string>
 								<object class="NSColor" key="IBUIBackgroundColor">
@@ -63,7 +62,6 @@
 								<int key="NSvFlags">274</int>
 								<string key="NSFrame">{{0, 12}, {320, 320}}</string>
 								<reference key="NSSuperview" ref="94663175"/>
-								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="859051715"/>
 								<string key="NSReuseIdentifierKey">_NS:567</string>
 								<object class="NSColor" key="IBUIBackgroundColor" id="765077827">
@@ -81,7 +79,6 @@
 								<int key="NSvFlags">268</int>
 								<string key="NSFrame">{{4, 336}, {38, 38}}</string>
 								<reference key="NSSuperview" ref="94663175"/>
-								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="903146239"/>
 								<string key="NSReuseIdentifierKey">_NS:567</string>
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
@@ -92,7 +89,6 @@
 								<int key="NSvFlags">266</int>
 								<string key="NSFrame">{{49, 334}, {229, 21}}</string>
 								<reference key="NSSuperview" ref="94663175"/>
-								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="404961213"/>
 								<string key="NSReuseIdentifierKey">_NS:328</string>
 								<bool key="IBUIOpaque">NO</bool>
@@ -124,7 +120,6 @@
 								<int key="NSvFlags">266</int>
 								<string key="NSFrame">{{49, 353}, {229, 21}}</string>
 								<reference key="NSSuperview" ref="94663175"/>
-								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="843057186"/>
 								<string key="NSReuseIdentifierKey">_NS:328</string>
 								<bool key="IBUIOpaque">NO</bool>
@@ -146,7 +141,6 @@
 								<int key="NSvFlags">265</int>
 								<string key="NSFrame">{{251, 353}, {64, 21}}</string>
 								<reference key="NSSuperview" ref="94663175"/>
-								<reference key="NSWindow"/>
 								<string key="NSReuseIdentifierKey">_NS:328</string>
 								<bool key="IBUIOpaque">NO</bool>
 								<bool key="IBUIClipsSubviews">YES</bool>
@@ -176,7 +170,6 @@
 								<int key="NSvFlags">265</int>
 								<string key="NSFrame">{{286, 338}, {18, 13}}</string>
 								<reference key="NSSuperview" ref="94663175"/>
-								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="92646375"/>
 								<string key="NSReuseIdentifierKey">_NS:567</string>
 								<int key="IBUIContentMode">1</int>
@@ -192,7 +185,6 @@
 								<int key="NSvFlags">265</int>
 								<string key="NSFrame">{{303, 338}, {12, 12}}</string>
 								<reference key="NSSuperview" ref="94663175"/>
-								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="847126505"/>
 								<string key="NSReuseIdentifierKey">_NS:567</string>
 								<int key="IBUIContentMode">2</int>
@@ -202,7 +194,6 @@
 						</array>
 						<string key="NSFrameSize">{320, 399}</string>
 						<reference key="NSSuperview" ref="373355806"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="15346423"/>
 						<string key="NSReuseIdentifierKey">_NS:395</string>
 						<object class="NSColor" key="IBUIBackgroundColor">
@@ -218,7 +209,6 @@
 				</array>
 				<string key="NSFrameSize">{320, 400}</string>
 				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="94663175"/>
 				<string key="NSReuseIdentifierKey">_NS:384</string>
 				<object class="NSColor" key="IBUIBackgroundColor">
@@ -406,129 +396,7 @@
 			<nil key="sourceID"/>
 			<int key="maxID">35</int>
 		</object>
-		<object class="IBClassDescriber" key="IBDocument.Classes">
-			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
-				<object class="IBPartialClassDescription">
-					<string key="className">PhotoUploadCell</string>
-					<string key="superclassName">UITableViewCell</string>
-					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="detailTextLabel">UILabel</string>
-						<string key="imageView">UIImageView</string>
-						<string key="notAButton">UIImage</string>
-						<string key="progressView">UIProgressView</string>
-						<string key="textLabel">UILabel</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<object class="IBToOneOutletInfo" key="detailTextLabel">
-							<string key="name">detailTextLabel</string>
-							<string key="candidateClassName">UILabel</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="imageView">
-							<string key="name">imageView</string>
-							<string key="candidateClassName">UIImageView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="notAButton">
-							<string key="name">notAButton</string>
-							<string key="candidateClassName">UIImage</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="progressView">
-							<string key="name">progressView</string>
-							<string key="candidateClassName">UIProgressView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="textLabel">
-							<string key="name">textLabel</string>
-							<string key="candidateClassName">UILabel</string>
-						</object>
-					</dictionary>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/PhotoUploadCell.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">PullRefreshTableViewController</string>
-					<string key="superclassName">UITableViewController</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/PullRefreshTableViewController.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">StreamPhotoViewCell</string>
-					<string key="superclassName">UITableViewCell</string>
-					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="avatarView">UIImageView</string>
-						<string key="frameView">UIView</string>
-						<string key="hasLocationImage">UIImageView</string>
-						<string key="photoView">UIImageView</string>
-						<string key="privacyImage">UIImageView</string>
-						<string key="timeagoView">UILabel</string>
-						<string key="titleView">UILabel</string>
-						<string key="usernameView">UILabel</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<object class="IBToOneOutletInfo" key="avatarView">
-							<string key="name">avatarView</string>
-							<string key="candidateClassName">UIImageView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="frameView">
-							<string key="name">frameView</string>
-							<string key="candidateClassName">UIView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="hasLocationImage">
-							<string key="name">hasLocationImage</string>
-							<string key="candidateClassName">UIImageView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="photoView">
-							<string key="name">photoView</string>
-							<string key="candidateClassName">UIImageView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="privacyImage">
-							<string key="name">privacyImage</string>
-							<string key="candidateClassName">UIImageView</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="timeagoView">
-							<string key="name">timeagoView</string>
-							<string key="candidateClassName">UILabel</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="titleView">
-							<string key="name">titleView</string>
-							<string key="candidateClassName">UILabel</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="usernameView">
-							<string key="name">usernameView</string>
-							<string key="candidateClassName">UILabel</string>
-						</object>
-					</dictionary>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/StreamPhotoViewCell.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">StreamViewController</string>
-					<string key="superclassName">PullRefreshTableViewController</string>
-					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="photoUploadCell">PhotoUploadCell</string>
-						<string key="photoViewCell">StreamPhotoViewCell</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<object class="IBToOneOutletInfo" key="photoUploadCell">
-							<string key="name">photoUploadCell</string>
-							<string key="candidateClassName">PhotoUploadCell</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="photoViewCell">
-							<string key="name">photoViewCell</string>
-							<string key="candidateClassName">StreamPhotoViewCell</string>
-						</object>
-					</dictionary>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/StreamViewController.h</string>
-					</object>
-				</object>
-			</array>
-		</object>
+		<object class="IBClassDescriber" key="IBDocument.Classes"/>
 		<int key="IBDocument.localizationMode">0</int>
 		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaTouchFramework</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencyDefaults">
