@@ -9,7 +9,6 @@
 #import "StreamPhoto.h"
 
 #import "APIKeys.h"
-#import "NSString+HTML.h"
 
 @implementation StreamPhoto
 
@@ -39,7 +38,7 @@
 
 - (NSString*)title;
 {
-    NSString *title = [[self.details valueForKeyPath:@"title"] stringByRemovingNewLinesAndWhitespace];
+    NSString *title = [[self.details valueForKeyPath:@"title"] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     if (title.length > 0) {
         return title;
     }
@@ -48,7 +47,7 @@
 
 -(BOOL)hasTitle;
 {
-    NSString *title = [[self.details valueForKeyPath:@"title"] stringByRemovingNewLinesAndWhitespace];
+    NSString *title = [[self.details valueForKeyPath:@"title"] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     return (title.length > 0);
 }
 
