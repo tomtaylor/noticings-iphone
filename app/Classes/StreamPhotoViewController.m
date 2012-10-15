@@ -136,7 +136,7 @@ GRMustacheTemplate *template;
         if (self.photo.hasTitle) {
             body = [NSString stringWithFormat:@"\"%@\" by %@\n\n%@\n\nSent using Noticings\n", self.photo.title, self.photo.ownername, self.photo.pageURL];
         } else {
-            body = [NSString stringWithFormat:@"A photo by %@\n\n%@\n\nSent using Noticings\n", self.photo.title, self.photo.ownername, self.photo.pageURL];
+            body = [NSString stringWithFormat:@"A photo by %@\n\n%@\n\nSent using Noticings\n", self.photo.ownername, self.photo.pageURL];
         }
         [composer setMessageBody:body isHTML:NO];
         [self presentModalViewController:composer animated:YES];
@@ -275,7 +275,7 @@ GRMustacheTemplate *template;
     })];
     [templateData setObject:pluralizeHelper forKey:@"pluralizeHelper"];
     
-    id dateHelper = [GRMustacheHelper helperWithBlock:(^(GRMustacheSection *section) {
+    id dateHelper = [GRMustacheHelper helperWithBlock:^NSString *(GRMustacheSection *section) {
         NSLog(@"section is %@", section);
         double timestamp = [[section render] doubleValue];
 
@@ -317,7 +317,7 @@ GRMustacheTemplate *template;
             seconds += minutes * 60;
         }
         return [NSString stringWithFormat:@"%d seconds ago", seconds];
-    })];
+    }];
     [templateData setObject:dateHelper forKey:@"dateHelper"];
     
     NSLog(@"rendering with %@", templateData);

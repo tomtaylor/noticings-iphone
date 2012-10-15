@@ -65,11 +65,6 @@ extern const NSUInteger kMaxDiskCacheSize;
     return [self cachePathForFilename:[hash stringByAppendingPathExtension:@"jpg"]];
 }
 
-- (void) clearCacheForURL:(NSURL*)url;
-{
-    // TODO
-}
-
 - (void) clearCache;
 {
     NSFileManager *fm = [NSFileManager defaultManager];

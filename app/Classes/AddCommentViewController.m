@@ -68,7 +68,7 @@
         [self.navigationController popViewControllerAnimated:YES];
     }
     orFail:^(NSString *code, NSString *error){
-        NSLog(@"bugger.");
+        NSLog(@"There was a problem sending the comment there. Try again later.");
         // TODO - popup. Do something better for feedback.
         self.navigationItem.rightBarButtonItem.enabled = YES;
     }];

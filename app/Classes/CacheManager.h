@@ -10,9 +10,10 @@
 
 @interface CacheManager : NSObject
 
--(NSString*) cachePathForFilename:(NSString*)filename;
+- (NSString*) cachePathForFilename:(NSString*)filename;
 - (NSString*) urlToFilename:(NSURL*)url;
 - (void) clearCache;
+- (void) reapCache;
 
 @property (retain) NSString *cacheDir;
 

@@ -139,6 +139,7 @@
     // TODO - error handling? what if the cache is bad?
     NSString* cache = [[NoticingsAppDelegate delegate].cacheManager cachePathForFilename:[self cacheFilename]];
     if (![[NSFileManager defaultManager] fileExistsAtPath:cache]) {
+        DLog(@"No cache for image list");
         return; // no cache
     }
     NSLog(@"Loading cached image data from %@", cache);

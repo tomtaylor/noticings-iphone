@@ -112,7 +112,7 @@
         NSTimeInterval now = [[NSDate date] timeIntervalSinceReferenceDate];
         NSDictionary *cachedLocation = [NSDictionary dictionaryWithObjectsAndKeys:
             name, @"name",
-            [NSString stringWithFormat:@"%d", now], @"date", // for potential cache invalidation later.
+            [NSString stringWithFormat:@"%f", now], @"date", // for potential cache invalidation later.
             nil];
         [self.cache setObject:cachedLocation forKey:photo.woeid];
         [self saveCachedLocations:self.cache];
