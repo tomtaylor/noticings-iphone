@@ -70,7 +70,6 @@
 		E662D77B1450D557002628AD /* Twitter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E662D77A1450D557002628AD /* Twitter.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		E668BBAD143BE307007ED22D /* TagStreamManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E668BBAC143BE307007ED22D /* TagStreamManager.m */; };
 		E671F9111439D31F0068380D /* DeferredFlickrCallManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E671F9101439D31F0068380D /* DeferredFlickrCallManager.m */; };
-		E671F9171439FC6E0068380D /* GTMNSString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = E671F9161439FC6E0068380D /* GTMNSString+HTML.m */; };
 		E67465C3155C4258007609A4 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E67465C2155C4258007609A4 /* Security.framework */; };
 		E67465C5155C4285007609A4 /* GCOAuth.m in Sources */ = {isa = PBXBuildFile; fileRef = E67465BF155C4135007609A4 /* GCOAuth.m */; };
 		E67465C6155C448F007609A4 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = E67465C1155C4135007609A4 /* NSData+Base64.m */; };
@@ -193,8 +192,6 @@
 		E668BBAC143BE307007ED22D /* TagStreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TagStreamManager.m; path = Classes/TagStreamManager.m; sourceTree = "<group>"; };
 		E671F90F1439D31F0068380D /* DeferredFlickrCallManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeferredFlickrCallManager.h; sourceTree = "<group>"; };
 		E671F9101439D31F0068380D /* DeferredFlickrCallManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeferredFlickrCallManager.m; sourceTree = "<group>"; };
-		E671F9151439FC6E0068380D /* GTMNSString+HTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GTMNSString+HTML.h"; sourceTree = "<group>"; };
-		E671F9161439FC6E0068380D /* GTMNSString+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GTMNSString+HTML.m"; sourceTree = "<group>"; };
 		E67465B4155C3981007609A4 /* JSONKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSONKit.h; sourceTree = "<group>"; };
 		E67465B5155C3981007609A4 /* JSONKit.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JSONKit.m; sourceTree = "<group>"; };
 		E67465BE155C4135007609A4 /* GCOAuth.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GCOAuth.h; sourceTree = "<group>"; };
@@ -393,8 +390,6 @@
 				E67465BE155C4135007609A4 /* GCOAuth.h */,
 				E67465BF155C4135007609A4 /* GCOAuth.m */,
 				E6A09AC11452EE4B009199CA /* GRMustache */,
-				E671F9151439FC6E0068380D /* GTMNSString+HTML.h */,
-				E671F9161439FC6E0068380D /* GTMNSString+HTML.m */,
 				E67465B4155C3981007609A4 /* JSONKit.h */,
 				E67465B5155C3981007609A4 /* JSONKit.m */,
 				E2CC8A70141EA0D400C1CF1B /* libTestFlight.a */,
@@ -656,7 +651,6 @@
 				E6BF642A1435D57100A04A81 /* StreamPhotoViewController.m in Sources */,
 				E6BF64301436386700A04A81 /* PhotoLocationManager.m in Sources */,
 				E671F9111439D31F0068380D /* DeferredFlickrCallManager.m in Sources */,
-				E671F9171439FC6E0068380D /* GTMNSString+HTML.m in Sources */,
 				E668BBAD143BE307007ED22D /* TagStreamManager.m in Sources */,
 				E6BF4A0C143C834E00FFBD67 /* NSString+URI.m in Sources */,
 				E6461F69143F2073009407FD /* AddCommentViewController.m in Sources */,
