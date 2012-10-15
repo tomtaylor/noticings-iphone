@@ -27,8 +27,7 @@
     titleView.text = self.photo.title;
     usernameView.text = self.photo.ownername;
 
-    // gfx are for losers. I like unicode.
-    timeagoView.text = [@"⌚" stringByAppendingString:self.photo.ago];
+    timeagoView.text = self.photo.ago;
 
     hasLocationImage.hidden = !self.photo.hasLocation;
 
