@@ -24,7 +24,6 @@
 		E211FACC109610A300ABAE72 /* type-280px.png in Resources */ = {isa = PBXBuildFile; fileRef = E211FACB109610A300ABAE72 /* type-280px.png */; };
 		E228010111C91F6100758E75 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E228010011C91F6100758E75 /* Icon@2x.png */; };
 		E22C520513D4C5F700197EC5 /* CameraController.m in Sources */ = {isa = PBXBuildFile; fileRef = E22C520413D4C5F700197EC5 /* CameraController.m */; };
-		E23B29F113F28C0600614C71 /* Entitlements.plist in Resources */ = {isa = PBXBuildFile; fileRef = E23B29F013F28C0600614C71 /* Entitlements.plist */; };
 		E244D468109C82AA0075CAFD /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = E244D467109C82AA0075CAFD /* Icon.png */; };
 		E244D479109C83CF0075CAFD /* MoreViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E244D478109C83CF0075CAFD /* MoreViewController.m */; };
 		E244D5DB109CA6BA0075CAFD /* tab-eye.png in Resources */ = {isa = PBXBuildFile; fileRef = E244D5DA109CA6BA0075CAFD /* tab-eye.png */; };
@@ -80,6 +79,7 @@
 		E67C8C9B158CD8F3008D3769 /* 09-chat-2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E67C8C99158CD8F3008D3769 /* 09-chat-2@2x.png */; };
 		E68D5F1E142BA7FC003192AE /* UserStreamManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E68D5F1D142BA7FC003192AE /* UserStreamManager.m */; };
 		E69E4AE01450985500BD442B /* DebugViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E69E4ADF1450985500BD442B /* DebugViewController.m */; };
+		E6A7CC4A162CB96100C2BD60 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E6A7CC49162CB96100C2BD60 /* libz.dylib */; };
 		E6AE4A9B13C3A1FD00702DA3 /* ContactsStreamManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E6AE4A9A13C3A1FD00702DA3 /* ContactsStreamManager.m */; };
 		E6AF32F01562426F00712D4C /* libGRMustache3-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E6AF32EF1562426F00712D4C /* libGRMustache3-iOS.a */; };
 		E6BF4A0C143C834E00FFBD67 /* NSString+URI.m in Sources */ = {isa = PBXBuildFile; fileRef = E6BF4A0B143C834E00FFBD67 /* NSString+URI.m */; };
@@ -124,7 +124,6 @@
 		E228010011C91F6100758E75 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		E22C520313D4C5F700197EC5 /* CameraController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraController.h; sourceTree = "<group>"; };
 		E22C520413D4C5F700197EC5 /* CameraController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CameraController.m; sourceTree = "<group>"; };
-		E23B29F013F28C0600614C71 /* Entitlements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Entitlements.plist; sourceTree = "<group>"; };
 		E244D467109C82AA0075CAFD /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		E244D477109C83CF0075CAFD /* MoreViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoreViewController.h; sourceTree = "<group>"; };
 		E244D478109C83CF0075CAFD /* MoreViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MoreViewController.m; sourceTree = "<group>"; };
@@ -208,6 +207,7 @@
 		E68D5F1D142BA7FC003192AE /* UserStreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UserStreamManager.m; path = Classes/UserStreamManager.m; sourceTree = "<group>"; };
 		E69E4ADE1450985500BD442B /* DebugViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugViewController.h; sourceTree = "<group>"; };
 		E69E4ADF1450985500BD442B /* DebugViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DebugViewController.m; sourceTree = "<group>"; };
+		E6A7CC49162CB96100C2BD60 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		E6AE4A9913C3A1FD00702DA3 /* ContactsStreamManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactsStreamManager.h; sourceTree = "<group>"; };
 		E6AE4A9A13C3A1FD00702DA3 /* ContactsStreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactsStreamManager.m; sourceTree = "<group>"; };
 		E6AF32EF1562426F00712D4C /* libGRMustache3-iOS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libGRMustache3-iOS.a"; sourceTree = "<group>"; };
@@ -247,6 +247,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E6A7CC4A162CB96100C2BD60 /* libz.dylib in Frameworks */,
 				E67465C3155C4258007609A4 /* Security.framework in Frameworks */,
 				E662D77B1450D557002628AD /* Twitter.framework in Frameworks */,
 				E604314B144DD370002A5546 /* MessageUI.framework in Frameworks */,
@@ -300,9 +301,9 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				E6A7CC49162CB96100C2BD60 /* libz.dylib */,
 				E6F8A798162CA66A005984C7 /* Default-568h@2x.png */,
 				E67465C2155C4258007609A4 /* Security.framework */,
-				E23B29F013F28C0600614C71 /* Entitlements.plist */,
 				E2A6C4EA11CA4A810065E27A /* Settings.bundle */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				E2AC983D107FAE68007A570A /* Third Party */,
@@ -548,7 +549,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0430;
+				LastUpgradeCheck = 0450;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Noticings" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -587,7 +588,6 @@
 				E2493586137356850066EE38 /* PhotoPreviewViewController.xib in Resources */,
 				E201C92313753FFD00FA5AFD /* PhotoSaveViewController.xib in Resources */,
 				E64839CD13C8EC39008DB9CE /* arrow.png in Resources */,
-				E23B29F113F28C0600614C71 /* Entitlements.plist in Resources */,
 				E2CC8A69141E9E7800C1CF1B /* camera.png in Resources */,
 				E2CC8A6B141E9E8A00C1CF1B /* camera@2x.png in Resources */,
 				E2CC8A6D141E9EEE00C1CF1B /* photos@2x.png in Resources */,
@@ -723,8 +723,8 @@
 			buildSettings = {
 				ARCHS = armv7;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
@@ -737,10 +737,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = armv7;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 			};
 			name = Release;
@@ -749,10 +751,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = armv7;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_PREPROCESSOR_DEFINITIONS = "ADHOC=1";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 			};
 			name = "Ad Hoc";
@@ -783,90 +788,6 @@
 			};
 			name = "Ad Hoc";
 		};
-		E28C152B10A489DF00B79928 /* App Store Distribution */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = armv7;
-				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
-				SDKROOT = iphoneos;
-			};
-			name = "App Store Distribution";
-		};
-		E28C152C10A489DF00B79928 /* App Store Distribution */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = Noticings_Prefix.pch;
-				HEADER_SEARCH_PATHS = (
-					../vendor/objectiveflickr/LFWebAPIKit,
-					../vendor/objectiveflickr/Source,
-				);
-				INFOPLIST_FILE = "Noticings-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)\"",
-					"\"$(SRCROOT)/GRMustache\"",
-					"\"$(SDKROOT)/usr/lib/system\"",
-				);
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				PRODUCT_NAME = Noticings;
-				SDKROOT = iphoneos;
-			};
-			name = "App Store Distribution";
-		};
-		E2C2CD1313F13583000767A5 /* Ad Hoc Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = armv7;
-				CODE_SIGN_ENTITLEMENTS = Entitlements.plist;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
-				PROVISIONING_PROFILE = "";
-				SDKROOT = iphoneos;
-			};
-			name = "Ad Hoc Debug";
-		};
-		E2C2CD1413F13583000767A5 /* Ad Hoc Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = Noticings_Prefix.pch;
-				HEADER_SEARCH_PATHS = (
-					../vendor/objectiveflickr/LFWebAPIKit,
-					../vendor/objectiveflickr/Source,
-				);
-				INFOPLIST_FILE = "Noticings-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)\"",
-					"\"$(SRCROOT)/GRMustache\"",
-					"\"$(SDKROOT)/usr/lib/system\"",
-				);
-				OTHER_CFLAGS = (
-					"-DADHOC",
-					"-DDEBUG",
-				);
-				OTHER_LDFLAGS = "";
-				PRODUCT_NAME = Noticings;
-				SDKROOT = iphoneos;
-			};
-			name = "Ad Hoc Debug";
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -874,10 +795,8 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1D6058940D05DD3E006BFB54 /* Debug */,
-				E2C2CD1413F13583000767A5 /* Ad Hoc Debug */,
 				1D6058950D05DD3E006BFB54 /* Release */,
 				E24BCD7D13F0468D00D5A566 /* Ad Hoc */,
-				E28C152C10A489DF00B79928 /* App Store Distribution */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -886,10 +805,8 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,
-				E2C2CD1313F13583000767A5 /* Ad Hoc Debug */,
 				C01FCF5008A954540054247B /* Release */,
 				E24BCD7C13F0468D00D5A566 /* Ad Hoc */,
-				E28C152B10A489DF00B79928 /* App Store Distribution */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
