@@ -53,18 +53,20 @@
     return self;
 }
 
--(void)respond:(NSData*)data;
-{
-    NSURLResponse *response = [[NSURLResponse alloc] initWithURL:self.request.URL MIMEType:nil expectedContentLength:-1 textEncodingName:nil];
-    [[self client] URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];  // We cache ourselves.
-    [response release];
-    [[self client] URLProtocol:self didLoadData:data];
-    [[self client] URLProtocolDidFinishLoading:self];
-}
-
-
 - (void)startLoading;
 {
+    CacheManager *cache = [NoticingsAppDelegate delegate].cacheManager;
+    NSString *filename = [cache urlToFilename:self.request.URL];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:filename]) {
+        DLog(@"found %@ in cache", self.request.URL);
+        NSData *data = [NSData dataWithContentsOfFile:filename];
+        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:self.request.URL statusCode:200 HTTPVersion:@"1" headerFields:@{}];
+        [[self client] URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
+        [[self client] URLProtocol:self didLoadData:data];
+        [[self client] URLProtocolDidFinishLoading:self];
+        return;
+    }
+
     self.connection = [NSURLConnection connectionWithRequest:self.request delegate:self];
 }
 
@@ -109,6 +111,20 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
+    if ([self.response isKindOfClass:NSHTTPURLResponse.class]) {
+        NSHTTPURLResponse *resp = (NSHTTPURLResponse*)self.response;
+        if (resp.statusCode == 200 && [self.request.HTTPMethod isEqualToString:@"GET"]) {
+            DLog(@"Sensible HTTP response.");
+            CacheManager *cache = [NoticingsAppDelegate delegate].cacheManager;
+            NSString *filename = [cache urlToFilename:self.request.URL];
+            [self.data writeToFile:filename atomically:YES];
+        } else {
+            DLog(@"Not caching respose %@ to %@", resp, self.request);
+        }
+    } else {
+        DLog(@"Not caching non-HTTP response.");
+    }
+    
     [[self client] URLProtocolDidFinishLoading:self];
     self.connection = nil;
     self.response = nil;
