@@ -41,8 +41,8 @@
     [[self componentsSeparatedByString:@"&"] enumerateObjectsUsingBlock:^(NSString *obj, NSUInteger idx, BOOL *stop) {
         NSArray *bits = [obj componentsSeparatedByString:@"="];
         if (bits.count == 2) {
-            NSString *k = [[bits objectAtIndex:0] stringByDecodingFromURI];
-            NSString *v = [[bits objectAtIndex:1] stringByDecodingFromURI];
+            NSString *k = [bits[0] stringByDecodingFromURI];
+            NSString *v = [bits[1] stringByDecodingFromURI];
             [parsed setValue:v forKey:k];
         }
     }];

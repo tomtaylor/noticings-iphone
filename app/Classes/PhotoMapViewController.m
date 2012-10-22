@@ -175,9 +175,9 @@ static NSString *adjustPinActionSheetAddTitle = @"Add to Map";
     [self.navigationController dismissModalViewControllerAnimated:YES];
     
     // pop the photos view back to the main list, and scroll that to the top so we see the upload progress
-    UINavigationController *firstNavController = [[[AppDelegate tabBarController] viewControllers] objectAtIndex:0];
+    UINavigationController *firstNavController = [[AppDelegate tabBarController] viewControllers][0];
     [firstNavController popToRootViewControllerAnimated:NO];
-    StreamViewController *streamView = (StreamViewController*)[firstNavController.viewControllers objectAtIndex:0];
+    StreamViewController *streamView = (StreamViewController*)(firstNavController.viewControllers)[0];
     [streamView.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
     
 }

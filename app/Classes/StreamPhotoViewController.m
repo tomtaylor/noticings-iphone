@@ -67,10 +67,10 @@ GRMustacheTemplate *template;
 
 
     // hide the shadows
-    for (UIView* shadowView in [[[self.webView subviews] objectAtIndex:0] subviews]) {
+    for (UIView* shadowView in [[self.webView subviews][0] subviews]) {
         [shadowView setHidden:YES];
     }
-    [[[[[self.webView subviews] objectAtIndex:0] subviews] lastObject] setHidden:NO];
+    [[[[self.webView subviews][0] subviews] lastObject] setHidden:NO];
     self.view.backgroundColor = [UIColor colorWithCSS:@"#404040"];
     self.webView.backgroundColor = self.view.backgroundColor;
     
@@ -191,9 +191,7 @@ GRMustacheTemplate *template;
 
     
     // load comments
-    NSDictionary *args = [NSDictionary dictionaryWithObjectsAndKeys:
-                          self.photo.flickrId, @"photo_id",
-                          nil];
+    NSDictionary *args = @{@"photo_id": self.photo.flickrId};
 
     [[NoticingsAppDelegate delegate].flickrCallManager
      callFlickrMethod:@"flickr.photos.comments.getList"
@@ -202,7 +200,7 @@ GRMustacheTemplate *template;
      andThen:^(NSDictionary* rsp){
          self.comments = [rsp valueForKeyPath:@"comments.comment"];
          if (!self.comments) {
-             self.comments = [NSArray array];
+             self.comments = @[];
          }
          [self updateHTML];
      }
@@ -261,7 +259,7 @@ GRMustacheTemplate *template;
     [templateData setValue:[NSNumber numberWithBool:(self.comments != nil)] forKey:@"loadedComments"];
     [templateData setValue:[NSNumber numberWithBool:(self.comments.count > 0)] forKey:@"hasComments"];
     [templateData setValue:[NSNumber numberWithBool:(self.comments == nil && !self.commentsError)] forKey:@"loadingComments"];
-    [templateData setValue:[NSNumber numberWithBool:(self.commentsError)] forKey:@"failedComments"];
+    [templateData setValue:@((self.commentsError)) forKey:@"failedComments"];
 
     [templateData setValue:self.comments forKey:@"comments"];
     [templateData setValue:[NSNumber numberWithInt:self.comments.count] forKey:@"commentCount"];
@@ -272,7 +270,7 @@ GRMustacheTemplate *template;
         NSString *result = [NSString stringWithFormat:@"%@ %@%@", count, contents, ([count isEqualToString:@"1"] ? @"" : @"s")];
         return result;
     })];
-    [templateData setObject:pluralizeHelper forKey:@"pluralizeHelper"];
+    templateData[@"pluralizeHelper"] = pluralizeHelper;
     
     id dateHelper = [GRMustacheHelper helperWithBlock:^NSString *(GRMustacheSection *section) {
         NSLog(@"section is %@", section);
@@ -317,7 +315,7 @@ GRMustacheTemplate *template;
         }
         return [NSString stringWithFormat:@"%d seconds ago", seconds];
     }];
-    [templateData setObject:dateHelper forKey:@"dateHelper"];
+    templateData[@"dateHelper"] = dateHelper;
     
     NSLog(@"rendering with %@", templateData);
     NSString *rendered = [template renderObject:templateData];
@@ -349,7 +347,7 @@ GRMustacheTemplate *template;
             
             UserStreamManager *manager;
             if (list.count > 2) {
-                NSString *userId = [[list objectAtIndex:1] stringByDecodingFromURI];
+                NSString *userId = [list[1] stringByDecodingFromURI];
                 manager = [[UserStreamManager alloc] initWithUser:userId];
             } else {
                 manager = [[UserStreamManager alloc] initWithUser:photo.ownerId];
@@ -357,7 +355,7 @@ GRMustacheTemplate *template;
             StreamViewController *userController = [[StreamViewController alloc] initWithPhotoStreamManager:manager];
             [manager release];
             if (list.count > 2) {
-                NSString *title = [[list objectAtIndex:2] stringByDecodingFromURI];
+                NSString *title = [list[2] stringByDecodingFromURI];
                 userController.title = title;
             } else {
                 userController.title = photo.ownername;
@@ -372,7 +370,7 @@ GRMustacheTemplate *template;
             if (list.count < 1) {
                 return false;
             }
-            NSString *tag = [[list objectAtIndex:1] stringByDecodingFromURI];
+            NSString *tag = [list[1] stringByDecodingFromURI];
 
             TagStreamManager *manager = [[TagStreamManager alloc] initWithTag:tag];
             StreamViewController *svc = [[StreamViewController alloc] initWithPhotoStreamManager:manager];

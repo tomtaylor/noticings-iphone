@@ -173,7 +173,7 @@
     NSMutableData *data = [NSMutableData new];
     NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data];
     [archiver encodeObject:self.rawPhotos forKey:@"photos"];
-    [archiver encodeObject:[NSNumber numberWithDouble:self.lastRefresh] forKey:@"lastRefresh"];
+    [archiver encodeObject:@(self.lastRefresh) forKey:@"lastRefresh"];
     [archiver finishEncoding];
     [data writeToFile:cache atomically:YES];
     [archiver release];

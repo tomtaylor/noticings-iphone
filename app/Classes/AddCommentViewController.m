@@ -57,7 +57,7 @@
     NSLog(@"Saving comment on photo %@: %@", self.photo.flickrId, self.textView.text);
     
     NSString *method = @"flickr.photos.comments.addComment";
-    NSDictionary *args = [NSDictionary dictionaryWithObjectsAndKeys: self.photo.flickrId, @"photo_id", self.textView.text, @"comment_text", nil];
+    NSDictionary *args = @{@"photo_id": self.photo.flickrId, @"comment_text": self.textView.text};
 
     [[NoticingsAppDelegate delegate].flickrCallManager
     callFlickrMethod:method

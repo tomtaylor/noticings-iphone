@@ -53,7 +53,7 @@
 {
     // call on main thread so KVO is safe for GUI elements
     dispatch_async(dispatch_get_main_queue(),^{
-        self.upload.progress = [NSNumber numberWithFloat:progress];
+        self.upload.progress = @(progress);
         self.upload.inProgress = YES;
     });
 }
@@ -89,13 +89,13 @@
                                       nil];
     
     if (self.upload.privacy == PhotoUploadPrivacyPrivate) {
-        [arguments setObject:@"0" forKey:@"is_public"];
+        arguments[@"is_public"] = @"0";
     } else if (self.upload.privacy == PhotoUploadPrivacyFriendsAndFamily) {
-        [arguments setObject:@"1" forKey:@"is_friend"];
-        [arguments setObject:@"1" forKey:@"is_family"];
-        [arguments setObject:@"0" forKey:@"is_public"];
+        arguments[@"is_friend"] = @"1";
+        arguments[@"is_family"] = @"1";
+        arguments[@"is_public"] = @"0";
     } else {
-        [arguments setObject:@"1" forKey:@"is_public"];
+        arguments[@"is_public"] = @"1";
     }
     
     NSString* token = [[NSUserDefaults standardUserDefaults] stringForKey:@"oauth_token"];
@@ -187,10 +187,8 @@
         NSString *timestampString = [outputFormatter stringFromDate:self.upload.timestamp];
         [outputFormatter release];
         
-        NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
-                                   self.upload.flickrId, @"photo_id",
-                                   timestampString, @"date_taken",
-                                   nil];
+        NSDictionary *arguments = @{@"photo_id": self.upload.flickrId,
+                                   @"date_taken": timestampString};
         
         DeferredFlickrCallManager *callManager = [NoticingsAppDelegate delegate].flickrCallManager;
         NSError *error = nil;
@@ -215,15 +213,14 @@
         if (CLLocationCoordinate2DIsValid(self.upload.coordinate)) {
             // set the geodata manually
             
-            NSNumber *latitudeNumber = [NSNumber numberWithDouble:self.upload.coordinate.latitude];
-            NSNumber *longitudeNumber = [NSNumber numberWithDouble:self.upload.coordinate.longitude];
+            NSNumber *latitudeNumber = @(self.upload.coordinate.latitude);
+            NSNumber *longitudeNumber = @(self.upload.coordinate.longitude);
             
             DLog(@"Setting latitude to %f, longitude to %f", self.upload.coordinate.latitude, self.upload.coordinate.longitude);
             
-            NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:self.upload.flickrId, @"photo_id", 
-                                       [latitudeNumber stringValue], @"lat",
-                                       [longitudeNumber stringValue], @"lon",
-                                       nil];
+            NSDictionary *arguments = @{@"photo_id": self.upload.flickrId, 
+                                       @"lat": [latitudeNumber stringValue],
+                                       @"lon": [longitudeNumber stringValue]};
             
             NSError *error = nil;
             [callManager callSynchronousFlickrMethod:@"flickr.photos.geo.setLocation" asPost:YES withArgs:arguments error:&error];
@@ -235,7 +232,7 @@
             // remove the geodata manually
             
             DLog(@"PhotoUpload did originally have a coordinate, but was removed the map, so removing the geodata manually.");
-            NSDictionary *arguments = [NSDictionary dictionaryWithObject:self.upload.flickrId forKey:@"photo_id"];
+            NSDictionary *arguments = @{@"photo_id": self.upload.flickrId};
             NSError *error = nil;
             [callManager callSynchronousFlickrMethod:@"flickr.photos.geo.removeLocation" asPost:YES withArgs:arguments error:&error];
             if (error) {

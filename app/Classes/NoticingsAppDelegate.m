@@ -49,11 +49,9 @@ BOOL gLogging = FALSE;
 #endif
     
 	NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-	NSDictionary *defaults = [NSDictionary dictionaryWithObjectsAndKeys:
-                              @"", @"defaultTags",
-                              [NSNumber numberWithBool:NO], @"filterInstagram", 
-                              [NSNumber numberWithBool:NO], @"askedToFilterInstagram", 
-                              nil];
+	NSDictionary *defaults = @{@"defaultTags": @"",
+                              @"filterInstagram": @NO, 
+                              @"askedToFilterInstagram": @NO};
 	[userDefaults registerDefaults:defaults];
 	[userDefaults synchronize];
 
@@ -65,7 +63,7 @@ BOOL gLogging = FALSE;
     self.flickrCallManager = [[[DeferredFlickrCallManager alloc] init] autorelease];
 	self.photoLocationManager = [[[PhotoLocationManager alloc] init] autorelease];
     
-	queueTab = [tabBarController.tabBar.items objectAtIndex:0];
+	queueTab = (tabBarController.tabBar.items)[0];
 	int count = self.uploadQueueManager.queue.operationCount;
 	
 	if (count > 0) {
@@ -89,7 +87,7 @@ BOOL gLogging = FALSE;
     // If there's no launch URL, then we haven't opened due to an auth callback.
     // If there is, we want to continue regardless, because we let the application:openURL: method below catch it.
     // We don't want to catch it here, because this is only called on launch, and won't call if the application is waking up after being backgrounded.
-    NSURL *launchURL = [launchOptions objectForKey:UIApplicationLaunchOptionsURLKey];
+    NSURL *launchURL = launchOptions[UIApplicationLaunchOptionsURLKey];
     if (!launchURL && ![self isAuthenticated]) {
         DLog(@"App is not authenticated, so popping sign in modal.");
         
@@ -139,11 +137,9 @@ BOOL gLogging = FALSE;
 }
 
 - (void)setDefaults {
-	NSDictionary *defaults = [NSDictionary dictionaryWithObjectsAndKeys:
-                                [NSNumber numberWithFloat:51.477811], @"lastKnownLatitude",
-                                [NSNumber numberWithFloat:-0.001475], @"lastKnownLongitude",
-                                [NSArray array], @"savedUploads",
-                                nil];
+	NSDictionary *defaults = @{@"lastKnownLatitude": @51.477811f,
+                                @"lastKnownLongitude": @-0.001475f,
+                                @"savedUploads": @[]};
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
 }
 
@@ -159,7 +155,7 @@ BOOL gLogging = FALSE;
     [[NoticingsAppDelegate delegate].contactsStreamManager maybeRefresh]; // the viewcontroller listens to this
     
     // if we're looking at a list of photos, reload it, in case the user defaults have changed.
-    UINavigationController *nav = (UINavigationController*)[self.tabBarController.viewControllers objectAtIndex:0];
+    UINavigationController *nav = (UINavigationController*)(self.tabBarController.viewControllers)[0];
     if (nav.visibleViewController.class == StreamViewController.class) {
         [((StreamViewController*)nav.visibleViewController).tableView reloadData];
     }

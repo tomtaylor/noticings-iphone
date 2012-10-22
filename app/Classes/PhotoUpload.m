@@ -38,7 +38,7 @@ enum {
 	if (self != nil) {
 		self.asset = _asset;
         self.inProgress = FALSE;
-		self.progress = [NSNumber numberWithFloat:0.0f];
+		self.progress = @0.0f;
 
         self.privacy = PhotoUploadPrivacyPublic;
         self.location = [asset valueForProperty:ALAssetPropertyLocation];
@@ -107,7 +107,7 @@ enum {
         originalCoordinate = anOriginalCoordinate;
                 
         self.inProgress = NO;
-		self.progress = [NSNumber numberWithFloat:0.0f];
+		self.progress = @0.0f;
     }
     return self;
 }

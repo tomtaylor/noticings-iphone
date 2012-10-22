@@ -114,14 +114,14 @@
 
 - (NSURL*) imageURL;
 {
-    return [NSURL URLWithString:[self.details objectForKey:@"url_m"]];
+    return [NSURL URLWithString:(self.details)[@"url_m"]];
 }
 
 - (NSURL*) bigImageURL;
 {
-    NSString *big = [self.details objectForKey:@"url_b"];
+    NSString *big = (self.details)[@"url_b"];
     if (!big) {
-        big = [self.details objectForKey:@"url_m"];
+        big = (self.details)[@"url_m"];
     }
     return [NSURL URLWithString:big];
 }
@@ -138,11 +138,11 @@
 - (NSURL*) avatarURL;
 {
     NSString *avatarUrl;
-    if ([self.details objectForKey:@"iconserver"] && ![[self.details objectForKey:@"iconserver"] isEqual:@"0"]) {
+    if ((self.details)[@"iconserver"] && ![(self.details)[@"iconserver"] isEqual:@"0"]) {
         avatarUrl = [NSString stringWithFormat:@"http://farm%@.static.flickr.com/%@/buddyicons/%@.jpg",
-                     [self.details objectForKey:@"iconfarm"],
-                     [self.details objectForKey:@"iconserver"],
-                     [self.details objectForKey:@"owner"]
+                     (self.details)[@"iconfarm"],
+                     (self.details)[@"iconserver"],
+                     (self.details)[@"owner"]
                      ];
         
     } else {
@@ -154,8 +154,8 @@
 - (NSURL*) pageURL;
 {
     NSString *urlString = [NSString stringWithFormat:@"http://www.flickr.com/photos/%@/%@",
-                           [self.details objectForKey:@"pathalias"],
-                           [self.details objectForKey:@"id"]
+                           (self.details)[@"pathalias"],
+                           (self.details)[@"id"]
                            ];
     return [NSURL URLWithString:urlString];
 }
@@ -163,21 +163,21 @@
 - (NSURL *)mobilePageURL;
 {
     NSString *urlString = [NSString stringWithFormat:@"http://m.flickr.com/photos/%@/%@",
-                           [self.details objectForKey:@"pathalias"],
-                           [self.details objectForKey:@"id"]
+                           (self.details)[@"pathalias"],
+                           (self.details)[@"id"]
                            ];
     return [NSURL URLWithString:urlString];
 }
 
 - (NSString*)dateupload;
 {
-    return [self.details objectForKey:@"dateupload"];
+    return (self.details)[@"dateupload"];
 }
 
 - (NSString*) ago;
 {
     NSTimeInterval epoch = [[NSDate date] timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970; // yeah.
-    NSString *uploaded = [self.details objectForKey:@"dateupload"];
+    NSString *uploaded = (self.details)[@"dateupload"];
     if (!uploaded) {
         return @"";
     }
@@ -207,10 +207,10 @@
 
 -(int)visibility;
 {
-    if ([[self.details objectForKey:@"ispublic"] intValue]) {
+    if ([(self.details)[@"ispublic"] intValue]) {
         return StreamPhotoVisibilityPublic;
     }
-    if ([[self.details objectForKey:@"isfriend"] intValue] || [[self.details objectForKey:@"isfamily"] intValue]) {
+    if ([(self.details)[@"isfriend"] intValue] || [(self.details)[@"isfamily"] intValue]) {
         return StreamPhotoVisibilityLimited;
     }
     return StreamPhotoVisibilityPrivate;
@@ -222,7 +222,7 @@
     if (tags.length > 0) {
         return [tags componentsSeparatedByString:@" "];
     }
-    return [NSArray array];
+    return @[];
 }
 
 -(NSArray*)humanTags;
@@ -241,8 +241,8 @@
 
 -(CGFloat)imageHeightForWidth:(CGFloat)width;
 {
-    float width_m = [[self.details objectForKey:@"width_m"] floatValue];
-    float height_m = [[self.details objectForKey:@"height_m"] floatValue];
+    float width_m = [(self.details)[@"width_m"] floatValue];
+    float height_m = [(self.details)[@"height_m"] floatValue];
     CGFloat height = width * height_m / width_m;
     return height;
 }

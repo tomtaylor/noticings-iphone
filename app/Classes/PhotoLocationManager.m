@@ -47,7 +47,7 @@
 
 -(NSString*)cachedLocationForPhoto:(StreamPhoto*)photo;
 {
-    NSDictionary *cachedLocation = [self.cache objectForKey:photo.woeid];
+    NSDictionary *cachedLocation = (self.cache)[photo.woeid];
     if (cachedLocation) {
         NSString *name = [cachedLocation valueForKeyPath:@"name"];
         return name;
@@ -73,10 +73,10 @@
     BOOL alreadyQueued = YES;
 
     @synchronized(self) {
-        NSMutableArray* listeners = [self.locationRequests objectForKey:photo.woeid];
+        NSMutableArray* listeners = (self.locationRequests)[photo.woeid];
         if (!listeners) {
             listeners = [NSMutableArray arrayWithCapacity:1];
-            [self.locationRequests setObject:listeners forKey:photo.woeid];
+            (self.locationRequests)[photo.woeid] = listeners;
             alreadyQueued = NO;
         }
         if (delegate) {
@@ -91,7 +91,7 @@
         return;
     }
 
-    NSDictionary *args = [NSDictionary dictionaryWithObject:photo.woeid forKey:@"woe_id"];
+    NSDictionary *args = @{@"woe_id": photo.woeid};
     NSString *woeid = photo.woeid;
     
     [[NoticingsAppDelegate delegate].flickrCallManager
@@ -106,19 +106,17 @@
             // store a true value, at least.
             name = @"Unknown location";
         }
-        NSString *first = [[name componentsSeparatedByString:@","] objectAtIndex:0];
+        NSString *first = [name componentsSeparatedByString:@","][0];
         name = [NSString stringWithFormat:@"%@, %@", first, [rsp valueForKeyPath:@"place.country._content"]];
         NSLog(@"Got location name '%@' for woeid %@", name, woeid);
         NSTimeInterval now = [[NSDate date] timeIntervalSinceReferenceDate];
-        NSDictionary *cachedLocation = [NSDictionary dictionaryWithObjectsAndKeys:
-            name, @"name",
-            [NSString stringWithFormat:@"%f", now], @"date", // for potential cache invalidation later.
-            nil];
-        [self.cache setObject:cachedLocation forKey:photo.woeid];
+        NSDictionary *cachedLocation = @{@"name": name,
+            @"date": [NSString stringWithFormat:@"%f", now]};
+        (self.cache)[photo.woeid] = cachedLocation;
         [self saveCachedLocations:self.cache];
 
         @synchronized(self) {
-            NSMutableArray* listeners = [[[self.locationRequests objectForKey:woeid] retain] autorelease];
+            NSMutableArray* listeners = [[(self.locationRequests)[woeid] retain] autorelease];
             [self.locationRequests removeObjectForKey:woeid]; // remove _before_ we dispatch.
 
             if (listeners != nil && listeners.count > 0) {

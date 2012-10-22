@@ -26,11 +26,9 @@
 
 -(void)callFlickrAnd:(FlickrCallback)callback;
 {
-    NSDictionary *args = [NSDictionary dictionaryWithObjectsAndKeys:
-                          @"50", @"per_page",
-                          [self extras], @"extras",
-                          self.userId, @"user_id",
-                          nil];
+    NSDictionary *args = @{@"per_page": @"50",
+                          @"extras": [self extras],
+                          @"user_id": self.userId};
     [[NoticingsAppDelegate delegate].flickrCallManager callFlickrMethod:@"flickr.photos.search"
                                                                            asPost:NO
                                                                          withArgs:args

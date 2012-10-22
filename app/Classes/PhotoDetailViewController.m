@@ -49,7 +49,7 @@
         [privacyView addSubview:privacyLabel];
         [privacyLabel release];
         
-        UISegmentedControl *privacyControl = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"Private", @"F & F", @"Public", nil]];
+        UISegmentedControl *privacyControl = [[UISegmentedControl alloc] initWithItems:@[@"Private", @"F & F", @"Public"]];
         privacyControl.frame = CGRectMake(10, 50.25, 300, self.privacyView.frame.size.height-50.25);
         [privacyControl addTarget:self action:@selector(privacyChanged:) forControlEvents:UIControlEventValueChanged];
         [privacyControl setSelectedSegmentIndex:2]; // default to being public

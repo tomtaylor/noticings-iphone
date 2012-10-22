@@ -149,7 +149,7 @@
         
         
         // whatever happens, don't do that again.
-        [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithBool:YES] forKey:@"askedToFilterInstagram"];
+        [[NSUserDefaults standardUserDefaults] setValue:@YES forKey:@"askedToFilterInstagram"];
     }
 
 	[self.tableView reloadData];
@@ -159,7 +159,7 @@
 {
     NSLog(@"button %d", buttonIndex);
     if (buttonIndex == 1) {
-        [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithBool:YES] forKey:@"filterInstagram"];
+        [[NSUserDefaults standardUserDefaults] setValue:@YES forKey:@"filterInstagram"];
         [self.tableView reloadData];
     }
 }
@@ -189,7 +189,7 @@
     if (!isRoot) {
         // for the non-root controller, just index into Photos.
         NSInteger photoIndex = indexPath.section;
-        return [photos objectAtIndex:photoIndex];
+        return photos[photoIndex];
     }
 
     UploadQueueManager *uploadQueueManager = [NoticingsAppDelegate delegate].uploadQueueManager;
@@ -200,7 +200,7 @@
     }
 
     NSInteger photoIndex = indexPath.section - photoUploads;
-    return [photos objectAtIndex:photoIndex];
+    return photos[photoIndex];
 }
 
 - (PhotoUpload*)photoUploadAtIndexPath:(NSIndexPath*)indexPath;
@@ -216,7 +216,7 @@
         return nil;
     }
     if (indexPath.section < [photoUploadOperations count]) {
-        return ((PhotoUploadOperation*)[photoUploadOperations objectAtIndex:indexPath.section]).upload;
+        return ((PhotoUploadOperation*)photoUploadOperations[indexPath.section]).upload;
     }
     return nil;
 }

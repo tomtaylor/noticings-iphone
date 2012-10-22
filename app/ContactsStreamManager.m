@@ -15,11 +15,9 @@
 
 -(void)callFlickrAnd:(FlickrCallback)callback;
 {
-    NSDictionary *args = [NSDictionary dictionaryWithObjectsAndKeys:
-                          @"50", @"count",
-                          [self extras], @"extras",
-                          @"1", @"include_self",
-                          nil];
+    NSDictionary *args = @{@"count": @"50",
+                          @"extras": [self extras],
+                          @"include_self": @"1"};
     [[NoticingsAppDelegate delegate].flickrCallManager callFlickrMethod:@"flickr.photos.getContactsPhotos"
                                                                            asPost:NO
                                                                          withArgs:args

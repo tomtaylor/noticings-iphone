@@ -35,9 +35,9 @@
 -(NSDictionary *) callSynchronousFlickrMethod:(NSString*)method asPost:(BOOL)asPost withArgs:(NSDictionary*)args error:(NSError**)errorAddr;
 {
     NSMutableDictionary *newArgs = args ? [NSMutableDictionary dictionaryWithDictionary:args] : [NSMutableDictionary dictionary];
-	[newArgs setObject:method forKey:@"method"];
-	[newArgs setObject:@"json" forKey:@"format"];
-    [newArgs setObject:@"1" forKey:@"nojsoncallback"];
+	newArgs[@"method"] = method;
+	newArgs[@"format"] = @"json";
+    newArgs[@"nojsoncallback"] = @"1";
     
     NSString* token = [[NSUserDefaults standardUserDefaults] stringForKey:@"oauth_token"];
     NSString* secret = [[NSUserDefaults standardUserDefaults] stringForKey:@"oauth_secret"];
@@ -80,9 +80,9 @@
     if (!rsp) {
         return nil;
     }
-    if (![[rsp objectForKey:@"stat"] isEqualToString:@"ok"]) {
+    if (![rsp[@"stat"] isEqualToString:@"ok"]) {
         NSLog(@"Failed flickr call %@(%@): %@", method, newArgs, rsp);
-        NSString *code = [rsp objectForKey:@"code"];
+        NSString *code = rsp[@"code"];
         *errorAddr = [NSError errorWithDomain:@"flickr" code:[code integerValue] userInfo:rsp];
         return rsp;
     }
@@ -111,7 +111,7 @@
         if (success) {
             successCB(rsp);
         } else {
-            failure([error.userInfo objectForKey:@"code"], [error.userInfo objectForKey:@"msg"]);
+            failure((error.userInfo)[@"code"], (error.userInfo)[@"msg"]);
         }
     }];
 }

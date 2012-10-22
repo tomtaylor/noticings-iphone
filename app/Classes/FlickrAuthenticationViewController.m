@@ -34,9 +34,7 @@
     [self displaySpinner];
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
-                                @"noticings://", @"callback",
-                                nil];
+        NSDictionary *params = @{@"callback": @"noticings://"};
         NSURLRequest *req = [GCOAuth URLRequestForPath:@"/services/oauth/request_token"
                                          GETParameters:params
                                                 scheme:@"http"
@@ -65,11 +63,11 @@
         [body release];
 
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        [defaults setValue:[parsed objectForKey:@"oauth_token"] forKey:@"request_token"];
-        [defaults setValue:[parsed objectForKey:@"oauth_token_secret"] forKey:@"request_secret"];
+        [defaults setValue:parsed[@"oauth_token"] forKey:@"request_token"];
+        [defaults setValue:parsed[@"oauth_token_secret"] forKey:@"request_secret"];
         [defaults synchronize];
         
-        NSString *redirect = [NSString stringWithFormat:@"http://www.flickr.com/services/oauth/authorize?oauth_token=%@", [parsed objectForKey:@"oauth_token"]];
+        NSString *redirect = [NSString stringWithFormat:@"http://www.flickr.com/services/oauth/authorize?oauth_token=%@", parsed[@"oauth_token"]];
 
         dispatch_async(dispatch_get_main_queue(),^{
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:redirect]];
@@ -80,16 +78,14 @@
 }
 
 - (void)finalizeAuthWithUrl:(NSURL *)url {
-    NSString *queryString = [[url.absoluteString componentsSeparatedByString:@"?"] objectAtIndex:1];
+    NSString *queryString = [url.absoluteString componentsSeparatedByString:@"?"][1];
     NSDictionary *urlParams = [queryString dictionaryByParsingAsQueryParameters];
     NSLog(@"incoming parsms are %@", urlParams);
 
     [self displaySpinner];
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
-                                [urlParams objectForKey:@"oauth_verifier"], @"oauth_verifier",
-                                nil];
+        NSDictionary *params = @{@"oauth_verifier": urlParams[@"oauth_verifier"]};
         
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         NSURLRequest *req = [GCOAuth URLRequestForPath:@"/services/oauth/access_token"
@@ -120,11 +116,11 @@
         [body release];
         DLog(@"got user data %@", parsed);
         
-        [defaults setValue:[parsed objectForKey:@"oauth_token"] forKey:@"oauth_token"];
-        [defaults setValue:[parsed objectForKey:@"oauth_token_secret"] forKey:@"oauth_secret"];
-        [defaults setValue:[parsed objectForKey:@"username"] forKey:@"userName"];
-        [defaults setValue:[parsed objectForKey:@"fullname"] forKey:@"fullName"];
-        [defaults setValue:[parsed objectForKey:@"user_nsid"] forKey:@"nsid"];
+        [defaults setValue:parsed[@"oauth_token"] forKey:@"oauth_token"];
+        [defaults setValue:parsed[@"oauth_token_secret"] forKey:@"oauth_secret"];
+        [defaults setValue:parsed[@"username"] forKey:@"userName"];
+        [defaults setValue:parsed[@"fullname"] forKey:@"fullName"];
+        [defaults setValue:parsed[@"user_nsid"] forKey:@"nsid"];
         [defaults synchronize];
 
         dispatch_async(dispatch_get_main_queue(),^{

@@ -70,59 +70,59 @@
     NSMutableDictionary *gps = [NSMutableDictionary dictionary];
 
     // GPS tag version
-    [gps setObject:@"2.2.0.0" forKey:(NSString *)kCGImagePropertyGPSVersion];
+    gps[(NSString *)kCGImagePropertyGPSVersion] = @"2.2.0.0";
     
     // Time and date must be provided as strings, not as an NSDate object
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     [formatter setDateFormat:@"HH:mm:ss.SSSSSS"];
     [formatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
-    [gps setObject:[formatter stringFromDate:self.currentLocation.timestamp] forKey:(NSString *)kCGImagePropertyGPSTimeStamp];
+    gps[(NSString *)kCGImagePropertyGPSTimeStamp] = [formatter stringFromDate:self.currentLocation.timestamp];
     [formatter setDateFormat:@"yyyy:MM:dd"];
-    [gps setObject:[formatter stringFromDate:self.currentLocation.timestamp] forKey:(NSString *)kCGImagePropertyGPSDateStamp];
+    gps[(NSString *)kCGImagePropertyGPSDateStamp] = [formatter stringFromDate:self.currentLocation.timestamp];
     [formatter release];
     
     // Latitude
     CGFloat latitude = self.currentLocation.coordinate.latitude;
     if (latitude < 0) {
         latitude = -latitude;
-        [gps setObject:@"S" forKey:(NSString *)kCGImagePropertyGPSLatitudeRef];
+        gps[(NSString *)kCGImagePropertyGPSLatitudeRef] = @"S";
     } else {
-        [gps setObject:@"N" forKey:(NSString *)kCGImagePropertyGPSLatitudeRef];
+        gps[(NSString *)kCGImagePropertyGPSLatitudeRef] = @"N";
     }
-    [gps setObject:[NSNumber numberWithFloat:latitude] forKey:(NSString *)kCGImagePropertyGPSLatitude];
+    gps[(NSString *)kCGImagePropertyGPSLatitude] = @(latitude);
     
     // Longitude
     CGFloat longitude = self.currentLocation.coordinate.longitude;
     if (longitude < 0) {
         longitude = -longitude;
-        [gps setObject:@"W" forKey:(NSString *)kCGImagePropertyGPSLongitudeRef];
+        gps[(NSString *)kCGImagePropertyGPSLongitudeRef] = @"W";
     } else {
-        [gps setObject:@"E" forKey:(NSString *)kCGImagePropertyGPSLongitudeRef];
+        gps[(NSString *)kCGImagePropertyGPSLongitudeRef] = @"E";
     }
-    [gps setObject:[NSNumber numberWithFloat:longitude] forKey:(NSString *)kCGImagePropertyGPSLongitude];
+    gps[(NSString *)kCGImagePropertyGPSLongitude] = @(longitude);
     
     // Altitude
     CGFloat altitude = self.currentLocation.altitude;
     if (!isnan(altitude)) {
         if (altitude < 0) {
             altitude = -altitude;
-            [gps setObject:@"1" forKey:(NSString *)kCGImagePropertyGPSAltitudeRef];
+            gps[(NSString *)kCGImagePropertyGPSAltitudeRef] = @"1";
         } else {
-            [gps setObject:@"0" forKey:(NSString *)kCGImagePropertyGPSAltitudeRef];
+            gps[(NSString *)kCGImagePropertyGPSAltitudeRef] = @"0";
         }
-        [gps setObject:[NSNumber numberWithFloat:altitude] forKey:(NSString *)kCGImagePropertyGPSAltitude];
+        gps[(NSString *)kCGImagePropertyGPSAltitude] = @(altitude);
     }
     
     // Speed, must be converted from m/s to km/h
     if (self.currentLocation.speed >= 0) {
-        [gps setObject:@"K" forKey:(NSString *)kCGImagePropertyGPSSpeedRef];
-        [gps setObject:[NSNumber numberWithFloat:self.currentLocation.speed*3.6] forKey:(NSString *)kCGImagePropertyGPSSpeed];
+        gps[(NSString *)kCGImagePropertyGPSSpeedRef] = @"K";
+        gps[(NSString *)kCGImagePropertyGPSSpeed] = [NSNumber numberWithFloat:3.6f * self.currentLocation.speed];
     }
     
     // Heading
     if (self.currentLocation.course >= 0) {
-        [gps setObject:@"T" forKey:(NSString *)kCGImagePropertyGPSTrackRef];
-        [gps setObject:[NSNumber numberWithFloat:self.currentLocation.course] forKey:(NSString *)kCGImagePropertyGPSTrack];
+        gps[(NSString *)kCGImagePropertyGPSTrackRef] = @"T";
+        gps[(NSString *)kCGImagePropertyGPSTrack] = [NSNumber numberWithFloat:self.currentLocation.course];
     }
     return gps;
 }
@@ -135,7 +135,7 @@
         [self imagePickerController:picker didFinishTakingPhotoWithInfo:info];
     } else {
         [self.baseViewController dismissModalViewControllerAnimated:NO];
-        NSURL *assetUrl = [info objectForKey:UIImagePickerControllerReferenceURL];
+        NSURL *assetUrl = info[UIImagePickerControllerReferenceURL];
         DLog(@"Reading asset with URL: %@", assetUrl);
         [self.assetsLibrary assetForURL:assetUrl 
                        resultBlock:^(ALAsset *asset) {
@@ -165,8 +165,8 @@
     
     DLog(@"metadata: %@", info);
     
-    UIImage *originalImage = [info objectForKey:UIImagePickerControllerOriginalImage];
-    NSDictionary *metadata = [info objectForKey:UIImagePickerControllerMediaMetadata];
+    UIImage *originalImage = info[UIImagePickerControllerOriginalImage];
+    NSDictionary *metadata = info[UIImagePickerControllerMediaMetadata];
     
     // GPS isn't recorded unless we do it manually
     NSDictionary *gpsMetadata = [self gpsDictionaryForCurrentLocation];
