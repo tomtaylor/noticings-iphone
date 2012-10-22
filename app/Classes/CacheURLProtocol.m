@@ -17,9 +17,16 @@
 @synthesize data = data_;
 @synthesize response = response_;
 
+// property to stop recursive requests.
+// http://stackoverflow.com/questions/2494831/intercept-web-requests-from-a-webview-flash-plugin
+#define ANTIRECURSE_REQUEST_HEADER_TAG  @"x-mycustomurl-intercept"
+
 + (BOOL)canInitWithRequest:(NSURLRequest *)request;
 {
-    if ([request.URL.scheme isEqualToString:@"cache"]) {
+    if ([request valueForHTTPHeaderField:ANTIRECURSE_REQUEST_HEADER_TAG]) {
+        return NO;
+    }
+    if ([request.URL.scheme isEqualToString:@"http"] || [request.URL.scheme isEqualToString:@"https"]) {
         return YES;
     }
     return NO;
@@ -32,9 +39,15 @@
 
 - (id)initWithRequest:(NSURLRequest *)request cachedResponse:(NSCachedURLResponse *)cachedResponse client:(id <NSURLProtocolClient>)client;
 {
-    self = [super initWithRequest:request cachedResponse:cachedResponse client:client];
+    // Add a custom header on the request to break the
+    // infinite loop created by the [startLoading] below.
+    NSMutableURLRequest* newRequest = [request mutableCopy];
+    [newRequest setValue:@"recurse" forHTTPHeaderField:ANTIRECURSE_REQUEST_HEADER_TAG];
+    
+    self = [super initWithRequest:newRequest cachedResponse:cachedResponse client:client];
+    
     if (self) {
-        self.request = request;
+        self.request = newRequest;
         self.connection = nil;
     }
     return self;
@@ -52,31 +65,12 @@
 
 - (void)startLoading;
 {
-//    DLog(@"startLoading %@", self.request.URL);
-    
-    // fix scheme up from cache to http;.
-    NSMutableURLRequest *myRequest = [[self.request mutableCopy] autorelease];
-    myRequest.URL = [NSURL URLWithString:[myRequest.URL.absoluteString stringByReplacingCharactersInRange:NSMakeRange(0, 5) withString:@"http"]];
-    
-    CacheManager *cache = [NoticingsAppDelegate delegate].cacheManager;
-    NSString *filename = [cache urlToFilename:self.request.URL];
-    if ([[NSFileManager defaultManager] fileExistsAtPath:filename]) {
-        NSData *data = [NSData dataWithContentsOfFile:filename];
-        [self respond:data];
-        return;
-    }
-
-    DLog(@"..fetching %@ from internet", myRequest.URL);
-    self.connection = [NSURLConnection connectionWithRequest:myRequest delegate:self];
-
+    self.connection = [NSURLConnection connectionWithRequest:self.request delegate:self];
 }
 
 -(void)dealloc;
 {
     [self stopLoading];
-    self.data = nil;
-    self.response = nil;
-    self.connection = nil;
     [super dealloc];
 }
 
@@ -88,11 +82,9 @@
 }
 
 // NSURLConnection delegates (generally we pass these on to our client)
-
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)newData
 {
     [[self client] URLProtocol:self didLoadData:newData];
-    
     if (self.data) {
         [self.data appendData:newData];
     } else {
@@ -118,23 +110,6 @@
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
     [[self client] URLProtocolDidFinishLoading:self];
-    
-    if ([self.response isKindOfClass:NSHTTPURLResponse.class]) {
-        NSHTTPURLResponse *resp = (NSHTTPURLResponse*)self.response;
-        if (resp.statusCode == 200) {
-            DLog(@"Sensible HTTP response.");
-            CacheManager *cache = [NoticingsAppDelegate delegate].cacheManager;
-            NSString *filename = [cache urlToFilename:self.request.URL];
-            [self.data writeToFile:filename atomically:YES];
-            [self respond:self.data];
-        } else {
-            DLog(@"Non-200 status code from HTTP response, not caching.");
-            [self respond:self.data];
-        }
-    } else {
-        DLog(@"Not caching non-HTTP response.");
-    }
-    
     self.connection = nil;
     self.response = nil;
     self.data = nil;
