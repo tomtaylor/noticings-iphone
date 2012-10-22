@@ -63,12 +63,11 @@
 
         if (!success) {
             NSLog(@"failed flickr request! %@", error);
-            [[[[UIAlertView alloc] initWithTitle:@"Flickr API call failed"
+            [[[UIAlertView alloc] initWithTitle:@"Flickr API call failed"
                                          message:@"There was a problem getting your contacts' photos from Flickr."
                                         delegate:nil
                                cancelButtonTitle:@"OK"
-                               otherButtonTitles:nil]
-              autorelease] show];
+                               otherButtonTitles:nil] show];
             
             // call newPhotos call _anyway_, to convince the view controller that we're finished.
             [self.delegate performSelector:@selector(newPhotos)];
@@ -79,7 +78,6 @@
         for (NSDictionary *photo in [rsp valueForKeyPath:@"photos.photo"]) {
             StreamPhoto *sp = [[StreamPhoto alloc] initWithDictionary:photo];
             [self.rawPhotos addObject:sp];
-            [sp release];
         }
         [self saveCachedImageList];
         
@@ -145,20 +143,16 @@
     NSLog(@"Loading cached image data from %@", cache);
     NSData *data = [[NSData alloc] initWithContentsOfFile:cache];
     NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
-    NSArray *archived = [[unarchiver decodeObjectForKey:@"photos"] retain];
-    NSNumber *archivedLastRefresh = [[unarchiver decodeObjectForKey:@"lastRefresh"] retain];
-    [unarchiver release];
-    [data release];
+    NSArray *archived = [unarchiver decodeObjectForKey:@"photos"];
+    NSNumber *archivedLastRefresh = [unarchiver decodeObjectForKey:@"lastRefresh"];
     
     // don't replace self.photos, alter, so we fire the watchers.
     [self.rawPhotos removeAllObjects];
     for (StreamPhoto *photo in archived) {
         [self.rawPhotos addObject:photo];
     }
-    [archived release];
 
     self.lastRefresh = [archivedLastRefresh doubleValue];
-    [archivedLastRefresh release];
 }
 
 // save the cached list of images fetched from flickr
@@ -176,15 +170,13 @@
     [archiver encodeObject:@(self.lastRefresh) forKey:@"lastRefresh"];
     [archiver finishEncoding];
     [data writeToFile:cache atomically:YES];
-    [archiver release];
-    [data release];
 }
 
 -(void)precache;
 {
     NSLog(@"pre-caching images for %@", self.class);
     
-    __block PhotoStreamManager* _self = self;
+    __weak PhotoStreamManager* _self = self;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
 
         // pre-cache images
@@ -212,9 +204,6 @@
 - (void)dealloc
 {
     NSLog(@"deallocing %@", self.class);
-    self.delegate = nil;
-    self.rawPhotos = nil;
-    [super dealloc];
 }
 
 

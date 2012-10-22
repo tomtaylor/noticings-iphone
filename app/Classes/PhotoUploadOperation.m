@@ -78,7 +78,6 @@
         [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
         [dateFormatter setDateStyle:NSDateFormatterNoStyle];
         uploadedTitleString = [dateFormatter stringFromDate:self.upload.timestamp];
-        [dateFormatter release];
     } else {
         uploadedTitleString = self.upload.title;
     }
@@ -110,7 +109,7 @@
                                        accessToken:token
                                        tokenSecret:secret];
     
-    NSMutableURLRequest *myreq = [[req mutableCopy] autorelease];
+    NSMutableURLRequest *myreq = [req mutableCopy];
     myreq.timeoutInterval = 100;
     
     // I DO NOT WANT TO TALK ABOUT THIS.
@@ -135,7 +134,7 @@
     [self status:0.05];
     
     // make long-running request, blocking this thread, but sending status updates
-    self.requestLock = [[[NSCondition alloc] init] autorelease];
+    self.requestLock = [[NSCondition alloc] init];
     [self.requestLock lock];
     self.requestFinished = FALSE;
     
@@ -150,7 +149,6 @@
     }
     [self.requestLock unlock];
     self.requestLock = nil;
-    [connection release];
     
     if (self.requestFailed) return; // assume [self fail:] already called
     if ([self isCancelled]) return [self backout];
@@ -169,7 +167,6 @@
     NSRange end = [stringBody rangeOfString:@"</photoid>"];
     NSString *photoId = [stringBody substringWithRange:NSMakeRange(start.location + start.length, end.location - (start.location+start.length))];
     NSLog(@"Got photo ID %@", photoId);
-    [stringBody release];
     
 
     self.upload.flickrId = photoId;
@@ -185,7 +182,6 @@
         NSDateFormatter *outputFormatter = [[NSDateFormatter alloc] init];
         [outputFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
         NSString *timestampString = [outputFormatter stringFromDate:self.upload.timestamp];
-        [outputFormatter release];
         
         NSDictionary *arguments = @{@"photo_id": self.upload.flickrId,
                                    @"date_taken": timestampString};

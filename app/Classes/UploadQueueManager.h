@@ -21,7 +21,7 @@
 - (void)uploadFailed:(PhotoUpload*)upload;
 
 @property (nonatomic) UIBackgroundTaskIdentifier backgroundTask;
-@property (nonatomic, retain) NSOperationQueue *queue;
+@property (nonatomic, strong) NSOperationQueue *queue;
 
 
 

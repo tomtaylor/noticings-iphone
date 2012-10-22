@@ -41,10 +41,5 @@
     return [NSString stringWithFormat:@"tag-%@", self.tag];
 }
 
--(void)dealloc;
-{
-    self.tag = nil;
-    [super dealloc];
-}
 
 @end

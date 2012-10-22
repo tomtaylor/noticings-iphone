@@ -44,10 +44,10 @@
     photoView.image = [UIImage imageNamed:@"photos"];
     photoView.contentMode = UIViewContentModeCenter;
 
-    __block StreamPhotoViewCell* _self = self;
+    __weak StreamPhotoViewCell* _self = self;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSData * data = [[[NSData alloc] initWithContentsOfURL:self.photo.imageURL] autorelease];
-        UIImage * image = [[[UIImage alloc] initWithData:data] autorelease];
+        NSData * data = [[NSData alloc] initWithContentsOfURL:self.photo.imageURL];
+        UIImage * image = [[UIImage alloc] initWithData:data];
         if (image != nil) {
             dispatch_async( dispatch_get_main_queue(), ^{
                 if (_self.photo == setphoto) {
@@ -66,8 +66,8 @@
     });
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSData * data = [[[NSData alloc] initWithContentsOfURL:self.photo.avatarURL] autorelease];
-        UIImage * image = [[[UIImage alloc] initWithData:data] autorelease];
+        NSData * data = [[NSData alloc] initWithContentsOfURL:self.photo.avatarURL];
+        UIImage * image = [[UIImage alloc] initWithData:data];
         if (image != nil) {
             dispatch_async( dispatch_get_main_queue(), ^{
                 if (_self.photo == setphoto) {
@@ -110,10 +110,6 @@
     }
 }
 
-- (void)dealloc {
-    self.photo = nil;
-    [super dealloc];
-}
 
 
 @end

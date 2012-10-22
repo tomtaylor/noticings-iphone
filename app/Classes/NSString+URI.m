@@ -12,13 +12,13 @@
 
 - (NSString *)stringByEncodingForURI;
 {
-    NSString * encodedString = (NSString *)CFURLCreateStringByAddingPercentEscapes(
+    NSString * encodedString = (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(
                                                                                    NULL,
                                                                                    (CFStringRef)self,
                                                                                    NULL,
                                                                                    (CFStringRef)@"!*'\"();:@&=+$,/?%#[]% ",
-                                                                                   kCFStringEncodingUTF8 );
-    return [encodedString autorelease];
+                                                                                   kCFStringEncodingUTF8 ));
+    return encodedString;
 }
 
 - (NSString *)stringByDecodingFromURI;

@@ -94,10 +94,5 @@ extern const NSUInteger kMaxDiskCacheSize;
     }
 
 }
-- (void)dealloc
-{
-    self.cacheDir = nil;
-    [super dealloc];
-}
 
 @end

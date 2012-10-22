@@ -25,13 +25,13 @@
 -(id)initWithPhoto:(StreamPhoto*)photo streamManager:(PhotoStreamManager*)streamManager;
 -(void)updateHTML;
 
-@property (retain) UIWebView *webView;
+@property (strong) UIWebView *webView;
 
-@property (retain) StreamPhoto* photo;
-@property (retain) PhotoStreamManager *streamManager;
-@property (retain) NSString *photoLocation;
+@property (strong) StreamPhoto* photo;
+@property (strong) PhotoStreamManager *streamManager;
+@property (strong) NSString *photoLocation;
 
-@property (retain) NSArray *comments;
+@property (strong) NSArray *comments;
 @property (assign) BOOL commentsError;
 
 @end

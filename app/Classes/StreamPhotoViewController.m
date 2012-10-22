@@ -49,7 +49,7 @@ GRMustacheTemplate *template;
 
 -(void)viewDidLoad;
 {
-    self.webView = [[[UIWebView alloc] initWithFrame:self.view.bounds] autorelease];
+    self.webView = [[UIWebView alloc] initWithFrame:self.view.bounds];
     self.webView.delegate = self;
     self.webView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     self.comments = nil;
@@ -63,7 +63,6 @@ GRMustacheTemplate *template;
                                      action:@selector(externalButton)];
     
     self.navigationItem.rightBarButtonItem = externalItem;
-    [externalItem release];
 
 
     // hide the shadows
@@ -80,7 +79,6 @@ GRMustacheTemplate *template;
                                    target: nil action: nil];
     
     [self.navigationItem setBackBarButtonItem: backButton];
-    [backButton release];
 
 }
 
@@ -116,7 +114,6 @@ GRMustacheTemplate *template;
 
     popupQuery.actionSheetStyle = UIActionSheetStyleBlackOpaque;
     [popupQuery showFromTabBar:self.tabBarController.tabBar];
-    [popupQuery release];
 
     
 }
@@ -139,7 +136,6 @@ GRMustacheTemplate *template;
         }
         [composer setMessageBody:body isHTML:NO];
         [self presentModalViewController:composer animated:YES];
-        [composer release];
 
     } else if (buttonIndex == sendTweetIndex) {
         TWTweetComposeViewController *composer = [[TWTweetComposeViewController alloc] init];
@@ -150,7 +146,6 @@ GRMustacheTemplate *template;
         }
         [composer addURL:self.photo.pageURL];
         [self presentModalViewController:composer animated:YES];
-        [composer release];
 
     } else if (buttonIndex == saveRollIndex) {
         // TODO
@@ -237,7 +232,7 @@ GRMustacheTemplate *template;
         NSLog(@"first run - need to parse template.");
         NSError *err = nil;
         NSString *file = [[NSBundle mainBundle] pathForResource:@"StreamPhotoViewController" ofType:@"html" inDirectory:nil];
-        template = [[GRMustacheTemplate templateFromContentsOfFile:file error:&err] retain];
+        template = [GRMustacheTemplate templateFromContentsOfFile:file error:&err];
         if (err != nil) {
             NSLog(@"error parsing template: %@", err);
             return;
@@ -332,14 +327,12 @@ GRMustacheTemplate *template;
         if ([request.URL.scheme isEqualToString:@"noticings-image"]) {
             ImageViewController *imageViewController = [[ImageViewController alloc] initWithPhoto:self.photo];
             [self.navigationController pushViewController:imageViewController animated:YES];
-            [imageViewController release];
             return false;
 
         } else if ([request.URL.scheme isEqualToString:@"noticings-map"]) {
             MapViewController *mapController = [[MapViewController alloc] init];
             [self.navigationController pushViewController:mapController animated:YES];
             [mapController displayPhoto:photo inManager:self.streamManager];
-            [mapController release];
             return false;
 
         } else if ([request.URL.scheme isEqualToString:@"noticings-user"]) {
@@ -353,7 +346,6 @@ GRMustacheTemplate *template;
                 manager = [[UserStreamManager alloc] initWithUser:photo.ownerId];
             }
             StreamViewController *userController = [[StreamViewController alloc] initWithPhotoStreamManager:manager];
-            [manager release];
             if (list.count > 2) {
                 NSString *title = [list[2] stringByDecodingFromURI];
                 userController.title = title;
@@ -361,7 +353,6 @@ GRMustacheTemplate *template;
                 userController.title = photo.ownername;
             }
             [self.navigationController pushViewController:userController animated:YES];
-            [userController release];
             return false;
 
         } else if ([request.URL.scheme isEqualToString:@"noticings-tag"]) {
@@ -374,16 +365,13 @@ GRMustacheTemplate *template;
 
             TagStreamManager *manager = [[TagStreamManager alloc] initWithTag:tag];
             StreamViewController *svc = [[StreamViewController alloc] initWithPhotoStreamManager:manager];
-            [manager release];
             svc.title = tag;
             [self.navigationController pushViewController:svc animated:YES];
-            [svc release];
             return false;
 
         } else if ([request.URL.scheme isEqualToString:@"noticings-comment"]) {
             AddCommentViewController *commentController = [[AddCommentViewController alloc] initWithPhoto:self.photo];
             [self.navigationController pushViewController:commentController animated:YES];
-            [commentController release];
             return false;
 
         }
@@ -423,7 +411,6 @@ GRMustacheTemplate *template;
 -(void)dealloc;
 {
     [self viewDidUnload];
-    [super dealloc];
 }
 
 

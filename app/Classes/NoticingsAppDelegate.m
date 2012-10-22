@@ -57,11 +57,11 @@ BOOL gLogging = FALSE;
 
     [NSURLProtocol registerClass:[CacheURLProtocol class]];
     
-    self.contactsStreamManager = [[[ContactsStreamManager alloc] init] autorelease];
-    self.cacheManager = [[[CacheManager alloc] init] autorelease];
-    self.uploadQueueManager = [[[UploadQueueManager alloc] init] autorelease];
-    self.flickrCallManager = [[[DeferredFlickrCallManager alloc] init] autorelease];
-	self.photoLocationManager = [[[PhotoLocationManager alloc] init] autorelease];
+    self.contactsStreamManager = [[ContactsStreamManager alloc] init];
+    self.cacheManager = [[CacheManager alloc] init];
+    self.uploadQueueManager = [[UploadQueueManager alloc] init];
+    self.flickrCallManager = [[DeferredFlickrCallManager alloc] init];
+	self.photoLocationManager = [[PhotoLocationManager alloc] init];
     
 	queueTab = (tabBarController.tabBar.items)[0];
 	int count = self.uploadQueueManager.queue.operationCount;
@@ -173,7 +173,6 @@ BOOL gLogging = FALSE;
         if (self.cameraController == nil) {
             CameraController *aCameraController = [[CameraController alloc] initWithBaseViewController:self.tabBarController];
             self.cameraController = aCameraController;
-            [aCameraController release];
         }
         
         if ([self.cameraController cameraIsAvailable]) {
@@ -181,7 +180,6 @@ BOOL gLogging = FALSE;
         } else {
             UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Camera Not Available" message:@"You can upload photos in your Camera Roll from the More tab." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [alertView show];
-            [alertView release];
         }
         return NO;
     }
@@ -196,13 +194,6 @@ BOOL gLogging = FALSE;
 #pragma mark -
 #pragma mark Memory management
 
-- (void)dealloc {
-    [authViewController release];
-	[tabBarController release];
-    [cameraController release];
-	[window release];
-	[super dealloc];
-}
 
 @end
 

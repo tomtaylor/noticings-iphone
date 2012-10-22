@@ -12,12 +12,12 @@
 
 @interface PhotoUploadOperation : NSOperation
 
-@property (nonatomic, retain) PhotoUpload *upload;
-@property (nonatomic, assign) UploadQueueManager *manager;
+@property (nonatomic, strong) PhotoUpload *upload;
+@property (nonatomic, weak) UploadQueueManager *manager;
 
 // URL request stuff
-@property (nonatomic, retain) NSMutableData *responseData;
-@property (nonatomic, retain) NSCondition *requestLock;
+@property (nonatomic, strong) NSMutableData *responseData;
+@property (nonatomic, strong) NSCondition *requestLock;
 @property (nonatomic) BOOL requestFinished;
 @property (nonatomic) BOOL requestFailed;
 

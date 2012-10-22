@@ -12,14 +12,14 @@
 
 @interface PhotoUploadCell : UITableViewCell <UIActionSheetDelegate>
 
-@property (nonatomic, retain) PhotoUpload *photoUpload;
+@property (nonatomic, strong) PhotoUpload *photoUpload;
 
 - (void)displayPhotoUpload:(PhotoUpload *)photoUpload;
 
-@property (retain, nonatomic) IBOutlet UIImageView* imageView;
-@property (retain, nonatomic) IBOutlet UILabel* textLabel;
-@property (retain, nonatomic) IBOutlet UILabel* detailTextLabel;
-@property (retain, nonatomic) IBOutlet UIProgressView* progressView;
-@property (retain, nonatomic) IBOutlet UIImage *notAButton;
+@property (strong, nonatomic) IBOutlet UIImageView* imageView;
+@property (strong, nonatomic) IBOutlet UILabel* textLabel;
+@property (strong, nonatomic) IBOutlet UILabel* detailTextLabel;
+@property (strong, nonatomic) IBOutlet UIProgressView* progressView;
+@property (strong, nonatomic) IBOutlet UIImage *notAButton;
 
 @end

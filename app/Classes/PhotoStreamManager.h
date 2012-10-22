@@ -33,14 +33,12 @@
 -(void)loadCachedImageList;
 -(void)saveCachedImageList;
 
-@property (retain) NSMutableArray* rawPhotos;
-@property (readonly) NSArray* filteredPhotos;
+@property (strong) NSMutableArray* rawPhotos;
+@property (weak, readonly) NSArray* filteredPhotos;
 @property (nonatomic) BOOL inProgress;
 @property (nonatomic) NSTimeInterval lastRefresh;
-
-@property (assign) NSObject<PhotoStreamDelegate>* delegate;
-
-@property (readonly) NSString* lastRefreshDisplay;
+@property (weak) NSObject<PhotoStreamDelegate>* delegate;
+@property (weak, readonly) NSString* lastRefreshDisplay;
 @end
 
 

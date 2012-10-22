@@ -20,14 +20,14 @@
 
 - (id)initWithStyle:(UITableViewStyle)style {
     if (self = [super initWithStyle:style]) {
-		self.photoTitleCell = [[[EditableTextFieldCell alloc] initWithStyle:UITableViewCellStyleDefault
-															 reuseIdentifier:nil] autorelease];
+		self.photoTitleCell = [[EditableTextFieldCell alloc] initWithStyle:UITableViewCellStyleDefault
+															 reuseIdentifier:nil];
 		self.photoTitleCell.textField.delegate = self;
 		self.photoTitleCell.textField.tag = PhotoTitle;
 		self.photoTitleCell.textField.returnKeyType = UIReturnKeyNext;
 		
-		self.photoTagsCell = [[[EditableTextFieldCell alloc] initWithStyle:UITableViewCellStyleDefault 
-														reuseIdentifier:nil] autorelease];
+		self.photoTagsCell = [[EditableTextFieldCell alloc] initWithStyle:UITableViewCellStyleDefault 
+														reuseIdentifier:nil];
 		self.photoTagsCell.textField.delegate = self;
 		self.photoTagsCell.textField.tag = PhotoTags;
 		self.photoTagsCell.textField.returnKeyType = UIReturnKeyNext;
@@ -36,7 +36,7 @@
 		self.photoTagsCell.textField.autocapitalizationType = UITextAutocapitalizationTypeNone;
 		self.photoTagsCell.textField.autocorrectionType = UITextAutocorrectionTypeNo;
         
-        self.privacyView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 94.25)] autorelease];
+        self.privacyView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 94.25)];
         
         UILabel *privacyLabel = [[UILabel alloc] initWithFrame:CGRectMake(19.0, 4.25, 320.0, 46.0)];
         privacyLabel.backgroundColor = [UIColor clearColor];
@@ -47,14 +47,12 @@
         privacyLabel.font = [UIFont boldSystemFontOfSize:17.0];
         privacyLabel.text = @"Privacy";
         [privacyView addSubview:privacyLabel];
-        [privacyLabel release];
         
         UISegmentedControl *privacyControl = [[UISegmentedControl alloc] initWithItems:@[@"Private", @"F & F", @"Public"]];
         privacyControl.frame = CGRectMake(10, 50.25, 300, self.privacyView.frame.size.height-50.25);
         [privacyControl addTarget:self action:@selector(privacyChanged:) forControlEvents:UIControlEventValueChanged];
         [privacyControl setSelectedSegmentIndex:2]; // default to being public
         [privacyView addSubview:privacyControl];
-        [privacyControl release];
         
     }
     return self;
@@ -72,12 +70,6 @@
 }
 
 
-- (void)dealloc {
-	[photoUpload release];
-	[photoTitleCell release];
-	[photoTagsCell release];
-    [super dealloc];
-}
 
 
 - (void)viewDidLoad {
@@ -92,7 +84,6 @@
 								   action:@selector(next)];
 	
 	[[self navigationItem] setRightBarButtonItem:nextButton];
-	[nextButton release];
     
     UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] 
                                      initWithTitle:@"Cancel" 
@@ -100,7 +91,6 @@
                                      target:self 
                                      action:@selector(cancel)];
     [[self navigationItem] setLeftBarButtonItem:cancelButton];
-    [cancelButton release];
 }
 
 
@@ -111,7 +101,6 @@
 	[dateFormatter setTimeStyle:NSDateFormatterShortStyle];
 	[dateFormatter setDateStyle:NSDateFormatterNoStyle];
 	NSString *defaultTitle = [dateFormatter stringFromDate:[self.photoUpload timestamp]];
-	[dateFormatter release];
 	self.photoTitleCell.textField.placeholder = defaultTitle;
 }
 
@@ -214,12 +203,10 @@
 		UploadTimestampViewController *timestampViewController = [[UploadTimestampViewController alloc] init];
 		timestampViewController.photoUpload = self.photoUpload;
 		[self.navigationController pushViewController:timestampViewController animated:YES];
-		[timestampViewController release];
 	} else {
 		PhotoMapViewController *mapViewController = [[PhotoMapViewController alloc] init];
 		mapViewController.photoUpload = self.photoUpload;
 		[self.navigationController pushViewController:mapViewController animated:YES];
-		[mapViewController release];
 	}
 }
 

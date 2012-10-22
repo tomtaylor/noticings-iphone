@@ -96,7 +96,6 @@ static NSString *adjustPinActionSheetAddTitle = @"Add to Map";
         alertView.tag = kUIAlertViewNoLocation;
     }
     [alertView show];
-    [alertView release];
 }
 
 #pragma mark -
@@ -110,7 +109,7 @@ static NSString *adjustPinActionSheetAddTitle = @"Add to Map";
 	
 	MKPinAnnotationView *annotationView = (MKPinAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:@"Pin"];
 	if (annotationView == nil) {
-		annotationView = [[[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"Pin"] autorelease];
+		annotationView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"Pin"];
 	}
 	
 	annotationView.pinColor = MKPinAnnotationColorPurple;
@@ -209,7 +208,6 @@ static NSString *adjustPinActionSheetAddTitle = @"Add to Map";
     }
 	
 	[sheet showFromToolbar:toolbar];
-	[sheet release];
 }
 
 - (IBAction)mapTypeChanged {
@@ -328,12 +326,7 @@ static NSString *adjustPinActionSheetAddTitle = @"Add to Map";
 - (void)dealloc {
 	[locationManager stopUpdatingLocation];
 	locationManager.delegate = nil;
-	[locationManager release];
-	[currentLocation release];
-    [previousLocation release];
 	mapView.delegate = nil;
-	[photoUpload release];
-    [super dealloc];
 }
 
 

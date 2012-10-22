@@ -73,7 +73,6 @@
 -(void)dealloc;
 {
     [self stopLoading];
-    [super dealloc];
 }
 
 - (void)stopLoading;

@@ -12,6 +12,6 @@
 @interface MoreViewController : UITableViewController {
 }
 
-@property (retain) CameraController *cameraController;
+@property (strong) CameraController *cameraController;
 
 @end

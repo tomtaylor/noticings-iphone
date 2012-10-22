@@ -21,7 +21,7 @@
 {
     self = [super init];
     if (self) {
-        self.queue = [[[NSOperationQueue alloc] init] autorelease];
+        self.queue = [[NSOperationQueue alloc] init];
         self.queue.maxConcurrentOperationCount = 1;
         self.locationRequests = [NSMutableDictionary dictionary];
         
@@ -34,9 +34,9 @@
 {
     NSString* filename = [[NoticingsAppDelegate delegate].cacheManager cachePathForFilename:@"locations.cache"];
     if (![[NSFileManager defaultManager] fileExistsAtPath:filename]) {
-        return [[[NSMutableDictionary alloc] initWithCapacity:100] autorelease];
+        return [[NSMutableDictionary alloc] initWithCapacity:100];
     }
-    return [[[NSMutableDictionary alloc] initWithContentsOfFile:filename] autorelease];
+    return [[NSMutableDictionary alloc] initWithContentsOfFile:filename];
 }
 
 -(void)saveCachedLocations:(NSMutableDictionary*)_cache;
@@ -116,7 +116,7 @@
         [self saveCachedLocations:self.cache];
 
         @synchronized(self) {
-            NSMutableArray* listeners = [[(self.locationRequests)[woeid] retain] autorelease];
+            NSMutableArray* listeners = (self.locationRequests)[woeid];
             [self.locationRequests removeObjectForKey:woeid]; // remove _before_ we dispatch.
 
             if (listeners != nil && listeners.count > 0) {
@@ -142,10 +142,6 @@
 -(void)dealloc;
 {
     [self.queue cancelAllOperations];
-    self.queue = nil;
-    self.cache = nil;
-    self.locationRequests = nil;
-    [super dealloc];
 }
 
 @end

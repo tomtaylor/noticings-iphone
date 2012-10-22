@@ -13,6 +13,6 @@
 
 - (id)initWithPhoto:(StreamPhoto*)_photo;
 
-@property (retain) StreamPhoto* photo;
-@property (retain) UITextView *textView;
+@property (strong) StreamPhoto* photo;
+@property (strong) UITextView *textView;
 @end

@@ -31,7 +31,7 @@
     [super viewDidLoad];
     self.view.autoresizesSubviews = YES;
     
-    self.textView = [[[UITextView alloc] initWithFrame:self.view.bounds] autorelease];
+    self.textView = [[UITextView alloc] initWithFrame:self.view.bounds];
     self.textView.font = [UIFont systemFontOfSize:16];
     self.textView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     [self.view addSubview:self.textView];
@@ -42,7 +42,6 @@
                                      action:@selector(saveComment)];
     
     self.navigationItem.rightBarButtonItem = saveButton;
-    [saveButton release];
 
 }
 
@@ -88,11 +87,5 @@
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
--(void)dealloc;
-{
-    self.photo = nil;
-    self.textView = nil;
-    [super dealloc];
-}
 
 @end

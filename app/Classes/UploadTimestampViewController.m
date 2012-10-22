@@ -25,7 +25,6 @@
 								   action:@selector(next)];
 	
 	[[self navigationItem] setRightBarButtonItem:nextButton];
-	[nextButton release];
 	
 	if (self.photoUpload.timestamp == nil) {
 		[self.datePicker setDate:[NSDate date]];
@@ -38,7 +37,6 @@
 	PhotoMapViewController *mapViewController = [[PhotoMapViewController alloc] init];
 	mapViewController.photoUpload = self.photoUpload;
 	[self.navigationController pushViewController:mapViewController animated:YES];
-	[mapViewController release];
 }
 
 - (IBAction)datePickerChanged {
@@ -46,10 +44,6 @@
 }
 
 
-- (void)dealloc {
-	[photoUpload release];
-    [super dealloc];
-}
 
 
 @end

@@ -31,11 +31,9 @@
         aLocationManager.desiredAccuracy = kCLLocationAccuracyBest;
         aLocationManager.delegate = self;
         self.locationManager = aLocationManager;
-        [aLocationManager release];
         
         ALAssetsLibrary *anAssetsLibrary = [[ALAssetsLibrary alloc] init];
         self.assetsLibrary = anAssetsLibrary;
-        [anAssetsLibrary release];
         
         self.baseViewController = _baseViewController;
     }
@@ -79,7 +77,6 @@
     gps[(NSString *)kCGImagePropertyGPSTimeStamp] = [formatter stringFromDate:self.currentLocation.timestamp];
     [formatter setDateFormat:@"yyyy:MM:dd"];
     gps[(NSString *)kCGImagePropertyGPSDateStamp] = [formatter stringFromDate:self.currentLocation.timestamp];
-    [formatter release];
     
     // Latitude
     CGFloat latitude = self.currentLocation.coordinate.latitude;
@@ -143,14 +140,11 @@
                            PhotoUpload *photoUpload = [[PhotoUpload alloc] initWithAsset:asset];
                            PhotoDetailViewController *photoDetailViewController = [[PhotoDetailViewController alloc] initWithStyle:UITableViewStyleGrouped];
                            photoDetailViewController.photoUpload = photoUpload;
-                           [photoUpload release];
                            
                            UINavigationController *detailNavigationController = [[UINavigationController alloc] initWithRootViewController:photoDetailViewController];
-                           [photoDetailViewController release];
                            
                            [self.baseViewController dismissModalViewControllerAnimated:NO];
                            [self.baseViewController.navigationController presentModalViewController:detailNavigationController animated:NO];
-                           [detailNavigationController release];
                        }
                       failureBlock:^(NSError *error) {
                           DLog(@"Failed to get Asset by URL: %@", error);
@@ -193,14 +187,11 @@
                   PhotoUpload *photoUpload = [[PhotoUpload alloc] initWithAsset:asset];
                   PhotoDetailViewController *photoDetailViewController = [[PhotoDetailViewController alloc] initWithStyle:UITableViewStyleGrouped];
                   photoDetailViewController.photoUpload = photoUpload;
-                  [photoUpload release];
                   
                   UINavigationController *detailNavigationController = [[UINavigationController alloc] initWithRootViewController:photoDetailViewController];
-                  [photoDetailViewController release];
                   
                   [self.baseViewController dismissModalViewControllerAnimated:NO];
                   [self.baseViewController presentModalViewController:detailNavigationController animated:NO];
-                  [detailNavigationController release];
               }
               failureBlock:^(NSError *error) {
                   DLog(@"Failed to get Asset by URL: %@", error);
@@ -225,7 +216,6 @@
     imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
     [self.baseViewController presentModalViewController:imagePickerController 
                                              animated:YES];
-    [imagePickerController release];
 }
 
 - (void)presentImagePicker
@@ -236,7 +226,6 @@
     imagePickerController.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
     [self.baseViewController presentModalViewController:imagePickerController 
                                                animated:YES];
-    [imagePickerController release];
 }
 
 - (CGImageRef)resizedImage:(CGImageRef)sourceImage withWidth:(CGFloat)maxWidth AndHeight:(CGFloat)maxHeight {
@@ -284,11 +273,12 @@
     
     // return an autoreleased CGImage
     if (resizedImage) {
-        resizedImage = (CGImageRef)[[(id)resizedImage retain] autorelease];
-        CGImageRelease(resizedImage);
+        // TODO
+//        resizedImage = (CGImageRef)[[(id)CFBridgingRelease(resizedImage) retain] autorelease];
+//        CGImageRelease(resizedImage);
     }
     
-	return resizedImage; 
+	return resizedImage;
 }
 
 - (BOOL)cameraIsAvailable
@@ -301,11 +291,6 @@
         locationManager.delegate = nil;
         [locationManager stopUpdatingLocation];
     }
-    [locationManager release];
-    [assetsLibrary release];
-    [baseViewController release];
-    [currentLocation release];
-    [super dealloc];
 }
 
 @end

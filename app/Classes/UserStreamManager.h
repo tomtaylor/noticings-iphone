@@ -12,6 +12,6 @@
 
 -(id)initWithUser:(NSString*)userId;
 
-@property (retain) NSString* userId;
+@property (strong) NSString* userId;
 
 @end

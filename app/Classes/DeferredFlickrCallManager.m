@@ -20,7 +20,7 @@
 {
     self = [super init];
     if (self) {
-        self.queue = [[[NSOperationQueue alloc] init] autorelease];
+        self.queue = [[NSOperationQueue alloc] init];
         self.queue.maxConcurrentOperationCount = 2;
     }
     return self;
@@ -68,7 +68,6 @@
     
     NSHTTPURLResponse *response = nil;
     NSData *data = [NSURLConnection sendSynchronousRequest:myreq returningResponse:&response error:errorAddr];
-    [myreq release];
     
     if (*errorAddr) {
         return nil;
@@ -119,7 +118,6 @@
 -(void)dealloc;
 {
     [self.queue cancelAllOperations];
-    [super dealloc];
 }
 
 @end

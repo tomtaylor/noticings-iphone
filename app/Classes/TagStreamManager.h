@@ -13,6 +13,6 @@
 
 -(id)initWithTag:(NSString*)tag;
 
-@property (retain) NSString* tag;
+@property (strong) NSString* tag;
 
 @end

@@ -78,7 +78,6 @@
 
 - (void)dealloc {
     [self displayPhotoUpload:nil];
-    [super dealloc];
 }
 
 

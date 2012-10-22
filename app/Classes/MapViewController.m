@@ -17,7 +17,7 @@
 
 -(void)viewDidLoad;
 {
-    self.mapView = [[[MKMapView alloc] initWithFrame:self.view.bounds] autorelease];
+    self.mapView = [[MKMapView alloc] initWithFrame:self.view.bounds];
     self.mapView.delegate = self;
     self.mapView.showsUserLocation = NO;
     
@@ -26,11 +26,10 @@
     [self.view addSubview:self.mapView];
     
     // button in top-right to open maps app.
-    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] 
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] 
                                                initWithBarButtonSystemItem:UIBarButtonSystemItemAction
                                                target:self
-                                               action:@selector(externalButton)]
-                                              autorelease];
+                                               action:@selector(externalButton)];
 }
 
 -(void)externalButton;
@@ -45,7 +44,6 @@
     popupQuery.cancelButtonIndex = [popupQuery addButtonWithTitle:@"Cancel"];
     popupQuery.actionSheetStyle = UIActionSheetStyleBlackOpaque;
     [popupQuery showFromTabBar:self.tabBarController.tabBar];
-    [popupQuery release];
 }
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
@@ -75,7 +73,7 @@
     MKAnnotationView *aView = [theMap dequeueReusableAnnotationViewWithIdentifier:@"PhotoAnnotation"];
     
     if (!aView) {
-        aView = [[[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"PhotoAnnotation"] autorelease];
+        aView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"PhotoAnnotation"];
         aView.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
         aView.canShowCallout = YES;
     }
@@ -96,10 +94,6 @@
 - (void)dealloc;
 {
     self.mapView.delegate = nil;
-    self.mapView = nil;
-    self.photo = nil;
-    self.streamManager = nil;
-    [super dealloc];
 }
 
 

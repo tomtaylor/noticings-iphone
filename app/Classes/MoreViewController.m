@@ -40,7 +40,7 @@ enum AppSectionRows {
 
 - (void)viewDidLoad {
     if (!self.cameraController) {
-        self.cameraController = [[[CameraController alloc] initWithBaseViewController:self] autorelease];
+        self.cameraController = [[CameraController alloc] initWithBaseViewController:self];
     }
     [super viewDidLoad];
 }
@@ -79,7 +79,7 @@ enum AppSectionRows {
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
 		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
 	
@@ -111,7 +111,7 @@ enum AppSectionRows {
 				[cameraController presentImagePicker];
 				break;
 			case kNoticingsSectionDebugRow:
-                [self.navigationController pushViewController:[[[DebugViewController alloc] initWithStyle:UITableViewStyleGrouped] autorelease] animated:YES];
+                [self.navigationController pushViewController:[[DebugViewController alloc] initWithStyle:UITableViewStyleGrouped] animated:YES];
 				break;
 			default:
 				break;
@@ -125,15 +125,10 @@ enum AppSectionRows {
 		FlickrAuthenticationViewController *authViewController = [[FlickrAuthenticationViewController alloc] init];
 		[authViewController displaySignIn];
 		[self presentModalViewController:authViewController animated:YES];
-		[authViewController release];
 	}
 
 }
 
-- (void)dealloc {
-    self.cameraController = nil;
-    [super dealloc];
-}
 
 
 @end

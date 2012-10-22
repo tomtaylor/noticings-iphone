@@ -14,8 +14,8 @@
 
 -(id)initWithPhoto:(StreamPhoto*)photo;
 
-@property (retain) StreamPhoto *photo;
-@property (retain) UIScrollView *scrollView;
-@property (retain) UIImageView *imageView;
+@property (strong) StreamPhoto *photo;
+@property (strong) UIScrollView *scrollView;
+@property (strong) UIImageView *imageView;
 
 @end

@@ -10,9 +10,9 @@
 
 @interface CacheURLProtocol : NSURLProtocol
 
-@property (nonatomic, retain) NSURLRequest *request;
-@property (nonatomic, retain) NSURLConnection *connection;
-@property (nonatomic, retain) NSMutableData *data;
-@property (nonatomic, retain) NSURLResponse *response;
+@property (nonatomic, strong) NSURLRequest *request;
+@property (nonatomic, strong) NSURLConnection *connection;
+@property (nonatomic, strong) NSMutableData *data;
+@property (nonatomic, strong) NSURLResponse *response;
 
 @end

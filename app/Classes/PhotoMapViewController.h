@@ -29,12 +29,12 @@
 - (void)previousLocationAlertViewClickedButtonAtIndex:(NSInteger)buttonIndex;
 - (void)noLocationAlertViewClickedButtonAtIndex:(NSInteger)buttonIndex;
 
-@property (nonatomic, retain) IBOutlet MKMapView *mapView;
-@property (nonatomic, retain) IBOutlet UISegmentedControl *mapTypeControl;
-@property (nonatomic, retain) IBOutlet UIToolbar *toolbar;
-@property (nonatomic, retain) PhotoUpload *photoUpload;
-@property (nonatomic, retain) CLLocationManager *locationManager;
-@property (nonatomic, retain) CLLocation *currentLocation;
-@property (nonatomic, retain) CLLocation *previousLocation;
+@property (nonatomic, strong) IBOutlet MKMapView *mapView;
+@property (nonatomic, strong) IBOutlet UISegmentedControl *mapTypeControl;
+@property (nonatomic, strong) IBOutlet UIToolbar *toolbar;
+@property (nonatomic, strong) PhotoUpload *photoUpload;
+@property (nonatomic, strong) CLLocationManager *locationManager;
+@property (nonatomic, strong) CLLocation *currentLocation;
+@property (nonatomic, strong) CLLocation *previousLocation;
 
 @end

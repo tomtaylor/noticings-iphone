@@ -23,7 +23,7 @@
 -(void)updatePullText;
 - (StreamPhoto *)streamPhotoAtIndexPath:(NSIndexPath*)indexPath;
 
-@property (retain) PhotoStreamManager *streamManager;
-@property (retain, nonatomic) PhotoUpload *maybeCancel;
+@property (strong) PhotoStreamManager *streamManager;
+@property (strong, nonatomic) PhotoUpload *maybeCancel;
 
 @end

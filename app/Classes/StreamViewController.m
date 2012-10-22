@@ -144,7 +144,6 @@
             [alert addButtonWithTitle:@"Hide"];
             [alert addButtonWithTitle:@"Show"];
             [alert show];
-            [alert release];
         }
         
         
@@ -291,7 +290,7 @@
     cell.textLabel.textColor = [UIColor grayColor];
     cell.textLabel.font = [UIFont systemFontOfSize:14];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    return [cell autorelease];
+    return cell;
     
 }
 
@@ -311,7 +310,6 @@
     if (photo) {
         StreamPhotoViewController *vc = [[StreamPhotoViewController alloc] initWithPhoto:photo streamManager:self.streamManager];
         [self.navigationController pushViewController:vc animated:YES];
-        [vc release];
         return;
     }
 
@@ -328,7 +326,6 @@
         
         popupQuery.actionSheetStyle = UIActionSheetStyleBlackOpaque;
         [popupQuery showFromTabBar:self.tabBarController.tabBar];
-        [popupQuery release];
         return;
     }
     
@@ -348,8 +345,6 @@
     NSLog(@"deallocing %@", self.class);
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     self.streamManager.delegate = nil;
-    self.streamManager = nil;
-    [super dealloc];
 }
 
 

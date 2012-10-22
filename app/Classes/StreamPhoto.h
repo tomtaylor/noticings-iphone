@@ -22,34 +22,34 @@
 #define StreamPhotoVisibilityLimited 1
 #define StreamPhotoVisibilityPrivate 2
 
-@property (retain) NSDictionary *details;
+@property (strong) NSDictionary *details;
 
 // method/properties that extract information from datails dict.
 @property (nonatomic, readonly, copy) NSString *title;
-@property (readonly) NSString* flickrId;
-@property (readonly) NSString* html;
-@property (readonly) NSString* ownername;
-@property (readonly) NSString* ownerId;
-@property (readonly) NSString* dateupload;
-@property (readonly) NSString* ago;
-@property (readonly) NSString* placename;
-@property (readonly) NSString* woeid;
+@property (weak, readonly) NSString* flickrId;
+@property (weak, readonly) NSString* html;
+@property (weak, readonly) NSString* ownername;
+@property (weak, readonly) NSString* ownerId;
+@property (weak, readonly) NSString* dateupload;
+@property (weak, readonly) NSString* ago;
+@property (weak, readonly) NSString* placename;
+@property (weak, readonly) NSString* woeid;
 @property (readonly) int visibility;
 @property (readonly) float latitude;
 @property (readonly) float longitude;
 
-@property (readonly) NSURL* avatarURL;
-@property (readonly) NSURL* imageURL;
-@property (readonly) NSURL* mapPageURL;
-@property (readonly) NSURL* mapImageURL;
+@property (weak, readonly) NSURL* avatarURL;
+@property (weak, readonly) NSURL* imageURL;
+@property (weak, readonly) NSURL* mapPageURL;
+@property (weak, readonly) NSURL* mapImageURL;
 @property (readonly) BOOL hasLocation;
 @property (readonly) BOOL hasTitle;
-@property (readonly) NSURL* pageURL;
-@property (readonly) NSURL* mobilePageURL;
-@property (readonly) NSURL* bigImageURL;
-@property (readonly) NSURL* originalImageURL;
-@property (readonly) NSArray* tags;
-@property (readonly) NSArray* humanTags;
+@property (weak, readonly) NSURL* pageURL;
+@property (weak, readonly) NSURL* mobilePageURL;
+@property (weak, readonly) NSURL* bigImageURL;
+@property (weak, readonly) NSURL* originalImageURL;
+@property (weak, readonly) NSArray* tags;
+@property (weak, readonly) NSArray* humanTags;
 
 // MKAnnotation
 @property (nonatomic, readonly) CLLocationCoordinate2D coordinate;

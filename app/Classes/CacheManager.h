@@ -15,6 +15,6 @@
 - (void) clearCache;
 - (void) reapCache;
 
-@property (retain) NSString *cacheDir;
+@property (strong) NSString *cacheDir;
 
 @end

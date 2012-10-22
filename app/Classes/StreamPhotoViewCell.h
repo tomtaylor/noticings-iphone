@@ -29,6 +29,6 @@
 
 -(void) populateFromPhoto:(StreamPhoto*)photo;
 
-@property (retain) StreamPhoto *photo;
+@property (strong) StreamPhoto *photo;
 
 @end

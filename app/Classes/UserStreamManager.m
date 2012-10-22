@@ -43,10 +43,5 @@
     return [NSString stringWithFormat:@"user-%@", self.userId];
 }
 
--(void)dealloc;
-{
-    self.userId = nil;
-    [super dealloc];
-}
 
 @end

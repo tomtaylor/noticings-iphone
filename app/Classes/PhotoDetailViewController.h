@@ -32,10 +32,10 @@ enum {
     UIView *privacyView;
 }
 
-@property (nonatomic, retain) PhotoUpload *photoUpload;
-@property (nonatomic, retain) EditableTextFieldCell *photoTitleCell;
-@property (nonatomic, retain) EditableTextFieldCell *photoTagsCell;
-@property (nonatomic, retain) UIView *privacyView;
+@property (nonatomic, strong) PhotoUpload *photoUpload;
+@property (nonatomic, strong) EditableTextFieldCell *photoTitleCell;
+@property (nonatomic, strong) EditableTextFieldCell *photoTagsCell;
+@property (nonatomic, strong) UIView *privacyView;
 
 - (void)next;
 

@@ -139,10 +139,10 @@ enum {
     ALAssetsLibrary *assetsLibrary = [[ALAssetsLibrary alloc] init];
     
     [assetsLibrary assetForURL:url resultBlock:^(ALAsset *asset) {
-        result = [asset retain];
+        result = asset;
         dispatch_semaphore_signal(sema);
     } failureBlock:^(NSError *error) {
-        assetError = [error retain];
+        assetError = error;
         dispatch_semaphore_signal(sema);
     }];
     
@@ -156,24 +156,10 @@ enum {
     }
     
     dispatch_release(sema);
-    [assetError release];
-    [assetsLibrary release];
     
-    return [result autorelease];
+    return result;
 }
 
-- (void) dealloc
-{
-	[asset release];
-	[title release];
-	[tags release];
-    [progress release];
-    [flickrId release];
-    [location release];
-    [timestamp release];
-    [originalTimestamp release];
-    [super dealloc];
-}
 
 
 

@@ -35,7 +35,7 @@
 -(void)viewDidLoad;
 {
     
-    self.scrollView = [[[UIScrollView alloc] initWithFrame:self.view.bounds] autorelease];
+    self.scrollView = [[UIScrollView alloc] initWithFrame:self.view.bounds];
     self.scrollView.backgroundColor = [UIColor blackColor];
     self.scrollView.minimumZoomScale = 1;
     self.scrollView.maximumZoomScale = 20;
@@ -46,7 +46,7 @@
     self.scrollView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     self.view.autoresizesSubviews = YES;
 
-    self.imageView = [[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 1024, 1024 * (480.0f/320))] autorelease];
+    self.imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 1024, 1024 * (480.0f/320))];
     self.imageView.contentMode = UIViewContentModeScaleAspectFit;
     [self.scrollView addSubview:self.imageView];
     self.scrollView.contentSize = self.imageView.frame.size;
@@ -58,8 +58,6 @@
     [twoFingerTap setNumberOfTouchesRequired:2];
     [self.scrollView addGestureRecognizer:doubleTap];
     [self.scrollView addGestureRecognizer:twoFingerTap];
-    [doubleTap release];
-    [twoFingerTap release];
 
     [self.view addSubview:self.scrollView];
 }
@@ -95,18 +93,18 @@
     // Explicitly _don't_ load the original. Some of those are insane, and you're probably using
     // the wrong app if you care about them.
 
-    __block ImageViewController* _self = self;
+    __weak ImageViewController* _self = self;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSData * data = [[[NSData alloc] initWithContentsOfURL:_self.photo.imageURL] autorelease];
-        UIImage * image = [[[UIImage alloc] initWithData:data] autorelease];
+        NSData * data = [[NSData alloc] initWithContentsOfURL:_self.photo.imageURL];
+        UIImage * image = [[UIImage alloc] initWithData:data];
         if (image != nil) {
             dispatch_async( dispatch_get_main_queue(), ^{
                 [_self scaleAndShowImage:image];
             });
         }
 
-        data = [[[NSData alloc] initWithContentsOfURL:_self.photo.bigImageURL] autorelease];
-        image = [[[UIImage alloc] initWithData:data] autorelease];
+        data = [[NSData alloc] initWithContentsOfURL:_self.photo.bigImageURL];
+        image = [[UIImage alloc] initWithData:data];
         if (image != nil) {
             dispatch_async( dispatch_get_main_queue(), ^{
                 [_self scaleAndShowImage:image];
@@ -191,10 +189,6 @@
 {
     NSLog(@"deallocing %@", self.class);
     self.scrollView.delegate = nil;
-    self.scrollView = nil;
-    self.imageView = nil;
-    self.photo = nil;
-    [super dealloc];
 }
 
 

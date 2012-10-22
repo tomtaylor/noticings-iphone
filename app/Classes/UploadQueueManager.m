@@ -25,7 +25,7 @@
 	self = [super init];
 	if (self != nil) {
 		self.backgroundTask = UIBackgroundTaskInvalid;
-        self.queue = [[[NSOperationQueue alloc] init] autorelease];
+        self.queue = [[NSOperationQueue alloc] init];
         self.queue.maxConcurrentOperationCount = 1;
         [self.queue addObserver:self forKeyPath:@"operationCount" options:NSKeyValueObservingOptionNew context:nil];
         [self restoreQueuedUploads];
@@ -42,7 +42,6 @@
 - (void)addPhotoUploadToQueue:(PhotoUpload *)photoUpload {
     PhotoUploadOperation *op = [[PhotoUploadOperation alloc] initWithPhotoUpload:photoUpload manager:self];
     [self.queue addOperation:op];
-    [op release];
 }
 
 -(void)cancelUpload:(PhotoUpload*)upload;
@@ -81,18 +80,17 @@
 {
     NSLog(@"Upload of %@ failed", upload);
 	if ([UIApplication sharedApplication].applicationState == UIApplicationStateActive) {	
-        [[[[UIAlertView alloc] initWithTitle:@"Upload Error" 
+        [[[UIAlertView alloc] initWithTitle:@"Upload Error" 
                                      message:[NSString stringWithFormat:@"There was a problem uploading the photo titled '%@'.", upload.title]
                                     delegate:nil
                            cancelButtonTitle:@"OK" 
-                           otherButtonTitles:nil] autorelease] show];
+                           otherButtonTitles:nil] show];
 	} else {
 		UILocalNotification *localNotification = [[UILocalNotification alloc] init];
 		localNotification.alertBody = [NSString stringWithFormat:@"There was a problem uploading the photo titled '%@'.", upload.title];
 		localNotification.hasAction = NO;
 		localNotification.soundName = UILocalNotificationDefaultSoundName;
 		[[UIApplication sharedApplication] presentLocalNotificationNow:localNotification];
-		[localNotification release];
 	}
 
     // operation is complete, having failed. Add a new one to the bottom of the queue, and suspend it.
@@ -126,14 +124,11 @@
     upload.title = @"-- fake upload --";
     upload.timestamp = [NSDate date];
     [self addPhotoUploadToQueue:upload];
-    [upload release];
 }
 
 - (void) dealloc {
 //    self.photoUploads = nil;
     [self.queue cancelAllOperations];
-    self.queue = nil;
-	[super dealloc];
 }
 
 

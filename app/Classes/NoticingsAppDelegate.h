@@ -21,18 +21,18 @@
 	UITabBarItem *queueTab;
 }
 
-@property (nonatomic, retain) IBOutlet UIWindow *window;
-@property (nonatomic, retain) IBOutlet UITabBarController *tabBarController;
-@property (nonatomic, retain) IBOutlet UIViewController *dummyViewController;
-@property (nonatomic, retain) CameraController *cameraController;
+@property (nonatomic, strong) IBOutlet UIWindow *window;
+@property (nonatomic, strong) IBOutlet UITabBarController *tabBarController;
+@property (nonatomic, strong) IBOutlet UIViewController *dummyViewController;
+@property (nonatomic, strong) CameraController *cameraController;
 
-@property (nonatomic, retain) IBOutlet UINavigationController *streamNavigationController;
+@property (nonatomic, strong) IBOutlet UINavigationController *streamNavigationController;
 
-@property (nonatomic, retain) ContactsStreamManager* contactsStreamManager;
-@property (nonatomic, retain) CacheManager *cacheManager;
-@property (nonatomic, retain) UploadQueueManager *uploadQueueManager;
-@property (nonatomic, retain) DeferredFlickrCallManager *flickrCallManager;
-@property (nonatomic, retain) PhotoLocationManager *photoLocationManager;
+@property (nonatomic, strong) ContactsStreamManager* contactsStreamManager;
+@property (nonatomic, strong) CacheManager *cacheManager;
+@property (nonatomic, strong) UploadQueueManager *uploadQueueManager;
+@property (nonatomic, strong) DeferredFlickrCallManager *flickrCallManager;
+@property (nonatomic, strong) PhotoLocationManager *photoLocationManager;
 
 +(NoticingsAppDelegate*)delegate;
 

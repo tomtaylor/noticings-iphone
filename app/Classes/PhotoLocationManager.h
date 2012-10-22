@@ -24,8 +24,8 @@ typedef void (^LocationCallbackBlock)(NSString* name);
 -(NSMutableDictionary*)loadCachedLocations;
 -(void)saveCachedLocations:(NSMutableDictionary*)cache;
 
-@property (retain) NSOperationQueue *queue;
-@property (retain) NSMutableDictionary *cache;
-@property (retain) NSMutableDictionary *locationRequests;
+@property (strong) NSOperationQueue *queue;
+@property (strong) NSMutableDictionary *cache;
+@property (strong) NSMutableDictionary *locationRequests;
 
 @end

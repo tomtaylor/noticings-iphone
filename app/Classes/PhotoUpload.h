@@ -19,18 +19,18 @@ enum {
 @interface PhotoUpload : NSObject <MKAnnotation, NSCoding> {
 }
 
-@property (nonatomic, retain) ALAsset *asset;
+@property (nonatomic, strong) ALAsset *asset;
 @property (nonatomic, copy) NSString *title;
-@property (nonatomic, retain) NSString *tags;
-@property (nonatomic, retain) NSNumber *progress;
+@property (nonatomic, strong) NSString *tags;
+@property (nonatomic, strong) NSNumber *progress;
 @property (nonatomic) BOOL inProgress;
 @property (nonatomic) NSInteger privacy;
-@property (nonatomic, retain) NSString *flickrId;
-@property (nonatomic, retain) CLLocation *location;
+@property (nonatomic, strong) NSString *flickrId;
+@property (nonatomic, strong) CLLocation *location;
 @property (nonatomic) CLLocationCoordinate2D coordinate;
 @property (nonatomic) CLLocationCoordinate2D originalCoordinate;
-@property (nonatomic, retain) NSDate *timestamp;
-@property (nonatomic, retain) NSDate *originalTimestamp;
+@property (nonatomic, strong) NSDate *timestamp;
+@property (nonatomic, strong) NSDate *originalTimestamp;
 
 
 - (id)initWithAsset:(ALAsset *)asset;

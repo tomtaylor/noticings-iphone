@@ -14,8 +14,8 @@
 	IBOutlet UIDatePicker *datePicker;
 }
 
-@property (nonatomic, retain) PhotoUpload *photoUpload;
-@property (nonatomic, retain) IBOutlet UIDatePicker *datePicker;
+@property (nonatomic, strong) PhotoUpload *photoUpload;
+@property (nonatomic, strong) IBOutlet UIDatePicker *datePicker;
 
 - (IBAction)datePickerChanged;
 

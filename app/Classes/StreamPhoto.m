@@ -285,9 +285,5 @@
 
 #pragma mark memory managment
 
-- (void)dealloc
-{
-    [super dealloc];
-}
 
 @end

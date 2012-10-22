@@ -15,7 +15,7 @@
 - (void)displaySignIn;
 - (void)displaySpinner;
 
-@property (nonatomic, retain) IBOutlet UIView *signInView;
-@property (nonatomic, retain) IBOutlet UIView *spinnerView;
+@property (nonatomic, strong) IBOutlet UIView *signInView;
+@property (nonatomic, strong) IBOutlet UIView *spinnerView;
 
 @end

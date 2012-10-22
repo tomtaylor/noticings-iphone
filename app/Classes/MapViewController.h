@@ -17,8 +17,8 @@
 
 -(void)displayPhoto:(StreamPhoto*)_photo inManager:(PhotoStreamManager*)manager;
 
-@property (retain) MKMapView *mapView;
-@property (retain) StreamPhoto *photo;
-@property (retain) PhotoStreamManager *streamManager;
+@property (strong) MKMapView *mapView;
+@property (strong) StreamPhoto *photo;
+@property (strong) PhotoStreamManager *streamManager;
 
 @end

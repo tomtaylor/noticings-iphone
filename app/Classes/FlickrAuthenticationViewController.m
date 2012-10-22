@@ -50,17 +50,16 @@
         NSString *body = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         if (response.statusCode != 200) {
             dispatch_async(dispatch_get_main_queue(),^{
-                [[[[UIAlertView alloc] initWithTitle:@"Noticings"
+                [[[UIAlertView alloc] initWithTitle:@"Noticings"
                                              message:@"There was a problem talking to Flickr. Try again later."
                                             delegate:nil
                                    cancelButtonTitle:@"OK"
-                                   otherButtonTitles:nil] autorelease] show];
+                                   otherButtonTitles:nil] show];
                 return;
             });
         }
             
         NSDictionary *parsed = [body dictionaryByParsingAsQueryParameters];
-        [body release];
 
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         [defaults setValue:parsed[@"oauth_token"] forKey:@"request_token"];
@@ -103,17 +102,16 @@
         NSString *body = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         if (response.statusCode != 200) {
             dispatch_async(dispatch_get_main_queue(),^{
-                [[[[UIAlertView alloc] initWithTitle:@"Noticings"
+                [[[UIAlertView alloc] initWithTitle:@"Noticings"
                                              message:@"There was a problem talking to Flickr. Try again later."
                                             delegate:nil
                                    cancelButtonTitle:@"OK"
-                                   otherButtonTitles:nil] autorelease] show];
+                                   otherButtonTitles:nil] show];
                 return;
             });
         }
         
         NSDictionary *parsed = [body dictionaryByParsingAsQueryParameters];
-        [body release];
         DLog(@"got user data %@", parsed);
         
         [defaults setValue:parsed[@"oauth_token"] forKey:@"oauth_token"];
