@@ -3,7 +3,7 @@
 //  Noticings
 //
 //  Created by Tom Insam on 14/05/2012.
-//  Copyright (c) 2012 Lanyrd. All rights reserved.
+//  Copyright (c) 2012 Tom Insam. All rights reserved.
 //
 
 #import "CacheURLProtocol.h"

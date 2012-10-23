@@ -3,7 +3,7 @@
 //  Noticings
 //
 //  Created by Tom Insam on 10/05/2012.
-//  Copyright (c) 2012 Lanyrd. All rights reserved.
+//  Copyright (c) 2012 Tom Insam. All rights reserved.
 //
 
 #import "PhotoUploadOperation.h"
@@ -82,10 +82,10 @@
         uploadedTitleString = self.upload.title;
     }
     
-    NSMutableDictionary *arguments = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                      uploadedTitleString, @"title", 
-                                      self.upload.tags, @"tags",
-                                      nil];
+    NSMutableDictionary *arguments = [NSMutableDictionary dictionaryWithDictionary:@{
+                                      @"title": uploadedTitleString,
+                                      @"tags": self.upload.tags
+                                      }];
     
     if (self.upload.privacy == PhotoUploadPrivacyPrivate) {
         arguments[@"is_public"] = @"0";
