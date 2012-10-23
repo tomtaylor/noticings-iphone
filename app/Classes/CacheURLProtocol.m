@@ -51,16 +51,18 @@
 
 - (void)startLoading;
 {
-    CacheManager *cache = [NoticingsAppDelegate delegate].cacheManager;
-    NSString *filename = [cache urlToFilename:self.request.URL];
-    if ([[NSFileManager defaultManager] fileExistsAtPath:filename]) {
-        DLog(@"found %@ in cache", self.request.URL);
-        NSData *data = [NSData dataWithContentsOfFile:filename];
-        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:self.request.URL statusCode:200 HTTPVersion:@"1" headerFields:@{}];
-        [[self client] URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
-        [[self client] URLProtocol:self didLoadData:data];
-        [[self client] URLProtocolDidFinishLoading:self];
-        return;
+    if ([self.request.HTTPMethod isEqualToString:@"GET"]) {
+        CacheManager *cache = [NoticingsAppDelegate delegate].cacheManager;
+        NSString *filename = [cache urlToFilename:self.request.URL];
+        if ([[NSFileManager defaultManager] fileExistsAtPath:filename]) {
+            DLog(@"found %@ in cache", self.request.URL);
+            NSData *data = [NSData dataWithContentsOfFile:filename];
+            NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:self.request.URL statusCode:200 HTTPVersion:@"1" headerFields:@{}];
+            [[self client] URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
+            [[self client] URLProtocol:self didLoadData:data];
+            [[self client] URLProtocolDidFinishLoading:self];
+            return;
+        }
     }
 
     self.connection = [NSURLConnection connectionWithRequest:self.request delegate:self];
