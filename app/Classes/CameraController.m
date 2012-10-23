@@ -19,12 +19,7 @@
 
 @implementation CameraController
 
-@synthesize locationManager;
-@synthesize currentLocation;
-@synthesize assetsLibrary;
-@synthesize baseViewController;
-
-- (id)initWithBaseViewController:(UIViewController *)_baseViewController {
+- (id)initWithBaseViewController:(UIViewController *)baseViewController {
     self = [super init];
     if (self) {
         CLLocationManager *aLocationManager = [[CLLocationManager alloc] init];
@@ -35,7 +30,7 @@
         ALAssetsLibrary *anAssetsLibrary = [[ALAssetsLibrary alloc] init];
         self.assetsLibrary = anAssetsLibrary;
         
-        self.baseViewController = _baseViewController;
+        self.baseViewController = baseViewController;
     }
     return self;
 }
@@ -169,18 +164,17 @@
         [metadata setValue:gpsMetadata forKey:(NSString *)kCGImagePropertyGPSDictionary];
     }
     
-    CGImageRef cgImage = [originalImage CGImage];
-    CGImageRef resizedImage = [self resizedImage:cgImage withWidth:1200.0f AndHeight:1200.0f];
+    UIImage *resizedImage = [self resizedImage:originalImage withWidth:1200.0f AndHeight:1200.0f];
     
     [self.assetsLibrary 
-     writeImageToSavedPhotosAlbum:resizedImage
+     writeImageToSavedPhotosAlbum:resizedImage.CGImage
      metadata:metadata 
      completionBlock:^(NSURL *assetURL, NSError *error) {
          if (error) {
              DLog(@"Failed to write Asset: %@", error);
          } else {
              DLog(@"Asset written to URL: %@", assetURL);
-             [assetsLibrary 
+             [self.assetsLibrary
               assetForURL:assetURL 
               resultBlock:^(ALAsset *asset) {
                   DLog(@"Asset read from URL: %@", assetURL);
@@ -203,7 +197,7 @@
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
-    [locationManager stopUpdatingLocation];
+    [self.locationManager stopUpdatingLocation];
     [picker dismissModalViewControllerAnimated:YES];
 }
 
@@ -228,12 +222,13 @@
                                                animated:YES];
 }
 
-- (CGImageRef)resizedImage:(CGImageRef)sourceImage withWidth:(CGFloat)maxWidth AndHeight:(CGFloat)maxHeight {
+- (UIImage *)resizedImage:(UIImage *)sourceImage withWidth:(CGFloat)maxWidth AndHeight:(CGFloat)maxHeight {
 	CGFloat targetWidth;
 	CGFloat targetHeight;
 	
-	CGFloat width = CGImageGetWidth(sourceImage);
-	CGFloat height = CGImageGetHeight(sourceImage);
+    CGImageRef sourceRef = sourceImage.CGImage;
+	CGFloat width = CGImageGetWidth(sourceRef);
+	CGFloat height = CGImageGetHeight(sourceRef);
 	
 	if ((width == maxWidth && height <= maxHeight) || (width <= maxWidth && height == maxHeight)){
 		// the source image already has the exact target size (one dimension is equal and one is less)
@@ -252,14 +247,14 @@
 		}
 	}
 	
-	CGBitmapInfo bitmapInfo = CGImageGetBitmapInfo(sourceImage);
-	CGColorSpaceRef colorSpaceInfo = CGImageGetColorSpace(sourceImage);
+	CGBitmapInfo bitmapInfo = CGImageGetBitmapInfo(sourceRef);
+	CGColorSpaceRef colorSpaceInfo = CGImageGetColorSpace(sourceRef);
 	
 	if (bitmapInfo == kCGImageAlphaNone) {
 		bitmapInfo = kCGImageAlphaNoneSkipLast;
 	}
 	
-	size_t bitesPerComponent = CGImageGetBitsPerComponent(sourceImage);
+	size_t bitesPerComponent = CGImageGetBitsPerComponent(sourceRef);
 	// To know the "bitesPerRow", we multiply the number of bits of a component per pixel (a component = Green for instance), 4 (RGB + alpha) and the row length (targetWidth)
 	size_t bitesPerRow = bitesPerComponent * 4 * targetWidth;
 	
@@ -267,18 +262,14 @@
 	CGContextRef bitmap;
     bitmap = CGBitmapContextCreate(NULL, targetWidth, targetHeight, bitesPerComponent, bitesPerRow, colorSpaceInfo, bitmapInfo);
 
-	CGContextDrawImage(bitmap, CGRectMake(0, 0, targetWidth, targetHeight), sourceImage);
+	CGContextDrawImage(bitmap, CGRectMake(0, 0, targetWidth, targetHeight), sourceRef);
 	CGImageRef resizedImage = CGBitmapContextCreateImage(bitmap);
 	CGContextRelease(bitmap);
     
-    // return an autoreleased CGImage
-    if (resizedImage) {
-        // TODO
-//        resizedImage = (CGImageRef)[[(id)CFBridgingRelease(resizedImage) retain] autorelease];
-//        CGImageRelease(resizedImage);
-    }
+    UIImage *resized = [UIImage imageWithCGImage:resizedImage];
+    CGImageRelease(resizedImage);
     
-	return resizedImage;
+	return resized;
 }
 
 - (BOOL)cameraIsAvailable
@@ -287,9 +278,9 @@
 }
 
 - (void)dealloc {
-    if (locationManager) {
-        locationManager.delegate = nil;
-        [locationManager stopUpdatingLocation];
+    if (self.locationManager) {
+        self.locationManager.delegate = nil;
+        [self.locationManager stopUpdatingLocation];
     }
 }
 
