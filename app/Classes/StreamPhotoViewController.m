@@ -148,13 +148,15 @@ GRMustacheTemplate *template;
         [self presentModalViewController:composer animated:YES];
 
     } else if (buttonIndex == saveRollIndex) {
-        // TODO
-//        UIImage *image = [[NoticingsAppDelegate delegate].cacheManager cachedImageForURL:self.photo.imageURL];
-//        if (image) {
-//            UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil);
-//        } else {
-//            // TODO. Bugger.
-//        }
+        // trust the cache. Probably unsafe.
+        // TODO - pretty progress views and things
+        NSData *imageData = [NSData dataWithContentsOfURL:self.photo.imageURL];
+        UIImage *image = [UIImage imageWithData:imageData];
+        if (image) {
+            UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil);
+        } else {
+            // TODO. Bugger.
+        }
 
     }
 }
