@@ -65,6 +65,7 @@
     
     NSMutableURLRequest *myreq = [req mutableCopy];
     myreq.timeoutInterval = 100;
+    [myreq setValue:@"api" forHTTPHeaderField:NOCACHE_REQUEST_HEADER_TAG];
     
     NSHTTPURLResponse *response = nil;
     NSData *data = [NSURLConnection sendSynchronousRequest:myreq returningResponse:&response error:errorAddr];
@@ -85,6 +86,7 @@
         *errorAddr = [NSError errorWithDomain:@"flickr" code:[code integerValue] userInfo:rsp];
         return rsp;
     }
+    *errorAddr = nil;
     return rsp;
 }
 

@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "CacheURLProtocol.h"
 
 @interface DeferredFlickrCallManager : NSObject
 

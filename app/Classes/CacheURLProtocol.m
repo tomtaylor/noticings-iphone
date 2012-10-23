@@ -17,13 +17,9 @@
 @synthesize data = data_;
 @synthesize response = response_;
 
-// property to stop recursive requests.
-// http://stackoverflow.com/questions/2494831/intercept-web-requests-from-a-webview-flash-plugin
-#define ANTIRECURSE_REQUEST_HEADER_TAG  @"x-mycustomurl-intercept"
-
 + (BOOL)canInitWithRequest:(NSURLRequest *)request;
 {
-    if ([request valueForHTTPHeaderField:ANTIRECURSE_REQUEST_HEADER_TAG]) {
+    if ([request valueForHTTPHeaderField:NOCACHE_REQUEST_HEADER_TAG]) {
         return NO;
     }
     if ([request.URL.scheme isEqualToString:@"http"] || [request.URL.scheme isEqualToString:@"https"]) {
@@ -42,7 +38,7 @@
     // Add a custom header on the request to break the
     // infinite loop created by the [startLoading] below.
     NSMutableURLRequest* newRequest = [request mutableCopy];
-    [newRequest setValue:@"recurse" forHTTPHeaderField:ANTIRECURSE_REQUEST_HEADER_TAG];
+    [newRequest setValue:@"recurse" forHTTPHeaderField:NOCACHE_REQUEST_HEADER_TAG];
     
     self = [super initWithRequest:newRequest cachedResponse:cachedResponse client:client];
     

@@ -15,4 +15,8 @@
 @property (nonatomic, strong) NSMutableData *data;
 @property (nonatomic, strong) NSURLResponse *response;
 
+// property to stop recursive requests.
+// http://stackoverflow.com/questions/2494831/intercept-web-requests-from-a-webview-flash-plugin
+#define NOCACHE_REQUEST_HEADER_TAG  @"noticings-cache"
+
 @end
