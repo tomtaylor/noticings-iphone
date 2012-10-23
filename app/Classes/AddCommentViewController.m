@@ -12,7 +12,6 @@
 #import "NoticingsAppDelegate.h"
 
 @implementation AddCommentViewController
-@synthesize photo = _photo, textView = _textView;
 
 - (id)initWithPhoto:(StreamPhoto*)photo;
 {

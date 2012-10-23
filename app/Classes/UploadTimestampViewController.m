@@ -11,9 +11,6 @@
 
 @implementation UploadTimestampViewController
 
-@synthesize photoUpload;
-@synthesize datePicker;
-
 - (void)viewDidLoad {
     [super viewDidLoad];
 	self.title = @"Taken At";

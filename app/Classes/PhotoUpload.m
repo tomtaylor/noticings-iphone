@@ -19,31 +19,18 @@ enum {
     ASSETURL_ALLFINISHED = 0
 };
 
-@synthesize asset;
-@synthesize progress;
-@synthesize inProgress;
-@synthesize privacy;
-@synthesize flickrId;
-@synthesize title;
-@synthesize tags;
-@synthesize location;
-@synthesize coordinate;
-@synthesize originalCoordinate;
-@synthesize timestamp;
-@synthesize originalTimestamp;
-
-- (id)initWithAsset:(ALAsset *)_asset
+- (id)initWithAsset:(ALAsset *)asset
 {
 	self = [super init];
 	if (self != nil) {
-		self.asset = _asset;
+		self.asset = asset;
         self.inProgress = FALSE;
 		self.progress = @0.0f;
 
         self.privacy = PhotoUploadPrivacyPublic;
-        self.location = [asset valueForProperty:ALAssetPropertyLocation];
-        self.originalTimestamp = [asset valueForProperty:ALAssetPropertyDate];
-        self.timestamp = [asset valueForProperty:ALAssetPropertyDate];
+        self.location = [self.asset valueForProperty:ALAssetPropertyLocation];
+        self.originalTimestamp = [self.asset valueForProperty:ALAssetPropertyDate];
+        self.timestamp = [self.asset valueForProperty:ALAssetPropertyDate];
         DLog(@"Created PhotoUpload for Asset with location: %@ and timestamp: %@", self.location, self.timestamp);
         		
 		if (self.location) {
@@ -51,7 +38,7 @@ enum {
 		} else {
 			self.originalCoordinate = kCLLocationCoordinate2DInvalid;
 		}
-        self.coordinate = originalCoordinate;
+        self.coordinate = self.originalCoordinate;
 	}
 	return self;
 }
@@ -68,11 +55,11 @@ enum {
     [coder encodeConditionalObject:self.timestamp forKey:@"timestamp"];
     [coder encodeConditionalObject:self.originalTimestamp forKey:@"originalTimestamp"];
     
-    [coder encodeDouble:coordinate.latitude forKey:@"coordinate.latitude"];
-    [coder encodeDouble:coordinate.longitude forKey:@"coordinate.longitude"];
+    [coder encodeDouble:self.coordinate.latitude forKey:@"coordinate.latitude"];
+    [coder encodeDouble:self.coordinate.longitude forKey:@"coordinate.longitude"];
     
-    [coder encodeDouble:originalCoordinate.latitude forKey:@"originalCoordinate.latitude"];
-    [coder encodeDouble:originalCoordinate.longitude forKey:@"originalCoordinate.longitude"];
+    [coder encodeDouble:self.originalCoordinate.latitude forKey:@"originalCoordinate.latitude"];
+    [coder encodeDouble:self.originalCoordinate.longitude forKey:@"originalCoordinate.longitude"];
 }
 
 - (id)initWithCoder:(NSCoder *)decoder
@@ -99,12 +86,12 @@ enum {
         CLLocationCoordinate2D aCoordinate;
         aCoordinate.latitude = [decoder decodeDoubleForKey:@"coordinate.latitude"];
         aCoordinate.longitude = [decoder decodeDoubleForKey:@"coordinate.longitude"];
-        coordinate = aCoordinate;
+        self.coordinate = aCoordinate;
         
         CLLocationCoordinate2D anOriginalCoordinate;
         anOriginalCoordinate.latitude = [decoder decodeDoubleForKey:@"originalCoordinate.latitude"];
         anOriginalCoordinate.longitude = [decoder decodeDoubleForKey:@"originalCoordinate.longitude"];
-        originalCoordinate = anOriginalCoordinate;
+        self.originalCoordinate = anOriginalCoordinate;
                 
         self.inProgress = NO;
 		self.progress = @0.0f;

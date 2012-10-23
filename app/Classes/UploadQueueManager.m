@@ -16,10 +16,6 @@
 
 @implementation UploadQueueManager
 
-//@synthesize photoUploads = _photoUploads;
-@synthesize backgroundTask = _backgroundTask;
-@synthesize queue = _queue;
-
 - (id)init
 {
 	self = [super init];

@@ -28,24 +28,15 @@ static NSString *adjustPinActionSheetPreviousLocationTitle = @"Last Uploaded Loc
 static NSString *adjustPinActionSheetRemoveTitle = @"Remove from Map";
 static NSString *adjustPinActionSheetAddTitle = @"Add to Map";
 
-@synthesize mapView;
-@synthesize mapTypeControl;
-@synthesize photoUpload;
-@synthesize toolbar;
-@synthesize locationManager;
-@synthesize currentLocation;
-@synthesize previousLocation;
-
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.mapView.showsUserLocation = NO;
 	
-	locationManager = [[CLLocationManager alloc] init];
-	locationManager.delegate = self;
-	locationManager.desiredAccuracy = kCLLocationAccuracyBest;
-	locationManager.distanceFilter = kCLDistanceFilterNone;
-	[locationManager startUpdatingLocation];
+	self.locationManager = [[CLLocationManager alloc] init];
+	self.locationManager.delegate = self;
+	self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+	self.locationManager.distanceFilter = kCLDistanceFilterNone;
+	[self.locationManager startUpdatingLocation];
 	
 	self.title = @"Location";
 	
@@ -103,11 +94,11 @@ static NSString *adjustPinActionSheetAddTitle = @"Add to Map";
 
 - (MKAnnotationView *)mapView:(MKMapView *)_mapView viewForAnnotation:(id <MKAnnotation>)annotation {
 	
-	if (annotation == mapView.userLocation) {
+	if (annotation == self.mapView.userLocation) {
 		return nil;
 	}
 	
-	MKPinAnnotationView *annotationView = (MKPinAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:@"Pin"];
+	MKPinAnnotationView *annotationView = (MKPinAnnotationView *)[self.mapView dequeueReusableAnnotationViewWithIdentifier:@"Pin"];
 	if (annotationView == nil) {
 		annotationView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"Pin"];
 	}
@@ -207,19 +198,19 @@ static NSString *adjustPinActionSheetAddTitle = @"Add to Map";
         [sheet addButtonWithTitle:adjustPinActionSheetAddTitle];
     }
 	
-	[sheet showFromToolbar:toolbar];
+	[sheet showFromToolbar:self.toolbar];
 }
 
 - (IBAction)mapTypeChanged {
-	switch (mapTypeControl.selectedSegmentIndex) {
+	switch (self.mapTypeControl.selectedSegmentIndex) {
 		case 0:
-			mapView.mapType = MKMapTypeStandard;
+			self.mapView.mapType = MKMapTypeStandard;
 			break;
 		case 1:
-			mapView.mapType = MKMapTypeHybrid;
+			self.mapView.mapType = MKMapTypeHybrid;
 			break;
 		case 2:
-			mapView.mapType = MKMapTypeSatellite;
+			self.mapView.mapType = MKMapTypeSatellite;
 			break;
 		default:
 			break;
@@ -324,9 +315,7 @@ static NSString *adjustPinActionSheetAddTitle = @"Add to Map";
 }
 
 - (void)dealloc {
-	[locationManager stopUpdatingLocation];
-	locationManager.delegate = nil;
-	mapView.delegate = nil;
+	[self.locationManager stopUpdatingLocation];
 }
 
 

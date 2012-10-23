@@ -12,8 +12,6 @@
 
 @implementation StreamPhoto
 
-@synthesize details;
-
 - (id)initWithDictionary:(NSDictionary*)dict;
 {
     self = [super init];

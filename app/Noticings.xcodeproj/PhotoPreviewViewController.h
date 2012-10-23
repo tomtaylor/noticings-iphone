@@ -10,7 +10,6 @@
 #import <AssetsLibrary/AssetsLibrary.h>
 
 @interface PhotoPreviewViewController : UIViewController {
-    IBOutlet UIImageView *imageView;
     UIBarButtonItem *nextButton;
 }
 

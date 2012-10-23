@@ -12,11 +12,6 @@
 
 @implementation CacheURLProtocol
 
-@synthesize request = request_;
-@synthesize connection = connection_;
-@synthesize data = data_;
-@synthesize response = response_;
-
 + (BOOL)canInitWithRequest:(NSURLRequest *)request;
 {
     if ([request valueForHTTPHeaderField:NOCACHE_REQUEST_HEADER_TAG]) {

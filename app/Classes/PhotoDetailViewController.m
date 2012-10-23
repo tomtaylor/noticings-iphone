@@ -13,11 +13,6 @@
 
 @implementation PhotoDetailViewController
 
-@synthesize photoUpload;
-@synthesize photoTitleCell;
-@synthesize photoTagsCell;
-@synthesize privacyView;
-
 - (id)initWithStyle:(UITableViewStyle)style {
     if (self = [super initWithStyle:style]) {
 		self.photoTitleCell = [[EditableTextFieldCell alloc] initWithStyle:UITableViewCellStyleDefault
@@ -46,13 +41,13 @@
         privacyLabel.shadowOffset = CGSizeMake(0, 1);
         privacyLabel.font = [UIFont boldSystemFontOfSize:17.0];
         privacyLabel.text = @"Privacy";
-        [privacyView addSubview:privacyLabel];
+        [self.privacyView addSubview:privacyLabel];
         
         UISegmentedControl *privacyControl = [[UISegmentedControl alloc] initWithItems:@[@"Private", @"F & F", @"Public"]];
         privacyControl.frame = CGRectMake(10, 50.25, 300, self.privacyView.frame.size.height-50.25);
         [privacyControl addTarget:self action:@selector(privacyChanged:) forControlEvents:UIControlEventValueChanged];
         [privacyControl setSelectedSegmentIndex:2]; // default to being public
-        [privacyView addSubview:privacyControl];
+        [self.privacyView addSubview:privacyControl];
         
     }
     return self;

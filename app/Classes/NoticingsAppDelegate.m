@@ -22,17 +22,6 @@
 
 @implementation NoticingsAppDelegate
 
-@synthesize window;
-@synthesize tabBarController;
-@synthesize dummyViewController;
-@synthesize cameraController;
-@synthesize streamNavigationController;
-@synthesize contactsStreamManager = _contactsStreamManager;
-@synthesize cacheManager = _cacheManager;
-@synthesize flickrCallManager = _flickrCallManager;
-@synthesize uploadQueueManager = _uploadQueueManager;
-@synthesize photoLocationManager = _photoLocationManager;
-
 BOOL gLogging = FALSE;
 
 #pragma mark -
@@ -63,7 +52,7 @@ BOOL gLogging = FALSE;
     self.flickrCallManager = [[DeferredFlickrCallManager alloc] init];
 	self.photoLocationManager = [[PhotoLocationManager alloc] init];
     
-	self.queueTab = (tabBarController.tabBar.items)[0];
+	self.queueTab = (self.tabBarController.tabBar.items)[0];
 	int count = self.uploadQueueManager.queue.operationCount;
 	
 	if (count > 0) {
@@ -79,8 +68,8 @@ BOOL gLogging = FALSE;
                                                  name:@"queueCount" 
                                                object:nil];	
     
-    [window addSubview:[tabBarController view]];
-	[window makeKeyAndVisible];
+    [self.window addSubview:[self.tabBarController view]];
+	[self.window makeKeyAndVisible];
     
     DLog(@"Launch options: %@", launchOptions);
     
@@ -98,8 +87,8 @@ BOOL gLogging = FALSE;
 
 -(void)showSigninView;
 {
-    if (tabBarController.modalViewController) {
-        [tabBarController dismissModalViewControllerAnimated:NO];
+    if (self.tabBarController.modalViewController) {
+        [self.tabBarController dismissModalViewControllerAnimated:NO];
     }
 
     if (!self.authViewController) {
@@ -107,7 +96,7 @@ BOOL gLogging = FALSE;
     }
     
     [self.authViewController displaySignIn];
-    [tabBarController presentModalViewController:self.authViewController animated:NO];
+    [self.tabBarController presentModalViewController:self.authViewController animated:NO];
 }
 
 - (BOOL)application:(UIApplication *)application
@@ -121,7 +110,7 @@ BOOL gLogging = FALSE;
     [self.authViewController finalizeAuthWithUrl:url];
     
     // when we return, make sure the feed is set.
-    [tabBarController setSelectedIndex:0];
+    [self.tabBarController setSelectedIndex:0];
     return YES;
 }
 
@@ -173,7 +162,7 @@ BOOL gLogging = FALSE;
 
 // this feels odd, but it's the easiest way of doing something when a tab is selected without having to hack the tabbar
 - (BOOL)tabBarController:(UITabBarController *)aTabBarController shouldSelectViewController:(UIViewController *)viewController {
-    if ([viewController isEqual:dummyViewController]) {
+    if ([viewController isEqual:self.dummyViewController]) {
         if (self.cameraController == nil) {
             CameraController *aCameraController = [[CameraController alloc] initWithBaseViewController:self.tabBarController];
             self.cameraController = aCameraController;

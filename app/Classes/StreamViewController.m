@@ -23,8 +23,6 @@
 
 @implementation StreamViewController
 
-@synthesize streamManager, maybeCancel;
-
 -(id)initWithPhotoStreamManager:(PhotoStreamManager*)manager;
 {
     self = [super initWithStyle:UITableViewStylePlain];
@@ -73,9 +71,9 @@
 
 -(void)updatePullText;
 {
-    self.textPull = [NSString stringWithFormat:@"Pull to refresh..\nLast refreshed %@", streamManager.lastRefreshDisplay];
-    self.textRelease = [NSString stringWithFormat:@"Release to refresh..\nLast refreshed %@", streamManager.lastRefreshDisplay];
-    self.textLoading = [NSString stringWithFormat:@"Loading..\nLast refreshed %@", streamManager.lastRefreshDisplay];
+    self.textPull = [NSString stringWithFormat:@"Pull to refresh..\nLast refreshed %@", self.streamManager.lastRefreshDisplay];
+    self.textRelease = [NSString stringWithFormat:@"Release to refresh..\nLast refreshed %@", self.streamManager.lastRefreshDisplay];
+    self.textLoading = [NSString stringWithFormat:@"Loading..\nLast refreshed %@", self.streamManager.lastRefreshDisplay];
 }
 
 -(void)viewWillAppear:(BOOL)animated;
@@ -170,7 +168,7 @@
 
 - (void)refresh;
 {
-    [streamManager refresh];
+    [self.streamManager refresh];
     [self.tableView reloadData];
 }
 
@@ -180,7 +178,7 @@
 }
 
 - (StreamPhoto *)streamPhotoAtIndexPath:(NSIndexPath*)indexPath {
-    NSArray *photos = streamManager.filteredPhotos;
+    NSArray *photos = self.streamManager.filteredPhotos;
     if ([photos count] == 0) {
         return nil;
     }

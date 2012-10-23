@@ -15,8 +15,6 @@
 
 @implementation PhotoLocationManager
 
-@synthesize queue, cache, locationRequests;
-
 - (id)init;
 {
     self = [super init];
@@ -39,10 +37,10 @@
     return [[NSMutableDictionary alloc] initWithContentsOfFile:filename];
 }
 
--(void)saveCachedLocations:(NSMutableDictionary*)_cache;
+-(void)saveCachedLocations:(NSMutableDictionary*)cache;
 {
     NSString* filename = [[NoticingsAppDelegate delegate].cacheManager cachePathForFilename:@"locations.cache"];
-    [_cache writeToFile:filename atomically:YES];
+    [cache writeToFile:filename atomically:YES];
 }
 
 -(NSString*)cachedLocationForPhoto:(StreamPhoto*)photo;

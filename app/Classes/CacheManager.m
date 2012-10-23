@@ -16,8 +16,6 @@
 
 extern const NSUInteger kMaxDiskCacheSize;
 
-@synthesize cacheDir;
-
 - (id)init;
 {
     self = [super init];

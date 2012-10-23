@@ -11,13 +11,11 @@
 
 @implementation UserStreamManager
 
-@synthesize userId;
-
--(id)initWithUser:(NSString*)_userId;
+-(id)initWithUser:(NSString*)userId;
 {
     self = [super init];
     if (self) {
-        self.userId = _userId;
+        self.userId = userId;
         [self loadCachedImageList];
     }
     return self;

@@ -13,13 +13,6 @@
 
 @implementation PhotoUploadOperation
 
-@synthesize upload = _upload,
-            manager = _manager,
-            requestLock = requestLock,
-            requestFinished = _requestFinished,
-            requestFailed = _requestFailed,
-            responseData = _responseData;
-
 #define BOUNDRY @"------------0x834758488ASDGC78A7896SFD"
 
 -(id)initWithPhotoUpload:(PhotoUpload*)upload manager:(UploadQueueManager*)manager;

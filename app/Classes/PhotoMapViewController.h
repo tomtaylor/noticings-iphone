@@ -12,13 +12,6 @@
 #import "PhotoUpload.h"
 
 @interface PhotoMapViewController : UIViewController <MKMapViewDelegate, UIActionSheetDelegate, UIAlertViewDelegate, CLLocationManagerDelegate> {
-	PhotoUpload *photoUpload;
-	IBOutlet MKMapView *mapView;
-	IBOutlet UISegmentedControl *mapTypeControl;
-	IBOutlet UIToolbar *toolbar;
-	CLLocationManager *locationManager;
-	CLLocation *currentLocation;
-    CLLocation *previousLocation;
     UIBarButtonItem *uploadButton;
 }
 

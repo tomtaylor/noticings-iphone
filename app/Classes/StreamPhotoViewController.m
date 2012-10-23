@@ -26,17 +26,15 @@
 
 @implementation StreamPhotoViewController
 
-@synthesize photo, streamManager, photoLocation, webView, comments, commentsError;
-
 // global template object cache
 GRMustacheTemplate *template;
 
--(id)initWithPhoto:(StreamPhoto*)_photo streamManager:(PhotoStreamManager*)_streamManager;
+-(id)initWithPhoto:(StreamPhoto*)photo streamManager:(PhotoStreamManager*)streamManager;
 {
     self = [super initWithNibName:nil bundle:nil];
     if (self) {
-        self.photo = _photo;
-        self.streamManager = _streamManager;
+        self.photo = photo;
+        self.streamManager = streamManager;
         self.title = @""; // self.photo.title;
     }
     return self;
@@ -121,7 +119,7 @@ GRMustacheTemplate *template;
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex == 0) {
-        [[UIApplication sharedApplication] openURL:photo.mobilePageURL];
+        [[UIApplication sharedApplication] openURL:self.photo.mobilePageURL];
 
     } else if (buttonIndex == sendMailIndex) {
         MFMailComposeViewController *composer = [[MFMailComposeViewController alloc] init];
@@ -178,7 +176,7 @@ GRMustacheTemplate *template;
         self.photoLocation = [locationManager cachedLocationForPhoto:self.photo];
         if (!self.photoLocation) {
             self.photoLocation = self.photo.placename;
-            [locationManager getLocationForPhoto:photo andTell:self];
+            [locationManager getLocationForPhoto:self.photo andTell:self];
         }
     } else {
         self.photoLocation = nil;
@@ -334,7 +332,7 @@ GRMustacheTemplate *template;
         } else if ([request.URL.scheme isEqualToString:@"noticings-map"]) {
             MapViewController *mapController = [[MapViewController alloc] init];
             [self.navigationController pushViewController:mapController animated:YES];
-            [mapController displayPhoto:photo inManager:self.streamManager];
+            [mapController displayPhoto:self.photo inManager:self.streamManager];
             return false;
 
         } else if ([request.URL.scheme isEqualToString:@"noticings-user"]) {
@@ -345,14 +343,14 @@ GRMustacheTemplate *template;
                 NSString *userId = [list[1] stringByDecodingFromURI];
                 manager = [[UserStreamManager alloc] initWithUser:userId];
             } else {
-                manager = [[UserStreamManager alloc] initWithUser:photo.ownerId];
+                manager = [[UserStreamManager alloc] initWithUser:self.photo.ownerId];
             }
             StreamViewController *userController = [[StreamViewController alloc] initWithPhotoStreamManager:manager];
             if (list.count > 2) {
                 NSString *title = [list[2] stringByDecodingFromURI];
                 userController.title = title;
             } else {
-                userController.title = photo.ownername;
+                userController.title = self.photo.ownername;
             }
             [self.navigationController pushViewController:userController animated:YES];
             return false;

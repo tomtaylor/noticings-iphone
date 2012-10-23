@@ -12,8 +12,6 @@
 
 @implementation PhotoUploadCell
 
-@synthesize photoUpload, imageView, textLabel, detailTextLabel, progressView, notAButton;
-
 -(void)displayPhotoUpload:(PhotoUpload *)_upload;
 {
     if (self.photoUpload == _upload) {

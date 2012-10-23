@@ -16,8 +16,7 @@ enum {
     PhotoUploadPrivacyPublic
 };
 
-@interface PhotoUpload : NSObject <MKAnnotation, NSCoding> {
-}
+@interface PhotoUpload : NSObject <MKAnnotation, NSCoding>
 
 @property (nonatomic, strong) ALAsset *asset;
 @property (nonatomic, copy) NSString *title;
@@ -34,8 +33,6 @@ enum {
 
 
 - (id)initWithAsset:(ALAsset *)asset;
-//- (id)initWithDictionary:(NSDictionary *)dictionary;
-//- (NSDictionary *)asDictionary;
 - (NSData *)imageData;
 
 @end

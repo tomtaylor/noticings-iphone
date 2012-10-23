@@ -14,8 +14,6 @@
 
 @implementation DeferredFlickrCallManager
 
-@synthesize queue;
-
 -(id)init;
 {
     self = [super init];

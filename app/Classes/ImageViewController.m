@@ -13,15 +13,11 @@
 
 #define ZOOM_STEP 3
 
-@synthesize photo;
-@synthesize scrollView;
-@synthesize imageView;
-
--(id)initWithPhoto:(StreamPhoto*)_photo;
+-(id)initWithPhoto:(StreamPhoto*)photo;
 {
     self = [super initWithNibName:nil bundle:nil];
     if (self) {
-        self.photo = _photo;
+        self.photo = photo;
         self.hidesBottomBarWhenPushed = YES;
     }
     return self;
@@ -65,7 +61,7 @@
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex == 0) {
-        [[UIApplication sharedApplication] openURL:photo.originalImageURL];
+        [[UIApplication sharedApplication] openURL:self.photo.originalImageURL];
     }
 }
 

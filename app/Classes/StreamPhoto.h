@@ -11,10 +11,7 @@
 #import <Foundation/Foundation.h>
 #import <MapKit/MKAnnotation.h>
 
-@interface StreamPhoto : NSObject<NSCoding, MKAnnotation> {
-    // NSDictionary describing the photo as returned by the API. Don't bother exploding it.
-    NSDictionary *details;
-}
+@interface StreamPhoto : NSObject<NSCoding, MKAnnotation>
 
 - (id)initWithDictionary:(NSDictionary*)dict;
 

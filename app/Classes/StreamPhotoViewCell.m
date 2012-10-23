@@ -11,7 +11,6 @@
 #import "NoticingsAppDelegate.h"
 
 @implementation StreamPhotoViewCell
-@synthesize photo = _photo;
 
 #define MAX_IMAGE_HEIGHT 320
 

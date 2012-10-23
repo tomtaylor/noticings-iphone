@@ -10,13 +10,11 @@
 
 @implementation TagStreamManager
 
-@synthesize tag;
-
--(id)initWithTag:(NSString*)_tag;
+-(id)initWithTag:(NSString*)tag;
 {
     self = [super init];
     if (self) {
-        self.tag = _tag;
+        self.tag = tag;
         [self loadCachedImageList];
     }
     return self;

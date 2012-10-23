@@ -25,12 +25,7 @@ enum {
     PrivacySection
 };
 
-@interface PhotoDetailViewController : UITableViewController <UITextFieldDelegate, UITextViewDelegate> {
-	PhotoUpload *photoUpload;
-	EditableTextFieldCell *photoTitleCell;
-	EditableTextFieldCell *photoTagsCell;
-    UIView *privacyView;
-}
+@interface PhotoDetailViewController : UITableViewController <UITextFieldDelegate, UITextViewDelegate>
 
 @property (nonatomic, strong) PhotoUpload *photoUpload;
 @property (nonatomic, strong) EditableTextFieldCell *photoTitleCell;

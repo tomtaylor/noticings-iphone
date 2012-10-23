@@ -11,10 +11,6 @@
 
 @implementation MapViewController
 
-@synthesize mapView;
-@synthesize photo;
-@synthesize streamManager;
-
 -(void)viewDidLoad;
 {
     self.mapView = [[MKMapView alloc] initWithFrame:self.view.bounds];
@@ -49,15 +45,15 @@
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex == 0) {
-        [[UIApplication sharedApplication] openURL:photo.mapPageURL];
+        [[UIApplication sharedApplication] openURL:self.photo.mapPageURL];
     }
 }
 
--(void)displayPhoto:(StreamPhoto*)_photo inManager:(PhotoStreamManager*)manager;
+-(void)displayPhoto:(StreamPhoto*)photo inManager:(PhotoStreamManager*)manager;
 {
-    self.photo = _photo;
+    self.photo = photo;
     self.streamManager = manager;
-    self.mapView.region = MKCoordinateRegionMake(photo.coordinate, MKCoordinateSpanMake(0.03, 0.03));
+    self.mapView.region = MKCoordinateRegionMake(self.photo.coordinate, MKCoordinateSpanMake(0.03, 0.03));
     [self.mapView addAnnotation:self.photo];
     [self performSelector:@selector(selectPhoto:) withObject:self.photo afterDelay:2];
 }

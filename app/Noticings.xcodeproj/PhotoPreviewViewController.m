@@ -12,8 +12,6 @@
 
 @implementation PhotoPreviewViewController
 
-@synthesize imageView;
-
 
 #pragma mark - View lifecycle
 
