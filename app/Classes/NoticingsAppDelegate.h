@@ -16,10 +16,7 @@
 #import "UploadQueueManager.h"
 
 
-@interface NoticingsAppDelegate : NSObject <UIApplicationDelegate, UITabBarControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CLLocationManagerDelegate> {
-	FlickrAuthenticationViewController *authViewController;
-	UITabBarItem *queueTab;
-}
+@interface NoticingsAppDelegate : NSObject <UIApplicationDelegate, UITabBarControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CLLocationManagerDelegate>
 
 @property (nonatomic, strong) IBOutlet UIWindow *window;
 @property (nonatomic, strong) IBOutlet UITabBarController *tabBarController;
@@ -27,6 +24,8 @@
 @property (nonatomic, strong) CameraController *cameraController;
 
 @property (nonatomic, strong) IBOutlet UINavigationController *streamNavigationController;
+@property (nonatomic, strong) FlickrAuthenticationViewController *authViewController;
+@property (nonatomic, strong) UITabBarItem *queueTab;
 
 @property (nonatomic, strong) ContactsStreamManager* contactsStreamManager;
 @property (nonatomic, strong) CacheManager *cacheManager;
@@ -34,7 +33,7 @@
 @property (nonatomic, strong) DeferredFlickrCallManager *flickrCallManager;
 @property (nonatomic, strong) PhotoLocationManager *photoLocationManager;
 
-+(NoticingsAppDelegate*)delegate;
++ (NoticingsAppDelegate*)delegate;
 
 - (BOOL)isAuthenticated;
 

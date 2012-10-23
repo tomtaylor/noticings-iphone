@@ -14,9 +14,6 @@
 
 @implementation FlickrAuthenticationViewController
 
-@synthesize signInView;
-@synthesize spinnerView;
-
 - (void)displaySignIn {
 	NSLog(@"displaying signin");
 	[self.spinnerView removeFromSuperview];
@@ -36,7 +33,7 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSDictionary *params = @{@"callback": @"noticings://"};
         NSURLRequest *req = [GCOAuth URLRequestForPath:@"/services/oauth/request_token"
-                                         GETParameters:params
+                                        POSTParameters:params
                                                 scheme:@"http"
                                                   host:@"www.flickr.com"
                                            consumerKey:FLICKR_API_KEY
@@ -47,7 +44,6 @@
         NSHTTPURLResponse *response = nil;
         NSError *error = nil;
         NSData *data = [NSURLConnection sendSynchronousRequest:req returningResponse:&response error:&error];
-        NSString *body = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         if (response.statusCode != 200) {
             dispatch_async(dispatch_get_main_queue(),^{
                 [[[UIAlertView alloc] initWithTitle:@"Noticings"
@@ -59,6 +55,7 @@
             });
         }
             
+        NSString *body = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         NSDictionary *parsed = [body dictionaryByParsingAsQueryParameters];
 
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -88,7 +85,7 @@
         
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         NSURLRequest *req = [GCOAuth URLRequestForPath:@"/services/oauth/access_token"
-                                         GETParameters:params
+                                        POSTParameters:params
                                                 scheme:@"http"
                                                   host:@"www.flickr.com"
                                            consumerKey:FLICKR_API_KEY

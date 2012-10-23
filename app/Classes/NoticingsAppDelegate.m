@@ -63,14 +63,14 @@ BOOL gLogging = FALSE;
     self.flickrCallManager = [[DeferredFlickrCallManager alloc] init];
 	self.photoLocationManager = [[PhotoLocationManager alloc] init];
     
-	queueTab = (tabBarController.tabBar.items)[0];
+	self.queueTab = (tabBarController.tabBar.items)[0];
 	int count = self.uploadQueueManager.queue.operationCount;
 	
 	if (count > 0) {
-		queueTab.badgeValue = [NSString stringWithFormat:@"%u",	count];
+		self.queueTab.badgeValue = [NSString stringWithFormat:@"%u", count];
         application.applicationIconBadgeNumber = count;
 	} else {
-		queueTab.badgeValue = 0;
+		self.queueTab.badgeValue = 0;
         application.applicationIconBadgeNumber = 0;
 	}
     
@@ -90,36 +90,35 @@ BOOL gLogging = FALSE;
     NSURL *launchURL = launchOptions[UIApplicationLaunchOptionsURLKey];
     if (!launchURL && ![self isAuthenticated]) {
         DLog(@"App is not authenticated, so popping sign in modal.");
-        
-        if (!authViewController) {
-            authViewController = [[FlickrAuthenticationViewController alloc] init];
-        }
-        
-        [authViewController displaySignIn];
-        [tabBarController presentModalViewController:authViewController animated:NO];
+        [self showSigninView];
     }
     
     return YES;
 }
 
-- (BOOL)application:(UIApplication *)application 
+-(void)showSigninView;
+{
+    if (tabBarController.modalViewController) {
+        [tabBarController dismissModalViewControllerAnimated:NO];
+    }
+
+    if (!self.authViewController) {
+        self.authViewController = [[FlickrAuthenticationViewController alloc] init];
+    }
+    
+    [self.authViewController displaySignIn];
+    [tabBarController presentModalViewController:self.authViewController animated:NO];
+}
+
+- (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url 
   sourceApplication:(NSString *)sourceApplication 
          annotation:(id)annotation
 {
     DLog(@"App launched with URL: %@", [url absoluteString]);
-    
-    if (tabBarController.modalViewController) {
-        [tabBarController dismissModalViewControllerAnimated:NO];
-    }
-    
-    if (!authViewController) {
-        authViewController = [[FlickrAuthenticationViewController alloc] init];
-    }
-    
-    [authViewController displaySpinner];
-    [authViewController finalizeAuthWithUrl:url];
-    [tabBarController presentModalViewController:authViewController animated:NO];
+    [self showSigninView];
+    [self.authViewController displaySpinner];
+    [self.authViewController finalizeAuthWithUrl:url];
     
     // when we return, make sure the feed is set.
     [tabBarController setSelectedIndex:0];
@@ -130,9 +129,9 @@ BOOL gLogging = FALSE;
 	int count = [NoticingsAppDelegate delegate].uploadQueueManager.queue.operationCount;
 	[UIApplication sharedApplication].applicationIconBadgeNumber = count;
 	if (count > 0) {
-		queueTab.badgeValue = [NSString stringWithFormat:@"%u",	count];
+		self.queueTab.badgeValue = [NSString stringWithFormat:@"%u",	count];
 	} else {
-		queueTab.badgeValue = nil;
+		self.queueTab.badgeValue = nil;
 	}
 }
 
@@ -151,13 +150,18 @@ BOOL gLogging = FALSE;
 
 - (void)applicationWillEnterForeground:(UIApplication *)application;
 {
-    // resume from background. Multitasking devices only.
-    [[NoticingsAppDelegate delegate].contactsStreamManager maybeRefresh]; // the viewcontroller listens to this
-    
-    // if we're looking at a list of photos, reload it, in case the user defaults have changed.
-    UINavigationController *nav = (UINavigationController*)(self.tabBarController.viewControllers)[0];
-    if (nav.visibleViewController.class == StreamViewController.class) {
-        [((StreamViewController*)nav.visibleViewController).tableView reloadData];
+    if ([self isAuthenticated]) {
+        // resume from background. Multitasking devices only.
+        [[NoticingsAppDelegate delegate].contactsStreamManager maybeRefresh]; // the viewcontroller listens to this
+        
+        // if we're looking at a list of photos, reload it, in case the user defaults have changed.
+        UINavigationController *nav = (UINavigationController*)(self.tabBarController.viewControllers)[0];
+        if (nav.visibleViewController.class == StreamViewController.class) {
+            [((StreamViewController*)nav.visibleViewController).tableView reloadData];
+        }
+        
+    } else {
+        [self showSigninView];
     }
 }
 
@@ -190,10 +194,6 @@ BOOL gLogging = FALSE;
 {
     return [[NSUserDefaults standardUserDefaults] objectForKey:@"oauth_token"] != nil;
 }
-
-#pragma mark -
-#pragma mark Memory management
-
 
 @end
 

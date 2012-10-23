@@ -36,8 +36,6 @@ enum AppSectionRows {
 
 @implementation MoreViewController
 
-@synthesize cameraController;
-
 - (void)viewDidLoad {
     if (!self.cameraController) {
         self.cameraController = [[CameraController alloc] initWithBaseViewController:self];
@@ -67,7 +65,7 @@ enum AppSectionRows {
 		case kAppSection:
 			return NUM_APP_SECTION_ROWS;
 		default:
-			return 1;
+			return 0;
 	}
 }
 
@@ -108,7 +106,7 @@ enum AppSectionRows {
 	if (indexPath.section == kNoticingsSection) {
 		switch (indexPath.row) {
 			case kNoticingsSectionSiteRow:
-				[cameraController presentImagePicker];
+				[self.cameraController presentImagePicker];
 				break;
 			case kNoticingsSectionDebugRow:
                 [self.navigationController pushViewController:[[DebugViewController alloc] initWithStyle:UITableViewStyleGrouped] animated:YES];
