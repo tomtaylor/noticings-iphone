@@ -13,11 +13,6 @@
 
 @implementation PhotoStreamManager
 
-@synthesize rawPhotos;
-@synthesize inProgress;
-@synthesize lastRefresh;
-@synthesize delegate;
-
 - (id)init;
 {
     self = [super init];
@@ -36,6 +31,11 @@
 // refresh, but only if we haven't refreshed recently.
 -(void)maybeRefresh;
 {
+    if (![[NoticingsAppDelegate delegate] isAuthenticated]) {
+        DLog(@"ont authenticated - not reloading");
+        return;
+    }
+
     NSTimeInterval now = [[NSDate date] timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970;
     NSLog(@"it's been %f seconds since refresh", now - self.lastRefresh);
     if (now - self.lastRefresh < 60 * 10) {
@@ -62,7 +62,7 @@
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 
         if (!success) {
-            NSLog(@"failed flickr request! %@", error);
+            NSLog(@"failed flickr request! %@ %@", rsp, error);
             [[[UIAlertView alloc] initWithTitle:@"Flickr API call failed"
                                          message:@"There was a problem getting your contacts' photos from Flickr."
                                         delegate:nil
