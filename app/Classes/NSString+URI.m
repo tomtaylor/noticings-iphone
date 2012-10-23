@@ -12,13 +12,11 @@
 
 - (NSString *)stringByEncodingForURI;
 {
-    NSString * encodedString = (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(
-                                                                                   NULL,
-                                                                                   (CFStringRef)self,
-                                                                                   NULL,
-                                                                                   (CFStringRef)@"!*'\"();:@&=+$,/?%#[]% ",
-                                                                                   kCFStringEncodingUTF8 ));
-    return encodedString;
+    return (__bridge_transfer NSString *)CFURLCreateStringByAddingPercentEscapes(NULL,
+                                                                                 (__bridge CFStringRef)self,
+                                                                                 NULL,
+                                                                                 (CFStringRef)@"!*'\"();:@&=+$,/?%#[]% ",
+                                                                                 kCFStringEncodingUTF8);
 }
 
 - (NSString *)stringByDecodingFromURI;
