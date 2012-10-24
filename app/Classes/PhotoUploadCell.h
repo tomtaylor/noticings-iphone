@@ -16,9 +16,10 @@
 
 - (void)displayPhotoUpload:(PhotoUpload *)photoUpload;
 
-@property (strong, nonatomic) IBOutlet UIImageView* imageView;
+// gratuitously NOT properties named like superclass!!
+@property (strong, nonatomic) IBOutlet UIImageView* uploadImageView;
 @property (strong, nonatomic) IBOutlet UILabel* mainTextLabel;
-@property (strong, nonatomic) IBOutlet UILabel* detailTextLabel;
+@property (strong, nonatomic) IBOutlet UILabel* otherTextLabel;
 @property (strong, nonatomic) IBOutlet UIProgressView* progressView;
 
 @end

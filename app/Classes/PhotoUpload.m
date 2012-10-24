@@ -22,7 +22,7 @@ enum {
 -(NSString*)description;
 {
     // this is the objective C introspection / toString() method
-    return [NSString stringWithFormat:@"<%@ \"%@\" progress %@>", self.class, self.title, self.progress];
+    return [NSString stringWithFormat:@"<%@ \"%@\" progress %@>", self.class, self.title, self.paused ? @"PAUSED" : self.progress];
 }
 
 - (id)initWithAsset:(ALAsset *)asset

@@ -27,9 +27,9 @@
     
     if (self.photoUpload) {
         if (self.photoUpload.asset) {
-            self.imageView.image = [UIImage imageWithCGImage:self.photoUpload.asset.thumbnail];
+            self.uploadImageView.image = [UIImage imageWithCGImage:self.photoUpload.asset.thumbnail];
         } else {
-            self.imageView.image = [UIImage imageNamed:@"Icon"];
+            self.uploadImageView.image = [UIImage imageNamed:@"Icon"];
         }
         
         if (self.photoUpload.title == nil || [self.photoUpload.title isEqualToString:@""]) {
@@ -56,9 +56,9 @@
                               context:NULL];
         
     } else {
-        self.imageView.image = nil;
+        self.uploadImageView.image = nil;
         self.mainTextLabel.text = @"";
-        self.detailTextLabel.text = @"";
+        self.otherTextLabel.text = @"";
     }
 
 }
@@ -66,22 +66,21 @@
 - (void)updateDetailText {
     if (self.photoUpload.paused) {
         self.progressView.hidden = YES;
-        self.detailTextLabel.hidden = NO;
-        self.detailTextLabel.text = @"Paused";
+        self.otherTextLabel.hidden = NO;
+        self.otherTextLabel.text = @"Paused";
 
     } else if (self.photoUpload.inProgress) {
-        self.detailTextLabel.text = @"";
-        self.detailTextLabel.hidden = YES;
+        self.otherTextLabel.text = @"invisible!";
+        self.otherTextLabel.hidden = YES;
         self.progressView.progress = [self.photoUpload.progress floatValue];
         self.progressView.hidden = NO;
-        return;
 
     } else {
         self.progressView.hidden = YES;
-        self.detailTextLabel.hidden = NO;
-        self.detailTextLabel.text = @"Queued";
+        self.otherTextLabel.hidden = NO;
+        self.otherTextLabel.text = @"Queued";
     }
-	//[self setNeedsDisplay];
+	[self setNeedsDisplay];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
