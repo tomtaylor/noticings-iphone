@@ -9,6 +9,8 @@
 #import "MoreViewController.h"
 #import "FlickrAuthenticationViewController.h"
 #import "DebugViewController.h"
+#import "StreamViewController.h"
+#import "StarredStreamManager.h"
 
 enum Sections {
 	kNoticingsSection = 0,
@@ -20,6 +22,7 @@ enum Sections {
 enum NoticingsSectionRows {
 	kNoticingsSectionSiteRow = 0,
 	kNoticingsSectionDebugRow,
+	kNoticingsSectionStarredRow,
 	NUM_NOTICINGS_SECTION_ROWS
 };
 
@@ -89,6 +92,9 @@ enum AppSectionRows {
 			case kNoticingsSectionDebugRow:
 				cell.textLabel.text = @"Debug";
 				break;
+			case kNoticingsSectionStarredRow:
+				cell.textLabel.text = @"Your favourites";
+				break;
 			default:
 				break;
 		}
@@ -111,6 +117,12 @@ enum AppSectionRows {
 			case kNoticingsSectionDebugRow:
                 [self.navigationController pushViewController:[[DebugViewController alloc] initWithStyle:UITableViewStyleGrouped] animated:YES];
 				break;
+            case kNoticingsSectionStarredRow: {
+                StarredStreamManager *manager = [[StarredStreamManager alloc] init];
+                StreamViewController *vc = [[StreamViewController alloc] initWithPhotoStreamManager:manager];
+                [self.navigationController pushViewController:vc animated:YES];
+                break;
+            }
 			default:
 				break;
 		}
