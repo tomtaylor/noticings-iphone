@@ -81,6 +81,10 @@ enum {
         // create photo from asset url
         NSURL *assetURL = [decoder decodeObjectForKey:@"assetUrl"];
         if (assetURL) {
+            // this doesn't actually work, alas. We can't get an asset from an URL
+            // unless we still have the original assetmanager.
+            // TODO - the only way round this is to get the resized image and save it out
+            // to disk ourselves somewhere.
             self.asset = [PhotoUpload assetForURL:assetURL];
         }
         
