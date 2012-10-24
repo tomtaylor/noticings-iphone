@@ -105,7 +105,6 @@ enum {
         self.inProgress = NO;
 		self.progress = @0.0f;
         self.paused = YES;
-        DLog(@"decoded %@", self);
     }
     return self;
 }
@@ -130,6 +129,7 @@ enum {
 }
 
 + (ALAsset *)assetForURL:(NSURL *)url {
+    DLog(@"restoring asset from url %@", url);
     __block ALAsset *result = nil;
     __block NSError *assetError = nil;
     dispatch_semaphore_t sema = dispatch_semaphore_create(0);

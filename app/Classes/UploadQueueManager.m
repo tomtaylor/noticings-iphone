@@ -138,7 +138,6 @@
     DLog(@"Saving queued uploads");
 //	[self pauseQueue];
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self.uploads];
-    DLog(@"archived as %@", data);
     [[NSUserDefaults standardUserDefaults] setObject:data forKey:@"savedPhotoUploads"];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }

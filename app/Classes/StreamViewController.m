@@ -316,7 +316,7 @@
 
     PhotoUpload *upload = [self photoUploadAtIndexPath:indexPath];
     if (upload) {
-        DLog(@"maybe cancelling upload %@", upload);
+        DLog(@"popup for upload %@", upload);
         self.maybeCancel = upload;
         UIActionSheet *popupQuery = [[UIActionSheet alloc]
                                      initWithTitle:upload.title
