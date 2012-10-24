@@ -32,7 +32,7 @@
 -(void)maybeRefresh;
 {
     if (![[NoticingsAppDelegate delegate] isAuthenticated]) {
-        DLog(@"ont authenticated - not reloading");
+        DLog(@"not authenticated - not reloading");
         return;
     }
 
@@ -117,7 +117,6 @@
 
 - (void)resetFlickrContext;
 {
-    NSLog(@"binning flickr request");
     self.inProgress = NO;
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 }
@@ -130,14 +129,15 @@
 // load the cached list of images fetched from flickr
 -(void)loadCachedImageList;
 {
-    if ([self cacheFilename].length == 0) {
+    if (![self cacheFilename] || [self cacheFilename].length == 0) {
+        DLog(@"this view has no cache");
         return;
     }
 
     // TODO - error handling? what if the cache is bad?
     NSString* cache = [[NoticingsAppDelegate delegate].cacheManager cachePathForFilename:[self cacheFilename]];
     if (![[NSFileManager defaultManager] fileExistsAtPath:cache]) {
-        DLog(@"No cache for image list");
+        DLog(@"No cache for image list at %@", cache);
         return; // no cache
     }
     NSLog(@"Loading cached image data from %@", cache);

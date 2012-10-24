@@ -22,6 +22,7 @@ extern const NSUInteger kMaxDiskCacheSize;
     if (self) {
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
         self.cacheDir = [paths[0] stringByAppendingPathComponent:@"imageCache"];
+        DLog(@"cachedir is %@", self.cacheDir);
         
         // create cache directory if it doesn't exist already.
         if (![[NSFileManager defaultManager] fileExistsAtPath:self.cacheDir]) {

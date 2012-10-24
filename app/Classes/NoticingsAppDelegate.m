@@ -46,8 +46,8 @@ BOOL gLogging = FALSE;
 
     [NSURLProtocol registerClass:[CacheURLProtocol class]];
     
+    self.cacheManager = [[CacheManager alloc] init]; // first!
     self.contactsStreamManager = [[ContactsStreamManager alloc] init];
-    self.cacheManager = [[CacheManager alloc] init];
     self.uploadQueueManager = [[UploadQueueManager alloc] init];
     self.flickrCallManager = [[DeferredFlickrCallManager alloc] init];
 	self.photoLocationManager = [[PhotoLocationManager alloc] init];
@@ -68,6 +68,7 @@ BOOL gLogging = FALSE;
                                                  name:@"queueCount" 
                                                object:nil];	
     
+    self.window.rootViewController = self.tabBarController;
     [self.window addSubview:[self.tabBarController view]];
 	[self.window makeKeyAndVisible];
     
