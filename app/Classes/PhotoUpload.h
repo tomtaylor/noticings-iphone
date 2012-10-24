@@ -23,6 +23,7 @@ enum {
 @property (nonatomic, strong) NSString *tags;
 @property (nonatomic, strong) NSNumber *progress;
 @property (nonatomic) BOOL inProgress;
+@property (nonatomic) BOOL paused;
 @property (nonatomic) NSInteger privacy;
 @property (nonatomic, strong) NSString *flickrId;
 @property (nonatomic, strong) CLLocation *location;

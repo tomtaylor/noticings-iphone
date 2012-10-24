@@ -19,12 +19,19 @@ enum {
     ASSETURL_ALLFINISHED = 0
 };
 
+-(NSString*)description;
+{
+    // this is the objective C introspection / toString() method
+    return [NSString stringWithFormat:@"<%@ \"%@\" progress %@>", self.class, self.title, self.progress];
+}
+
 - (id)initWithAsset:(ALAsset *)asset
 {
 	self = [super init];
 	if (self != nil) {
 		self.asset = asset;
         self.inProgress = FALSE;
+        self.paused = FALSE;
 		self.progress = @0.0f;
 
         self.privacy = PhotoUploadPrivacyPublic;
@@ -47,13 +54,13 @@ enum {
 {
     [coder encodeInt:4 forKey:@"version"];
     [coder encodeObject:self.asset.defaultRepresentation.url forKey:@"assetUrl"];
-    [coder encodeConditionalObject:self.title forKey:@"title"];
-    [coder encodeConditionalObject:self.tags forKey:@"tags"];
+    [coder encodeObject:self.title forKey:@"title"];
+    [coder encodeObject:self.tags forKey:@"tags"];
     [coder encodeInt:self.privacy forKey:@"privacy"];
-    [coder encodeConditionalObject:self.flickrId forKey:@"flickrId"];
-    [coder encodeConditionalObject:self.location forKey:@"location"];
-    [coder encodeConditionalObject:self.timestamp forKey:@"timestamp"];
-    [coder encodeConditionalObject:self.originalTimestamp forKey:@"originalTimestamp"];
+    [coder encodeObject:self.flickrId forKey:@"flickrId"];
+    [coder encodeObject:self.location forKey:@"location"];
+    [coder encodeObject:self.timestamp forKey:@"timestamp"];
+    [coder encodeObject:self.originalTimestamp forKey:@"originalTimestamp"];
     
     [coder encodeDouble:self.coordinate.latitude forKey:@"coordinate.latitude"];
     [coder encodeDouble:self.coordinate.longitude forKey:@"coordinate.longitude"];
@@ -73,7 +80,9 @@ enum {
         
         // create photo from asset url
         NSURL *assetURL = [decoder decodeObjectForKey:@"assetUrl"];
-        self.asset = [PhotoUpload assetForURL:assetURL];
+        if (assetURL) {
+            self.asset = [PhotoUpload assetForURL:assetURL];
+        }
         
         self.title = [decoder decodeObjectForKey:@"title"];
         self.tags = [decoder decodeObjectForKey:@"tags"];
@@ -95,6 +104,8 @@ enum {
                 
         self.inProgress = NO;
 		self.progress = @0.0f;
+        self.paused = YES;
+        DLog(@"decoded %@", self);
     }
     return self;
 }

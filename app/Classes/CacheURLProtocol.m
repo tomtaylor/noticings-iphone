@@ -50,7 +50,7 @@
         CacheManager *cache = [NoticingsAppDelegate delegate].cacheManager;
         NSString *filename = [cache urlToFilename:self.request.URL];
         if ([[NSFileManager defaultManager] fileExistsAtPath:filename]) {
-            DLog(@"found %@ in cache", self.request.URL);
+            //DLog(@"found %@ in cache", self.request.URL);
             NSData *data = [NSData dataWithContentsOfFile:filename];
             NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:self.request.URL statusCode:200 HTTPVersion:@"1" headerFields:@{}];
             [[self client] URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
@@ -60,6 +60,7 @@
         }
     }
 
+    DLog(@"Fetching %@ from internet", self.request.URL);
     self.connection = [NSURLConnection connectionWithRequest:self.request delegate:self];
 }
 

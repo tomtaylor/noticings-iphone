@@ -21,23 +21,46 @@
 	self = [super init];
 	if (self != nil) {
 		self.backgroundTask = UIBackgroundTaskInvalid;
+        self.uploads = [NSMutableArray array];
         self.queue = [[NSOperationQueue alloc] init];
         self.queue.maxConcurrentOperationCount = 1;
-        [self.queue addObserver:self forKeyPath:@"operationCount" options:NSKeyValueObservingOptionNew context:nil];
         [self restoreQueuedUploads];
 	}
 	return self;
 }
 
-// queue has changed
--(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context;
+- (void)doNext;
 {
-	[[NSNotificationCenter defaultCenter] postNotificationName:@"queueCount" object:[NSNumber numberWithInt:self.queue.operationCount]];
+    // do this a lot.
+    [self saveQueuedUploads];
+
+    DLog(@"upload queue is %@", self.uploads);
+    if (self.uploads.count == 0) {
+        DLog(@"Queue is empty!");
+    } else if (self.queue.operationCount > 0) {
+        DLog(@"Operation queue is busy!");
+    } else {
+        // Queue the next unpaused photo
+        for (PhotoUpload* upload in self.uploads) {
+            if (!upload.paused) {
+                DLog(@"adding %@ to operation queue", upload);
+                PhotoUploadOperation *op = [[PhotoUploadOperation alloc] initWithPhotoUpload:upload manager:self];
+                [self.queue addOperation:op];
+                break;
+            } else {
+                DLog(@"Upload %@ is paused", upload);
+            }
+        }
+    }
+
+    DLog(@"posting badge %u", self.uploads.count);
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"queueCount" object:[NSNumber numberWithInt:self.uploads.count]];
 }
 
 - (void)addPhotoUploadToQueue:(PhotoUpload *)photoUpload {
-    PhotoUploadOperation *op = [[PhotoUploadOperation alloc] initWithPhotoUpload:photoUpload manager:self];
-    [self.queue addOperation:op];
+    DLog(@"adding upload %@", photoUpload);
+    [self.uploads addObject:photoUpload];
+    [self doNext];
 }
 
 -(void)cancelUpload:(PhotoUpload*)upload;
@@ -51,6 +74,15 @@
             [op.requestLock signal];
         }
     }
+    [self.uploads removeObject:upload];
+    [self doNext];
+}
+
+- (void)resumeUpload:(PhotoUpload*)upload;
+{
+    upload.paused = NO;
+    upload.progress = 0;
+    [self doNext];
 }
 
 - (void)startBackgroundTaskIfNeeded {
@@ -72,9 +104,16 @@
 	});
 }
 
+-(void)uploadSucceeded:(PhotoUpload *)upload;
+{
+    DLog(@"Upload of %@ succeeded", upload);
+    [self.uploads removeObject:upload];
+    [self doNext];
+}
+
 - (void)uploadFailed:(PhotoUpload*)upload;
 {
-    NSLog(@"Upload of %@ failed", upload);
+    DLog(@"Upload of %@ failed", upload);
 	if ([UIApplication sharedApplication].applicationState == UIApplicationStateActive) {	
         [[[UIAlertView alloc] initWithTitle:@"Upload Error" 
                                      message:[NSString stringWithFormat:@"There was a problem uploading the photo titled '%@'.", upload.title]
@@ -90,40 +129,57 @@
 	}
 
     // operation is complete, having failed. Add a new one to the bottom of the queue, and suspend it.
-    // TODO - need paused uploads for this
-//    PhotoUploadOperation *op = [[PhotoUploadOperation alloc] initWithPhotoUpload:upload manager:self];    
-//    [self.queue addOperation:op];
-//    [op release];
+    upload.paused = YES;
+    [self.uploads removeObject:upload];
+    [self addPhotoUploadToQueue:upload];
 }
 
 - (void)saveQueuedUploads {
-//    DLog(@"Saving queued uploads");
+    DLog(@"Saving queued uploads");
 //	[self pauseQueue];
-//    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self.photoUploads];
-//    [[NSUserDefaults standardUserDefaults] setObject:data forKey:@"savedPhotoUploads"];
-//    [[NSUserDefaults standardUserDefaults] synchronize];
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self.uploads];
+    DLog(@"archived as %@", data);
+    [[NSUserDefaults standardUserDefaults] setObject:data forKey:@"savedPhotoUploads"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (void)restoreQueuedUploads {
-//    DLog(@"Restoring queued uploads");
-//	[self pauseQueue];
-//    NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:@"savedPhotoUploads"];
-//    NSArray *savedUploads = [NSKeyedUnarchiver unarchiveObjectWithData:data];
-//    [self.photoUploads removeAllObjects];
-//    [self.photoUploads addObjectsFromArray:savedUploads];
+    DLog(@"Restoring queued uploads");
+    [self.queue cancelAllOperations];
+    NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:@"savedPhotoUploads"];
+
+    // remove data so that we don't crash forever if the restore fails.
+    [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"savedPhotoUploads"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+
+    if (!data) return;
+    NSArray *savedUploads;
+    @try {
+        savedUploads = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    }
+    @catch (NSException *e) {
+        DLog(@"invalid archive");
+        return;
+    }
+    if (![savedUploads isKindOfClass:NSArray.class]) return;
+    DLog(@"got %@", savedUploads);
+
+    [self.uploads removeAllObjects];
+    [self.uploads addObjectsFromArray:savedUploads];
+    // this will re-save the queued photos
+    [self doNext];
 }
 
 - (void)fakeUpload;
 {
     // for debugging
     PhotoUpload *upload = [[PhotoUpload alloc] init];
-    upload.title = @"-- fake upload --";
+    upload.title = [NSString stringWithFormat:@"-- fake upload (%@) --", [NSDate date]];
     upload.timestamp = [NSDate date];
     [self addPhotoUploadToQueue:upload];
 }
 
 - (void) dealloc {
-//    self.photoUploads = nil;
     [self.queue cancelAllOperations];
 }
 

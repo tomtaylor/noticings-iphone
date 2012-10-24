@@ -17,9 +17,8 @@
 - (void)displayPhotoUpload:(PhotoUpload *)photoUpload;
 
 @property (strong, nonatomic) IBOutlet UIImageView* imageView;
-@property (strong, nonatomic) IBOutlet UILabel* textLabel;
+@property (strong, nonatomic) IBOutlet UILabel* mainTextLabel;
 @property (strong, nonatomic) IBOutlet UILabel* detailTextLabel;
 @property (strong, nonatomic) IBOutlet UIProgressView* progressView;
-@property (strong, nonatomic) IBOutlet UIImage *notAButton;
 
 @end

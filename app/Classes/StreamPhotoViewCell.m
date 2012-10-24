@@ -17,7 +17,7 @@
 
 -(void) populateFromPhoto:(StreamPhoto*)setphoto;
 {
-    DLog(@"populateFromPhoto %@", setphoto);
+    //DLog(@"populateFromPhoto %@", setphoto);
     if (self.photo == setphoto) {
         return;
     }

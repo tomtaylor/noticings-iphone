@@ -64,7 +64,7 @@ BOOL gLogging = FALSE;
 	}
     
     [[NSNotificationCenter defaultCenter] addObserver:self 
-                                             selector:@selector(queueDidChange) 
+                                             selector:@selector(queueDidChange:)
                                                  name:@"queueCount" 
                                                object:nil];	
     
@@ -114,11 +114,14 @@ BOOL gLogging = FALSE;
     return YES;
 }
 
-- (void)queueDidChange {
-	int count = [NoticingsAppDelegate delegate].uploadQueueManager.queue.operationCount;
-	[UIApplication sharedApplication].applicationIconBadgeNumber = count;
-	if (count > 0) {
-		self.queueTab.badgeValue = [NSString stringWithFormat:@"%u",	count];
+- (void)queueDidChange:(NSNotification*)notification {
+    NSNumber *size = notification.object;
+    if (![size isKindOfClass:NSNumber.class]) {
+        return;
+    }
+	[UIApplication sharedApplication].applicationIconBadgeNumber = size.intValue;
+	if (size.intValue > 0) {
+		self.queueTab.badgeValue = [NSString stringWithFormat:@"%u", size.intValue];
 	} else {
 		self.queueTab.badgeValue = nil;
 	}

@@ -24,7 +24,7 @@
 -(NSString*)description;
 {
     // this is the objective C introspection / toString() method
-    return [NSString stringWithFormat:@"<StreamPhoto \"%@\" by %@>", self.title, self.ownername];
+    return [NSString stringWithFormat:@"<%@ \"%@\" by %@>", self.class, self.title, self.ownername];
 }
 
 #pragma mark accessors / view utilities

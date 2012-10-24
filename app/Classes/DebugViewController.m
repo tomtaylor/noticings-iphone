@@ -61,6 +61,10 @@ enum DebugActions {
             [[NoticingsAppDelegate delegate].cacheManager clearCache];
             break;
 
+        case kNoticingsDebugFakeUpload:
+            [[NoticingsAppDelegate delegate].uploadQueueManager fakeUpload];
+            break;
+
         default:
             break;
     }

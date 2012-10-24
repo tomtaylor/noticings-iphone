@@ -14,14 +14,18 @@
 
 - (void)addPhotoUploadToQueue:(PhotoUpload *)photoUpload;
 - (void)cancelUpload:(PhotoUpload*)upload;
+- (void)resumeUpload:(PhotoUpload*)upload;
 - (void)saveQueuedUploads;
 - (void)restoreQueuedUploads;
+- (void)fakeUpload;
 
 // operation callbacks
 - (void)uploadFailed:(PhotoUpload*)upload;
+- (void)uploadSucceeded:(PhotoUpload*)upload;
 
 @property (nonatomic) UIBackgroundTaskIdentifier backgroundTask;
 @property (nonatomic, strong) NSOperationQueue *queue;
+@property (nonatomic, strong) NSMutableArray *uploads;
 
 
 

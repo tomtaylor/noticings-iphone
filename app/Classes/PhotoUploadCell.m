@@ -12,16 +12,18 @@
 
 @implementation PhotoUploadCell
 
--(void)displayPhotoUpload:(PhotoUpload *)_upload;
+-(void)displayPhotoUpload:(PhotoUpload *)upload;
 {
-    if (self.photoUpload == _upload) {
+    if (self.photoUpload == upload) {
         return;
     }
+    DLog(@"showing %@", upload);
     if (self.photoUpload) {
         [self.photoUpload removeObserver:self forKeyPath:@"inProgress"];
+        [self.photoUpload removeObserver:self forKeyPath:@"progress"];
+        [self.photoUpload removeObserver:self forKeyPath:@"paused"];
     }
-
-    self.photoUpload = _upload;
+    self.photoUpload = upload;
     
     if (self.photoUpload) {
         if (self.photoUpload.asset) {
@@ -31,9 +33,9 @@
         }
         
         if (self.photoUpload.title == nil || [self.photoUpload.title isEqualToString:@""]) {
-            self.textLabel.text = @"No title";
+            self.mainTextLabel.text = @"No title";
         } else {
-            self.textLabel.text = self.photoUpload.title;
+            self.mainTextLabel.text = self.photoUpload.title;
         }
         
         self.progressView.progress = 0;
@@ -44,26 +46,42 @@
                            forKeyPath:@"inProgress"
                               options:(NSKeyValueObservingOptionNew)
                               context:NULL];
+        [self.photoUpload addObserver:self
+                           forKeyPath:@"paused"
+                              options:(NSKeyValueObservingOptionNew)
+                              context:NULL];
+        [self.photoUpload addObserver:self
+                           forKeyPath:@"progress"
+                              options:(NSKeyValueObservingOptionNew)
+                              context:NULL];
         
     } else {
         self.imageView.image = nil;
-        self.textLabel.text = @"";
+        self.mainTextLabel.text = @"";
         self.detailTextLabel.text = @"";
     }
 
 }
 
 - (void)updateDetailText {
-    if (self.photoUpload.inProgress) {
+    if (self.photoUpload.paused) {
+        self.progressView.hidden = YES;
+        self.detailTextLabel.hidden = NO;
+        self.detailTextLabel.text = @"Paused";
+
+    } else if (self.photoUpload.inProgress) {
         self.detailTextLabel.text = @"";
+        self.detailTextLabel.hidden = YES;
         self.progressView.progress = [self.photoUpload.progress floatValue];
         self.progressView.hidden = NO;
         return;
+
     } else {
         self.progressView.hidden = YES;
+        self.detailTextLabel.hidden = NO;
         self.detailTextLabel.text = @"Queued";
     }
-	[self setNeedsDisplay];
+	//[self setNeedsDisplay];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
@@ -71,8 +89,12 @@
                         change:(NSDictionary *)change
                        context:(void *)context
 {
-    [self updateDetailText];
+    // KVO isn't main-thread
+    dispatch_async(dispatch_get_main_queue(),^{
+        [self updateDetailText];
+    });
 }
+
 
 - (void)dealloc {
     [self displayPhotoUpload:nil];

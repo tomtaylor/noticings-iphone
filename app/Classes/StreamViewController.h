@@ -24,6 +24,6 @@
 - (StreamPhoto *)streamPhotoAtIndexPath:(NSIndexPath*)indexPath;
 
 @property (strong) PhotoStreamManager *streamManager;
-@property (strong, nonatomic) PhotoUpload *maybeCancel;
+@property (weak, nonatomic) PhotoUpload *maybeCancel;
 
 @end

@@ -16,6 +16,9 @@
 #import "NoticingsAppDelegate.h"
 #import "PhotoUploadOperation.h"
 
+#define RETRY_UPLOAD @"Retry upload"
+#define CANCEL_UPLOAD @"Cancel upload"
+
 @interface StreamViewController (Private)
 - (void)setQueueButtonState;
 - (void)queueButtonPressed;
@@ -190,7 +193,7 @@
     }
 
     UploadQueueManager *uploadQueueManager = [NoticingsAppDelegate delegate].uploadQueueManager;
-    int photoUploads = uploadQueueManager.queue.operationCount;
+    int photoUploads = uploadQueueManager.uploads.count;
     if (indexPath.section < photoUploads) {
         // upload cell
         return nil;
@@ -208,12 +211,12 @@
     }
 
     UploadQueueManager *uploadQueueManager = [NoticingsAppDelegate delegate].uploadQueueManager;
-    NSArray *photoUploadOperations = uploadQueueManager.queue.operations;
-    if ([photoUploadOperations count] == 0) {
+    NSArray *photoUploads = uploadQueueManager.uploads;
+    if (photoUploads.count == 0) {
         return nil;
     }
-    if (indexPath.section < [photoUploadOperations count]) {
-        return ((PhotoUploadOperation*)photoUploadOperations[indexPath.section]).upload;
+    if (indexPath.section < photoUploads.count) {
+        return photoUploads[indexPath.section];
     }
     return nil;
 }
@@ -242,7 +245,7 @@
 	NSInteger photosCount = photos.count == 0 ? 1 : photos.count;
     if (isRoot) {
         UploadQueueManager *uploadQueueManager = [NoticingsAppDelegate delegate].uploadQueueManager;
-        return photosCount + uploadQueueManager.queue.operationCount;
+        return photosCount + uploadQueueManager.uploads.count;
     } else {
         return photosCount;
     }
@@ -316,11 +319,16 @@
         DLog(@"maybe cancelling upload %@", upload);
         self.maybeCancel = upload;
         UIActionSheet *popupQuery = [[UIActionSheet alloc]
-                                     initWithTitle:nil
+                                     initWithTitle:upload.title
                                      delegate:self
-                                     cancelButtonTitle:@"Continue"
-                                     destructiveButtonTitle:@"Cancel upload"
+                                     cancelButtonTitle:@"Never mind"
+                                     destructiveButtonTitle:nil
                                      otherButtonTitles:nil];
+    
+        if (upload.paused) {
+            [popupQuery addButtonWithTitle:RETRY_UPLOAD];
+        }
+        [popupQuery addButtonWithTitle:CANCEL_UPLOAD];
         
         popupQuery.actionSheetStyle = UIActionSheetStyleBlackOpaque;
         [popupQuery showFromTabBar:self.tabBarController.tabBar];
@@ -331,7 +339,10 @@
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if (buttonIndex != actionSheet.cancelButtonIndex && self.maybeCancel) {
+    NSString* title = [actionSheet buttonTitleAtIndex:buttonIndex];
+    if ([title isEqualToString:RETRY_UPLOAD]) {
+        [[NoticingsAppDelegate delegate].uploadQueueManager resumeUpload:self.maybeCancel];
+    } else if ([title isEqualToString:CANCEL_UPLOAD]) {
         [[NoticingsAppDelegate delegate].uploadQueueManager cancelUpload:self.maybeCancel];
     }
     self.maybeCancel = nil;

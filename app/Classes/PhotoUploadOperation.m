@@ -17,7 +17,6 @@
 
 -(id)initWithPhotoUpload:(PhotoUpload*)upload manager:(UploadQueueManager*)manager;
 {
-    // TODO - pause support. Fiangle the "isReady" key
     self = [super init];
     if (self) {
         self.upload = upload;
@@ -26,7 +25,6 @@
     }
     return self;
 }
-
 
 -(void)fail:(NSError*)e;
 {
@@ -39,16 +37,12 @@
 -(void)backout;
 {
     // TODO - delete the uploaded photo, so we don't leave dangling images?
-
 }
 
 -(void)status:(float)progress;
 {
-    // call on main thread so KVO is safe for GUI elements
-    dispatch_async(dispatch_get_main_queue(),^{
-        self.upload.progress = @(progress);
-        self.upload.inProgress = YES;
-    });
+    self.upload.progress = @(progress);
+    self.upload.inProgress = YES;
 }
 
 -(void)main;
@@ -233,7 +227,9 @@
     
     if ([self isCancelled]) return [self backout];
     [self status:1];
+    [self.manager uploadSucceeded:self.upload];
 }
+
 
 
 #pragma mark NSURLConnection data delegate methods
