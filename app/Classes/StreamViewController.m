@@ -94,7 +94,11 @@
 {
     [super viewDidAppear:animated];
     [self.streamManager maybeRefresh];
-	[self.tableView reloadData]; // reload here to update the "no photos" message to be "loading"
+
+    if (self.streamManager.filteredPhotos.count == 0) {
+        // reload here to update the "no photos" message to be "loading"
+        [self.tableView reloadData];
+    }
 }
 
 -(void)viewWillDisappear:(BOOL)animated;
@@ -136,7 +140,7 @@
             }
             return NO;
         }]];
-        if (instagramPhotos.count > 6) { // this number by hand-waving
+        if (instagramPhotos.count > 4) { // this number by hand-waving
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"oooh, Instagram."
                                                             message:@"I see some Instagram photos from your contacts here. If you prefer to look at them with the Real Instagram client, I can hide them from this view for you (change this back in Settings)."
                                                            delegate:self
@@ -172,7 +176,11 @@
 - (void)refresh;
 {
     [self.streamManager refresh];
-    [self.tableView reloadData];
+
+    if (self.streamManager.filteredPhotos.count == 0) {
+        // reload here to update the "no photos" message to be "loading"
+        [self.tableView reloadData];
+    }
 }
 
 - (void)didReceiveMemoryWarning
