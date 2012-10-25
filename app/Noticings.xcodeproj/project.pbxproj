@@ -168,8 +168,8 @@
 		E60912F7142B982C004861F5 /* CacheManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CacheManager.m; sourceTree = "<group>"; };
 		E6119A921450AEFA0078161F /* PhotoUploadCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PhotoUploadCell.xib; sourceTree = "<group>"; };
 		E6119A941450B82A0078161F /* cancel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cancel.png; sourceTree = "<group>"; };
-		E6218AD513C35D7C0021CB80 /* StreamPhoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StreamPhoto.h; path = Classes/StreamPhoto.h; sourceTree = "<group>"; };
-		E6218AD613C35D7C0021CB80 /* StreamPhoto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StreamPhoto.m; path = Classes/StreamPhoto.m; sourceTree = "<group>"; };
+		E6218AD513C35D7C0021CB80 /* StreamPhoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamPhoto.h; sourceTree = "<group>"; };
+		E6218AD613C35D7C0021CB80 /* StreamPhoto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StreamPhoto.m; sourceTree = "<group>"; };
 		E6218AD713C35D7C0021CB80 /* StreamPhotoViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StreamPhotoViewCell.h; path = Classes/StreamPhotoViewCell.h; sourceTree = "<group>"; };
 		E6218AD813C35D7C0021CB80 /* StreamPhotoViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StreamPhotoViewCell.m; path = Classes/StreamPhotoViewCell.m; sourceTree = "<group>"; };
 		E6218AD913C35D7C0021CB80 /* StreamViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StreamViewController.h; path = Classes/StreamViewController.h; sourceTree = "<group>"; };
@@ -180,18 +180,18 @@
 		E62D742A15618E9000A418BC /* CacheURLProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CacheURLProtocol.m; sourceTree = "<group>"; };
 		E62D74301561AF7E00A418BC /* 253-person.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "253-person.png"; sourceTree = "<group>"; };
 		E62D74311561AF7E00A418BC /* 253-person@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "253-person@2x.png"; sourceTree = "<group>"; };
-		E63D611E142B9D6F00884F10 /* PhotoStreamManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhotoStreamManager.h; path = Classes/PhotoStreamManager.h; sourceTree = "<group>"; };
-		E63D611F142B9D6F00884F10 /* PhotoStreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PhotoStreamManager.m; path = Classes/PhotoStreamManager.m; sourceTree = "<group>"; };
+		E63D611E142B9D6F00884F10 /* PhotoStreamManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoStreamManager.h; sourceTree = "<group>"; };
+		E63D611F142B9D6F00884F10 /* PhotoStreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoStreamManager.m; sourceTree = "<group>"; };
 		E6461F66143F2073009407FD /* AddCommentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AddCommentViewController.h; path = Classes/AddCommentViewController.h; sourceTree = "<group>"; };
 		E6461F67143F2073009407FD /* AddCommentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AddCommentViewController.m; path = Classes/AddCommentViewController.m; sourceTree = "<group>"; };
 		E64839C913C8EBBF008DB9CE /* PullRefreshTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PullRefreshTableViewController.h; path = Classes/PullRefreshTableViewController.h; sourceTree = "<group>"; };
 		E64839CA13C8EBBF008DB9CE /* PullRefreshTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PullRefreshTableViewController.m; path = Classes/PullRefreshTableViewController.m; sourceTree = "<group>"; };
 		E64839CC13C8EC39008DB9CE /* arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = arrow.png; sourceTree = "<group>"; };
-		E662B4E91638ABFD00E00503 /* StarredStreamManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StarredStreamManager.h; sourceTree = "<group>"; };
-		E662B4EA1638ABFD00E00503 /* StarredStreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StarredStreamManager.m; sourceTree = "<group>"; };
+		E662B4E91638ABFD00E00503 /* StarredStreamManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StarredStreamManager.h; path = ../StarredStreamManager.h; sourceTree = "<group>"; };
+		E662B4EA1638ABFD00E00503 /* StarredStreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StarredStreamManager.m; path = ../StarredStreamManager.m; sourceTree = "<group>"; };
 		E662D77A1450D557002628AD /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
-		E668BBAB143BE307007ED22D /* TagStreamManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TagStreamManager.h; path = Classes/TagStreamManager.h; sourceTree = "<group>"; };
-		E668BBAC143BE307007ED22D /* TagStreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TagStreamManager.m; path = Classes/TagStreamManager.m; sourceTree = "<group>"; };
+		E668BBAB143BE307007ED22D /* TagStreamManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagStreamManager.h; sourceTree = "<group>"; };
+		E668BBAC143BE307007ED22D /* TagStreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TagStreamManager.m; sourceTree = "<group>"; };
 		E671F90F1439D31F0068380D /* DeferredFlickrCallManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeferredFlickrCallManager.h; sourceTree = "<group>"; };
 		E671F9101439D31F0068380D /* DeferredFlickrCallManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeferredFlickrCallManager.m; sourceTree = "<group>"; };
 		E67465B4155C3981007609A4 /* JSONKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSONKit.h; sourceTree = "<group>"; };
@@ -206,13 +206,13 @@
 		E67C8C95158CD692008D3769 /* UIColor+Hex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Hex.m"; sourceTree = "<group>"; };
 		E67C8C98158CD8F3008D3769 /* 09-chat-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "09-chat-2.png"; sourceTree = "<group>"; };
 		E67C8C99158CD8F3008D3769 /* 09-chat-2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "09-chat-2@2x.png"; sourceTree = "<group>"; };
-		E68D5F1C142BA7FC003192AE /* UserStreamManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserStreamManager.h; path = Classes/UserStreamManager.h; sourceTree = "<group>"; };
-		E68D5F1D142BA7FC003192AE /* UserStreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UserStreamManager.m; path = Classes/UserStreamManager.m; sourceTree = "<group>"; };
+		E68D5F1C142BA7FC003192AE /* UserStreamManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserStreamManager.h; sourceTree = "<group>"; };
+		E68D5F1D142BA7FC003192AE /* UserStreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserStreamManager.m; sourceTree = "<group>"; };
 		E69E4ADE1450985500BD442B /* DebugViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugViewController.h; sourceTree = "<group>"; };
 		E69E4ADF1450985500BD442B /* DebugViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DebugViewController.m; sourceTree = "<group>"; };
 		E6A7CC49162CB96100C2BD60 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
-		E6AE4A9913C3A1FD00702DA3 /* ContactsStreamManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactsStreamManager.h; sourceTree = "<group>"; };
-		E6AE4A9A13C3A1FD00702DA3 /* ContactsStreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactsStreamManager.m; sourceTree = "<group>"; };
+		E6AE4A9913C3A1FD00702DA3 /* ContactsStreamManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContactsStreamManager.h; path = ../ContactsStreamManager.h; sourceTree = "<group>"; };
+		E6AE4A9A13C3A1FD00702DA3 /* ContactsStreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ContactsStreamManager.m; path = ../ContactsStreamManager.m; sourceTree = "<group>"; };
 		E6AF32EF1562426F00712D4C /* libGRMustache3-iOS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libGRMustache3-iOS.a"; sourceTree = "<group>"; };
 		E6AF32F21562428400712D4C /* GRMustache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GRMustache.h; sourceTree = "<group>"; };
 		E6AF32F31562428400712D4C /* GRMustacheAvailabilityMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GRMustacheAvailabilityMacros.h; sourceTree = "<group>"; };
@@ -276,6 +276,7 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				E6B540D51639CAE000F3F268 /* API Access */,
 				E677D79C1587CF49006A34CF /* Network */,
 				E691DC2F155C65AC002F3551 /* Authentication */,
 				E6218AD413C35D6D0021CB80 /* Stream */,
@@ -409,24 +410,12 @@
 		E6218AD413C35D6D0021CB80 /* Stream */ = {
 			isa = PBXGroup;
 			children = (
-				E63D611E142B9D6F00884F10 /* PhotoStreamManager.h */,
-				E63D611F142B9D6F00884F10 /* PhotoStreamManager.m */,
-				E6AE4A9913C3A1FD00702DA3 /* ContactsStreamManager.h */,
-				E6AE4A9A13C3A1FD00702DA3 /* ContactsStreamManager.m */,
-				E668BBAB143BE307007ED22D /* TagStreamManager.h */,
-				E668BBAC143BE307007ED22D /* TagStreamManager.m */,
-				E662B4E91638ABFD00E00503 /* StarredStreamManager.h */,
-				E662B4EA1638ABFD00E00503 /* StarredStreamManager.m */,
-				E68D5F1C142BA7FC003192AE /* UserStreamManager.h */,
-				E68D5F1D142BA7FC003192AE /* UserStreamManager.m */,
 				E6461F66143F2073009407FD /* AddCommentViewController.h */,
 				E6461F67143F2073009407FD /* AddCommentViewController.m */,
 				E6DE3AC9142BC3ED00E9BE0B /* ImageViewController.h */,
 				E6DE3ACA142BC3ED00E9BE0B /* ImageViewController.m */,
 				E6F80E21142BE73400B7432D /* MapViewController.h */,
 				E6F80E22142BE73400B7432D /* MapViewController.m */,
-				E6218AD513C35D7C0021CB80 /* StreamPhoto.h */,
-				E6218AD613C35D7C0021CB80 /* StreamPhoto.m */,
 				E6218AD713C35D7C0021CB80 /* StreamPhotoViewCell.h */,
 				E6218AD813C35D7C0021CB80 /* StreamPhotoViewCell.m */,
 				E6BF64271435D57100A04A81 /* StreamPhotoViewController.h */,
@@ -516,6 +505,25 @@
 				E6AF32EF1562426F00712D4C /* libGRMustache3-iOS.a */,
 			);
 			path = GRMustache;
+			sourceTree = "<group>";
+		};
+		E6B540D51639CAE000F3F268 /* API Access */ = {
+			isa = PBXGroup;
+			children = (
+				E63D611E142B9D6F00884F10 /* PhotoStreamManager.h */,
+				E63D611F142B9D6F00884F10 /* PhotoStreamManager.m */,
+				E6218AD513C35D7C0021CB80 /* StreamPhoto.h */,
+				E6218AD613C35D7C0021CB80 /* StreamPhoto.m */,
+				E6AE4A9913C3A1FD00702DA3 /* ContactsStreamManager.h */,
+				E6AE4A9A13C3A1FD00702DA3 /* ContactsStreamManager.m */,
+				E668BBAB143BE307007ED22D /* TagStreamManager.h */,
+				E668BBAC143BE307007ED22D /* TagStreamManager.m */,
+				E662B4E91638ABFD00E00503 /* StarredStreamManager.h */,
+				E662B4EA1638ABFD00E00503 /* StarredStreamManager.m */,
+				E68D5F1C142BA7FC003192AE /* UserStreamManager.h */,
+				E68D5F1D142BA7FC003192AE /* UserStreamManager.m */,
+			);
+			name = "API Access";
 			sourceTree = "<group>";
 		};
 		E6D03F7714524615005DDB6E /* visibility */ = {
