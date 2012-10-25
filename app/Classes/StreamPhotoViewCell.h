@@ -18,6 +18,8 @@
     IBOutlet UIImageView *avatarView;
     IBOutlet UIImageView *photoView;
     IBOutlet UIImageView *hasLocationImage;
+    IBOutlet UIImageView *hasCommentsImage;
+    IBOutlet UIImageView *isFavoriteImage;
     IBOutlet UIImageView *privacyImage;
     IBOutlet UILabel *usernameView;
     IBOutlet UILabel *timeagoView;

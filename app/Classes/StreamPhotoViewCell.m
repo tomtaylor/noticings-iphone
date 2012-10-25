@@ -27,8 +27,11 @@
     usernameView.text = self.photo.ownername;
 
     timeagoView.text = self.photo.ago;
-
+    
+    // TODO - would be nice to stack them all up on the right.
     hasLocationImage.hidden = !self.photo.hasLocation;
+    isFavoriteImage.hidden = !self.photo.isfavorite.boolValue;
+    hasCommentsImage.hidden = !self.photo.comments.intValue > 0;
 
     int vis = self.photo.visibility;
     if (vis == StreamPhotoVisibilityPrivate) {
