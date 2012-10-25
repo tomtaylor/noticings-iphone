@@ -94,23 +94,25 @@
             if ([photo.needsFetch boolValue]) {
                 if (self.photoInfoFetcher == nil) {
                     self.photoInfoFetcher = [[NSOperationQueue alloc] init];
-                    self.photoInfoFetcher.maxConcurrentOperationCount = 2;
+                    self.photoInfoFetcher.maxConcurrentOperationCount = 1;
                 }
                 [self.photoInfoFetcher addOperationWithBlock:^{
                     if ([photo.needsFetch boolValue]) {
                         DLog(@"photo %@ needs metadata fetch", photo);
-                        NSDictionary *args = @{@"photo_id":photo.flickrId};
                         NSError *error = nil;
                         NSDictionary *rsp = [[NoticingsAppDelegate delegate].flickrCallManager
                                              callSynchronousFlickrMethod:@"flickr.photos.getInfo"
                                              asPost:NO
-                                             withArgs:args
+                                             withArgs:@{@"photo_id":photo.flickrId}
                                              error:&error];
                         if (!error && [rsp objectForKey:@"photo"]) {
                             [photo updateFromPhotoInfo:[rsp objectForKey:@"photo"]];
                             // would be nicer to do this at the end? do we care?
                             [[NoticingsAppDelegate delegate] savePersistentObjects];
-                        };
+                            DLog(@"fetched and saved %@", photo);
+                        } else {
+                            DLog(@"problem fetching %@: %@", photo, error);
+                        }
                     }
                 }];
             }
