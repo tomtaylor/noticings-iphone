@@ -112,7 +112,7 @@
 
 -(NSString*)extras;
 {
-    return @"date_upload,date_taken,owner_name,icon_server,geo,path_alias,description,url_m,url_o,url_b,tags,media";
+    return @"date_upload,date_taken,owner_name,icon_server,geo,path_alias,description,url_m,url_o,url_b,tags,media,last_update";
 }
 
 - (void)resetFlickrContext;

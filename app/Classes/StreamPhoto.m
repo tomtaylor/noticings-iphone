@@ -16,6 +16,7 @@
 {
     self = [super init];
     if (self) {
+        DLog(@"detials are %@", dict);
         self.details = dict;
     }
     return self;
