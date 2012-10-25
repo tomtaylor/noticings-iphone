@@ -136,5 +136,12 @@
 }
 
 
+-(void)dealloc;
+{
+    if (self.photo != nil) {
+        [self.photo removeObserver:self forKeyPath:@"isfavorite"];
+        self.photo = nil;
+    }
+}
 
 @end
