@@ -39,6 +39,9 @@
 @property (nonatomic) NSTimeInterval lastRefresh;
 @property (weak) NSObject<PhotoStreamDelegate>* delegate;
 @property (weak, readonly) NSString* lastRefreshDisplay;
+
+@property (strong, nonatomic) NSOperationQueue *photoInfoFetcher;
+
 @end
 
 

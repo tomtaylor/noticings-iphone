@@ -20,12 +20,17 @@
 #define StreamPhotoVisibilityLimited 1
 #define StreamPhotoVisibilityPrivate 2
 
+-(void)updateFromPhotoInfo:(NSDictionary*)info;
+
 // core data properties. Magic.
-@property (nonatomic, strong) NSString * flickrId;
-@property (nonatomic, strong) NSData * json;
-@property (nonatomic, strong) NSNumber * lastupdate;
-@property (nonatomic, strong) NSNumber * dateupload;
-@property (nonatomic, strong) NSNumber * needsFetch;
+@property (nonatomic, strong) NSString *flickrId;
+@property (nonatomic, strong) NSData *json;
+@property (nonatomic, strong) NSData *fullInfo;
+@property (nonatomic, strong) NSNumber *lastupdate;
+@property (nonatomic, strong) NSNumber *dateupload;
+@property (nonatomic, strong) NSNumber *needsFetch;
+@property (nonatomic, strong) NSNumber *isfavorite;
+@property (nonatomic, strong) NSNumber *comments;
 
 // expanded JSON
 @property (nonatomic, strong) NSDictionary *details;

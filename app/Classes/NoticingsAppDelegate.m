@@ -234,5 +234,17 @@ BOOL gLogging = FALSE;
     return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
 }
 
+-(void)savePersistentObjects;
+{
+    NSManagedObjectContext *context = [NoticingsAppDelegate delegate].managedObjectContext;
+    NSError *error = nil;
+    [context save:&error];
+    if (error) {
+        DLog(@"error saving: %@", error);
+        abort();
+    }
+}
+
+
 @end
 

@@ -79,6 +79,7 @@
             StreamPhoto *sp = [StreamPhoto photoWithDictionary:photo];
             [self.rawPhotos addObject:sp];
         }
+        [[NoticingsAppDelegate delegate] savePersistentObjects];
         [self saveCachedImageList];
         
         self.lastRefresh = [[NSDate date] timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970;
@@ -88,6 +89,27 @@
             [self.delegate performSelector:@selector(newPhotos)];
         }
         
+        // now update dirty photos
+        for (StreamPhoto *photo in self.rawPhotos) {
+            if ([photo.needsFetch boolValue]) {
+                if (self.photoInfoFetcher == nil) {
+                    self.photoInfoFetcher = [[NSOperationQueue alloc] init];
+                    self.photoInfoFetcher.maxConcurrentOperationCount = 1;
+                }
+                [self.photoInfoFetcher addOperationWithBlock:^{
+                    if ([photo.needsFetch boolValue]) {
+                        DLog(@"photo %@ needs metadata fetch", photo);
+                        [self flickrInfoFor:photo.flickrId callback:^(BOOL success, NSDictionary *rsp, NSError *error) {
+                            if (success && [rsp objectForKey:@"photo"]) {
+                                [photo updateFromPhotoInfo:[rsp objectForKey:@"photo"]];
+                                // would be nicer to do this at the end? do we care?
+                                [[NoticingsAppDelegate delegate] savePersistentObjects];
+                            }
+                        }];
+                    }
+                }];
+            }
+        }
     }];
     
 }
@@ -108,6 +130,15 @@
     // override in subclass
     NSLog(@"can't use superclass PhotoStreamManager without implementing callFlickr!!");
     assert(FALSE);
+}
+
+-(void)flickrInfoFor:(NSString*)flickrId callback:(FlickrCallback)callback;
+{
+    NSDictionary *args = @{@"photo_id":flickrId};
+    [[NoticingsAppDelegate delegate].flickrCallManager callFlickrMethod:@"flickr.photos.getInfo"
+                                                                 asPost:NO
+                                                               withArgs:args
+                                                                andThen:callback];
 }
 
 -(NSString*)extras;

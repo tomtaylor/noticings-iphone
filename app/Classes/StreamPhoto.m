@@ -16,6 +16,8 @@
 
 // core data magic
 @dynamic flickrId, title, json, lastupdate, dateupload, needsFetch;
+@dynamic isfavorite, comments, fullInfo;
+
 
 @synthesize details;
 
@@ -29,37 +31,31 @@
     request.predicate = [NSPredicate predicateWithFormat:@"flickrId = %@", flickrId];
     NSError *error = nil;
     StreamPhoto *photo = [[context executeFetchRequest:request error:&error] lastObject];
-    
     if (error) {
         DLog(@"error looking up object %@: %@", flickrId, error);
         abort();
     }
-    
     if (photo != nil) {
         photo.details = [photo.json objectFromJSONData];
     }
-    
     return photo;
 }
 
 + (id)photoWithDictionary:(NSDictionary*)dict;
 {
     StreamPhoto *photo = [self photoWithFlickrId:[dict objectForKey:@"id"]];
-
     if (photo == nil) {
         NSManagedObjectContext *context = [NoticingsAppDelegate delegate].managedObjectContext;
         NSEntityDescription *entity = [NSEntityDescription entityForName:@"Photo" inManagedObjectContext:context];
         photo = [[StreamPhoto alloc] initWithEntity:entity insertIntoManagedObjectContext:context];;
     }
-    
     [photo updateFromDict:dict];
-
     return photo;
 }
 
 - (void)updateFromDict:(NSDictionary*)dict;
 {
-    DLog(@"details are %@", dict);
+    //DLog(@"details are %@", dict);
     self.details = dict;
 
     // update core data properties
@@ -75,14 +71,18 @@
     } else {
         self.needsFetch = [NSNumber numberWithBool:YES];
     }
+}
 
-    NSManagedObjectContext *context = [NoticingsAppDelegate delegate].managedObjectContext;
-    NSError *error = nil;
-    [context save:&error];
-    if (error) {
-        DLog(@"error saving: %@", error);
-        abort();
-    }
+-(void)updateFromPhotoInfo:(NSDictionary*)info;
+{
+    //DLog(@"got full photo info %@", info);
+    self.fullInfo = [info JSONData];
+
+    // info here is a response from flickr.photos.getInfo. more details.
+    self.comments = @([[[info objectForKey:@"comments"] objectForKey:@"_content"] boolValue]);
+    self.isfavorite = @([[info objectForKey:@"isfavorite"] boolValue]);
+    self.lastupdate = @([[[info objectForKey:@"dates"] objectForKey:@"lastupdate"] intValue]);
+    self.needsFetch = [NSNumber numberWithBool:NO];
 }
 
 -(NSString*)description;
