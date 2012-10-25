@@ -16,17 +16,30 @@
 #import "UploadQueueManager.h"
 
 
-@interface NoticingsAppDelegate : NSObject <UIApplicationDelegate, UITabBarControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CLLocationManagerDelegate>
+@interface NoticingsAppDelegate : NSObject <UIApplicationDelegate, UITabBarControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CLLocationManagerDelegate> {
+    //core data
+    NSManagedObjectModel *managedObjectModel;
+    NSManagedObjectContext *managedObjectContext;
+    NSPersistentStoreCoordinator *persistentStoreCoordinator;
+}
 
+// core data
+@property (nonatomic, retain, readonly) NSManagedObjectModel *managedObjectModel;
+@property (nonatomic, retain, readonly) NSManagedObjectContext *managedObjectContext;
+@property (nonatomic, retain, readonly) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+- (NSString *)applicationDocumentsDirectory;
+
+// interfaceb uilder
 @property (nonatomic, strong) IBOutlet UIWindow *window;
 @property (nonatomic, strong) IBOutlet UITabBarController *tabBarController;
 @property (nonatomic, strong) IBOutlet UIViewController *dummyViewController;
 @property (nonatomic, strong) CameraController *cameraController;
-
 @property (nonatomic, strong) IBOutlet UINavigationController *streamNavigationController;
+
 @property (nonatomic, strong) FlickrAuthenticationViewController *authViewController;
 @property (nonatomic, strong) UITabBarItem *queueTab;
 
+// API managers
 @property (nonatomic, strong) ContactsStreamManager* contactsStreamManager;
 @property (nonatomic, strong) CacheManager *cacheManager;
 @property (nonatomic, strong) UploadQueueManager *uploadQueueManager;
@@ -35,7 +48,10 @@
 
 + (NoticingsAppDelegate*)delegate;
 
-- (BOOL)isAuthenticated;
+@property (nonatomic, readonly) BOOL isAuthenticated;
+
+
+
 
 
 // log only in dev

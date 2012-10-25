@@ -76,7 +76,7 @@
 
         [self.rawPhotos removeAllObjects];
         for (NSDictionary *photo in [rsp valueForKeyPath:@"photos.photo"]) {
-            StreamPhoto *sp = [[StreamPhoto alloc] initWithDictionary:photo];
+            StreamPhoto *sp = [StreamPhoto photoWithDictionary:photo];
             [self.rawPhotos addObject:sp];
         }
         [self saveCachedImageList];
@@ -143,13 +143,16 @@
     NSLog(@"Loading cached image data from %@", cache);
     NSData *data = [[NSData alloc] initWithContentsOfFile:cache];
     NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
-    NSArray *archived = [unarchiver decodeObjectForKey:@"photos"];
+    NSArray *archived = [unarchiver decodeObjectForKey:@"photoIds"];
     NSNumber *archivedLastRefresh = [unarchiver decodeObjectForKey:@"lastRefresh"];
     
     // don't replace self.photos, alter, so we fire the watchers.
     [self.rawPhotos removeAllObjects];
-    for (StreamPhoto *photo in archived) {
-        [self.rawPhotos addObject:photo];
+    for (NSString *flickrId in archived) {
+        StreamPhoto *photo = [StreamPhoto photoWithFlickrId:flickrId];
+        if (photo != nil) {
+            [self.rawPhotos addObject:photo];
+        }
     }
 
     self.lastRefresh = [archivedLastRefresh doubleValue];
@@ -164,9 +167,14 @@
 
     NSString* cache = [[NoticingsAppDelegate delegate].cacheManager cachePathForFilename:[self cacheFilename]];
     NSLog(@"Saving cached image data to %@", cache);
+    // store just the Ids of the photos in this view
+    NSMutableArray *photoIds = [NSMutableArray arrayWithCapacity:self.rawPhotos.count];
+    for (StreamPhoto *photo in self.rawPhotos) {
+        [photoIds addObject:photo.flickrId];
+    }
     NSMutableData *data = [NSMutableData new];
     NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data];
-    [archiver encodeObject:self.rawPhotos forKey:@"photos"];
+    [archiver encodeObject:photoIds forKey:@"photoIds"];
     [archiver encodeObject:@(self.lastRefresh) forKey:@"lastRefresh"];
     [archiver finishEncoding];
     [data writeToFile:cache atomically:YES];

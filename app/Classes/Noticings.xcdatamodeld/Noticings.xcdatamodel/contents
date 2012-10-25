@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1811" systemVersion="12C60" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="Photo" representedClassName="StreamPhoto" syncable="YES">
+        <attribute name="dateupload" attributeType="Integer 32" defaultValueString="0" indexed="YES" syncable="YES"/>
+        <attribute name="flickrId" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="json" attributeType="Binary" syncable="YES"/>
+        <attribute name="lastupdate" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="needsFetch" attributeType="Boolean" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Photo" positionX="160" positionY="192" width="128" height="120"/>
+    </elements>
+</model>

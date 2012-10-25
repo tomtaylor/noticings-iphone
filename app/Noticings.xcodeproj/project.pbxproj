@@ -68,6 +68,8 @@
 		E64839CD13C8EC39008DB9CE /* arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = E64839CC13C8EC39008DB9CE /* arrow.png */; };
 		E662B4EB1638ABFE00E00503 /* StarredStreamManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E662B4EA1638ABFD00E00503 /* StarredStreamManager.m */; };
 		E662D77B1450D557002628AD /* Twitter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E662D77A1450D557002628AD /* Twitter.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		E66820D41639CC9C00401648 /* Noticings.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E66820D21639CC9C00401648 /* Noticings.xcdatamodeld */; };
+		E66820D91639D13500401648 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E66820D81639D13500401648 /* CoreData.framework */; };
 		E668BBAD143BE307007ED22D /* TagStreamManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E668BBAC143BE307007ED22D /* TagStreamManager.m */; };
 		E671F9111439D31F0068380D /* DeferredFlickrCallManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E671F9101439D31F0068380D /* DeferredFlickrCallManager.m */; };
 		E67465C3155C4258007609A4 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E67465C2155C4258007609A4 /* Security.framework */; };
@@ -190,6 +192,8 @@
 		E662B4E91638ABFD00E00503 /* StarredStreamManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StarredStreamManager.h; path = ../StarredStreamManager.h; sourceTree = "<group>"; };
 		E662B4EA1638ABFD00E00503 /* StarredStreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StarredStreamManager.m; path = ../StarredStreamManager.m; sourceTree = "<group>"; };
 		E662D77A1450D557002628AD /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
+		E66820D31639CC9C00401648 /* Noticings.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Noticings.xcdatamodel; sourceTree = "<group>"; };
+		E66820D81639D13500401648 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		E668BBAB143BE307007ED22D /* TagStreamManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagStreamManager.h; sourceTree = "<group>"; };
 		E668BBAC143BE307007ED22D /* TagStreamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TagStreamManager.m; sourceTree = "<group>"; };
 		E671F90F1439D31F0068380D /* DeferredFlickrCallManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeferredFlickrCallManager.h; sourceTree = "<group>"; };
@@ -250,6 +254,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E66820D91639D13500401648 /* CoreData.framework in Frameworks */,
 				E6A7CC4A162CB96100C2BD60 /* libz.dylib in Frameworks */,
 				E67465C3155C4258007609A4 /* Security.framework in Frameworks */,
 				E662D77B1450D557002628AD /* Twitter.framework in Frameworks */,
@@ -276,6 +281,7 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				E66820D01639CC9400401648 /* Models */,
 				E6B540D51639CAE000F3F268 /* API Access */,
 				E677D79C1587CF49006A34CF /* Network */,
 				E691DC2F155C65AC002F3551 /* Authentication */,
@@ -307,7 +313,6 @@
 			children = (
 				E6A7CC49162CB96100C2BD60 /* libz.dylib */,
 				E6F8A798162CA66A005984C7 /* Default-568h@2x.png */,
-				E67465C2155C4258007609A4 /* Security.framework */,
 				E2A6C4EA11CA4A810065E27A /* Settings.bundle */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				E2AC983D107FAE68007A570A /* Third Party */,
@@ -370,6 +375,8 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E66820D81639D13500401648 /* CoreData.framework */,
+				E67465C2155C4258007609A4 /* Security.framework */,
 				E662D77A1450D557002628AD /* Twitter.framework */,
 				E604314A144DD370002A5546 /* MessageUI.framework */,
 				E60912E6142B535B004861F5 /* MobileCoreServices.framework */,
@@ -425,6 +432,16 @@
 			);
 			name = Stream;
 			path = ..;
+			sourceTree = "<group>";
+		};
+		E66820D01639CC9400401648 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				E66820D21639CC9C00401648 /* Noticings.xcdatamodeld */,
+				E6218AD513C35D7C0021CB80 /* StreamPhoto.h */,
+				E6218AD613C35D7C0021CB80 /* StreamPhoto.m */,
+			);
+			name = Models;
 			sourceTree = "<group>";
 		};
 		E677D79C1587CF49006A34CF /* Network */ = {
@@ -512,8 +529,6 @@
 			children = (
 				E63D611E142B9D6F00884F10 /* PhotoStreamManager.h */,
 				E63D611F142B9D6F00884F10 /* PhotoStreamManager.m */,
-				E6218AD513C35D7C0021CB80 /* StreamPhoto.h */,
-				E6218AD613C35D7C0021CB80 /* StreamPhoto.m */,
 				E6AE4A9913C3A1FD00702DA3 /* ContactsStreamManager.h */,
 				E6AE4A9A13C3A1FD00702DA3 /* ContactsStreamManager.m */,
 				E668BBAB143BE307007ED22D /* TagStreamManager.h */,
@@ -672,6 +687,7 @@
 				E62D742B15618E9000A418BC /* CacheURLProtocol.m in Sources */,
 				E67C8C96158CD692008D3769 /* UIColor+Hex.m in Sources */,
 				E662B4EB1638ABFE00E00503 /* StarredStreamManager.m in Sources */,
+				E66820D41639CC9C00401648 /* Noticings.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -829,6 +845,19 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		E66820D21639CC9C00401648 /* Noticings.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				E66820D31639CC9C00401648 /* Noticings.xcdatamodel */,
+			);
+			currentVersion = E66820D31639CC9C00401648 /* Noticings.xcdatamodel */;
+			path = Noticings.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 29B97313FDCFA39411CA2CEA /* Project object */;
 }

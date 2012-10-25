@@ -7,19 +7,82 @@
 //
 
 #import "StreamPhoto.h"
+#import "JSONKit.h"
 
 #import "APIKeys.h"
+#import "NoticingsAppDelegate.h"
 
 @implementation StreamPhoto
 
-- (id)initWithDictionary:(NSDictionary*)dict;
+// core data magic
+@dynamic flickrId, title, json, lastupdate, dateupload, needsFetch;
+
+@synthesize details;
+
++ (id)photoWithFlickrId:(NSString*)flickrId;
 {
-    self = [super init];
-    if (self) {
-        DLog(@"detials are %@", dict);
-        self.details = dict;
+    NSManagedObjectContext *context = [NoticingsAppDelegate delegate].managedObjectContext;
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Photo" inManagedObjectContext:context];
+    
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    request.entity = entity;
+    request.predicate = [NSPredicate predicateWithFormat:@"flickrId = %@", flickrId];
+    NSError *error = nil;
+    StreamPhoto *photo = [[context executeFetchRequest:request error:&error] lastObject];
+    
+    if (error) {
+        DLog(@"error looking up object %@: %@", flickrId, error);
+        abort();
     }
-    return self;
+    
+    if (photo != nil) {
+        photo.details = [photo.json objectFromJSONData];
+    }
+    
+    return photo;
+}
+
++ (id)photoWithDictionary:(NSDictionary*)dict;
+{
+    StreamPhoto *photo = [self photoWithFlickrId:[dict objectForKey:@"id"]];
+
+    if (photo == nil) {
+        NSManagedObjectContext *context = [NoticingsAppDelegate delegate].managedObjectContext;
+        NSEntityDescription *entity = [NSEntityDescription entityForName:@"Photo" inManagedObjectContext:context];
+        photo = [[StreamPhoto alloc] initWithEntity:entity insertIntoManagedObjectContext:context];;
+    }
+    
+    [photo updateFromDict:dict];
+
+    return photo;
+}
+
+- (void)updateFromDict:(NSDictionary*)dict;
+{
+    DLog(@"details are %@", dict);
+    self.details = dict;
+
+    // update core data properties
+    self.flickrId = [dict objectForKey:@"id"];
+    self.json = [dict JSONData];
+    self.dateupload = [NSNumber numberWithInt:[[dict objectForKey:@"dateupload"] intValue]];
+
+    // the dict lastupdate is when flickr was last updated. ours is when we last fetched the
+    // full photo information from flickr
+    NSNumber *lastupdate = [NSNumber numberWithInt:[[dict objectForKey:@"lastupdate"] intValue]];
+    if (self.lastupdate != nil && [self.lastupdate isEqualToNumber:lastupdate]) {
+        self.needsFetch = [NSNumber numberWithBool:NO];
+    } else {
+        self.needsFetch = [NSNumber numberWithBool:YES];
+    }
+
+    NSManagedObjectContext *context = [NoticingsAppDelegate delegate].managedObjectContext;
+    NSError *error = nil;
+    [context save:&error];
+    if (error) {
+        DLog(@"error saving: %@", error);
+        abort();
+    }
 }
 
 -(NSString*)description;
@@ -28,12 +91,10 @@
     return [NSString stringWithFormat:@"<%@ \"%@\" by %@>", self.class, self.title, self.ownername];
 }
 
-#pragma mark accessors / view utilities
 
-- (NSString*)flickrId;
-{
-    return [self.details valueForKeyPath:@"id"];
-}
+
+
+#pragma mark accessors / view utilities
 
 - (NSString*)title;
 {
@@ -168,15 +229,10 @@
     return [NSURL URLWithString:urlString];
 }
 
-- (NSString*)dateupload;
-{
-    return (self.details)[@"dateupload"];
-}
-
 - (NSString*) ago;
 {
     NSTimeInterval epoch = [[NSDate date] timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970; // yeah.
-    NSString *uploaded = (self.details)[@"dateupload"];
+    NSString *uploaded = [self.dateupload stringValue];
     if (!uploaded) {
         return @"";
     }
@@ -261,28 +317,6 @@
 {
     return self.ownername;
 }
-
-
-
-
-#pragma mark serialize / deserizlise
-
-- (void)encodeWithCoder:(NSCoder *)coder
-{
-    [coder encodeObject:self.details forKey:@"details"];
-}
-
-- (id)initWithCoder:(NSCoder *)coder
-{
-    self = [super init];
-    if (self) {
-        self.details = [coder decodeObjectForKey:@"details"];
-    }
-    return self;
-}
-
-
-#pragma mark memory managment
 
 
 @end

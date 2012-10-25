@@ -11,30 +11,36 @@
 #import <Foundation/Foundation.h>
 #import <MapKit/MKAnnotation.h>
 
-@interface StreamPhoto : NSObject<NSCoding, MKAnnotation>
+@interface StreamPhoto : NSManagedObject<MKAnnotation>
 
-- (id)initWithDictionary:(NSDictionary*)dict;
++ (id)photoWithDictionary:(NSDictionary*)dict;
++ (id)photoWithFlickrId:(NSString*)flickrId;
 
 #define StreamPhotoVisibilityPublic 0
 #define StreamPhotoVisibilityLimited 1
 #define StreamPhotoVisibilityPrivate 2
 
-@property (strong) NSDictionary *details;
+// core data properties. Magic.
+@property (nonatomic, strong) NSString * flickrId;
+@property (nonatomic, strong) NSData * json;
+@property (nonatomic, strong) NSNumber * lastupdate;
+@property (nonatomic, strong) NSNumber * dateupload;
+@property (nonatomic, strong) NSNumber * needsFetch;
+
+// expanded JSON
+@property (nonatomic, strong) NSDictionary *details;
 
 // method/properties that extract information from datails dict.
 @property (nonatomic, readonly, copy) NSString *title;
-@property (weak, readonly) NSString* flickrId;
 @property (weak, readonly) NSString* html;
 @property (weak, readonly) NSString* ownername;
 @property (weak, readonly) NSString* ownerId;
-@property (weak, readonly) NSString* dateupload;
 @property (weak, readonly) NSString* ago;
 @property (weak, readonly) NSString* placename;
 @property (weak, readonly) NSString* woeid;
 @property (readonly) int visibility;
 @property (readonly) float latitude;
 @property (readonly) float longitude;
-
 @property (weak, readonly) NSURL* avatarURL;
 @property (weak, readonly) NSURL* imageURL;
 @property (weak, readonly) NSURL* mapPageURL;
