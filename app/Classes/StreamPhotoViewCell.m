@@ -21,11 +21,63 @@
     if (self.photo == setphoto) {
         return;
     }
+    
+    // need to watch for changes to photo object as updates come in.
+    if (self.photo != nil) {
+        [self.photo removeObserver:self forKeyPath:@"isfavorite"];
+    }
     self.photo = setphoto;
+    [self.photo addObserver:self forKeyPath:@"isfavorite" options:0 context:nil];
+    
+    [self updateView];
+    [self loadImages];
+}
 
+-(void)loadImages;
+{
+    avatarView.image = [UIImage imageNamed:@"235-person"];
+    photoView.image = [UIImage imageNamed:@"photos"];
+    photoView.contentMode = UIViewContentModeCenter;
+
+    StreamPhoto *originalPhoto = self.photo;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSData * data = [[NSData alloc] initWithContentsOfURL:self.photo.imageURL];
+        UIImage * image = [[UIImage alloc] initWithData:data];
+        if (image != nil) {
+            dispatch_async( dispatch_get_main_queue(), ^{
+                if (self.photo == originalPhoto) {
+                    photoView.image = image;
+                    
+                    // make landscape images aspect fill and crop to frame, so we get perfect margins.
+                    // or actually, images that are close enough to landscape that we'd get ugly margins.
+                    if ([self.photo imageHeightForWidth:320] <= MAX_IMAGE_HEIGHT) {
+                        photoView.contentMode = UIViewContentModeScaleAspectFill;
+                    } else {
+                        photoView.contentMode = UIViewContentModeScaleAspectFit;
+                    }
+                }
+            });
+        }
+    });
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSData * data = [[NSData alloc] initWithContentsOfURL:self.photo.avatarURL];
+        UIImage * image = [[UIImage alloc] initWithData:data];
+        if (image != nil) {
+            dispatch_async( dispatch_get_main_queue(), ^{
+                if (self.photo == originalPhoto) {
+                    avatarView.image = image;
+                }
+            });
+        }
+    });
+
+}
+
+-(void)updateView;
+{
     titleView.text = self.photo.title;
     usernameView.text = self.photo.ownername;
-
     timeagoView.text = self.photo.ago;
     
     // TODO - would be nice to stack them all up on the right.
@@ -41,50 +93,21 @@
     } else if (vis == StreamPhotoVisibilityPublic) {
         privacyImage.image = [UIImage imageNamed:@"visibility_green"];
     }
-    
-    avatarView.image = [UIImage imageNamed:@"235-person"];
-    photoView.image = [UIImage imageNamed:@"photos"];
-    photoView.contentMode = UIViewContentModeCenter;
-
-    __weak StreamPhotoViewCell* _self = self;
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSData * data = [[NSData alloc] initWithContentsOfURL:self.photo.imageURL];
-        UIImage * image = [[UIImage alloc] initWithData:data];
-        if (image != nil) {
-            dispatch_async( dispatch_get_main_queue(), ^{
-                if (_self.photo == setphoto) {
-                    photoView.image = image;
-
-                    // make landscape images aspect fill and crop to frame, so we get perfect margins.
-                    // or actually, images that are close enough to landscape that we'd get ugly margins.
-                    if ([_self.photo imageHeightForWidth:320] <= MAX_IMAGE_HEIGHT) {
-                        photoView.contentMode = UIViewContentModeScaleAspectFill;
-                    } else {
-                        photoView.contentMode = UIViewContentModeScaleAspectFit;
-                    }
-                }
-            });
-        }
-    });
-
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSData * data = [[NSData alloc] initWithContentsOfURL:self.photo.avatarURL];
-        UIImage * image = [[UIImage alloc] initWithData:data];
-        if (image != nil) {
-            dispatch_async( dispatch_get_main_queue(), ^{
-                if (_self.photo == setphoto) {
-                    avatarView.image = image;
-                }
-            });
-        }
-    });
 
     // all the views in the nib have the right affinity to edges and know how to scale
     // themselves, so we just have to resize the outer frame and re-lay them out.
     CGRect frame = self.frame;
     frame.size.height = [StreamPhotoViewCell cellHeightForPhoto:self.photo];
     self.frame = frame;
-    
+}
+
+-(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    DLog(@"watched photo %@ changed", object);
+    if (object == self.photo) {
+        DLog(@"that's me!");
+        [self updateView];
+    }
 }
 
 +(CGFloat)cellHeightForPhoto:(StreamPhoto*)photo;
