@@ -94,7 +94,7 @@
 								<string key="NSFrame">{{49, 334}, {222, 21}}</string>
 								<reference key="NSSuperview" ref="94663175"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView" ref="154264876"/>
+								<reference key="NSNextKeyView" ref="568613788"/>
 								<string key="NSReuseIdentifierKey">_NS:328</string>
 								<bool key="IBUIOpaque">NO</bool>
 								<bool key="IBUIClipsSubviews">YES</bool>
@@ -172,10 +172,10 @@
 								</object>
 								<bool key="IBUIAdjustsFontSizeToFit">NO</bool>
 							</object>
-							<object class="IBUIImageView" id="57681608">
+							<object class="IBUIImageView" id="933493128">
 								<reference key="NSNextResponder" ref="94663175"/>
 								<int key="NSvFlags">265</int>
-								<string key="NSFrame">{{272, 338}, {12, 13}}</string>
+								<string key="NSFrame">{{273, 338}, {12, 13}}</string>
 								<reference key="NSSuperview" ref="94663175"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="404961213"/>
@@ -188,20 +188,20 @@
 									<string key="NSResourceName">08-chat.png</string>
 								</object>
 							</object>
-							<object class="IBUIImageView" id="154264876">
+							<object class="IBUIImageView" id="568613788">
 								<reference key="NSNextResponder" ref="94663175"/>
 								<int key="NSvFlags">265</int>
-								<string key="NSFrame">{{253, 338}, {12, 13}}</string>
+								<string key="NSFrame">{{253, 337}, {18, 13}}</string>
 								<reference key="NSSuperview" ref="94663175"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView" ref="57681608"/>
+								<reference key="NSNextKeyView" ref="933493128"/>
 								<string key="NSReuseIdentifierKey">_NS:567</string>
 								<int key="IBUIContentMode">1</int>
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 								<object class="NSCustomResource" key="IBUIImage">
 									<string key="NSClassName">NSImage</string>
-									<string key="NSResourceName">29-heart.png</string>
+									<string key="NSResourceName">28-star.png</string>
 								</object>
 							</object>
 							<object class="IBUIImageView" id="404961213">
@@ -343,7 +343,7 @@
 					<object class="IBCocoaTouchOutletConnection" key="connection">
 						<string key="label">isFavoriteImage</string>
 						<reference key="source" ref="373355806"/>
-						<reference key="destination" ref="154264876"/>
+						<reference key="destination" ref="568613788"/>
 					</object>
 					<int key="connectionID">38</int>
 				</object>
@@ -351,7 +351,7 @@
 					<object class="IBCocoaTouchOutletConnection" key="connection">
 						<string key="label">hasCommentsImage</string>
 						<reference key="source" ref="373355806"/>
-						<reference key="destination" ref="57681608"/>
+						<reference key="destination" ref="933493128"/>
 					</object>
 					<int key="connectionID">39</int>
 				</object>
@@ -387,8 +387,8 @@
 							<reference ref="404961213"/>
 							<reference ref="859051715"/>
 							<reference ref="15346423"/>
-							<reference ref="57681608"/>
-							<reference ref="154264876"/>
+							<reference ref="933493128"/>
+							<reference ref="568613788"/>
 						</array>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -435,12 +435,12 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">36</int>
-						<reference key="object" ref="57681608"/>
+						<reference key="object" ref="933493128"/>
 						<reference key="parent" ref="373355806"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">37</int>
-						<reference key="object" ref="154264876"/>
+						<reference key="object" ref="568613788"/>
 						<reference key="parent" ref="373355806"/>
 					</object>
 				</array>
@@ -609,7 +609,7 @@
 		<dictionary class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
 			<string key="07-map-marker.png">{16, 26}</string>
 			<string key="08-chat.png">{24, 22}</string>
-			<string key="29-heart.png">{24, 21}</string>
+			<string key="28-star.png">{26, 26}</string>
 		</dictionary>
 		<string key="IBCocoaTouchPluginVersion">1929</string>
 	</data>

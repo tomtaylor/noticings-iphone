@@ -258,6 +258,7 @@ GRMustacheTemplate *template;
 
     [templateData setValue:self.comments forKey:@"comments"];
     [templateData setValue:[NSNumber numberWithInt:self.comments.count] forKey:@"commentCount"];
+    [templateData setValue:[NSNumber numberWithBool:self.photo.isfavorite.intValue] forKey:@"isfavorite"];
     
     id pluralizeHelper = [GRMustacheHelper helperWithBlock:(^(GRMustacheSection *section) {
         NSString *count = [section valueForKey:@"description"];
@@ -373,6 +374,38 @@ GRMustacheTemplate *template;
             AddCommentViewController *commentController = [[AddCommentViewController alloc] initWithPhoto:self.photo];
             [self.navigationController pushViewController:commentController animated:YES];
             return false;
+
+        } else if ([request.URL.scheme isEqualToString:@"noticings-favorite"]) {
+
+            [[NoticingsAppDelegate delegate].flickrCallManager
+             callFlickrMethod:@"flickr.favorites.add"
+             asPost:YES
+             withArgs:@{@"photo_id": self.photo.flickrId}
+             andThen:^(NSDictionary* rsp){
+                 NSLog(@"Added fave!");
+                 self.photo.isfavorite = [NSNumber numberWithBool:YES];
+                 [[NoticingsAppDelegate delegate] savePersistentObjects];
+                 [self updateHTML];
+             }
+             orFail:^(NSString *code, NSString *error){
+                 NSLog(@"Can't add fave!!! %@ %@", code, error);
+             }];
+
+        } else if ([request.URL.scheme isEqualToString:@"noticings-unfavorite"]) {
+
+            [[NoticingsAppDelegate delegate].flickrCallManager
+             callFlickrMethod:@"flickr.favorites.remove"
+             asPost:YES
+             withArgs:@{@"photo_id": self.photo.flickrId}
+             andThen:^(NSDictionary* rsp){
+                 NSLog(@"Removed fave!");
+                 self.photo.isfavorite = [NSNumber numberWithBool:NO];
+                 [[NoticingsAppDelegate delegate] savePersistentObjects];
+                 [self updateHTML];
+             }
+             orFail:^(NSString *code, NSString *error){
+                 NSLog(@"Can't rmeove fave!!! %@ %@", code, error);
+             }];
 
         }
         
