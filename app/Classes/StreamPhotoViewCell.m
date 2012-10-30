@@ -25,12 +25,17 @@
     // need to watch for changes to photo object as updates come in.
     if (self.photo != nil) {
         [self.photo removeObserver:self forKeyPath:@"isfavorite"];
+        [self.photo removeObserver:self forKeyPath:@"comments"];
+        [self.photo removeObserver:self forKeyPath:@"needsFetch"];
     }
     self.photo = setphoto;
-    [self.photo addObserver:self forKeyPath:@"isfavorite" options:0 context:nil];
     
     [self updateView];
     [self loadImages];
+
+    [self.photo addObserver:self forKeyPath:@"isfavorite" options:0 context:nil];
+    [self.photo addObserver:self forKeyPath:@"comments" options:0 context:nil];
+    [self.photo addObserver:self forKeyPath:@"needsFetch" options:0 context:nil];
 }
 
 -(void)loadImages;
@@ -74,17 +79,59 @@
 
 }
 
+#define ICON_STEP 3
+
+
 -(void)updateView;
 {
     titleView.text = self.photo.title;
     usernameView.text = self.photo.ownername;
     timeagoView.text = self.photo.ago;
     
-    // TODO - would be nice to stack them all up on the right.
-    hasLocationImage.hidden = !self.photo.hasLocation;
-    isFavoriteImage.hidden = !self.photo.isfavorite.boolValue;
-    hasCommentsImage.hidden = !self.photo.comments.intValue > 0;
-
+    float left = privacyImage.frame.origin.x;
+    
+    if (self.photo.hasLocation) {
+        hasLocationImage.hidden = NO;
+        CGRect f = hasLocationImage.frame;
+        left -= f.size.width + ICON_STEP;
+        f.origin.x = left;
+        hasLocationImage.frame = f;
+    } else {
+        hasLocationImage.hidden = YES;
+    }
+    
+    if (self.photo.isfavorite.boolValue) {
+        isFavoriteImage.hidden = NO;
+        CGRect f = isFavoriteImage.frame;
+        left -= f.size.width + ICON_STEP;
+        f.origin.x = left;
+        isFavoriteImage.frame = f;
+    } else {
+        isFavoriteImage.hidden = YES;
+    }
+    
+    if (self.photo.comments.intValue > 0) {
+        hasCommentsImage.hidden = NO;
+        CGRect f = hasCommentsImage.frame;
+        left -= f.size.width + ICON_STEP;
+        f.origin.x = left;
+        hasCommentsImage.frame = f;
+    } else {
+        hasCommentsImage.hidden = YES;
+    }
+    
+    if (self.photo.needsFetch.boolValue) {
+        spinner.hidden = NO;
+        [spinner startAnimating];
+        CGRect f = spinner.frame;
+        left -= f.size.width + ICON_STEP;
+        f.origin.x = left;
+        spinner.frame = f;
+    } else {
+        spinner.hidden = YES;
+        [spinner stopAnimating];
+    }
+    
     int vis = self.photo.visibility;
     if (vis == StreamPhotoVisibilityPrivate) {
         privacyImage.image = [UIImage imageNamed:@"visibility_red"];
@@ -99,14 +146,22 @@
     CGRect frame = self.frame;
     frame.size.height = [StreamPhotoViewCell cellHeightForPhoto:self.photo];
     self.frame = frame;
+
+    DLog(@"set needs display");
+    [self setNeedsDisplay];
 }
 
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    DLog(@"watched photo %@ changed", object);
+    StreamPhoto *photo = object;
+    
+    DLog(@"watched photo %@ changed (%@ %@ %@)", object, photo.isfavorite, photo.comments, photo.needsFetch);
     if (object == self.photo) {
         DLog(@"that's me!");
-        [self updateView];
+        // KVO isn't main-thread
+        dispatch_async(dispatch_get_main_queue(),^{
+            [self updateView];
+        });
     }
 }
 
@@ -140,6 +195,8 @@
 {
     if (self.photo != nil) {
         [self.photo removeObserver:self forKeyPath:@"isfavorite"];
+        [self.photo removeObserver:self forKeyPath:@"comments"];
+        [self.photo removeObserver:self forKeyPath:@"needsFetch"];
         self.photo = nil;
     }
 }

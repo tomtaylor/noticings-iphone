@@ -63,6 +63,8 @@
     }
 
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(photoChanged:) name:PHOTO_CHANGED_NOTIFICATION object:nil];
 }
 
 - (void)viewDidUnload
@@ -159,6 +161,17 @@
 	[self.tableView reloadData];
 }
 
+-(void)photoChanged:(NSNotification*)notification;
+{
+    // TODO this can be better
+    if ([self.streamManager.filteredPhotos containsObject:notification.object]) {
+        DLog(@"view %@ needs refresh", self);
+        dispatch_async( dispatch_get_main_queue(), ^{
+            [self.tableView reloadData];
+        });
+    }
+}
+
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
 {
     NSLog(@"button %d", buttonIndex);
@@ -170,7 +183,9 @@
 
 - (void)uploadQueueDidChange
 {
-    [self.tableView reloadData];
+    dispatch_async( dispatch_get_main_queue(), ^{
+        [self.tableView reloadData];
+    });
 }
 
 - (void)refresh;

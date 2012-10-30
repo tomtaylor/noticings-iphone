@@ -25,6 +25,7 @@
     IBOutlet UILabel *timeagoView;
     IBOutlet UILabel *titleView;
     IBOutlet UIView *frameView;
+    IBOutlet UIActivityIndicatorView *spinner;
 }
 
 +(CGFloat)cellHeightForPhoto:(StreamPhoto*)photo;

@@ -12,6 +12,7 @@
 		</object>
 		<array key="IBDocument.IntegratedClassDependencies">
 			<string>IBProxyObject</string>
+			<string>IBUIActivityIndicatorView</string>
 			<string>IBUIImageView</string>
 			<string>IBUILabel</string>
 			<string>IBUITableViewCell</string>
@@ -207,7 +208,7 @@
 							<object class="IBUIImageView" id="404961213">
 								<reference key="NSNextResponder" ref="94663175"/>
 								<int key="NSvFlags">265</int>
-								<string key="NSFrame">{{286, 338}, {18, 13}}</string>
+								<string key="NSFrame">{{286, 338}, {14, 13}}</string>
 								<reference key="NSSuperview" ref="94663175"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="92646375"/>
@@ -231,6 +232,18 @@
 								<int key="IBUIContentMode">2</int>
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
+							</object>
+							<object class="IBUIActivityIndicatorView" id="943729130">
+								<reference key="NSNextResponder" ref="94663175"/>
+								<int key="NSvFlags">265</int>
+								<string key="NSFrame">{{231, 335}, {20, 20}}</string>
+								<reference key="NSSuperview" ref="94663175"/>
+								<reference key="NSWindow"/>
+								<string key="NSReuseIdentifierKey">_NS:9</string>
+								<bool key="IBUIOpaque">NO</bool>
+								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
+								<bool key="IBUIHidesWhenStopped">NO</bool>
+								<int key="IBUIStyle">2</int>
 							</object>
 						</array>
 						<string key="NSFrameSize">{320, 399}</string>
@@ -355,6 +368,14 @@
 					</object>
 					<int key="connectionID">39</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">spinner</string>
+						<reference key="source" ref="373355806"/>
+						<reference key="destination" ref="943729130"/>
+					</object>
+					<int key="connectionID">41</int>
+				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<array key="orderedObjects">
@@ -389,6 +410,7 @@
 							<reference ref="15346423"/>
 							<reference ref="933493128"/>
 							<reference ref="568613788"/>
+							<reference ref="943729130"/>
 						</array>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -443,6 +465,11 @@
 						<reference key="object" ref="568613788"/>
 						<reference key="parent" ref="373355806"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">40</int>
+						<reference key="object" ref="943729130"/>
+						<reference key="parent" ref="373355806"/>
+					</object>
 				</array>
 			</object>
 			<dictionary class="NSMutableDictionary" key="flattenedProperties">
@@ -460,6 +487,7 @@
 				<string key="36.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="37.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="4.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+				<string key="40.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="5.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="6.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="8.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
@@ -468,7 +496,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">39</int>
+			<int key="maxID">41</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -523,6 +551,7 @@
 						<string key="isFavoriteImage">UIImageView</string>
 						<string key="photoView">UIImageView</string>
 						<string key="privacyImage">UIImageView</string>
+						<string key="spinner">UIActivityIndicatorView</string>
 						<string key="timeagoView">UILabel</string>
 						<string key="titleView">UILabel</string>
 						<string key="usernameView">UILabel</string>
@@ -555,6 +584,10 @@
 						<object class="IBToOneOutletInfo" key="privacyImage">
 							<string key="name">privacyImage</string>
 							<string key="candidateClassName">UIImageView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="spinner">
+							<string key="name">spinner</string>
+							<string key="candidateClassName">UIActivityIndicatorView</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="timeagoView">
 							<string key="name">timeagoView</string>

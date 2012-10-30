@@ -77,7 +77,7 @@
 {
     //DLog(@"got full photo info %@", info);
     self.fullInfo = [info JSONData];
-
+    
     // info here is a response from flickr.photos.getInfo. more details.
     self.comments = @([[[info objectForKey:@"comments"] objectForKey:@"_content"] boolValue]);
     self.isfavorite = @([[info objectForKey:@"isfavorite"] boolValue]);

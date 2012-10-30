@@ -52,6 +52,8 @@
 @property (nonatomic, readonly) BOOL isAuthenticated;
 
 
+#define PHOTO_CHANGED_NOTIFICATION @"photo_changed_notification"
+
 
 
 

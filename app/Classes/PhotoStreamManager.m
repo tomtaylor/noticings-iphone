@@ -110,6 +110,8 @@
                             // would be nicer to do this at the end? do we care?
                             [[NoticingsAppDelegate delegate] savePersistentObjects];
                             DLog(@"fetched and saved %@", photo);
+                            [[NSNotificationCenter defaultCenter] postNotificationName:PHOTO_CHANGED_NOTIFICATION object:photo];
+
                         } else {
                             DLog(@"problem fetching %@: %@", photo, error);
                         }
