@@ -155,7 +155,7 @@
     StreamPhoto *photo = object;
     
     DLog(@"watched photo %@ changed (%@ %@ %@)", object, photo.isfavorite, photo.comments, photo.needsFetch);
-    if (object == self.photo) {
+    if (photo == self.photo) {
         DLog(@"that's me!");
         // KVO isn't main-thread
         dispatch_async(dispatch_get_main_queue(),^{

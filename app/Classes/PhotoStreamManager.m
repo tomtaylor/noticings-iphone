@@ -81,9 +81,8 @@
             [self.rawPhotos addObject:sp];
         }
         [[NoticingsAppDelegate delegate] savePersistentObjects];
-        [self saveCachedImageList];
-        
         self.lastRefresh = [[NSDate date] timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970;
+        [self saveCachedImageList];
 
         NSLog(@"loaded %d photos", [self.rawPhotos count]);
         if (self.delegate) {
