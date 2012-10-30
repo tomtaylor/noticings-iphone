@@ -151,8 +151,10 @@ BOOL gLogging = FALSE;
         
         // if we're looking at a list of photos, reload it, in case the user defaults have changed.
         UINavigationController *nav = (UINavigationController*)(self.tabBarController.viewControllers)[0];
-        if (nav.visibleViewController.class == StreamViewController.class) {
-            [((StreamViewController*)nav.visibleViewController).tableView reloadData];
+        StreamViewController *svc = (StreamViewController*)nav.visibleViewController;
+        if ([svc isKindOfClass:StreamViewController.class]) {
+            [svc.tableView reloadData];
+            [svc.streamManager maybeRefresh];
         }
         
     } else {

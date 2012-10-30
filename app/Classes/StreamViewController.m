@@ -161,6 +161,17 @@
 	[self.tableView reloadData];
 }
 
+- (void)photoStreamManagerStartedRefresh:(PhotoStreamManager*)manager;
+{
+    DLog(@"showing loading indicator.");
+    [self showLoading];
+    // if we're near the top, show the loading indicator.
+    if (self.tableView.contentOffset.y < 200) {
+        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+    }
+}
+
+
 -(void)photoChanged:(NSNotification*)notification;
 {
     // TODO this can be better

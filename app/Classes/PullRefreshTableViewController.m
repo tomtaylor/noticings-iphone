@@ -112,9 +112,8 @@
     }
 }
 
-- (void)startLoading {
-    isLoading = YES;
-
+- (void)showLoading;
+{
     // Show the header
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDuration:0.3];
@@ -123,6 +122,12 @@
     refreshArrow.hidden = YES;
     [refreshSpinner startAnimating];
     [UIView commitAnimations];
+}
+
+- (void)startLoading {
+    isLoading = YES;
+
+    [self showLoading];
 
     // Refresh action!
     [self refresh];

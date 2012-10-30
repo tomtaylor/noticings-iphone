@@ -55,4 +55,7 @@
 - (void)stopLoading;
 - (void)refresh;
 
+// TI patches
+- (void)showLoading;
+
 @end

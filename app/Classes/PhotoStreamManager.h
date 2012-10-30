@@ -12,9 +12,12 @@
 #import "PhotoLocationManager.h"
 #import "DeferredFlickrCallManager.h"
 
+@class PhotoStreamManager;
+
 // protocol for delegates
 @protocol PhotoStreamDelegate <NSObject>
 - (void)newPhotos;
+- (void)photoStreamManagerStartedRefresh:(PhotoStreamManager*)manager;
 @end
 
 @interface PhotoStreamManager : NSObject

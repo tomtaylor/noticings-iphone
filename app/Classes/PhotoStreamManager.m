@@ -55,6 +55,7 @@
     
     self.inProgress = YES;
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    [self.delegate photoStreamManagerStartedRefresh:self];
     
     NSLog(@"Calling Flickr");
     [self callFlickrAnd:^(BOOL success, NSDictionary *rsp, NSError *error) {
