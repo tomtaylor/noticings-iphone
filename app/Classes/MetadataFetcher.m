@@ -24,24 +24,8 @@
 
 - (void)fetchPhotos;
 {
-    NSManagedObjectContext *context = [NoticingsAppDelegate delegate].managedObjectContext;
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Photo" inManagedObjectContext:context];
-    
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    request.entity = entity;
-    request.predicate = [NSPredicate predicateWithFormat:@"needsFetch = true"];
-    // mose recently uploaded photos fetched first.
-    request.sortDescriptors = @[ [[NSSortDescriptor alloc] initWithKey:@"dateupload" ascending:NO] ];
-    NSError *error = nil;
-    NSEnumerator *photos = [[context executeFetchRequest:request error:&error] objectEnumerator];
-    
-    if (error != nil) {
-        DLog(@"Error getting photo list from DB: %@", error);
-        return;
-    }
-
-    StreamPhoto *photo;
-    while (photo = [photos nextObject]) {
+    NSArray *photos = [StreamPhoto photosWithPredicate:[NSPredicate predicateWithFormat:@"needsFetch = true"]];
+    for (StreamPhoto *photo in photos) {
         [self.queue addOperationWithBlock:^{
             // test again here to allow for photos being added to the queue more
             // than once - we're pretty aggressive, but this lets me just zap

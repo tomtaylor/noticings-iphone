@@ -53,6 +53,20 @@
     return photo;
 }
 
++ (NSArray*)photosWithPredicate:(NSPredicate*)predicate;
+{
+    NSManagedObjectContext *context = [NoticingsAppDelegate delegate].managedObjectContext;
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Photo" inManagedObjectContext:context];
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    request.entity = entity;
+    request.predicate = predicate;
+    // mose recently uploaded photos fetched first.
+    request.sortDescriptors = @[ [[NSSortDescriptor alloc] initWithKey:@"dateupload" ascending:NO] ];
+    NSError *error = nil;
+    NSEnumerator *photos = [[context executeFetchRequest:request error:&error] objectEnumerator];
+    return [photos allObjects];
+}
+
 - (void)updateFromDict:(NSDictionary*)dict;
 {
     //DLog(@"details are %@", dict);

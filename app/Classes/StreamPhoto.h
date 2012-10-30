@@ -16,6 +16,9 @@
 + (id)photoWithDictionary:(NSDictionary*)dict;
 + (id)photoWithFlickrId:(NSString*)flickrId;
 
+// date order, most recently uploaded first.
++ (NSArray*)photosWithPredicate:(NSPredicate*)predicate;
+
 #define StreamPhotoVisibilityPublic 0
 #define StreamPhotoVisibilityLimited 1
 #define StreamPhotoVisibilityPrivate 2
