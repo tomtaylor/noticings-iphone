@@ -147,7 +147,6 @@
     frame.size.height = [StreamPhotoViewCell cellHeightForPhoto:self.photo];
     self.frame = frame;
 
-    DLog(@"set needs display");
     [self setNeedsDisplay];
 }
 

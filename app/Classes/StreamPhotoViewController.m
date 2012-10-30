@@ -283,7 +283,7 @@ GRMustacheTemplate *template;
         int seconds = ago % 60;
         int minutes = (ago / 60) % 60;
         int hours = (ago / (60*60)) % 24;
-        int days = (ago / (24*60*60));
+        int days = (ago / (24*60*60)) % 30;
         int months = (ago / (24*60*60*30));
         NSLog(@"%d/%d/%d/%d/%d", months, days, hours, minutes, seconds);
         
