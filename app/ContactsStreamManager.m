@@ -7,20 +7,21 @@
 //
 
 #import "ContactsStreamManager.h"
-#import "SynthesizeSingleton.h"
 #import "CacheManager.h"
+#import "DeferredFlickrCallManager.h"
+#import "NoticingsAppDelegate.h"
 
 @implementation ContactsStreamManager
-SYNTHESIZE_SINGLETON_FOR_CLASS(ContactsStreamManager);
 
--(void) callFlickr;
+-(void)callFlickrAnd:(FlickrCallback)callback;
 {
-    NSDictionary *args = [NSDictionary dictionaryWithObjectsAndKeys:
-                          @"50", @"count",
-                          [self extras], @"extras",
-                          @"1", @"include_self",
-                          nil];
-    [[self flickrRequest] callAPIMethodWithGET:@"flickr.photos.getContactsPhotos" arguments:args];
+    NSDictionary *args = @{@"count": @"50",
+                          @"extras": [self extras],
+                          @"include_self": @"1"};
+    [[NoticingsAppDelegate delegate].flickrCallManager callFlickrMethod:@"flickr.photos.getContactsPhotos"
+                                                                           asPost:NO
+                                                                         withArgs:args
+                                                                          andThen:callback];
 }
 
 -(NSArray*)filteredPhotos;

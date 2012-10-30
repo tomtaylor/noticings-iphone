@@ -13,6 +13,11 @@
 #import "PhotoUploadCell.h"
 #import "ContactsStreamManager.h"
 #import "StreamPhotoViewController.h"
+#import "NoticingsAppDelegate.h"
+#import "PhotoUploadOperation.h"
+
+#define RETRY_UPLOAD @"Retry upload"
+#define CANCEL_UPLOAD @"Cancel upload"
 
 @interface StreamViewController (Private)
 - (void)setQueueButtonState;
@@ -20,8 +25,6 @@
 @end
 
 @implementation StreamViewController
-
-@synthesize streamManager;
 
 -(id)initWithPhotoStreamManager:(PhotoStreamManager*)manager;
 {
@@ -42,7 +45,7 @@
     if (!self.streamManager) {
         // we were initialized from the nib, without going through the custom init above,
         // so we must be the root controller.
-        self.streamManager = [ContactsStreamManager sharedContactsStreamManager];
+        self.streamManager = [NoticingsAppDelegate delegate].contactsStreamManager;
         self.streamManager.delegate = self;
         isRoot = YES;
     }
@@ -60,7 +63,8 @@
     }
 
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(photoChanged:) name:PHOTO_CHANGED_NOTIFICATION object:nil];
 }
 
 - (void)viewDidUnload
@@ -72,9 +76,9 @@
 
 -(void)updatePullText;
 {
-    self.textPull = [NSString stringWithFormat:@"Pull to refresh..\nLast refreshed %@", streamManager.lastRefreshDisplay];
-    self.textRelease = [NSString stringWithFormat:@"Release to refresh..\nLast refreshed %@", streamManager.lastRefreshDisplay];
-    self.textLoading = [NSString stringWithFormat:@"Loading..\nLast refreshed %@", streamManager.lastRefreshDisplay];
+    self.textPull = [NSString stringWithFormat:@"Pull to refresh..\nLast refreshed %@", self.streamManager.lastRefreshDisplay];
+    self.textRelease = [NSString stringWithFormat:@"Release to refresh..\nLast refreshed %@", self.streamManager.lastRefreshDisplay];
+    self.textLoading = [NSString stringWithFormat:@"Loading..\nLast refreshed %@", self.streamManager.lastRefreshDisplay];
 }
 
 -(void)viewWillAppear:(BOOL)animated;
@@ -84,6 +88,7 @@
         [self.navigationController setNavigationBarHidden:YES animated:animated];
     }
     [super viewWillAppear:animated];
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     [self updatePullText];
 }
 
@@ -91,12 +96,15 @@
 {
     [super viewDidAppear:animated];
     [self.streamManager maybeRefresh];
-	[self.tableView reloadData]; // reload here to update the "no photos" message to be "loading"
+
+    if (self.streamManager.filteredPhotos.count == 0) {
+        // reload here to update the "no photos" message to be "loading"
+        [self.tableView reloadData];
+    }
 }
 
 -(void)viewWillDisappear:(BOOL)animated;
 {
-    [[CacheManager sharedCacheManager] flushQueue]; // we don't need any of the pending photos any more.
     [super viewWillDisappear:animated];
     if (isRoot) {
         // hide navigation bar, only for root controller
@@ -134,7 +142,7 @@
             }
             return NO;
         }]];
-        if (instagramPhotos.count > 6) { // this number by hand-waving
+        if (instagramPhotos.count > 4) { // this number by hand-waving
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"oooh, Instagram."
                                                             message:@"I see some Instagram photos from your contacts here. If you prefer to look at them with the Real Instagram client, I can hide them from this view for you (change this back in Settings)."
                                                            delegate:self
@@ -143,45 +151,60 @@
             [alert addButtonWithTitle:@"Hide"];
             [alert addButtonWithTitle:@"Show"];
             [alert show];
-            [alert release];
         }
         
         
         // whatever happens, don't do that again.
-        [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithBool:YES] forKey:@"askedToFilterInstagram"];
+        [[NSUserDefaults standardUserDefaults] setValue:@YES forKey:@"askedToFilterInstagram"];
     }
 
 	[self.tableView reloadData];
+}
+
+-(void)photoChanged:(NSNotification*)notification;
+{
+    // TODO this can be better
+    if ([self.streamManager.filteredPhotos containsObject:notification.object]) {
+        DLog(@"view %@ needs refresh", self);
+        dispatch_async( dispatch_get_main_queue(), ^{
+            [self.tableView reloadData];
+        });
+    }
 }
 
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
 {
     NSLog(@"button %d", buttonIndex);
     if (buttonIndex == 1) {
-        [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithBool:YES] forKey:@"filterInstagram"];
+        [[NSUserDefaults standardUserDefaults] setValue:@YES forKey:@"filterInstagram"];
         [self.tableView reloadData];
     }
 }
 
 - (void)uploadQueueDidChange
 {
-    [self.tableView reloadData];
+    dispatch_async( dispatch_get_main_queue(), ^{
+        [self.tableView reloadData];
+    });
 }
 
 - (void)refresh;
 {
-    [streamManager refresh];
-    [self.tableView reloadData];
+    [self.streamManager refresh];
+
+    if (self.streamManager.filteredPhotos.count == 0) {
+        // reload here to update the "no photos" message to be "loading"
+        [self.tableView reloadData];
+    }
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    [[CacheManager sharedCacheManager] flushMemoryCache];
 }
 
 - (StreamPhoto *)streamPhotoAtIndexPath:(NSIndexPath*)indexPath {
-    NSArray *photos = streamManager.filteredPhotos;
+    NSArray *photos = self.streamManager.filteredPhotos;
     if ([photos count] == 0) {
         return nil;
     }
@@ -189,18 +212,18 @@
     if (!isRoot) {
         // for the non-root controller, just index into Photos.
         NSInteger photoIndex = indexPath.section;
-        return [photos objectAtIndex:photoIndex];
+        return photos[photoIndex];
     }
 
-    UploadQueueManager *uploadQueueManager = [UploadQueueManager sharedUploadQueueManager];
-    NSMutableArray *photoUploads = uploadQueueManager.photoUploads;
-    if (indexPath.section < [photoUploads count]) {
+    UploadQueueManager *uploadQueueManager = [NoticingsAppDelegate delegate].uploadQueueManager;
+    int photoUploads = uploadQueueManager.uploads.count;
+    if (indexPath.section < photoUploads) {
         // upload cell
         return nil;
     }
 
-    NSInteger photoIndex = indexPath.section - [photoUploads count];
-    return [photos objectAtIndex:photoIndex];
+    NSInteger photoIndex = indexPath.section - photoUploads;
+    return photos[photoIndex];
 }
 
 - (PhotoUpload*)photoUploadAtIndexPath:(NSIndexPath*)indexPath;
@@ -210,13 +233,13 @@
         return nil;
     }
 
-    UploadQueueManager *uploadQueueManager = [UploadQueueManager sharedUploadQueueManager];
-    NSMutableArray *photoUploads = uploadQueueManager.photoUploads;
-    if ([photoUploads count] == 0) {
+    UploadQueueManager *uploadQueueManager = [NoticingsAppDelegate delegate].uploadQueueManager;
+    NSArray *photoUploads = uploadQueueManager.uploads;
+    if (photoUploads.count == 0) {
         return nil;
     }
-    if (indexPath.section < [photoUploads count]) {
-        return [uploadQueueManager.photoUploads objectAtIndex:indexPath.section];
+    if (indexPath.section < photoUploads.count) {
+        return photoUploads[indexPath.section];
     }
     return nil;
 }
@@ -244,8 +267,8 @@
     NSArray *photos = self.streamManager.filteredPhotos;
 	NSInteger photosCount = photos.count == 0 ? 1 : photos.count;
     if (isRoot) {
-        UploadQueueManager *uploadQueueManager = [UploadQueueManager sharedUploadQueueManager];
-        return photosCount + [uploadQueueManager.photoUploads count];
+        UploadQueueManager *uploadQueueManager = [NoticingsAppDelegate delegate].uploadQueueManager;
+        return photosCount + uploadQueueManager.uploads.count;
     } else {
         return photosCount;
     }
@@ -275,7 +298,6 @@
     StreamPhoto *photo = [self streamPhotoAtIndexPath:indexPath];
     if (photo) {
         StreamPhotoViewCell *cell = [self passiveTableCellForPhoto:photo];
-        [cell loadImages];
         return cell;
     }
     
@@ -292,7 +314,7 @@
     cell.textLabel.textColor = [UIColor grayColor];
     cell.textLabel.font = [UIFont systemFontOfSize:14];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    return [cell autorelease];
+    return cell;
     
 }
 
@@ -307,21 +329,46 @@
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    PhotoUpload *upload = [self photoUploadAtIndexPath:indexPath];
-    if (upload) {
-        // just flash the cell.
-        [tableView deselectRowAtIndexPath:indexPath animated:YES];
-        [upload togglePause];
+
+    StreamPhoto *photo = [self streamPhotoAtIndexPath:indexPath];
+    if (photo) {
+        StreamPhotoViewController *vc = [[StreamPhotoViewController alloc] initWithPhoto:photo streamManager:self.streamManager];
+        [self.navigationController pushViewController:vc animated:YES];
         return;
     }
 
-    StreamPhoto *photo = [self streamPhotoAtIndexPath:indexPath];
-    if (!photo) return;
+    PhotoUpload *upload = [self photoUploadAtIndexPath:indexPath];
+    if (upload) {
+        DLog(@"popup for upload %@", upload);
+        self.maybeCancel = upload;
+        UIActionSheet *popupQuery = [[UIActionSheet alloc]
+                                     initWithTitle:upload.title
+                                     delegate:self
+                                     cancelButtonTitle:@"Never mind"
+                                     destructiveButtonTitle:nil
+                                     otherButtonTitles:nil];
     
-    StreamPhotoViewController *vc = [[StreamPhotoViewController alloc] initWithPhoto:photo streamManager:self.streamManager];
-    [self.navigationController pushViewController:vc animated:YES];
-    [vc release];
+        if (upload.paused) {
+            [popupQuery addButtonWithTitle:RETRY_UPLOAD];
+        }
+        [popupQuery addButtonWithTitle:CANCEL_UPLOAD];
+        
+        popupQuery.actionSheetStyle = UIActionSheetStyleBlackOpaque;
+        [popupQuery showFromTabBar:self.tabBarController.tabBar];
+        return;
+    }
+    
+}
 
+-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    NSString* title = [actionSheet buttonTitleAtIndex:buttonIndex];
+    if ([title isEqualToString:RETRY_UPLOAD]) {
+        [[NoticingsAppDelegate delegate].uploadQueueManager resumeUpload:self.maybeCancel];
+    } else if ([title isEqualToString:CANCEL_UPLOAD]) {
+        [[NoticingsAppDelegate delegate].uploadQueueManager cancelUpload:self.maybeCancel];
+    }
+    self.maybeCancel = nil;
 }
 
 # pragma mark memory management
@@ -330,8 +377,6 @@
     NSLog(@"deallocing %@", self.class);
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     self.streamManager.delegate = nil;
-    self.streamManager = nil;
-    [super dealloc];
 }
 
 

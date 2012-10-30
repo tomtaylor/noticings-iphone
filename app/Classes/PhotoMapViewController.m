@@ -28,24 +28,15 @@ static NSString *adjustPinActionSheetPreviousLocationTitle = @"Last Uploaded Loc
 static NSString *adjustPinActionSheetRemoveTitle = @"Remove from Map";
 static NSString *adjustPinActionSheetAddTitle = @"Add to Map";
 
-@synthesize mapView;
-@synthesize mapTypeControl;
-@synthesize photoUpload;
-@synthesize toolbar;
-@synthesize locationManager;
-@synthesize currentLocation;
-@synthesize previousLocation;
-
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.mapView.showsUserLocation = NO;
 	
-	locationManager = [[CLLocationManager alloc] init];
-	locationManager.delegate = self;
-	locationManager.desiredAccuracy = kCLLocationAccuracyBest;
-	locationManager.distanceFilter = kCLDistanceFilterNone;
-	[locationManager startUpdatingLocation];
+	self.locationManager = [[CLLocationManager alloc] init];
+	self.locationManager.delegate = self;
+	self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+	self.locationManager.distanceFilter = kCLDistanceFilterNone;
+	[self.locationManager startUpdatingLocation];
 	
 	self.title = @"Location";
 	
@@ -96,7 +87,6 @@ static NSString *adjustPinActionSheetAddTitle = @"Add to Map";
         alertView.tag = kUIAlertViewNoLocation;
     }
     [alertView show];
-    [alertView release];
 }
 
 #pragma mark -
@@ -104,13 +94,13 @@ static NSString *adjustPinActionSheetAddTitle = @"Add to Map";
 
 - (MKAnnotationView *)mapView:(MKMapView *)_mapView viewForAnnotation:(id <MKAnnotation>)annotation {
 	
-	if (annotation == mapView.userLocation) {
+	if (annotation == self.mapView.userLocation) {
 		return nil;
 	}
 	
-	MKPinAnnotationView *annotationView = (MKPinAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:@"Pin"];
+	MKPinAnnotationView *annotationView = (MKPinAnnotationView *)[self.mapView dequeueReusableAnnotationViewWithIdentifier:@"Pin"];
 	if (annotationView == nil) {
-		annotationView = [[[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"Pin"] autorelease];
+		annotationView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"Pin"];
 	}
 	
 	annotationView.pinColor = MKPinAnnotationColorPurple;
@@ -127,9 +117,7 @@ static NSString *adjustPinActionSheetAddTitle = @"Add to Map";
 }
 
 - (void)mapViewDidFinishLoadingMap:(MKMapView *)mapView {
-	if ([UploadQueueManager sharedUploadQueueManager].inProgress == NO) {
-		[UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-	}
+//    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 }
 
 - (void)locationManager:(CLLocationManager *)manager 
@@ -172,17 +160,14 @@ static NSString *adjustPinActionSheetAddTitle = @"Add to Map";
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
 	
-	[[UploadQueueManager sharedUploadQueueManager] addPhotoUploadToQueue:self.photoUpload];
-	[[UploadQueueManager sharedUploadQueueManager] startQueueIfNeeded];
+	[[NoticingsAppDelegate delegate].uploadQueueManager addPhotoUploadToQueue:self.photoUpload];
     [[AppDelegate tabBarController] setSelectedIndex:0];
     [self.navigationController dismissModalViewControllerAnimated:YES];
     
-    // zoom the image view to the top so we can see the uploading image.
-    UINavigationController *firstNavController = [[[AppDelegate tabBarController] viewControllers] objectAtIndex:0];
-    
-    // pop the photos view back to the main list, and scroll that to the top.
+    // pop the photos view back to the main list, and scroll that to the top so we see the upload progress
+    UINavigationController *firstNavController = [[AppDelegate tabBarController] viewControllers][0];
     [firstNavController popToRootViewControllerAnimated:NO];
-    StreamViewController *streamView = (StreamViewController*)[firstNavController.viewControllers objectAtIndex:0];
+    StreamViewController *streamView = (StreamViewController*)(firstNavController.viewControllers)[0];
     [streamView.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
     
 }
@@ -213,20 +198,19 @@ static NSString *adjustPinActionSheetAddTitle = @"Add to Map";
         [sheet addButtonWithTitle:adjustPinActionSheetAddTitle];
     }
 	
-	[sheet showFromToolbar:toolbar];
-	[sheet release];
+	[sheet showFromToolbar:self.toolbar];
 }
 
 - (IBAction)mapTypeChanged {
-	switch (mapTypeControl.selectedSegmentIndex) {
+	switch (self.mapTypeControl.selectedSegmentIndex) {
 		case 0:
-			mapView.mapType = MKMapTypeStandard;
+			self.mapView.mapType = MKMapTypeStandard;
 			break;
 		case 1:
-			mapView.mapType = MKMapTypeHybrid;
+			self.mapView.mapType = MKMapTypeHybrid;
 			break;
 		case 2:
-			mapView.mapType = MKMapTypeSatellite;
+			self.mapView.mapType = MKMapTypeSatellite;
 			break;
 		default:
 			break;
@@ -331,14 +315,7 @@ static NSString *adjustPinActionSheetAddTitle = @"Add to Map";
 }
 
 - (void)dealloc {
-	[locationManager stopUpdatingLocation];
-	locationManager.delegate = nil;
-	[locationManager release];
-	[currentLocation release];
-    [previousLocation release];
-	mapView.delegate = nil;
-	[photoUpload release];
-    [super dealloc];
+	[self.locationManager stopUpdatingLocation];
 }
 
 

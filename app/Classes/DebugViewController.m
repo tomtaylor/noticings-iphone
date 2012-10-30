@@ -3,10 +3,11 @@
 //  Noticings
 //
 //  Created by Tom Insam on 20/10/2011.
-//  Copyright (c) 2011 Strange Tractor Limited. All rights reserved.
+//  Copyright (c) 2011 Tom Insam.
 //
 
 #import "DebugViewController.h"
+#import "NoticingsAppDelegate.h"
 #import "CacheManager.h"
 #import "UploadQueueManager.h"
 
@@ -35,7 +36,7 @@ enum DebugActions {
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
 	
     switch (indexPath.section) {
@@ -54,18 +55,16 @@ enum DebugActions {
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UploadQueueManager *manager;
     
     switch (indexPath.section) {
         case kNoticingsDebugClearCache:
-            [[CacheManager sharedCacheManager] clearCache];
+            [[NoticingsAppDelegate delegate].cacheManager clearCache];
             break;
 
         case kNoticingsDebugFakeUpload:
-            manager = [UploadQueueManager sharedUploadQueueManager];
-            [manager fakeUpload];
-            [self.navigationController.tabBarController setSelectedIndex:0];
+            [[NoticingsAppDelegate delegate].uploadQueueManager fakeUpload];
             break;
+
         default:
             break;
     }

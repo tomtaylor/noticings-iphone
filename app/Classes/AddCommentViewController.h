@@ -3,7 +3,7 @@
 //  Noticings
 //
 //  Created by Tom Insam on 07/10/2011.
-//  Copyright (c) 2011 Strange Tractor Limited. All rights reserved.
+//  Copyright (c) 2011 Tom Insam.
 //
 
 #import <UIKit/UIKit.h>
@@ -13,6 +13,6 @@
 
 - (id)initWithPhoto:(StreamPhoto*)_photo;
 
-@property (retain) StreamPhoto* photo;
-@property (retain) UITextView *textView;
+@property (strong) StreamPhoto* photo;
+@property (strong) UITextView *textView;
 @end

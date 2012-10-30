@@ -11,8 +11,6 @@
 
 @implementation EditableTextViewCell
 
-@synthesize textView = _textView;
-
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]) {
         CGRect bounds = [[self contentView] bounds];

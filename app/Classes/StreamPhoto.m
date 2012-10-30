@@ -7,40 +7,98 @@
 //
 
 #import "StreamPhoto.h"
+#import "JSONKit.h"
 
 #import "APIKeys.h"
-#import "ObjectiveFlickr.h"
-#import "NSString+HTML.h"
+#import "NoticingsAppDelegate.h"
 
 @implementation StreamPhoto
 
+// core data magic
+@dynamic flickrId, title, json, lastupdate, dateupload, needsFetch;
+@dynamic isfavorite, comments, fullInfo;
+
+
 @synthesize details;
 
-- (id)initWithDictionary:(NSDictionary*)dict;
++ (id)photoWithFlickrId:(NSString*)flickrId;
 {
-    self = [super init];
-    if (self) {
-        self.details = dict;
+    NSManagedObjectContext *context = [NoticingsAppDelegate delegate].managedObjectContext;
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Photo" inManagedObjectContext:context];
+    
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    request.entity = entity;
+    request.predicate = [NSPredicate predicateWithFormat:@"flickrId = %@", flickrId];
+    NSError *error = nil;
+    StreamPhoto *photo = [[context executeFetchRequest:request error:&error] lastObject];
+    if (error) {
+        DLog(@"error looking up object %@: %@", flickrId, error);
+        abort();
     }
-    return self;
+    if (photo != nil) {
+        photo.details = [photo.json objectFromJSONData];
+    }
+    return photo;
+}
+
++ (id)photoWithDictionary:(NSDictionary*)dict;
+{
+    StreamPhoto *photo = [self photoWithFlickrId:[dict objectForKey:@"id"]];
+    if (photo == nil) {
+        NSManagedObjectContext *context = [NoticingsAppDelegate delegate].managedObjectContext;
+        NSEntityDescription *entity = [NSEntityDescription entityForName:@"Photo" inManagedObjectContext:context];
+        photo = [[StreamPhoto alloc] initWithEntity:entity insertIntoManagedObjectContext:context];;
+    }
+    [photo updateFromDict:dict];
+    return photo;
+}
+
+- (void)updateFromDict:(NSDictionary*)dict;
+{
+    //DLog(@"details are %@", dict);
+    self.details = dict;
+
+    // update core data properties
+    self.flickrId = [dict objectForKey:@"id"];
+    self.json = [dict JSONData];
+    self.dateupload = [NSNumber numberWithInt:[[dict objectForKey:@"dateupload"] intValue]];
+
+    // the dict lastupdate is when flickr was last updated. ours is when we last fetched the
+    // full photo information from flickr
+    NSNumber *lastupdate = [NSNumber numberWithInt:[[dict objectForKey:@"lastupdate"] intValue]];
+    if (self.lastupdate != nil && [self.lastupdate isEqualToNumber:lastupdate]) {
+        self.needsFetch = [NSNumber numberWithBool:NO];
+    } else {
+        self.needsFetch = [NSNumber numberWithBool:YES];
+    }
+}
+
+-(void)updateFromPhotoInfo:(NSDictionary*)info;
+{
+    //DLog(@"got full photo info %@", info);
+    self.fullInfo = [info JSONData];
+    
+    // info here is a response from flickr.photos.getInfo. more details.
+    self.comments = @([[[info objectForKey:@"comments"] objectForKey:@"_content"] boolValue]);
+    self.isfavorite = @([[info objectForKey:@"isfavorite"] boolValue]);
+    self.lastupdate = @([[[info objectForKey:@"dates"] objectForKey:@"lastupdate"] intValue]);
+    self.needsFetch = [NSNumber numberWithBool:NO];
 }
 
 -(NSString*)description;
 {
     // this is the objective C introspection / toString() method
-    return [NSString stringWithFormat:@"<StreamPhoto \"%@\" by %@>", self.title, self.ownername];
+    return [NSString stringWithFormat:@"<%@ \"%@\" by %@>", self.class, self.title, self.ownername];
 }
+
+
+
 
 #pragma mark accessors / view utilities
 
-- (NSString*)flickrId;
-{
-    return [self.details valueForKeyPath:@"id"];
-}
-
 - (NSString*)title;
 {
-    NSString *title = [[self.details valueForKeyPath:@"title"] stringByRemovingNewLinesAndWhitespace];
+    NSString *title = [[self.details valueForKeyPath:@"title"] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     if (title.length > 0) {
         return title;
     }
@@ -49,13 +107,13 @@
 
 -(BOOL)hasTitle;
 {
-    NSString *title = [[self.details valueForKeyPath:@"title"] stringByRemovingNewLinesAndWhitespace];
+    NSString *title = [[self.details valueForKeyPath:@"title"] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     return (title.length > 0);
 }
 
 - (NSString*)html;
 {
-    NSString *raw = [self.details valueForKeyPath:@"description._text"];
+    NSString *raw = [self.details valueForKeyPath:@"description._content"];
     return [raw stringByReplacingOccurrencesOfString:@"\n" withString:@"<br>"];
 }
 
@@ -109,21 +167,23 @@
 -(NSURL*)mapImageURL;
 {
     int scale = [UIScreen mainScreen].scale; //  1 or 2
-    NSString *mapURL = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/staticmap?sensor=false&size=320x100&center=%f,%f&zoom=12&scale=%d&markers=size:small%%7C%f,%f",
+    NSString *mapURL = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/staticmap?sensor=false&size=320x70&center=%f,%f&zoom=12&scale=%d&markers=size:small%%7C%f,%f",
                         self.latitude, self.longitude, scale, self.latitude, self.longitude];
     return [NSURL URLWithString:mapURL];
 }
 
 - (NSURL*) imageURL;
 {
-    OFFlickrAPIContext *apiContext = [[[OFFlickrAPIContext alloc] initWithAPIKey:FLICKR_API_KEY sharedSecret:FLICKR_API_SECRET] autorelease];
-    return [apiContext photoSourceURLFromDictionary:self.details size:nil];
+    return [NSURL URLWithString:(self.details)[@"url_m"]];
 }
 
 - (NSURL*) bigImageURL;
 {
-    OFFlickrAPIContext *apiContext = [[[OFFlickrAPIContext alloc] initWithAPIKey:FLICKR_API_KEY sharedSecret:FLICKR_API_SECRET] autorelease];
-    return [apiContext photoSourceURLFromDictionary:self.details size:@"b"];
+    NSString *big = (self.details)[@"url_b"];
+    if (!big) {
+        big = (self.details)[@"url_m"];
+    }
+    return [NSURL URLWithString:big];
 }
 
 - (NSURL*) originalImageURL;
@@ -138,11 +198,11 @@
 - (NSURL*) avatarURL;
 {
     NSString *avatarUrl;
-    if ([self.details objectForKey:@"iconserver"] && ![[self.details objectForKey:@"iconserver"] isEqual:@"0"]) {
+    if ((self.details)[@"iconserver"] && ![(self.details)[@"iconserver"] isEqual:@"0"]) {
         avatarUrl = [NSString stringWithFormat:@"http://farm%@.static.flickr.com/%@/buddyicons/%@.jpg",
-                     [self.details objectForKey:@"iconfarm"],
-                     [self.details objectForKey:@"iconserver"],
-                     [self.details objectForKey:@"owner"]
+                     (self.details)[@"iconfarm"],
+                     (self.details)[@"iconserver"],
+                     (self.details)[@"owner"]
                      ];
         
     } else {
@@ -154,8 +214,8 @@
 - (NSURL*) pageURL;
 {
     NSString *urlString = [NSString stringWithFormat:@"http://www.flickr.com/photos/%@/%@",
-                           [self.details objectForKey:@"pathalias"],
-                           [self.details objectForKey:@"id"]
+                           (self.details)[@"pathalias"],
+                           (self.details)[@"id"]
                            ];
     return [NSURL URLWithString:urlString];
 }
@@ -163,21 +223,16 @@
 - (NSURL *)mobilePageURL;
 {
     NSString *urlString = [NSString stringWithFormat:@"http://m.flickr.com/photos/%@/%@",
-                           [self.details objectForKey:@"pathalias"],
-                           [self.details objectForKey:@"id"]
+                           (self.details)[@"pathalias"],
+                           (self.details)[@"id"]
                            ];
     return [NSURL URLWithString:urlString];
-}
-
-- (NSString*)dateupload;
-{
-    return [self.details objectForKey:@"dateupload"];
 }
 
 - (NSString*) ago;
 {
     NSTimeInterval epoch = [[NSDate date] timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970; // yeah.
-    NSString *uploaded = [self.details objectForKey:@"dateupload"];
+    NSString *uploaded = [self.dateupload stringValue];
     if (!uploaded) {
         return @"";
     }
@@ -207,10 +262,10 @@
 
 -(int)visibility;
 {
-    if ([[self.details objectForKey:@"ispublic"] intValue]) {
+    if ([(self.details)[@"ispublic"] intValue]) {
         return StreamPhotoVisibilityPublic;
     }
-    if ([[self.details objectForKey:@"isfriend"] intValue] || [[self.details objectForKey:@"isfamily"] intValue]) {
+    if ([(self.details)[@"isfriend"] intValue] || [(self.details)[@"isfamily"] intValue]) {
         return StreamPhotoVisibilityLimited;
     }
     return StreamPhotoVisibilityPrivate;
@@ -222,7 +277,7 @@
     if (tags.length > 0) {
         return [tags componentsSeparatedByString:@" "];
     }
-    return [NSArray array];
+    return @[];
 }
 
 -(NSArray*)humanTags;
@@ -241,12 +296,11 @@
 
 -(CGFloat)imageHeightForWidth:(CGFloat)width;
 {
-    float width_m = [[self.details objectForKey:@"width_m"] floatValue];
-    float height_m = [[self.details objectForKey:@"height_m"] floatValue];
+    float width_m = [(self.details)[@"width_m"] floatValue];
+    float height_m = [(self.details)[@"height_m"] floatValue];
     CGFloat height = width * height_m / width_m;
     return height;
 }
-
 
 
 #pragma mark MKAnnotation
@@ -264,31 +318,5 @@
     return self.ownername;
 }
 
-
-
-
-#pragma mark serialize / deserizlise
-
-- (void)encodeWithCoder:(NSCoder *)coder
-{
-    [coder encodeObject:self.details forKey:@"details"];
-}
-
-- (id)initWithCoder:(NSCoder *)coder
-{
-    self = [super init];
-    if (self) {
-        self.details = [coder decodeObjectForKey:@"details"];
-    }
-    return self;
-}
-
-
-#pragma mark memory managment
-
-- (void)dealloc
-{
-    [super dealloc];
-}
 
 @end

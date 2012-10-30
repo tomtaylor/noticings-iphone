@@ -3,7 +3,7 @@
 //  Noticings
 //
 //  Created by Tom Insam on 22/09/2011.
-//  Copyright (c) 2011 Strange Tractor Limited. All rights reserved.
+//  Copyright (c) 2011 Tom Insam.
 //
 
 #import "MapViewController.h"
@@ -11,13 +11,9 @@
 
 @implementation MapViewController
 
-@synthesize mapView;
-@synthesize photo;
-@synthesize streamManager;
-
 -(void)viewDidLoad;
 {
-    self.mapView = [[[MKMapView alloc] initWithFrame:self.view.bounds] autorelease];
+    self.mapView = [[MKMapView alloc] initWithFrame:self.view.bounds];
     self.mapView.delegate = self;
     self.mapView.showsUserLocation = NO;
     
@@ -26,11 +22,10 @@
     [self.view addSubview:self.mapView];
     
     // button in top-right to open maps app.
-    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] 
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] 
                                                initWithBarButtonSystemItem:UIBarButtonSystemItemAction
                                                target:self
-                                               action:@selector(externalButton)]
-                                              autorelease];
+                                               action:@selector(externalButton)];
 }
 
 -(void)externalButton;
@@ -45,21 +40,20 @@
     popupQuery.cancelButtonIndex = [popupQuery addButtonWithTitle:@"Cancel"];
     popupQuery.actionSheetStyle = UIActionSheetStyleBlackOpaque;
     [popupQuery showFromTabBar:self.tabBarController.tabBar];
-    [popupQuery release];
 }
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex == 0) {
-        [[UIApplication sharedApplication] openURL:photo.mapPageURL];
+        [[UIApplication sharedApplication] openURL:self.photo.mapPageURL];
     }
 }
 
--(void)displayPhoto:(StreamPhoto*)_photo inManager:(PhotoStreamManager*)manager;
+-(void)displayPhoto:(StreamPhoto*)photo inManager:(PhotoStreamManager*)manager;
 {
-    self.photo = _photo;
+    self.photo = photo;
     self.streamManager = manager;
-    self.mapView.region = MKCoordinateRegionMake(photo.coordinate, MKCoordinateSpanMake(0.03, 0.03));
+    self.mapView.region = MKCoordinateRegionMake(self.photo.coordinate, MKCoordinateSpanMake(0.03, 0.03));
     [self.mapView addAnnotation:self.photo];
     [self performSelector:@selector(selectPhoto:) withObject:self.photo afterDelay:2];
 }
@@ -75,7 +69,7 @@
     MKAnnotationView *aView = [theMap dequeueReusableAnnotationViewWithIdentifier:@"PhotoAnnotation"];
     
     if (!aView) {
-        aView = [[[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"PhotoAnnotation"] autorelease];
+        aView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"PhotoAnnotation"];
         aView.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
         aView.canShowCallout = YES;
     }
@@ -96,10 +90,6 @@
 - (void)dealloc;
 {
     self.mapView.delegate = nil;
-    self.mapView = nil;
-    self.photo = nil;
-    self.streamManager = nil;
-    [super dealloc];
 }
 
 

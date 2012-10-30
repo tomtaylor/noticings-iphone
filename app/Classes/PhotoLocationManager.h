@@ -3,12 +3,11 @@
 //  Noticings
 //
 //  Created by Tom Insam on 30/09/2011.
-//  Copyright (c) 2011 Strange Tractor Limited. All rights reserved.
+//  Copyright (c) 2011 Tom Insam.
 //
 
 #import <Foundation/Foundation.h>
 #import "StreamPhoto.h"
-#import "ASIHTTPRequest.h"
 
 @protocol LocationDelegate <NSObject>
 @required
@@ -18,8 +17,6 @@
 
 @interface PhotoLocationManager : NSObject
 
-+(PhotoLocationManager*)sharedPhotoLocationManager;
-
 typedef void (^LocationCallbackBlock)(NSString* name);
 
 -(NSString*)cachedLocationForPhoto:(StreamPhoto*)photo;
@@ -27,8 +24,8 @@ typedef void (^LocationCallbackBlock)(NSString* name);
 -(NSMutableDictionary*)loadCachedLocations;
 -(void)saveCachedLocations:(NSMutableDictionary*)cache;
 
-@property (retain) NSOperationQueue *queue;
-@property (retain) NSMutableDictionary *cache;
-@property (retain) NSMutableDictionary *locationRequests;
+@property (strong) NSOperationQueue *queue;
+@property (strong) NSMutableDictionary *cache;
+@property (strong) NSMutableDictionary *locationRequests;
 
 @end

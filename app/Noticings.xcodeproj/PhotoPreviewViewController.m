@@ -12,12 +12,6 @@
 
 @implementation PhotoPreviewViewController
 
-@synthesize imageView;
-
-- (void)dealloc
-{
-    [super dealloc];
-}
 
 #pragma mark - View lifecycle
 

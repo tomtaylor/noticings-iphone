@@ -3,20 +3,18 @@
 //  Noticings
 //
 //  Created by Tom Insam on 05/10/2011.
-//  Copyright (c) 2011 Strange Tractor Limited. All rights reserved.
+//  Copyright (c) 2011 Tom Insam.
 //
 
 #import "TagStreamManager.h"
 
 @implementation TagStreamManager
 
-@synthesize tag;
-
--(id)initWithTag:(NSString*)_tag;
+-(id)initWithTag:(NSString*)tag;
 {
     self = [super init];
     if (self) {
-        self.tag = _tag;
+        self.tag = tag;
         [self loadCachedImageList];
     }
     return self;
@@ -25,12 +23,12 @@
 
 -(void) callFlickr;
 {
-    NSDictionary *args = [NSDictionary dictionaryWithObjectsAndKeys:
-                          @"50", @"per_page",
-                          [self extras], @"extras",
-                          self.tag, @"tags",
-                          nil];
-    [[self flickrRequest] callAPIMethodWithGET:@"flickr.photos.search" arguments:args];
+//    NSDictionary *args = [NSDictionary dictionaryWithObjectsAndKeys:
+//                          @"50", @"per_page",
+//                          [self extras], @"extras",
+//                          self.tag, @"tags",
+//                          nil];
+//    [[self flickrRequest] callAPIMethodWithGET:@"flickr.photos.search" arguments:args];
 }
 
 -(NSString*)cacheFilename;
@@ -41,10 +39,5 @@
     return [NSString stringWithFormat:@"tag-%@", self.tag];
 }
 
--(void)dealloc;
-{
-    self.tag = nil;
-    [super dealloc];
-}
 
 @end

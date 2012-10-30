@@ -3,19 +3,19 @@
 //  Noticings
 //
 //  Created by Tom Insam on 22/09/2011.
-//  Copyright (c) 2011 Strange Tractor Limited. All rights reserved.
+//  Copyright (c) 2011 Tom Insam.
 //
 
 #import <UIKit/UIKit.h>
 #import "CacheManager.h"
 #import "StreamPhoto.h"
 
-@interface ImageViewController : UIViewController <DeferredImageLoader, UIScrollViewDelegate, UIActionSheetDelegate>
+@interface ImageViewController : UIViewController <UIScrollViewDelegate, UIActionSheetDelegate>
 
 -(id)initWithPhoto:(StreamPhoto*)photo;
 
-@property (retain) StreamPhoto *photo;
-@property (retain) UIScrollView *scrollView;
-@property (retain) UIImageView *imageView;
+@property (strong) StreamPhoto *photo;
+@property (strong) UIScrollView *scrollView;
+@property (strong) UIImageView *imageView;
 
 @end

@@ -3,11 +3,12 @@
 //  Noticings
 //
 //  Created by Tom Insam on 30/09/2011.
-//  Copyright (c) 2011 Strange Tractor Limited. All rights reserved.
+//  Copyright (c) 2011 Tom Insam.
 //
 
 #import "Twitter/Twitter.h"
 #import "GRMustache.h"
+#import "NoticingsAppDelegate.h"
 
 #import "StreamPhotoViewController.h"
 #import "StreamPhotoViewCell.h"
@@ -20,25 +21,21 @@
 #import "TagStreamManager.h"
 #import "AddCommentViewController.h"
 
-#import "NSString+HTML.h"
 #import "NSString+URI.h"
+#import "UIColor+Hex.h"
 
 @implementation StreamPhotoViewController
-
-@synthesize photo, streamManager, photoLocation, webView, comments, commentsError;
 
 // global template object cache
 GRMustacheTemplate *template;
 
--(id)initWithPhoto:(StreamPhoto*)_photo streamManager:(PhotoStreamManager*)_streamManager;
+-(id)initWithPhoto:(StreamPhoto*)photo streamManager:(PhotoStreamManager*)streamManager;
 {
     self = [super initWithNibName:nil bundle:nil];
     if (self) {
-        self.photo = _photo;
-        self.streamManager = _streamManager;
-        self.title = self.photo.title;
-        firstRender = YES;
-
+        self.photo = photo;
+        self.streamManager = streamManager;
+        self.title = @""; // self.photo.title;
     }
     return self;
 }
@@ -50,7 +47,7 @@ GRMustacheTemplate *template;
 
 -(void)viewDidLoad;
 {
-    self.webView = [[[UIWebView alloc] initWithFrame:self.view.bounds] autorelease];
+    self.webView = [[UIWebView alloc] initWithFrame:self.view.bounds];
     self.webView.delegate = self;
     self.webView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     self.comments = nil;
@@ -64,7 +61,23 @@ GRMustacheTemplate *template;
                                      action:@selector(externalButton)];
     
     self.navigationItem.rightBarButtonItem = externalItem;
-    [externalItem release];
+
+
+    // hide the shadows
+    for (UIView* shadowView in [[self.webView subviews][0] subviews]) {
+        [shadowView setHidden:YES];
+    }
+    [[[[self.webView subviews][0] subviews] lastObject] setHidden:NO];
+    self.view.backgroundColor = [UIColor colorWithCSS:@"#404040"];
+    self.webView.backgroundColor = self.view.backgroundColor;
+    
+    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] 
+                                   initWithTitle: @"Photo" 
+                                   style: UIBarButtonItemStyleBordered
+                                   target: nil action: nil];
+    
+    [self.navigationItem setBackBarButtonItem: backButton];
+
 }
 
 -(void)externalButton;
@@ -99,7 +112,6 @@ GRMustacheTemplate *template;
 
     popupQuery.actionSheetStyle = UIActionSheetStyleBlackOpaque;
     [popupQuery showFromTabBar:self.tabBarController.tabBar];
-    [popupQuery release];
 
     
 }
@@ -107,7 +119,7 @@ GRMustacheTemplate *template;
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex == 0) {
-        [[UIApplication sharedApplication] openURL:photo.mobilePageURL];
+        [[UIApplication sharedApplication] openURL:self.photo.mobilePageURL];
 
     } else if (buttonIndex == sendMailIndex) {
         MFMailComposeViewController *composer = [[MFMailComposeViewController alloc] init];
@@ -118,11 +130,10 @@ GRMustacheTemplate *template;
         if (self.photo.hasTitle) {
             body = [NSString stringWithFormat:@"\"%@\" by %@\n\n%@\n\nSent using Noticings\n", self.photo.title, self.photo.ownername, self.photo.pageURL];
         } else {
-            body = [NSString stringWithFormat:@"A photo by %@\n\n%@\n\nSent using Noticings\n", self.photo.title, self.photo.ownername, self.photo.pageURL];
+            body = [NSString stringWithFormat:@"A photo by %@\n\n%@\n\nSent using Noticings\n", self.photo.ownername, self.photo.pageURL];
         }
         [composer setMessageBody:body isHTML:NO];
         [self presentModalViewController:composer animated:YES];
-        [composer release];
 
     } else if (buttonIndex == sendTweetIndex) {
         TWTweetComposeViewController *composer = [[TWTweetComposeViewController alloc] init];
@@ -133,10 +144,12 @@ GRMustacheTemplate *template;
         }
         [composer addURL:self.photo.pageURL];
         [self presentModalViewController:composer animated:YES];
-        [composer release];
 
     } else if (buttonIndex == saveRollIndex) {
-        UIImage *image = [[CacheManager sharedCacheManager] cachedImageForURL:self.photo.imageURL];
+        // trust the cache. Probably unsafe.
+        // TODO - pretty progress views and things
+        NSData *imageData = [NSData dataWithContentsOfURL:self.photo.imageURL];
+        UIImage *image = [UIImage imageWithData:imageData];
         if (image) {
             UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil);
         } else {
@@ -156,46 +169,33 @@ GRMustacheTemplate *template;
 {
     NSLog(@"%@ will appear and display %@", self.class, self.photo);
     [super viewWillAppear:animated];
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
 
-    CacheManager *cacheManager = [CacheManager sharedCacheManager];
-    PhotoLocationManager *locationManager = [PhotoLocationManager sharedPhotoLocationManager];
-
-    // load images if we haven't got them already.
-    if (![cacheManager cachedImageForURL:self.photo.imageURL]) {
-        [cacheManager fetchImageForURL:self.photo.imageURL andNotify:self];
-    }
-    if (![cacheManager cachedImageForURL:self.photo.avatarURL]) {
-        [cacheManager fetchImageForURL:self.photo.avatarURL andNotify:self];
-    }
-
+    PhotoLocationManager *locationManager = [NoticingsAppDelegate delegate].photoLocationManager;
     if (self.photo.hasLocation) {
-        if (![cacheManager cachedImageForURL:self.photo.mapImageURL]) {
-            [cacheManager fetchImageForURL:self.photo.mapImageURL andNotify:self];
-        }
-        
         self.photoLocation = [locationManager cachedLocationForPhoto:self.photo];
         if (!self.photoLocation) {
             self.photoLocation = self.photo.placename;
-            [locationManager getLocationForPhoto:photo andTell:self];
+            [locationManager getLocationForPhoto:self.photo andTell:self];
         }
-
     } else {
         self.photoLocation = nil;
     }
+
+    [self updateHTML];
+
     
     // load comments
-    NSDictionary *args = [NSDictionary dictionaryWithObjectsAndKeys:
-                          self.photo.flickrId, @"photo_id",
-                          nil];
+    NSDictionary *args = @{@"photo_id": self.photo.flickrId};
 
-    [[DeferredFlickrCallManager sharedDeferredFlickrCallManager]
+    [[NoticingsAppDelegate delegate].flickrCallManager
      callFlickrMethod:@"flickr.photos.comments.getList"
      asPost:NO
      withArgs:args
      andThen:^(NSDictionary* rsp){
          self.comments = [rsp valueForKeyPath:@"comments.comment"];
          if (!self.comments) {
-             self.comments = [NSArray array];
+             self.comments = @[];
          }
          [self updateHTML];
      }
@@ -204,17 +204,6 @@ GRMustacheTemplate *template;
          self.comments = nil;
          [self updateHTML];
      }];
-    
-    // if we have the template, just render it. otherwise, it'll need loading,
-    // which will take time. don't defer the appearance of the view, or it'll
-    // hang the front end.
-    if (template) {
-        [self updateHTML];
-    } else {
-        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-            [self updateHTML];
-        }];
-    }
 }
 
 -(void) gotLocation:(NSString*)location forPhoto:(StreamPhoto*)photo;
@@ -226,7 +215,6 @@ GRMustacheTemplate *template;
 -(void)viewWillDisappear:(BOOL)animated;
 {
     NSLog(@"%@ will disappear", self.class);
-    [[CacheManager sharedCacheManager] flushQueue];
     [super viewWillDisappear:animated];
 }
 
@@ -244,7 +232,7 @@ GRMustacheTemplate *template;
         NSLog(@"first run - need to parse template.");
         NSError *err = nil;
         NSString *file = [[NSBundle mainBundle] pathForResource:@"StreamPhotoViewController" ofType:@"html" inDirectory:nil];
-        template = [[GRMustacheTemplate parseContentsOfFile:file error:&err] retain];
+        template = [GRMustacheTemplate templateFromContentsOfFile:file error:&err];
         if (err != nil) {
             NSLog(@"error parsing template: %@", err);
             return;
@@ -253,22 +241,8 @@ GRMustacheTemplate *template;
     }
 
 
-    CacheManager *cacheManager = [CacheManager sharedCacheManager];
     NSMutableDictionary *templateData = [NSMutableDictionary dictionary];
     [templateData setValue:self.photo forKey:@"photo"];
-
-    [templateData setValue:[cacheManager urlToFilename:photo.imageURL] forKey:@"imageFile"];
-    BOOL imageLoaded = [[NSFileManager defaultManager] fileExistsAtPath:[templateData valueForKey:@"imageFile"]];
-    [templateData setValue:[NSNumber numberWithBool:imageLoaded] forKey:@"imageLoaded"];
-
-    [templateData setValue:[cacheManager urlToFilename:photo.mapImageURL] forKey:@"mapImageFile"];
-    BOOL mapImageLoaded = [[NSFileManager defaultManager] fileExistsAtPath:[templateData valueForKey:@"mapImageFile"]];
-    [templateData setValue:[NSNumber numberWithBool:mapImageLoaded] forKey:@"mapImageLoaded"];
-
-    [templateData setValue:[cacheManager urlToFilename:photo.avatarURL] forKey:@"avatarFile"];
-    BOOL avatarLoaded = [[NSFileManager defaultManager] fileExistsAtPath:[templateData valueForKey:@"avatarFile"]];
-    [templateData setValue:[NSNumber numberWithBool:avatarLoaded] forKey:@"avatarLoaded"];
-
     [templateData setValue:self.photoLocation forKey:@"location"];
     
     [templateData setValue:[NSNumber numberWithBool:(self.photo.visibility == StreamPhotoVisibilityPrivate)] forKey:@"isPrivate"];
@@ -280,66 +254,71 @@ GRMustacheTemplate *template;
     [templateData setValue:[NSNumber numberWithBool:(self.comments != nil)] forKey:@"loadedComments"];
     [templateData setValue:[NSNumber numberWithBool:(self.comments.count > 0)] forKey:@"hasComments"];
     [templateData setValue:[NSNumber numberWithBool:(self.comments == nil && !self.commentsError)] forKey:@"loadingComments"];
-    [templateData setValue:[NSNumber numberWithBool:(self.commentsError)] forKey:@"failedComments"];
+    [templateData setValue:@((self.commentsError)) forKey:@"failedComments"];
 
     [templateData setValue:self.comments forKey:@"comments"];
     [templateData setValue:[NSNumber numberWithInt:self.comments.count] forKey:@"commentCount"];
-
-
-    id pluralizeHelper = [GRMustacheBlockHelper helperWithBlock:(^(GRMustacheSection *section, id context) {
-        NSString *count = [context valueForKey:@"description"];
-        NSString *contents = [section renderObject:context];
+    [templateData setValue:[NSNumber numberWithBool:self.photo.isfavorite.intValue] forKey:@"isfavorite"];
+    
+    id pluralizeHelper = [GRMustacheHelper helperWithBlock:(^(GRMustacheSection *section) {
+        NSString *count = [section valueForKey:@"description"];
+        NSString *contents = [section render];
         NSString *result = [NSString stringWithFormat:@"%@ %@%@", count, contents, ([count isEqualToString:@"1"] ? @"" : @"s")];
         return result;
     })];
-    [templateData setObject:pluralizeHelper forKey:@"pluralizeHelper"];
+    templateData[@"pluralizeHelper"] = pluralizeHelper;
     
-    id dateHelper = [GRMustacheBlockHelper helperWithBlock:(^(GRMustacheSection *section, id context) {
-        double timestamp = [[context valueForKey:@"description"] doubleValue];
+    id dateHelper = [GRMustacheHelper helperWithBlock:^NSString *(GRMustacheSection *section) {
+        NSLog(@"section is %@", section);
+        double timestamp = [[section render] doubleValue];
 
         // TODO - copied out of StreamPhoto/ago - refactor.
         NSTimeInterval epoch = [[NSDate date] timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970; // yeah.
-        int ago = epoch - timestamp; // woooo overflow bug. I hope your friends upload at least once every 2*32 seconds!
+        int ago = epoch - timestamp;
         if (ago < 0) {
-            return @"just now";
+            return @"a moment ago";
         }
         
+        NSLog(@"ago is %f - %f = %d", epoch, timestamp, ago);
         int seconds = ago % 60;
         int minutes = (ago / 60) % 60;
         int hours = (ago / (60*60)) % 24;
-        int days = (ago / (24*60*60));
+        int days = (ago / (24*60*60)) % 30;
+        int months = (ago / (24*60*60*30));
+        NSLog(@"%d/%d/%d/%d/%d", months, days, hours, minutes, seconds);
         
         // >1 here partially to make things more precise when they're small numbers (75 mins better 
         // than 1 hour, for instance) but mostly so I don't have to remove the 's' for the ==1 case. :-)
+        if (months > 1) {
+            return [NSString stringWithFormat:@"%d months ago", months];
+        } else {
+            days += months * 30;
+        }
         if (days > 1) {
             return [NSString stringWithFormat:@"%d days ago", days];
+        } else {
+            hours += days * 24;
         }
         if (hours > 1) {
-            return [NSString stringWithFormat:@"%d hours ago", hours + days*24];
+            return [NSString stringWithFormat:@"%d hours ago", hours];
+        } else {
+            minutes += hours * 60;
         }
         if (minutes > 1) {
-            return [NSString stringWithFormat:@"%d minutes ago", minutes + hours*60];
+            return [NSString stringWithFormat:@"%d minutes ago", minutes];
+        } else {
+            seconds += minutes * 60;
         }
-        return [NSString stringWithFormat:@"%d seconds ago", seconds + minutes*60];
-    })];
-    [templateData setObject:dateHelper forKey:@"dateHelper"];
+        return [NSString stringWithFormat:@"%d seconds ago", seconds];
+    }];
+    templateData[@"dateHelper"] = dateHelper;
     
-    //NSLog(@"rendering with %@", templateData);
+    NSLog(@"rendering with %@", templateData);
     NSString *rendered = [template renderObject:templateData];
-    //NSLog(@"rendered as %@", rendered);
+//    NSLog(@"rendered as %@", rendered);
     
-//    if (firstRender) {
-        NSURL *baseURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
-        [self.webView loadHTMLString:rendered baseURL:baseURL];
-        firstRender = NO;
-//    } else {
-//        // update HTML by replacing with JS.
-//        NSString *html = [NSString stringWithFormat:@"document.getElementsByTagName('html')[0].innerHTML = \"%@\";", [rendered stringByEncodingForJavaScript]];
-//        NSLog(@"updating webview with JS");
-//        [self.webView stringByEvaluatingJavaScriptFromString:html];
-//    }
-   
-
+    NSURL *baseURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
+    [self.webView loadHTMLString:rendered baseURL:baseURL];
 }
 
 // open links in the webview using the system browser
@@ -349,14 +328,12 @@ GRMustacheTemplate *template;
         if ([request.URL.scheme isEqualToString:@"noticings-image"]) {
             ImageViewController *imageViewController = [[ImageViewController alloc] initWithPhoto:self.photo];
             [self.navigationController pushViewController:imageViewController animated:YES];
-            [imageViewController release];
             return false;
 
         } else if ([request.URL.scheme isEqualToString:@"noticings-map"]) {
             MapViewController *mapController = [[MapViewController alloc] init];
             [self.navigationController pushViewController:mapController animated:YES];
-            [mapController displayPhoto:photo inManager:self.streamManager];
-            [mapController release];
+            [mapController displayPhoto:self.photo inManager:self.streamManager];
             return false;
 
         } else if ([request.URL.scheme isEqualToString:@"noticings-user"]) {
@@ -364,21 +341,19 @@ GRMustacheTemplate *template;
             
             UserStreamManager *manager;
             if (list.count > 2) {
-                NSString *userId = [[list objectAtIndex:1] stringByDecodingFromURI];
+                NSString *userId = [list[1] stringByDecodingFromURI];
                 manager = [[UserStreamManager alloc] initWithUser:userId];
             } else {
-                manager = [[UserStreamManager alloc] initWithUser:photo.ownerId];
+                manager = [[UserStreamManager alloc] initWithUser:self.photo.ownerId];
             }
             StreamViewController *userController = [[StreamViewController alloc] initWithPhotoStreamManager:manager];
-            [manager release];
             if (list.count > 2) {
-                NSString *title = [[list objectAtIndex:2] stringByDecodingFromURI];
+                NSString *title = [list[2] stringByDecodingFromURI];
                 userController.title = title;
             } else {
-                userController.title = photo.ownername;
+                userController.title = self.photo.ownername;
             }
             [self.navigationController pushViewController:userController animated:YES];
-            [userController release];
             return false;
 
         } else if ([request.URL.scheme isEqualToString:@"noticings-tag"]) {
@@ -387,21 +362,50 @@ GRMustacheTemplate *template;
             if (list.count < 1) {
                 return false;
             }
-            NSString *tag = [[list objectAtIndex:1] stringByDecodingFromURI];
+            NSString *tag = [list[1] stringByDecodingFromURI];
 
             TagStreamManager *manager = [[TagStreamManager alloc] initWithTag:tag];
             StreamViewController *svc = [[StreamViewController alloc] initWithPhotoStreamManager:manager];
-            [manager release];
             svc.title = tag;
             [self.navigationController pushViewController:svc animated:YES];
-            [svc release];
             return false;
 
         } else if ([request.URL.scheme isEqualToString:@"noticings-comment"]) {
             AddCommentViewController *commentController = [[AddCommentViewController alloc] initWithPhoto:self.photo];
             [self.navigationController pushViewController:commentController animated:YES];
-            [commentController release];
             return false;
+
+        } else if ([request.URL.scheme isEqualToString:@"noticings-favorite"]) {
+
+            [[NoticingsAppDelegate delegate].flickrCallManager
+             callFlickrMethod:@"flickr.favorites.add"
+             asPost:YES
+             withArgs:@{@"photo_id": self.photo.flickrId}
+             andThen:^(NSDictionary* rsp){
+                 NSLog(@"Added fave!");
+                 self.photo.isfavorite = [NSNumber numberWithBool:YES];
+                 [[NoticingsAppDelegate delegate] savePersistentObjects];
+                 [self updateHTML];
+             }
+             orFail:^(NSString *code, NSString *error){
+                 NSLog(@"Can't add fave!!! %@ %@", code, error);
+             }];
+
+        } else if ([request.URL.scheme isEqualToString:@"noticings-unfavorite"]) {
+
+            [[NoticingsAppDelegate delegate].flickrCallManager
+             callFlickrMethod:@"flickr.favorites.remove"
+             asPost:YES
+             withArgs:@{@"photo_id": self.photo.flickrId}
+             andThen:^(NSDictionary* rsp){
+                 NSLog(@"Removed fave!");
+                 self.photo.isfavorite = [NSNumber numberWithBool:NO];
+                 [[NoticingsAppDelegate delegate] savePersistentObjects];
+                 [self updateHTML];
+             }
+             orFail:^(NSString *code, NSString *error){
+                 NSLog(@"Can't rmeove fave!!! %@ %@", code, error);
+             }];
 
         }
         
@@ -425,6 +429,10 @@ GRMustacheTemplate *template;
     [super viewDidUnload];
     self.webView.delegate = nil;
     self.webView = nil;
+    self.comments = nil;
+    self.photoLocation = nil;
+    self.streamManager = nil;
+    self.photo = nil;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -435,15 +443,7 @@ GRMustacheTemplate *template;
 
 -(void)dealloc;
 {
-    if (self.webView) {
-        self.webView.delegate = nil;
-    }
-    self.webView = nil;
-    self.comments = nil;
-    self.photoLocation = nil;
-    self.streamManager = nil;
-    self.photo = nil;
-    [super dealloc];
+    [self viewDidUnload];
 }
 
 

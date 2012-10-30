@@ -9,6 +9,8 @@
 #import "MoreViewController.h"
 #import "FlickrAuthenticationViewController.h"
 #import "DebugViewController.h"
+#import "StreamViewController.h"
+#import "StarredStreamManager.h"
 
 enum Sections {
 	kNoticingsSection = 0,
@@ -20,6 +22,7 @@ enum Sections {
 enum NoticingsSectionRows {
 	kNoticingsSectionSiteRow = 0,
 	kNoticingsSectionDebugRow,
+	kNoticingsSectionStarredRow,
 	NUM_NOTICINGS_SECTION_ROWS
 };
 
@@ -36,11 +39,9 @@ enum AppSectionRows {
 
 @implementation MoreViewController
 
-@synthesize cameraController;
-
 - (void)viewDidLoad {
     if (!self.cameraController) {
-        self.cameraController = [[[CameraController alloc] initWithBaseViewController:self] autorelease];
+        self.cameraController = [[CameraController alloc] initWithBaseViewController:self];
     }
     [super viewDidLoad];
 }
@@ -67,7 +68,7 @@ enum AppSectionRows {
 		case kAppSection:
 			return NUM_APP_SECTION_ROWS;
 		default:
-			return 1;
+			return 0;
 	}
 }
 
@@ -79,7 +80,7 @@ enum AppSectionRows {
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
 		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
 	
@@ -90,6 +91,9 @@ enum AppSectionRows {
 				break;
 			case kNoticingsSectionDebugRow:
 				cell.textLabel.text = @"Debug";
+				break;
+			case kNoticingsSectionStarredRow:
+				cell.textLabel.text = @"Your favourites";
 				break;
 			default:
 				break;
@@ -108,31 +112,33 @@ enum AppSectionRows {
 	if (indexPath.section == kNoticingsSection) {
 		switch (indexPath.row) {
 			case kNoticingsSectionSiteRow:
-				[cameraController presentImagePicker];
+				[self.cameraController presentImagePicker];
 				break;
 			case kNoticingsSectionDebugRow:
-                [self.navigationController pushViewController:[[[DebugViewController alloc] initWithStyle:UITableViewStyleGrouped] autorelease] animated:YES];
+                [self.navigationController pushViewController:[[DebugViewController alloc] initWithStyle:UITableViewStyleGrouped] animated:YES];
 				break;
+            case kNoticingsSectionStarredRow: {
+                StarredStreamManager *manager = [[StarredStreamManager alloc] init];
+                StreamViewController *vc = [[StreamViewController alloc] initWithPhotoStreamManager:manager];
+                [self.navigationController pushViewController:vc animated:YES];
+                break;
+            }
 			default:
 				break;
 		}
 	} else if (indexPath.section == kFlickrSection) {
 		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://m.flickr.com"]];
 	} else {
-		[[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"authToken"];
+		[[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"oauth_token"];
+		[[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"oauth_secret"];
         [[NSUserDefaults standardUserDefaults] synchronize];
 		FlickrAuthenticationViewController *authViewController = [[FlickrAuthenticationViewController alloc] init];
 		[authViewController displaySignIn];
 		[self presentModalViewController:authViewController animated:YES];
-		[authViewController release];
 	}
 
 }
 
-- (void)dealloc {
-    self.cameraController = nil;
-    [super dealloc];
-}
 
 
 @end

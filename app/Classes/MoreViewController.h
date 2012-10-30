@@ -9,9 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "CameraController.h"
 
-@interface MoreViewController : UITableViewController {
-}
+@interface MoreViewController : UITableViewController
 
-@property (retain) CameraController *cameraController;
+@property (strong) CameraController *cameraController;
 
 @end

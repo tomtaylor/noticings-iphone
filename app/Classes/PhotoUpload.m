@@ -19,33 +19,25 @@ enum {
     ASSETURL_ALLFINISHED = 0
 };
 
-@synthesize asset;
-@synthesize progress;
-@synthesize inProgress;
-@synthesize state;
-@synthesize privacy;
-@synthesize flickrId;
-@synthesize title;
-@synthesize tags;
-@synthesize location;
-@synthesize coordinate;
-@synthesize originalCoordinate;
-@synthesize timestamp;
-@synthesize originalTimestamp;
+-(NSString*)description;
+{
+    // this is the objective C introspection / toString() method
+    return [NSString stringWithFormat:@"<%@ \"%@\" progress %@>", self.class, self.title, self.paused ? @"PAUSED" : self.progress];
+}
 
-- (id)initWithAsset:(ALAsset *)_asset
+- (id)initWithAsset:(ALAsset *)asset
 {
 	self = [super init];
 	if (self != nil) {
-		self.asset = _asset;
-		self.state = PhotoUploadStatePendingUpload;
-        self.inProgress = NO;
-		self.progress = [NSNumber numberWithFloat:0.0f];
+		self.asset = asset;
+        self.inProgress = FALSE;
+        self.paused = FALSE;
+		self.progress = @0.0f;
+
         self.privacy = PhotoUploadPrivacyPublic;
-        
-        self.location = [asset valueForProperty:ALAssetPropertyLocation];
-        self.originalTimestamp = [asset valueForProperty:ALAssetPropertyDate];
-        self.timestamp = [asset valueForProperty:ALAssetPropertyDate];
+        self.location = [self.asset valueForProperty:ALAssetPropertyLocation];
+        self.originalTimestamp = [self.asset valueForProperty:ALAssetPropertyDate];
+        self.timestamp = [self.asset valueForProperty:ALAssetPropertyDate];
         DLog(@"Created PhotoUpload for Asset with location: %@ and timestamp: %@", self.location, self.timestamp);
         		
 		if (self.location) {
@@ -53,7 +45,7 @@ enum {
 		} else {
 			self.originalCoordinate = kCLLocationCoordinate2DInvalid;
 		}
-        self.coordinate = originalCoordinate;
+        self.coordinate = self.originalCoordinate;
 	}
 	return self;
 }
@@ -62,20 +54,19 @@ enum {
 {
     [coder encodeInt:4 forKey:@"version"];
     [coder encodeObject:self.asset.defaultRepresentation.url forKey:@"assetUrl"];
-    [coder encodeConditionalObject:self.title forKey:@"title"];
-    [coder encodeConditionalObject:self.tags forKey:@"tags"];
-    [coder encodeInt:self.state forKey:@"state"];
+    [coder encodeObject:self.title forKey:@"title"];
+    [coder encodeObject:self.tags forKey:@"tags"];
     [coder encodeInt:self.privacy forKey:@"privacy"];
-    [coder encodeConditionalObject:self.flickrId forKey:@"flickrId"];
-    [coder encodeConditionalObject:self.location forKey:@"location"];
-    [coder encodeConditionalObject:self.timestamp forKey:@"timestamp"];
-    [coder encodeConditionalObject:self.originalTimestamp forKey:@"originalTimestamp"];
+    [coder encodeObject:self.flickrId forKey:@"flickrId"];
+    [coder encodeObject:self.location forKey:@"location"];
+    [coder encodeObject:self.timestamp forKey:@"timestamp"];
+    [coder encodeObject:self.originalTimestamp forKey:@"originalTimestamp"];
     
-    [coder encodeDouble:coordinate.latitude forKey:@"coordinate.latitude"];
-    [coder encodeDouble:coordinate.longitude forKey:@"coordinate.longitude"];
+    [coder encodeDouble:self.coordinate.latitude forKey:@"coordinate.latitude"];
+    [coder encodeDouble:self.coordinate.longitude forKey:@"coordinate.longitude"];
     
-    [coder encodeDouble:originalCoordinate.latitude forKey:@"originalCoordinate.latitude"];
-    [coder encodeDouble:originalCoordinate.longitude forKey:@"originalCoordinate.longitude"];
+    [coder encodeDouble:self.originalCoordinate.latitude forKey:@"originalCoordinate.latitude"];
+    [coder encodeDouble:self.originalCoordinate.longitude forKey:@"originalCoordinate.longitude"];
 }
 
 - (id)initWithCoder:(NSCoder *)decoder
@@ -89,11 +80,16 @@ enum {
         
         // create photo from asset url
         NSURL *assetURL = [decoder decodeObjectForKey:@"assetUrl"];
-        self.asset = [PhotoUpload assetForURL:assetURL];
+        if (assetURL) {
+            // this doesn't actually work, alas. We can't get an asset from an URL
+            // unless we still have the original assetmanager.
+            // TODO - the only way round this is to get the resized image and save it out
+            // to disk ourselves somewhere.
+            self.asset = [PhotoUpload assetForURL:assetURL];
+        }
         
         self.title = [decoder decodeObjectForKey:@"title"];
         self.tags = [decoder decodeObjectForKey:@"tags"];
-        self.state = [decoder decodeIntForKey:@"state"];
         self.privacy = [decoder decodeIntForKey:@"privacy"];
         self.flickrId = [decoder decodeObjectForKey:@"flickrId"];
         self.location = [decoder decodeObjectForKey:@"location"];
@@ -103,15 +99,16 @@ enum {
         CLLocationCoordinate2D aCoordinate;
         aCoordinate.latitude = [decoder decodeDoubleForKey:@"coordinate.latitude"];
         aCoordinate.longitude = [decoder decodeDoubleForKey:@"coordinate.longitude"];
-        coordinate = aCoordinate;
+        self.coordinate = aCoordinate;
         
         CLLocationCoordinate2D anOriginalCoordinate;
         anOriginalCoordinate.latitude = [decoder decodeDoubleForKey:@"originalCoordinate.latitude"];
         anOriginalCoordinate.longitude = [decoder decodeDoubleForKey:@"originalCoordinate.longitude"];
-        originalCoordinate = anOriginalCoordinate;
+        self.originalCoordinate = anOriginalCoordinate;
                 
         self.inProgress = NO;
-		self.progress = [NSNumber numberWithFloat:0.0f];
+		self.progress = @0.0f;
+        self.paused = YES;
     }
     return self;
 }
@@ -135,14 +132,8 @@ enum {
                           freeWhenDone:YES];  // YES means free malloc'ed buf that backs this when deallocated
 }
 
--(void)togglePause;
-{
-    // TODO - should probably actually _DO_ something.
-    self.inProgress = !self.inProgress;
-    
-}
-
 + (ALAsset *)assetForURL:(NSURL *)url {
+    DLog(@"restoring asset from url %@", url);
     __block ALAsset *result = nil;
     __block NSError *assetError = nil;
     dispatch_semaphore_t sema = dispatch_semaphore_create(0);
@@ -150,10 +141,10 @@ enum {
     ALAssetsLibrary *assetsLibrary = [[ALAssetsLibrary alloc] init];
     
     [assetsLibrary assetForURL:url resultBlock:^(ALAsset *asset) {
-        result = [asset retain];
+        result = asset;
         dispatch_semaphore_signal(sema);
     } failureBlock:^(NSError *error) {
-        assetError = [error retain];
+        assetError = error;
         dispatch_semaphore_signal(sema);
     }];
     
@@ -167,23 +158,10 @@ enum {
     }
     
     dispatch_release(sema);
-    [assetError release];
     
-    return [result autorelease];
+    return result;
 }
 
-- (void) dealloc
-{
-	[asset release];
-	[title release];
-	[tags release];
-    [progress release];
-    [flickrId release];
-    [location release];
-    [timestamp release];
-    [originalTimestamp release];
-    [super dealloc];
-}
 
 
 

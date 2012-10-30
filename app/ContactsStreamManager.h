@@ -7,12 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ObjectiveFlickr.h"
 #import "PhotoStreamManager.h"
 
 @interface ContactsStreamManager : PhotoStreamManager
-
-+(ContactsStreamManager *)sharedContactsStreamManager;
 
 @end
 

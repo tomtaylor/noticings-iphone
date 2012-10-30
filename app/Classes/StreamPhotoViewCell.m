@@ -8,55 +8,160 @@
 
 #import "StreamPhotoViewCell.h"
 #import <QuartzCore/QuartzCore.h>
+#import "NoticingsAppDelegate.h"
 
 @implementation StreamPhotoViewCell
-@synthesize photo;
 
-#define MAX_IMAGE_HEIGHT 360
+#define MAX_IMAGE_HEIGHT 320
 
 
--(void) populateFromPhoto:(StreamPhoto*)_photo;
+-(void) populateFromPhoto:(StreamPhoto*)setphoto;
 {
-    // drop shadow on the white photo background
-//    frameView.layer.shadowOffset = CGSizeMake(0,2);
-//    frameView.layer.shadowColor = [[UIColor blackColor] CGColor];
-//    frameView.layer.shadowRadius = 5.0f;
-//    frameView.layer.shadowOpacity = 0.6f;
-    self.contentView.backgroundColor = [UIColor colorWithWhite:0.6f alpha:1.0f];
-
-    self.photo = _photo;
-
-    titleView.text = photo.title;
-    usernameView.text = photo.ownername;
-
-    // gfx are for losers. I like unicode.
-    timeagoView.text = [@"⌚" stringByAppendingString:photo.ago];
-
-    hasLocationImage.hidden = !photo.hasLocation;
-
-    int vis = photo.visibility;
-    if (vis == StreamPhotoVisibilityPrivate) {
-        privacyImage.image = [UIImage imageNamed:@"visibility_red.png"];
-    } else if (vis == StreamPhotoVisibilityLimited) {
-        privacyImage.image = [UIImage imageNamed:@"visibility_yellow.png"];
-    } else if (vis == StreamPhotoVisibilityPublic) {
-        privacyImage.image = [UIImage imageNamed:@"visibility_green.png"];
+    //DLog(@"populateFromPhoto %@", setphoto);
+    if (self.photo == setphoto) {
+        return;
     }
     
-    // make landscape images aspect fill and crop to frame, so we get perfect margins.
-    // or actually, images that are close enough to landscape that we'd get ugly margins.
-    if ([photo imageHeightForWidth:320] <= MAX_IMAGE_HEIGHT * 1.0) {
-        photoView.contentMode = UIViewContentModeScaleAspectFill;
+    // need to watch for changes to photo object as updates come in.
+    if (self.photo != nil) {
+        [self.photo removeObserver:self forKeyPath:@"isfavorite"];
+        [self.photo removeObserver:self forKeyPath:@"comments"];
+        [self.photo removeObserver:self forKeyPath:@"needsFetch"];
+    }
+    self.photo = setphoto;
+    
+    [self updateView];
+    [self loadImages];
+
+    [self.photo addObserver:self forKeyPath:@"isfavorite" options:0 context:nil];
+    [self.photo addObserver:self forKeyPath:@"comments" options:0 context:nil];
+    [self.photo addObserver:self forKeyPath:@"needsFetch" options:0 context:nil];
+}
+
+-(void)loadImages;
+{
+    avatarView.image = [UIImage imageNamed:@"235-person"];
+    photoView.image = [UIImage imageNamed:@"photos"];
+    photoView.contentMode = UIViewContentModeCenter;
+
+    StreamPhoto *originalPhoto = self.photo;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSData * data = [[NSData alloc] initWithContentsOfURL:self.photo.imageURL];
+        UIImage * image = [[UIImage alloc] initWithData:data];
+        if (image != nil) {
+            dispatch_async( dispatch_get_main_queue(), ^{
+                if (self.photo == originalPhoto) {
+                    photoView.image = image;
+                    
+                    // make landscape images aspect fill and crop to frame, so we get perfect margins.
+                    // or actually, images that are close enough to landscape that we'd get ugly margins.
+                    if ([self.photo imageHeightForWidth:320] <= MAX_IMAGE_HEIGHT) {
+                        photoView.contentMode = UIViewContentModeScaleAspectFill;
+                    } else {
+                        photoView.contentMode = UIViewContentModeScaleAspectFit;
+                    }
+                }
+            });
+        }
+    });
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSData * data = [[NSData alloc] initWithContentsOfURL:self.photo.avatarURL];
+        UIImage * image = [[UIImage alloc] initWithData:data];
+        if (image != nil) {
+            dispatch_async( dispatch_get_main_queue(), ^{
+                if (self.photo == originalPhoto) {
+                    avatarView.image = image;
+                }
+            });
+        }
+    });
+
+}
+
+#define ICON_STEP 3
+
+
+-(void)updateView;
+{
+    titleView.text = self.photo.title;
+    usernameView.text = self.photo.ownername;
+    timeagoView.text = self.photo.ago;
+    
+    float left = privacyImage.frame.origin.x;
+    
+    if (self.photo.hasLocation) {
+        hasLocationImage.hidden = NO;
+        CGRect f = hasLocationImage.frame;
+        left -= f.size.width + ICON_STEP;
+        f.origin.x = left;
+        hasLocationImage.frame = f;
     } else {
-        photoView.contentMode = UIViewContentModeScaleAspectFit;
+        hasLocationImage.hidden = YES;
     }
     
+    if (self.photo.isfavorite.boolValue) {
+        isFavoriteImage.hidden = NO;
+        CGRect f = isFavoriteImage.frame;
+        left -= f.size.width + ICON_STEP;
+        f.origin.x = left;
+        isFavoriteImage.frame = f;
+    } else {
+        isFavoriteImage.hidden = YES;
+    }
+    
+    if (self.photo.comments.intValue > 0) {
+        hasCommentsImage.hidden = NO;
+        CGRect f = hasCommentsImage.frame;
+        left -= f.size.width + ICON_STEP;
+        f.origin.x = left;
+        hasCommentsImage.frame = f;
+    } else {
+        hasCommentsImage.hidden = YES;
+    }
+    
+    if (self.photo.needsFetch.boolValue) {
+        spinner.hidden = NO;
+        [spinner startAnimating];
+        CGRect f = spinner.frame;
+        left -= f.size.width + ICON_STEP;
+        f.origin.x = left;
+        spinner.frame = f;
+    } else {
+        spinner.hidden = YES;
+        [spinner stopAnimating];
+    }
+    
+    int vis = self.photo.visibility;
+    if (vis == StreamPhotoVisibilityPrivate) {
+        privacyImage.image = [UIImage imageNamed:@"visibility_red"];
+    } else if (vis == StreamPhotoVisibilityLimited) {
+        privacyImage.image = [UIImage imageNamed:@"visibility_yellow"];
+    } else if (vis == StreamPhotoVisibilityPublic) {
+        privacyImage.image = [UIImage imageNamed:@"visibility_green"];
+    }
+
     // all the views in the nib have the right affinity to edges and know how to scale
     // themselves, so we just have to resize the outer frame and re-lay them out.
     CGRect frame = self.frame;
-    frame.size.height = [StreamPhotoViewCell cellHeightForPhoto:photo];
+    frame.size.height = [StreamPhotoViewCell cellHeightForPhoto:self.photo];
     self.frame = frame;
+
+    [self setNeedsDisplay];
+}
+
+-(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    StreamPhoto *photo = object;
     
+    DLog(@"watched photo %@ changed (%@ %@ %@)", object, photo.isfavorite, photo.comments, photo.needsFetch);
+    if (object == self.photo) {
+        DLog(@"that's me!");
+        // KVO isn't main-thread
+        dispatch_async(dispatch_get_main_queue(),^{
+            [self updateView];
+        });
+    }
 }
 
 +(CGFloat)cellHeightForPhoto:(StreamPhoto*)photo;
@@ -68,62 +173,31 @@
     // to "aspect fill" for landscape images, so as long as we're within 1% here everything looks
     // fine.
     
-    CGFloat nativeCellHeight = 370; // copy from table cell nib if you change it.
-    CGFloat roomForControls = nativeCellHeight - 310; // image in nib is 310 high. Everything else in cell must therefore be..
+    CGFloat controls = 80;
 
     // ideal image height, limited to a maximum so images don't make cells bigger than the window.
     CGFloat wantedImageHeight = MIN( [photo imageHeightForWidth:320], MAX_IMAGE_HEIGHT);
     
-    return wantedImageHeight + roomForControls;
+    return wantedImageHeight + controls;
 }
 
-
--(void)loadImages;
-{
-    CacheManager *manager = [CacheManager sharedCacheManager];
-
-    UIImage *cached = [manager cachedImageForURL:photo.imageURL];
-    if (cached) {
-        photoView.image = cached;
-    } else {
-        photoView.image = nil; // TODO - loading spinner or something.
-        [manager fetchImageForURL:photo.imageURL andNotify:self];
-    }
-    
-    cached = [manager cachedImageForURL:photo.avatarURL];
-    if (cached) {
-        avatarView.image = cached;
-    } else {
-        avatarView.image = nil; // TODO - loading spinner or something.
-        [manager fetchImageForURL:photo.avatarURL andNotify:self];
-    }
-}
-
-
--(void) loadedImage:(UIImage*)image forURL:(NSURL*)url cached:(BOOL)cached;
-{
-    if ([url isEqual:self.photo.imageURL]) {
-        photoView.image = image;
-    }
-    if ([url isEqual:photo.avatarURL]) {
-        avatarView.image = image;
-    }
-}
-
-
--(void) gotLocation:(NSString*)location forPhoto:(StreamPhoto*)_photo;
+-(void) gotLocation:(NSString*)location forPhoto:(StreamPhoto*)photo;
 {
     // note that this cell can be re-used, so don't overwrite the wrong location.
-    if ([_photo.woeid isEqual:self.photo.woeid]) {
+    if ([photo.woeid isEqual:self.photo.woeid]) {
         //placeView.text = [@"⊙" stringByAppendingString:location];
     }
 }
 
 
-- (void)dealloc {
-    self.photo = nil;
-    [super dealloc];
+-(void)dealloc;
+{
+    if (self.photo != nil) {
+        [self.photo removeObserver:self forKeyPath:@"isfavorite"];
+        [self.photo removeObserver:self forKeyPath:@"comments"];
+        [self.photo removeObserver:self forKeyPath:@"needsFetch"];
+        self.photo = nil;
+    }
 }
-
 
 @end

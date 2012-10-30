@@ -10,10 +10,9 @@
 #import <AssetsLibrary/AssetsLibrary.h>
 
 @interface PhotoPreviewViewController : UIViewController {
-    IBOutlet UIImageView *imageView;
     UIBarButtonItem *nextButton;
 }
 
-@property (nonatomic, retain) IBOutlet UIImageView *imageView;
+@property (nonatomic, strong) IBOutlet UIImageView *imageView;
 
 @end

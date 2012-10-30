@@ -1,6 +1,6 @@
 // The MIT License
 // 
-// Copyright (c) 2010 Gwendal Roué
+// Copyright (c) 2012 Gwendal Roué
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,38 +27,29 @@
 /**
  The domain of a GRMustache-generated NSError
  
- @since v1.0.0
+ @since v1.0
  */
-extern NSString* const GRMustacheErrorDomain AVAILABLE_GRMUSTACHE_VERSION_1_0_AND_LATER;
-
-/**
- When a GRMustache-generated NSError has the code GRMustacheErrorCodeParseError,
- its userInfo dictionary contains the line where the parse error occurred, at
- the key GRMustacheErrorLine.
- 
- @since v1.0.0
- */
-extern NSString* const GRMustacheErrorLine AVAILABLE_GRMUSTACHE_VERSION_1_0_AND_LATER;
+extern NSString* const GRMustacheErrorDomain AVAILABLE_GRMUSTACHE_VERSION_3_0_AND_LATER;
 
 /**
  The codes of a GRMustache-generated NSError
  
- @since v1.0.0
+ @since v1.0
  */
 typedef enum {
-	/**
-	 The error code for parse errors.
-	 
-	 @since v1.0.0
-	 */
-	GRMustacheErrorCodeParseError,
-	
-	/**
-	 The error code for not found templates and partials.
-	 
-	 @since v1.0.0
-	 */
-	GRMustacheErrorCodeTemplateNotFound,
-} GRMustacheErrorCode AVAILABLE_GRMUSTACHE_VERSION_1_0_AND_LATER;
+    /**
+     The error code for parse errors.
+     
+     @since v1.0
+     */
+    GRMustacheErrorCodeParseError,
+    
+    /**
+     The error code for not found templates and partials.
+     
+     @since v1.0
+     */
+    GRMustacheErrorCodeTemplateNotFound,
+} GRMustacheErrorCode AVAILABLE_GRMUSTACHE_VERSION_3_0_AND_LATER;
 
 

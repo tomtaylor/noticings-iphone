@@ -3,26 +3,23 @@
 //  Noticings
 //
 //  Created by Tom Insam on 30/09/2011.
-//  Copyright (c) 2011 Strange Tractor Limited. All rights reserved.
+//  Copyright (c) 2011 Tom Insam.
 //
 
 #import "PhotoLocationManager.h"
+#import "NoticingsAppDelegate.h"
 
-#import "SynthesizeSingleton.h"
 #import "StreamPhoto.h"
 #import "CacheManager.h"
 #import "DeferredFlickrCallManager.h"
 
 @implementation PhotoLocationManager
-SYNTHESIZE_SINGLETON_FOR_CLASS(PhotoLocationManager);
-
-@synthesize queue, cache, locationRequests;
 
 - (id)init;
 {
     self = [super init];
     if (self) {
-        self.queue = [[[NSOperationQueue alloc] init] autorelease];
+        self.queue = [[NSOperationQueue alloc] init];
         self.queue.maxConcurrentOperationCount = 1;
         self.locationRequests = [NSMutableDictionary dictionary];
         
@@ -33,22 +30,22 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(PhotoLocationManager);
 
 -(NSMutableDictionary*)loadCachedLocations;
 {
-    NSString* filename = [[CacheManager sharedCacheManager] cachePathForFilename:@"locations.cache"];
+    NSString* filename = [[NoticingsAppDelegate delegate].cacheManager cachePathForFilename:@"locations.cache"];
     if (![[NSFileManager defaultManager] fileExistsAtPath:filename]) {
-        return [[[NSMutableDictionary alloc] initWithCapacity:100] autorelease];
+        return [[NSMutableDictionary alloc] initWithCapacity:100];
     }
-    return [[[NSMutableDictionary alloc] initWithContentsOfFile:filename] autorelease];
+    return [[NSMutableDictionary alloc] initWithContentsOfFile:filename];
 }
 
--(void)saveCachedLocations:(NSMutableDictionary*)_cache;
+-(void)saveCachedLocations:(NSMutableDictionary*)cache;
 {
-    NSString* filename = [[CacheManager sharedCacheManager] cachePathForFilename:@"locations.cache"];
-    [_cache writeToFile:filename atomically:YES];
+    NSString* filename = [[NoticingsAppDelegate delegate].cacheManager cachePathForFilename:@"locations.cache"];
+    [cache writeToFile:filename atomically:YES];
 }
 
 -(NSString*)cachedLocationForPhoto:(StreamPhoto*)photo;
 {
-    NSDictionary *cachedLocation = [self.cache objectForKey:photo.woeid];
+    NSDictionary *cachedLocation = (self.cache)[photo.woeid];
     if (cachedLocation) {
         NSString *name = [cachedLocation valueForKeyPath:@"name"];
         return name;
@@ -74,10 +71,10 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(PhotoLocationManager);
     BOOL alreadyQueued = YES;
 
     @synchronized(self) {
-        NSMutableArray* listeners = [self.locationRequests objectForKey:photo.woeid];
+        NSMutableArray* listeners = (self.locationRequests)[photo.woeid];
         if (!listeners) {
             listeners = [NSMutableArray arrayWithCapacity:1];
-            [self.locationRequests setObject:listeners forKey:photo.woeid];
+            (self.locationRequests)[photo.woeid] = listeners;
             alreadyQueued = NO;
         }
         if (delegate) {
@@ -92,10 +89,10 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(PhotoLocationManager);
         return;
     }
 
-    NSDictionary *args = [NSDictionary dictionaryWithObject:photo.woeid forKey:@"woe_id"];
+    NSDictionary *args = @{@"woe_id": photo.woeid};
     NSString *woeid = photo.woeid;
     
-    [[DeferredFlickrCallManager sharedDeferredFlickrCallManager]
+    [[NoticingsAppDelegate delegate].flickrCallManager
     callFlickrMethod:@"flickr.places.getInfo"
     asPost:NO
     withArgs:args
@@ -105,19 +102,19 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(PhotoLocationManager);
         NSString *name = [rsp valueForKeyPath:@"place.name"];
         if (!name) {
             // store a true value, at least.
-            name = @"";
+            name = @"Unknown location";
         }
+        NSString *first = [name componentsSeparatedByString:@","][0];
+        name = [NSString stringWithFormat:@"%@, %@", first, [rsp valueForKeyPath:@"place.country._content"]];
         NSLog(@"Got location name '%@' for woeid %@", name, woeid);
         NSTimeInterval now = [[NSDate date] timeIntervalSinceReferenceDate];
-        NSDictionary *cachedLocation = [NSDictionary dictionaryWithObjectsAndKeys:
-            name, @"name",
-            [NSString stringWithFormat:@"%d", now], @"date", // for potential cache invalidation later.
-            nil];
-        [self.cache setObject:cachedLocation forKey:photo.woeid];
+        NSDictionary *cachedLocation = @{@"name": name,
+            @"date": [NSString stringWithFormat:@"%f", now]};
+        (self.cache)[photo.woeid] = cachedLocation;
         [self saveCachedLocations:self.cache];
 
         @synchronized(self) {
-            NSMutableArray* listeners = [[[self.locationRequests objectForKey:woeid] retain] autorelease];
+            NSMutableArray* listeners = (self.locationRequests)[woeid];
             [self.locationRequests removeObjectForKey:woeid]; // remove _before_ we dispatch.
 
             if (listeners != nil && listeners.count > 0) {
@@ -143,10 +140,6 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(PhotoLocationManager);
 -(void)dealloc;
 {
     [self.queue cancelAllOperations];
-    self.queue = nil;
-    self.cache = nil;
-    self.locationRequests = nil;
-    [super dealloc];
 }
 
 @end

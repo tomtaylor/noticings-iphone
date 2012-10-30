@@ -1,6 +1,6 @@
 // The MIT License
 // 
-// Copyright (c) 2010 Gwendal Roué
+// Copyright (c) 2012 Gwendal Roué
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,35 +23,58 @@
 #import <Foundation/Foundation.h>
 #import "GRMustacheAvailabilityMacros.h"
 
+@class GRMustacheInvocation;
+@class GRMustacheTemplate;
 
 @interface GRMustacheSection: NSObject {
 @private
-	NSString *name;
-	NSString *baseTemplateString;
-    NSRange range;
-	BOOL inverted;
-	NSArray *elems;
+    GRMustacheInvocation *_invocation;
+    GRMustacheTemplate *_rootTemplate;
+    NSString *_templateString;
+    NSRange _range;
+    BOOL _inverted;
+    NSArray *_elems;
+    id _renderingContext;
 }
-@property (nonatomic, readonly) NSString *templateString AVAILABLE_GRMUSTACHE_VERSION_1_3_AND_LATER;
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+/// @name Accessing the current rendering context
+//////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- Renders a template with a context object.
+ Returns the current rendering context.
  
- @returns A string containing the rendered template
- @param object A context object used for interpreting Mustache tags
- 
- @since v1.3.0
+ @since v2.0
  */
-- (NSString *)renderObject:(id)object AVAILABLE_GRMUSTACHE_VERSION_1_3_AND_LATER;
+@property (nonatomic, readonly) id renderingContext AVAILABLE_GRMUSTACHE_VERSION_3_0_AND_LATER;
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+/// @name Accessing the literal inner content
+//////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- Renders a template with context objects.
+ Returns the literal inner content of the section, with unprocessed mustache `{{tags}}`.
  
- @returns A string containing the rendered template
- @param object, ... A comma-separated list of objects used for interpreting Mustache tags, ending with nil
- 
- @since v1.5.0
+ @since v2.0
  */
-- (NSString *)renderObjects:(id)object, ... AVAILABLE_GRMUSTACHE_VERSION_1_5_AND_LATER;
+@property (nonatomic, readonly) NSString *innerTemplateString AVAILABLE_GRMUSTACHE_VERSION_3_0_AND_LATER;
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+/// @name Rendering the inner content
+//////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ Renders the inner content of the receiver with the current context
+ 
+ @return A string containing the rendered inner content.
+ 
+ @since v2.0
+ */
+- (NSString *)render AVAILABLE_GRMUSTACHE_VERSION_3_0_AND_LATER;
 
 @end

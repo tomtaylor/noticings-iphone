@@ -13,6 +13,7 @@
 #import "CacheManager.h"
 #import <ImageIO/ImageIO.h>
 #import "StreamViewController.h"
+#import "CacheURLProtocol.h"
 
 #ifdef ADHOC
 #import "TestFlight.h"
@@ -21,158 +22,145 @@
 
 @implementation NoticingsAppDelegate
 
-@synthesize window;
-@synthesize tabBarController;
-@synthesize dummyViewController;
-@synthesize cameraController;
-@synthesize streamNavigationController;
+@dynamic managedObjectModel, managedObjectContext, persistentStoreCoordinator;
 
 BOOL gLogging = FALSE;
 
 #pragma mark -
 #pragma mark Application lifecycle
 
++(NoticingsAppDelegate*)delegate;
+{
+    return (NoticingsAppDelegate*)[UIApplication sharedApplication].delegate;
+}
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    #ifdef ADHOC
+#ifdef ADHOC
     [TestFlight takeOff:TESTFLIGHT_API_KEY];
-    #endif
+#endif
     
 	NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-	NSDictionary *defaults = [NSDictionary dictionaryWithObjectsAndKeys:
-                              @"", @"defaultTags",
-                              [NSNumber numberWithBool:NO], @"filterInstagram", 
-                              [NSNumber numberWithBool:NO], @"askedToFilterInstagram", 
-                              nil];
+	NSDictionary *defaults = @{@"defaultTags": @"",
+                              @"filterInstagram": @NO, 
+                              @"askedToFilterInstagram": @NO};
 	[userDefaults registerDefaults:defaults];
 	[userDefaults synchronize];
-	
-    //[[UploadQueueManager sharedUploadQueueManager] restoreQueuedUploads];
+
+    [NSURLProtocol registerClass:[CacheURLProtocol class]];
     
-	queueTab = [tabBarController.tabBar.items objectAtIndex:0];
-	int count = [[UploadQueueManager sharedUploadQueueManager].photoUploads count];
+    self.cacheManager = [[CacheManager alloc] init]; // first!
+    self.contactsStreamManager = [[ContactsStreamManager alloc] init];
+    self.uploadQueueManager = [[UploadQueueManager alloc] init];
+    self.flickrCallManager = [[DeferredFlickrCallManager alloc] init];
+	self.photoLocationManager = [[PhotoLocationManager alloc] init];
+    
+	self.queueTab = (self.tabBarController.tabBar.items)[0];
+	int count = self.uploadQueueManager.queue.operationCount;
 	
 	if (count > 0) {
-		queueTab.badgeValue = [NSString stringWithFormat:@"%u",	count];
+		self.queueTab.badgeValue = [NSString stringWithFormat:@"%u", count];
+        application.applicationIconBadgeNumber = count;
 	} else {
-		queueTab.badgeValue = 0;
+		self.queueTab.badgeValue = 0;
+        application.applicationIconBadgeNumber = 0;
 	}
     
-    
     [[NSNotificationCenter defaultCenter] addObserver:self 
-                                             selector:@selector(queueDidChange) 
+                                             selector:@selector(queueDidChange:)
                                                  name:@"queueCount" 
                                                object:nil];	
     
-    [[UploadQueueManager sharedUploadQueueManager] addObserver:self
-                                                    forKeyPath:@"inProgress"
-                                                       options:(NSKeyValueObservingOptionNew)
-                                                       context:NULL];
-    
-    [window addSubview:[tabBarController view]];
-	[window makeKeyAndVisible];
+    self.window.rootViewController = self.tabBarController;
+    [self.window addSubview:[self.tabBarController view]];
+	[self.window makeKeyAndVisible];
     
     DLog(@"Launch options: %@", launchOptions);
     
     // If there's no launch URL, then we haven't opened due to an auth callback.
     // If there is, we want to continue regardless, because we let the application:openURL: method below catch it.
     // We don't want to catch it here, because this is only called on launch, and won't call if the application is waking up after being backgrounded.
-    NSURL *launchURL = [launchOptions objectForKey:UIApplicationLaunchOptionsURLKey];
+    NSURL *launchURL = launchOptions[UIApplicationLaunchOptionsURLKey];
     if (!launchURL && ![self isAuthenticated]) {
         DLog(@"App is not authenticated, so popping sign in modal.");
-        
-        if (!authViewController) {
-            authViewController = [[FlickrAuthenticationViewController alloc] init];
-        }
-        
-        [authViewController displaySignIn];
-        [tabBarController presentModalViewController:authViewController animated:NO];
+        [self showSigninView];
     }
     
     return YES;
 }
 
-- (BOOL)application:(UIApplication *)application 
+-(void)showSigninView;
+{
+    if (self.tabBarController.modalViewController) {
+        [self.tabBarController dismissModalViewControllerAnimated:NO];
+    }
+
+    if (!self.authViewController) {
+        self.authViewController = [[FlickrAuthenticationViewController alloc] init];
+    }
+    
+    [self.authViewController displaySignIn];
+    [self.tabBarController presentModalViewController:self.authViewController animated:NO];
+}
+
+- (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url 
   sourceApplication:(NSString *)sourceApplication 
          annotation:(id)annotation
 {
     DLog(@"App launched with URL: %@", [url absoluteString]);
-    //[tabBarController dismissModalViewControllerAnimated:NO];
-    
-    if (tabBarController.modalViewController) {
-        [tabBarController dismissModalViewControllerAnimated:NO];
-    }
-    
-    if (!authViewController) {
-        authViewController = [[FlickrAuthenticationViewController alloc] init];
-    }
-    
-    [authViewController displaySpinner];
-    [authViewController finalizeAuthWithUrl:url];
-    [tabBarController presentModalViewController:authViewController animated:NO];
+    [self showSigninView];
+    [self.authViewController displaySpinner];
+    [self.authViewController finalizeAuthWithUrl:url];
     
     // when we return, make sure the feed is set.
-    [tabBarController setSelectedIndex:0];
+    [self.tabBarController setSelectedIndex:0];
     return YES;
 }
 
-- (void)queueDidChange {
-	int count = [[UploadQueueManager sharedUploadQueueManager].photoUploads count];
-	[UIApplication sharedApplication].applicationIconBadgeNumber = count;
-	
-	if (count > 0) {
-		queueTab.badgeValue = [NSString stringWithFormat:@"%u",	count];
+- (void)queueDidChange:(NSNotification*)notification {
+    NSNumber *size = notification.object;
+    if (![size isKindOfClass:NSNumber.class]) {
+        return;
+    }
+	[UIApplication sharedApplication].applicationIconBadgeNumber = size.intValue;
+	if (size.intValue > 0) {
+		self.queueTab.badgeValue = [NSString stringWithFormat:@"%u", size.intValue];
 	} else {
-		queueTab.badgeValue = nil;
+		self.queueTab.badgeValue = nil;
 	}
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath
-					  ofObject:(id)object
-                        change:(NSDictionary *)change
-                       context:(void *)context
-{
-	[UIApplication sharedApplication].networkActivityIndicatorVisible = [UploadQueueManager sharedUploadQueueManager].inProgress;
-}
-
-
 - (void)setDefaults {
-	NSDictionary *defaults = [NSDictionary dictionaryWithObjectsAndKeys:
-                                [NSNumber numberWithFloat:51.477811], @"lastKnownLatitude",
-                                [NSNumber numberWithFloat:-0.001475], @"lastKnownLongitude",
-                                [NSArray array], @"savedUploads",
-                                nil];
+	NSDictionary *defaults = @{@"lastKnownLatitude": @51.477811f,
+                                @"lastKnownLongitude": @-0.001475f,
+                                @"savedUploads": @[]};
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application;
 {
     // something caused us to be bakgrounded. incoming call, home button, etc.
-    [[CacheManager sharedCacheManager] flushMemoryCache];
-    [[ContactsStreamManager sharedContactsStreamManager] resetFlickrContext];
-    
-    [[UploadQueueManager sharedUploadQueueManager] saveQueuedUploads];
-	[UIApplication sharedApplication].applicationIconBadgeNumber = [[UploadQueueManager sharedUploadQueueManager].photoUploads count];
+    [[NoticingsAppDelegate delegate].contactsStreamManager resetFlickrContext];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application;
 {
-    // resume from background. Multitasking devices only.
-    [[ContactsStreamManager sharedContactsStreamManager] maybeRefresh]; // the viewcontroller listens to this
-    
-    UINavigationController *nav = (UINavigationController*)[self.tabBarController.viewControllers objectAtIndex:0];
-
-    // if we're looking at a list of photos, reload it, in case the user defaults have changed.
-    if (nav.visibleViewController.class == StreamViewController.class) {
-        [((StreamViewController*)nav.visibleViewController).tableView reloadData];
+    if ([self isAuthenticated]) {
+        // resume from background. Multitasking devices only.
+        [[NoticingsAppDelegate delegate].contactsStreamManager maybeRefresh]; // the viewcontroller listens to this
+        
+        // if we're looking at a list of photos, reload it, in case the user defaults have changed.
+        UINavigationController *nav = (UINavigationController*)(self.tabBarController.viewControllers)[0];
+        if (nav.visibleViewController.class == StreamViewController.class) {
+            [((StreamViewController*)nav.visibleViewController).tableView reloadData];
+        }
+        
+    } else {
+        [self showSigninView];
     }
-    
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
-	[[UploadQueueManager sharedUploadQueueManager] saveQueuedUploads];
-    
-	[UIApplication sharedApplication].applicationIconBadgeNumber = [[UploadQueueManager sharedUploadQueueManager].photoUploads count];
 }
 
 #pragma mark -
@@ -180,11 +168,10 @@ BOOL gLogging = FALSE;
 
 // this feels odd, but it's the easiest way of doing something when a tab is selected without having to hack the tabbar
 - (BOOL)tabBarController:(UITabBarController *)aTabBarController shouldSelectViewController:(UIViewController *)viewController {
-    if ([viewController isEqual:dummyViewController]) {
+    if ([viewController isEqual:self.dummyViewController]) {
         if (self.cameraController == nil) {
             CameraController *aCameraController = [[CameraController alloc] initWithBaseViewController:self.tabBarController];
             self.cameraController = aCameraController;
-            [aCameraController release];
         }
         
         if ([self.cameraController cameraIsAvailable]) {
@@ -192,7 +179,6 @@ BOOL gLogging = FALSE;
         } else {
             UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Camera Not Available" message:@"You can upload photos in your Camera Roll from the More tab." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [alertView show];
-            [alertView release];
         }
         return NO;
     }
@@ -201,19 +187,64 @@ BOOL gLogging = FALSE;
                
 - (BOOL)isAuthenticated
 {
-    return [[NSUserDefaults standardUserDefaults] objectForKey:@"authToken"] != nil;
+    return [[NSUserDefaults standardUserDefaults] objectForKey:@"oauth_token"] != nil;
 }
 
-#pragma mark -
-#pragma mark Memory management
 
-- (void)dealloc {
-    [authViewController release];
-	[tabBarController release];
-    [cameraController release];
-	[window release];
-	[super dealloc];
+#pragma mark Core Data
+
+// http://wiresareobsolete.com/wordpress/2009/12/adding-core-data-existing-iphone-projects/
+- (NSManagedObjectContext *) managedObjectContext {
+    if (managedObjectContext != nil) {
+        return managedObjectContext;
+    }
+    NSPersistentStoreCoordinator *coordinator = self.persistentStoreCoordinator;
+    if (coordinator != nil) {
+        managedObjectContext = [[NSManagedObjectContext alloc] init];
+        [managedObjectContext setPersistentStoreCoordinator: coordinator];
+    }
+    
+    return managedObjectContext;
 }
+
+- (NSManagedObjectModel *)managedObjectModel {
+    if (managedObjectModel != nil) {
+        return managedObjectModel;
+    }
+    managedObjectModel = [NSManagedObjectModel mergedModelFromBundles:nil];
+    
+    return managedObjectModel;
+}
+
+- (NSPersistentStoreCoordinator *)persistentStoreCoordinator {
+    if (persistentStoreCoordinator != nil) {
+        return persistentStoreCoordinator;
+    }
+    NSURL *storeUrl = [NSURL fileURLWithPath: [[self applicationDocumentsDirectory] stringByAppendingPathComponent: @"noticings.sqlite"]];
+    NSError *error = nil;
+    persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
+    if(![persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeUrl options:nil error:&error]) {
+        /*TODO Error for store creation should be handled in here*/
+    }
+    
+    return persistentStoreCoordinator;
+}
+
+- (NSString *)applicationDocumentsDirectory {
+    return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
+}
+
+-(void)savePersistentObjects;
+{
+    NSManagedObjectContext *context = [NoticingsAppDelegate delegate].managedObjectContext;
+    NSError *error = nil;
+    [context save:&error];
+    if (error) {
+        DLog(@"error saving: %@", error);
+        abort();
+    }
+}
+
 
 @end
 

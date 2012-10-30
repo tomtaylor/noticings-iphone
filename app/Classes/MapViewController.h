@@ -3,7 +3,7 @@
 //  Noticings
 //
 //  Created by Tom Insam on 22/09/2011.
-//  Copyright (c) 2011 Strange Tractor Limited. All rights reserved.
+//  Copyright (c) 2011 Tom Insam.
 //
 
 #import <UIKit/UIKit.h>
@@ -17,8 +17,8 @@
 
 -(void)displayPhoto:(StreamPhoto*)_photo inManager:(PhotoStreamManager*)manager;
 
-@property (retain) MKMapView *mapView;
-@property (retain) StreamPhoto *photo;
-@property (retain) PhotoStreamManager *streamManager;
+@property (strong) MKMapView *mapView;
+@property (strong) StreamPhoto *photo;
+@property (strong) PhotoStreamManager *streamManager;
 
 @end

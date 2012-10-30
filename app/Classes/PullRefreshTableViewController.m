@@ -40,9 +40,9 @@
 - (id)initWithStyle:(UITableViewStyle)style {
     self = [super initWithStyle:style];
     if (self != nil) {
-        textPull = [[NSString alloc] initWithString:@"Pull down to refresh..."];
-        textRelease = [[NSString alloc] initWithString:@"Release to refresh..."];
-        textLoading = [[NSString alloc] initWithString:@"Loading..."];
+        textPull = @"Pull down to refresh...";
+        textRelease = @"Release to refresh...";
+        textLoading = @"Loading...";
     }
     return self;
 }
@@ -61,7 +61,7 @@
     refreshLabel.font = [UIFont boldSystemFontOfSize:12.0];
     refreshLabel.textAlignment = UITextAlignmentCenter;
 
-    refreshArrow = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"arrow.png"]];
+    refreshArrow = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"arrow"]];
     refreshArrow.frame = CGRectMake((REFRESH_HEADER_HEIGHT - 27) / 2,
                                     (REFRESH_HEADER_HEIGHT - 44) / 2,
                                     27, 44);
@@ -154,15 +154,5 @@
     [self performSelector:@selector(stopLoading) withObject:nil afterDelay:2.0];
 }
 
-- (void)dealloc {
-    [refreshHeaderView release];
-    [refreshLabel release];
-    [refreshArrow release];
-    [refreshSpinner release];
-    [textPull release];
-    [textRelease release];
-    [textLoading release];
-    [super dealloc];
-}
 
 @end

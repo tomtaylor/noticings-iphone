@@ -3,24 +3,21 @@
 //  Noticings
 //
 //  Created by Tom Insam on 22/09/2011.
-//  Copyright (c) 2011 Strange Tractor Limited. All rights reserved.
+//  Copyright (c) 2011 Tom Insam.
 //
 
 #import "ImageViewController.h"
+#import "NoticingsAppDelegate.h"
 
 @implementation ImageViewController
 
 #define ZOOM_STEP 3
 
-@synthesize photo;
-@synthesize scrollView;
-@synthesize imageView;
-
--(id)initWithPhoto:(StreamPhoto*)_photo;
+-(id)initWithPhoto:(StreamPhoto*)photo;
 {
     self = [super initWithNibName:nil bundle:nil];
     if (self) {
-        self.photo = _photo;
+        self.photo = photo;
         self.hidesBottomBarWhenPushed = YES;
     }
     return self;
@@ -34,7 +31,7 @@
 -(void)viewDidLoad;
 {
     
-    self.scrollView = [[[UIScrollView alloc] initWithFrame:self.view.bounds] autorelease];
+    self.scrollView = [[UIScrollView alloc] initWithFrame:self.view.bounds];
     self.scrollView.backgroundColor = [UIColor blackColor];
     self.scrollView.minimumZoomScale = 1;
     self.scrollView.maximumZoomScale = 20;
@@ -45,7 +42,7 @@
     self.scrollView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     self.view.autoresizesSubviews = YES;
 
-    self.imageView = [[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 1024, 1024 * (480.0f/320))] autorelease];
+    self.imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 1024, 1024 * (480.0f/320))];
     self.imageView.contentMode = UIViewContentModeScaleAspectFit;
     [self.scrollView addSubview:self.imageView];
     self.scrollView.contentSize = self.imageView.frame.size;
@@ -57,16 +54,14 @@
     [twoFingerTap setNumberOfTouchesRequired:2];
     [self.scrollView addGestureRecognizer:doubleTap];
     [self.scrollView addGestureRecognizer:twoFingerTap];
-    [doubleTap release];
-    [twoFingerTap release];
-    
+
     [self.view addSubview:self.scrollView];
 }
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex == 0) {
-        [[UIApplication sharedApplication] openURL:photo.originalImageURL];
+        [[UIApplication sharedApplication] openURL:self.photo.originalImageURL];
     }
 }
 
@@ -90,34 +85,35 @@
     NSLog(@"%@ will appear", self.class);
     [super viewWillAppear:animated];
 
+    
     // Explicitly _don't_ load the original. Some of those are insane, and you're probably using
     // the wrong app if you care about them.
 
-    // look for the big image
-    UIImage *cached = [[CacheManager sharedCacheManager] cachedImageForURL:self.photo.bigImageURL];
-    if (cached) {
-        // we already have the big image. Show it, and we're done.
-        [self scaleAndShowImage:cached];
-        return;
-    }
+    __weak ImageViewController* _self = self;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSData * data = [[NSData alloc] initWithContentsOfURL:_self.photo.imageURL];
+        UIImage * image = [[UIImage alloc] initWithData:data];
+        if (image != nil) {
+            dispatch_async( dispatch_get_main_queue(), ^{
+                [_self scaleAndShowImage:image];
+            });
+        }
 
-    // WE don't have the big image. Load it.
-    [[CacheManager sharedCacheManager] fetchImageForURL:self.photo.bigImageURL andNotify:self];
+        data = [[NSData alloc] initWithContentsOfURL:_self.photo.bigImageURL];
+        image = [[UIImage alloc] initWithData:data];
+        if (image != nil) {
+            dispatch_async( dispatch_get_main_queue(), ^{
+                [_self scaleAndShowImage:image];
+            });
+        }
+    });
 
-
-    // try to load the normal as a fall-back
-    cached = [[CacheManager sharedCacheManager] cachedImageForURL:self.photo.imageURL];
-    if (cached) {
-        [self scaleAndShowImage:cached];
-    }
-    
     self.navigationController.navigationBar.barStyle = UIBarStyleBlackTranslucent;
 }
 
 -(void)viewWillDisappear:(BOOL)animated;
 {
     NSLog(@"%@ will disappear", self.class);
-    [[CacheManager sharedCacheManager] flushQueue];
     self.navigationController.navigationBar.barStyle = UIBarStyleDefault;
     [super viewWillDisappear:animated];
 }
@@ -189,10 +185,6 @@
 {
     NSLog(@"deallocing %@", self.class);
     self.scrollView.delegate = nil;
-    self.scrollView = nil;
-    self.imageView = nil;
-    self.photo = nil;
-    [super dealloc];
 }
 
 

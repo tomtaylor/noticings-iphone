@@ -3,21 +3,21 @@
 //  Noticings
 //
 //  Created by Tom Insam on 07/10/2011.
-//  Copyright (c) 2011 Strange Tractor Limited. All rights reserved.
+//  Copyright (c) 2011 Tom Insam.
 //
 
 #import "AddCommentViewController.h"
 
 #import"DeferredFlickrCallManager.h"
+#import "NoticingsAppDelegate.h"
 
 @implementation AddCommentViewController
-@synthesize photo, textView;
 
-- (id)initWithPhoto:(StreamPhoto*)_photo;
+- (id)initWithPhoto:(StreamPhoto*)photo;
 {
     self = [super initWithNibName:nil bundle:nil];
     if (self) {
-        self.photo = _photo;
+        self.photo = photo;
         self.title = @"Add comment";
     }
     return self;
@@ -28,11 +28,11 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.view.autoresizesSubviews = YES;
     
-    self.textView = [[[UITextView alloc] initWithFrame:self.view.bounds] autorelease];
+    self.textView = [[UITextView alloc] initWithFrame:self.view.bounds];
     self.textView.font = [UIFont systemFontOfSize:16];
     self.textView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-    self.view.autoresizesSubviews = YES;
     [self.view addSubview:self.textView];
 
     UIBarButtonItem *saveButton = [[UIBarButtonItem alloc] 
@@ -41,7 +41,6 @@
                                      action:@selector(saveComment)];
     
     self.navigationItem.rightBarButtonItem = saveButton;
-    [saveButton release];
 
 }
 
@@ -56,9 +55,9 @@
     NSLog(@"Saving comment on photo %@: %@", self.photo.flickrId, self.textView.text);
     
     NSString *method = @"flickr.photos.comments.addComment";
-    NSDictionary *args = [NSDictionary dictionaryWithObjectsAndKeys: self.photo.flickrId, @"photo_id", self.textView.text, @"comment_text", nil];
+    NSDictionary *args = @{@"photo_id": self.photo.flickrId, @"comment_text": self.textView.text};
 
-    [[DeferredFlickrCallManager sharedDeferredFlickrCallManager]
+    [[NoticingsAppDelegate delegate].flickrCallManager
     callFlickrMethod:method
     asPost:YES
     withArgs:args
@@ -67,7 +66,7 @@
         [self.navigationController popViewControllerAnimated:YES];
     }
     orFail:^(NSString *code, NSString *error){
-        NSLog(@"bugger.");
+        NSLog(@"There was a problem sending the comment there. Try again later.");
         // TODO - popup. Do something better for feedback.
         self.navigationItem.rightBarButtonItem.enabled = YES;
     }];
@@ -87,11 +86,5 @@
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
--(void)dealloc;
-{
-    self.photo = nil;
-    self.textView = nil;
-    [super dealloc];
-}
 
 @end

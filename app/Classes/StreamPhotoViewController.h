@@ -3,7 +3,7 @@
 //  Noticings
 //
 //  Created by Tom Insam on 30/09/2011.
-//  Copyright (c) 2011 Strange Tractor Limited. All rights reserved.
+//  Copyright (c) 2011 Tom Insam.
 //
 
 #import <UIKit/UIKit.h>
@@ -16,9 +16,7 @@
 #import <MessageUI/MessageUI.h>
 #import <MessageUI/MFMailComposeViewController.h>
 
-@interface StreamPhotoViewController : UIViewController <UIWebViewDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate, DeferredImageLoader, LocationDelegate> {
-    BOOL firstRender;
-    
+@interface StreamPhotoViewController : UIViewController <UIWebViewDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate, LocationDelegate> {
     int sendMailIndex;
     int sendTweetIndex;
     int saveRollIndex;
@@ -27,13 +25,13 @@
 -(id)initWithPhoto:(StreamPhoto*)photo streamManager:(PhotoStreamManager*)streamManager;
 -(void)updateHTML;
 
-@property (retain) UIWebView *webView;
+@property (strong) UIWebView *webView;
 
-@property (retain) StreamPhoto* photo;
-@property (retain) PhotoStreamManager *streamManager;
-@property (retain) NSString *photoLocation;
+@property (strong) StreamPhoto* photo;
+@property (strong) PhotoStreamManager *streamManager;
+@property (strong) NSString *photoLocation;
 
-@property (retain) NSArray *comments;
+@property (strong) NSArray *comments;
 @property (assign) BOOL commentsError;
 
 @end

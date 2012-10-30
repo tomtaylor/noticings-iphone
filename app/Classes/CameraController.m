@@ -19,25 +19,18 @@
 
 @implementation CameraController
 
-@synthesize locationManager;
-@synthesize currentLocation;
-@synthesize assetsLibrary;
-@synthesize baseViewController;
-
-- (id)initWithBaseViewController:(UIViewController *)_baseViewController {
+- (id)initWithBaseViewController:(UIViewController *)baseViewController {
     self = [super init];
     if (self) {
         CLLocationManager *aLocationManager = [[CLLocationManager alloc] init];
         aLocationManager.desiredAccuracy = kCLLocationAccuracyBest;
         aLocationManager.delegate = self;
         self.locationManager = aLocationManager;
-        [aLocationManager release];
         
         ALAssetsLibrary *anAssetsLibrary = [[ALAssetsLibrary alloc] init];
         self.assetsLibrary = anAssetsLibrary;
-        [anAssetsLibrary release];
         
-        self.baseViewController = _baseViewController;
+        self.baseViewController = baseViewController;
     }
     return self;
 }
@@ -70,59 +63,58 @@
     NSMutableDictionary *gps = [NSMutableDictionary dictionary];
 
     // GPS tag version
-    [gps setObject:@"2.2.0.0" forKey:(NSString *)kCGImagePropertyGPSVersion];
+    gps[(NSString *)kCGImagePropertyGPSVersion] = @"2.2.0.0";
     
     // Time and date must be provided as strings, not as an NSDate object
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     [formatter setDateFormat:@"HH:mm:ss.SSSSSS"];
     [formatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
-    [gps setObject:[formatter stringFromDate:self.currentLocation.timestamp] forKey:(NSString *)kCGImagePropertyGPSTimeStamp];
+    gps[(NSString *)kCGImagePropertyGPSTimeStamp] = [formatter stringFromDate:self.currentLocation.timestamp];
     [formatter setDateFormat:@"yyyy:MM:dd"];
-    [gps setObject:[formatter stringFromDate:self.currentLocation.timestamp] forKey:(NSString *)kCGImagePropertyGPSDateStamp];
-    [formatter release];
+    gps[(NSString *)kCGImagePropertyGPSDateStamp] = [formatter stringFromDate:self.currentLocation.timestamp];
     
     // Latitude
     CGFloat latitude = self.currentLocation.coordinate.latitude;
     if (latitude < 0) {
         latitude = -latitude;
-        [gps setObject:@"S" forKey:(NSString *)kCGImagePropertyGPSLatitudeRef];
+        gps[(NSString *)kCGImagePropertyGPSLatitudeRef] = @"S";
     } else {
-        [gps setObject:@"N" forKey:(NSString *)kCGImagePropertyGPSLatitudeRef];
+        gps[(NSString *)kCGImagePropertyGPSLatitudeRef] = @"N";
     }
-    [gps setObject:[NSNumber numberWithFloat:latitude] forKey:(NSString *)kCGImagePropertyGPSLatitude];
+    gps[(NSString *)kCGImagePropertyGPSLatitude] = @(latitude);
     
     // Longitude
     CGFloat longitude = self.currentLocation.coordinate.longitude;
     if (longitude < 0) {
         longitude = -longitude;
-        [gps setObject:@"W" forKey:(NSString *)kCGImagePropertyGPSLongitudeRef];
+        gps[(NSString *)kCGImagePropertyGPSLongitudeRef] = @"W";
     } else {
-        [gps setObject:@"E" forKey:(NSString *)kCGImagePropertyGPSLongitudeRef];
+        gps[(NSString *)kCGImagePropertyGPSLongitudeRef] = @"E";
     }
-    [gps setObject:[NSNumber numberWithFloat:longitude] forKey:(NSString *)kCGImagePropertyGPSLongitude];
+    gps[(NSString *)kCGImagePropertyGPSLongitude] = @(longitude);
     
     // Altitude
     CGFloat altitude = self.currentLocation.altitude;
     if (!isnan(altitude)) {
         if (altitude < 0) {
             altitude = -altitude;
-            [gps setObject:@"1" forKey:(NSString *)kCGImagePropertyGPSAltitudeRef];
+            gps[(NSString *)kCGImagePropertyGPSAltitudeRef] = @"1";
         } else {
-            [gps setObject:@"0" forKey:(NSString *)kCGImagePropertyGPSAltitudeRef];
+            gps[(NSString *)kCGImagePropertyGPSAltitudeRef] = @"0";
         }
-        [gps setObject:[NSNumber numberWithFloat:altitude] forKey:(NSString *)kCGImagePropertyGPSAltitude];
+        gps[(NSString *)kCGImagePropertyGPSAltitude] = @(altitude);
     }
     
     // Speed, must be converted from m/s to km/h
     if (self.currentLocation.speed >= 0) {
-        [gps setObject:@"K" forKey:(NSString *)kCGImagePropertyGPSSpeedRef];
-        [gps setObject:[NSNumber numberWithFloat:self.currentLocation.speed*3.6] forKey:(NSString *)kCGImagePropertyGPSSpeed];
+        gps[(NSString *)kCGImagePropertyGPSSpeedRef] = @"K";
+        gps[(NSString *)kCGImagePropertyGPSSpeed] = [NSNumber numberWithFloat:3.6f * self.currentLocation.speed];
     }
     
     // Heading
     if (self.currentLocation.course >= 0) {
-        [gps setObject:@"T" forKey:(NSString *)kCGImagePropertyGPSTrackRef];
-        [gps setObject:[NSNumber numberWithFloat:self.currentLocation.course] forKey:(NSString *)kCGImagePropertyGPSTrack];
+        gps[(NSString *)kCGImagePropertyGPSTrackRef] = @"T";
+        gps[(NSString *)kCGImagePropertyGPSTrack] = [NSNumber numberWithFloat:self.currentLocation.course];
     }
     return gps;
 }
@@ -135,7 +127,7 @@
         [self imagePickerController:picker didFinishTakingPhotoWithInfo:info];
     } else {
         [self.baseViewController dismissModalViewControllerAnimated:NO];
-        NSURL *assetUrl = [info objectForKey:UIImagePickerControllerReferenceURL];
+        NSURL *assetUrl = info[UIImagePickerControllerReferenceURL];
         DLog(@"Reading asset with URL: %@", assetUrl);
         [self.assetsLibrary assetForURL:assetUrl 
                        resultBlock:^(ALAsset *asset) {
@@ -143,14 +135,11 @@
                            PhotoUpload *photoUpload = [[PhotoUpload alloc] initWithAsset:asset];
                            PhotoDetailViewController *photoDetailViewController = [[PhotoDetailViewController alloc] initWithStyle:UITableViewStyleGrouped];
                            photoDetailViewController.photoUpload = photoUpload;
-                           [photoUpload release];
                            
                            UINavigationController *detailNavigationController = [[UINavigationController alloc] initWithRootViewController:photoDetailViewController];
-                           [photoDetailViewController release];
                            
                            [self.baseViewController dismissModalViewControllerAnimated:NO];
                            [self.baseViewController.navigationController presentModalViewController:detailNavigationController animated:NO];
-                           [detailNavigationController release];
                        }
                       failureBlock:^(NSError *error) {
                           DLog(@"Failed to get Asset by URL: %@", error);
@@ -165,8 +154,8 @@
     
     DLog(@"metadata: %@", info);
     
-    UIImage *originalImage = [info objectForKey:UIImagePickerControllerOriginalImage];
-    NSDictionary *metadata = [info objectForKey:UIImagePickerControllerMediaMetadata];
+    UIImage *originalImage = info[UIImagePickerControllerOriginalImage];
+    NSDictionary *metadata = info[UIImagePickerControllerMediaMetadata];
     
     // GPS isn't recorded unless we do it manually
     NSDictionary *gpsMetadata = [self gpsDictionaryForCurrentLocation];
@@ -175,32 +164,28 @@
         [metadata setValue:gpsMetadata forKey:(NSString *)kCGImagePropertyGPSDictionary];
     }
     
-    CGImageRef cgImage = [originalImage CGImage];
-    CGImageRef resizedImage = [self resizedImage:cgImage withWidth:1200.0f AndHeight:1200.0f];
+    UIImage *resizedImage = [self resizedImage:originalImage withWidth:1200.0f AndHeight:1200.0f];
     
     [self.assetsLibrary 
-     writeImageToSavedPhotosAlbum:resizedImage
+     writeImageToSavedPhotosAlbum:resizedImage.CGImage
      metadata:metadata 
      completionBlock:^(NSURL *assetURL, NSError *error) {
          if (error) {
              DLog(@"Failed to write Asset: %@", error);
          } else {
              DLog(@"Asset written to URL: %@", assetURL);
-             [assetsLibrary 
+             [self.assetsLibrary
               assetForURL:assetURL 
               resultBlock:^(ALAsset *asset) {
                   DLog(@"Asset read from URL: %@", assetURL);
                   PhotoUpload *photoUpload = [[PhotoUpload alloc] initWithAsset:asset];
                   PhotoDetailViewController *photoDetailViewController = [[PhotoDetailViewController alloc] initWithStyle:UITableViewStyleGrouped];
                   photoDetailViewController.photoUpload = photoUpload;
-                  [photoUpload release];
                   
                   UINavigationController *detailNavigationController = [[UINavigationController alloc] initWithRootViewController:photoDetailViewController];
-                  [photoDetailViewController release];
                   
                   [self.baseViewController dismissModalViewControllerAnimated:NO];
                   [self.baseViewController presentModalViewController:detailNavigationController animated:NO];
-                  [detailNavigationController release];
               }
               failureBlock:^(NSError *error) {
                   DLog(@"Failed to get Asset by URL: %@", error);
@@ -212,7 +197,7 @@
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
-    [locationManager stopUpdatingLocation];
+    [self.locationManager stopUpdatingLocation];
     [picker dismissModalViewControllerAnimated:YES];
 }
 
@@ -225,7 +210,6 @@
     imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
     [self.baseViewController presentModalViewController:imagePickerController 
                                              animated:YES];
-    [imagePickerController release];
 }
 
 - (void)presentImagePicker
@@ -236,15 +220,15 @@
     imagePickerController.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
     [self.baseViewController presentModalViewController:imagePickerController 
                                                animated:YES];
-    [imagePickerController release];
 }
 
-- (CGImageRef)resizedImage:(CGImageRef)sourceImage withWidth:(CGFloat)maxWidth AndHeight:(CGFloat)maxHeight {
+- (UIImage *)resizedImage:(UIImage *)sourceImage withWidth:(CGFloat)maxWidth AndHeight:(CGFloat)maxHeight {
 	CGFloat targetWidth;
 	CGFloat targetHeight;
 	
-	CGFloat width = CGImageGetWidth(sourceImage);
-	CGFloat height = CGImageGetHeight(sourceImage);
+    CGImageRef sourceRef = sourceImage.CGImage;
+	CGFloat width = CGImageGetWidth(sourceRef);
+	CGFloat height = CGImageGetHeight(sourceRef);
 	
 	if ((width == maxWidth && height <= maxHeight) || (width <= maxWidth && height == maxHeight)){
 		// the source image already has the exact target size (one dimension is equal and one is less)
@@ -263,14 +247,14 @@
 		}
 	}
 	
-	CGBitmapInfo bitmapInfo = CGImageGetBitmapInfo(sourceImage);
-	CGColorSpaceRef colorSpaceInfo = CGImageGetColorSpace(sourceImage);
+	CGBitmapInfo bitmapInfo = CGImageGetBitmapInfo(sourceRef);
+	CGColorSpaceRef colorSpaceInfo = CGImageGetColorSpace(sourceRef);
 	
 	if (bitmapInfo == kCGImageAlphaNone) {
 		bitmapInfo = kCGImageAlphaNoneSkipLast;
 	}
 	
-	size_t bitesPerComponent = CGImageGetBitsPerComponent(sourceImage);
+	size_t bitesPerComponent = CGImageGetBitsPerComponent(sourceRef);
 	// To know the "bitesPerRow", we multiply the number of bits of a component per pixel (a component = Green for instance), 4 (RGB + alpha) and the row length (targetWidth)
 	size_t bitesPerRow = bitesPerComponent * 4 * targetWidth;
 	
@@ -278,17 +262,14 @@
 	CGContextRef bitmap;
     bitmap = CGBitmapContextCreate(NULL, targetWidth, targetHeight, bitesPerComponent, bitesPerRow, colorSpaceInfo, bitmapInfo);
 
-	CGContextDrawImage(bitmap, CGRectMake(0, 0, targetWidth, targetHeight), sourceImage);
+	CGContextDrawImage(bitmap, CGRectMake(0, 0, targetWidth, targetHeight), sourceRef);
 	CGImageRef resizedImage = CGBitmapContextCreateImage(bitmap);
 	CGContextRelease(bitmap);
     
-    // return an autoreleased CGImage
-    if (resizedImage) {
-        resizedImage = (CGImageRef)[[(id)resizedImage retain] autorelease];
-        CGImageRelease(resizedImage);
-    }
+    UIImage *resized = [UIImage imageWithCGImage:resizedImage];
+    CGImageRelease(resizedImage);
     
-	return resizedImage; 
+	return resized;
 }
 
 - (BOOL)cameraIsAvailable
@@ -297,15 +278,10 @@
 }
 
 - (void)dealloc {
-    if (locationManager) {
-        locationManager.delegate = nil;
-        [locationManager stopUpdatingLocation];
+    if (self.locationManager) {
+        self.locationManager.delegate = nil;
+        [self.locationManager stopUpdatingLocation];
     }
-    [locationManager release];
-    [assetsLibrary release];
-    [baseViewController release];
-    [currentLocation release];
-    [super dealloc];
 }
 
 @end

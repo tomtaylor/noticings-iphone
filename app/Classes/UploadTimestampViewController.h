@@ -9,13 +9,10 @@
 #import <UIKit/UIKit.h>
 #import "PhotoUpload.h"
 
-@interface UploadTimestampViewController : UIViewController {
-	PhotoUpload *photoUpload;
-	IBOutlet UIDatePicker *datePicker;
-}
+@interface UploadTimestampViewController : UIViewController
 
-@property (nonatomic, retain) PhotoUpload *photoUpload;
-@property (nonatomic, retain) IBOutlet UIDatePicker *datePicker;
+@property (nonatomic, strong) PhotoUpload *photoUpload;
+@property (nonatomic, strong) IBOutlet UIDatePicker *datePicker;
 
 - (IBAction)datePickerChanged;
 

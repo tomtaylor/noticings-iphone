@@ -13,24 +13,25 @@
 
 #define PADDING_SIZE 4.0f
 
-@interface StreamPhotoViewCell : UITableViewCell <DeferredImageLoader, LocationDelegate> {
+@interface StreamPhotoViewCell : UITableViewCell <LocationDelegate> {
     
     IBOutlet UIImageView *avatarView;
     IBOutlet UIImageView *photoView;
     IBOutlet UIImageView *hasLocationImage;
+    IBOutlet UIImageView *hasCommentsImage;
+    IBOutlet UIImageView *isFavoriteImage;
     IBOutlet UIImageView *privacyImage;
     IBOutlet UILabel *usernameView;
     IBOutlet UILabel *timeagoView;
     IBOutlet UILabel *titleView;
-
     IBOutlet UIView *frameView;
+    IBOutlet UIActivityIndicatorView *spinner;
 }
 
 +(CGFloat)cellHeightForPhoto:(StreamPhoto*)photo;
 
 -(void) populateFromPhoto:(StreamPhoto*)photo;
--(void)loadImages;
 
-@property (retain) StreamPhoto *photo;
+@property (strong) StreamPhoto *photo;
 
 @end

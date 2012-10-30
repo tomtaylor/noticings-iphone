@@ -3,21 +3,15 @@
 //  Noticings
 //
 //  Created by Tom Insam on 22/09/2011.
-//  Copyright (c) 2011 Strange Tractor Limited. All rights reserved.
+//  Copyright (c) 2011 Tom Insam.
 //
 
 #import "PhotoStreamManager.h"
 
-#import "SynthesizeSingleton.h"
-#import "ASIHTTPRequest.h"
 #import "APIKeys.h"
+#import "NoticingsAppDelegate.h"
 
 @implementation PhotoStreamManager
-
-@synthesize rawPhotos;
-@synthesize inProgress;
-@synthesize lastRefresh;
-@synthesize delegate;
 
 - (id)init;
 {
@@ -37,6 +31,11 @@
 // refresh, but only if we haven't refreshed recently.
 -(void)maybeRefresh;
 {
+    if (![[NoticingsAppDelegate delegate] isAuthenticated]) {
+        DLog(@"not authenticated - not reloading");
+        return;
+    }
+
     NSTimeInterval now = [[NSDate date] timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970;
     NSLog(@"it's been %f seconds since refresh", now - self.lastRefresh);
     if (now - self.lastRefresh < 60 * 10) {
@@ -54,17 +53,74 @@
         return;
     }
     
-    if (![self flickrRequest]) {
-        NSLog(@"No authenticated flickr connection - not refreshing.");
-        return;
-    }
-    
     self.inProgress = YES;
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     
     NSLog(@"Calling Flickr");
-    [self callFlickr];
+    [self callFlickrAnd:^(BOOL success, NSDictionary *rsp, NSError *error) {
+        self.inProgress = NO;
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+
+        if (!success) {
+            NSLog(@"failed flickr request! %@ %@", rsp, error);
+            [[[UIAlertView alloc] initWithTitle:@"Flickr API call failed"
+                                         message:@"There was a problem getting your contacts' photos from Flickr."
+                                        delegate:nil
+                               cancelButtonTitle:@"OK"
+                               otherButtonTitles:nil] show];
+            
+            // call newPhotos call _anyway_, to convince the view controller that we're finished.
+            [self.delegate performSelector:@selector(newPhotos)];
+            return;
+        }
+
+        [self.rawPhotos removeAllObjects];
+        for (NSDictionary *photo in [rsp valueForKeyPath:@"photos.photo"]) {
+            StreamPhoto *sp = [StreamPhoto photoWithDictionary:photo];
+            [self.rawPhotos addObject:sp];
+        }
+        [[NoticingsAppDelegate delegate] savePersistentObjects];
+        [self saveCachedImageList];
+        
+        self.lastRefresh = [[NSDate date] timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970;
+
+        NSLog(@"loaded %d photos", [self.rawPhotos count]);
+        if (self.delegate) {
+            [self.delegate performSelector:@selector(newPhotos)];
+        }
+        
+        // now update dirty photos
+        for (StreamPhoto *photo in self.rawPhotos) {
+            if ([photo.needsFetch boolValue]) {
+                if (self.photoInfoFetcher == nil) {
+                    self.photoInfoFetcher = [[NSOperationQueue alloc] init];
+                    self.photoInfoFetcher.maxConcurrentOperationCount = 1;
+                }
+                [self.photoInfoFetcher addOperationWithBlock:^{
+                    if ([photo.needsFetch boolValue]) {
+                        DLog(@"photo %@ needs metadata fetch", photo);
+                        NSError *error = nil;
+                        NSDictionary *rsp = [[NoticingsAppDelegate delegate].flickrCallManager
+                                             callSynchronousFlickrMethod:@"flickr.photos.getInfo"
+                                             asPost:NO
+                                             withArgs:@{@"photo_id":photo.flickrId}
+                                             error:&error];
+                        if (!error && [rsp objectForKey:@"photo"]) {
+                            [photo updateFromPhotoInfo:[rsp objectForKey:@"photo"]];
+                            // would be nicer to do this at the end? do we care?
+                            [[NoticingsAppDelegate delegate] savePersistentObjects];
+                            DLog(@"fetched and saved %@", photo);
+                            [[NSNotificationCenter defaultCenter] postNotificationName:PHOTO_CHANGED_NOTIFICATION object:photo];
+
+                        } else {
+                            DLog(@"problem fetching %@: %@", photo, error);
+                        }
+                    }
+                }];
+            }
+        }
+    }];
     
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
 }
 
 -(NSString*)lastRefreshDisplay;
@@ -78,52 +134,29 @@
     return [NSDateFormatter localizedStringFromDate:refresh dateStyle:dateStyle timeStyle:timeStyle];
 }
 
--(void)callFlickr;
+-(void)callFlickrAnd:(FlickrCallback)callback;
 {
     // override in subclass
     NSLog(@"can't use superclass PhotoStreamManager without implementing callFlickr!!");
     assert(FALSE);
 }
 
--(NSString*)extras;
+-(void)flickrInfoFor:(NSString*)flickrId callback:(FlickrCallback)callback;
 {
-    return @"date_upload,date_taken,owner_name,icon_server,geo,path_alias,description,url_m,url_o,tags,media";
+    NSDictionary *args = @{@"photo_id":flickrId};
+    [[NoticingsAppDelegate delegate].flickrCallManager callFlickrMethod:@"flickr.photos.getInfo"
+                                                                 asPost:NO
+                                                               withArgs:args
+                                                                andThen:callback];
 }
 
-// TODO - stolen from the uploader. refactor into base class?
-- (OFFlickrAPIRequest *)flickrRequest;
+-(NSString*)extras;
 {
-	if (!flickrRequest) {
-        NSString* token = [[NSUserDefaults standardUserDefaults] stringForKey:@"authToken"];
-        if (!token) {
-            return nil;
-        }
-        
-        NSLog(@"connecting to flickr with token %@", token);
-		OFFlickrAPIContext *apiContext = [[OFFlickrAPIContext alloc] initWithAPIKey:FLICKR_API_KEY
-                                                                       sharedSecret:FLICKR_API_SECRET];
-		[apiContext setAuthToken:[[NSUserDefaults standardUserDefaults] stringForKey:@"authToken"]];
-		flickrRequest = [[OFFlickrAPIRequest alloc] initWithAPIContext:apiContext];
-		flickrRequest.delegate = self;
-		flickrRequest.requestTimeoutInterval = 45;
-		[apiContext release];
-	}
-	
-	return flickrRequest;
+    return @"date_upload,date_taken,owner_name,icon_server,geo,path_alias,description,url_m,url_o,url_b,tags,media,last_update";
 }
 
 - (void)resetFlickrContext;
 {
-    NSLog(@"binning flickr request");
-    // called when the app wakes from sleep - invalidate the flickr request object,
-    // in case it is the old, unauthenticated version.
-    if (flickrRequest) {
-        [flickrRequest cancel]; // stop ongoing HTTP requests
-        flickrRequest.delegate = nil;
-        [flickrRequest release];
-    }
-    flickrRequest = nil;
-    
     self.inProgress = NO;
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 }
@@ -136,32 +169,33 @@
 // load the cached list of images fetched from flickr
 -(void)loadCachedImageList;
 {
-    if ([self cacheFilename].length == 0) {
+    if (![self cacheFilename] || [self cacheFilename].length == 0) {
+        DLog(@"this view has no cache");
         return;
     }
 
     // TODO - error handling? what if the cache is bad?
-    NSString* cache = [[CacheManager sharedCacheManager] cachePathForFilename:[self cacheFilename]];
+    NSString* cache = [[NoticingsAppDelegate delegate].cacheManager cachePathForFilename:[self cacheFilename]];
     if (![[NSFileManager defaultManager] fileExistsAtPath:cache]) {
+        DLog(@"No cache for image list at %@", cache);
         return; // no cache
     }
     NSLog(@"Loading cached image data from %@", cache);
     NSData *data = [[NSData alloc] initWithContentsOfFile:cache];
     NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
-    NSArray *archived = [[unarchiver decodeObjectForKey:@"photos"] retain];
-    NSNumber *archivedLastRefresh = [[unarchiver decodeObjectForKey:@"lastRefresh"] retain];
-    [unarchiver release];
-    [data release];
+    NSArray *archived = [unarchiver decodeObjectForKey:@"photoIds"];
+    NSNumber *archivedLastRefresh = [unarchiver decodeObjectForKey:@"lastRefresh"];
     
     // don't replace self.photos, alter, so we fire the watchers.
     [self.rawPhotos removeAllObjects];
-    for (StreamPhoto *photo in archived) {
-        [self.rawPhotos addObject:photo];
+    for (NSString *flickrId in archived) {
+        StreamPhoto *photo = [StreamPhoto photoWithFlickrId:flickrId];
+        if (photo != nil) {
+            [self.rawPhotos addObject:photo];
+        }
     }
-    [archived release];
 
     self.lastRefresh = [archivedLastRefresh doubleValue];
-    [archivedLastRefresh release];
 }
 
 // save the cached list of images fetched from flickr
@@ -171,35 +205,37 @@
         return;
     }
 
-    NSString* cache = [[CacheManager sharedCacheManager] cachePathForFilename:[self cacheFilename]];
+    NSString* cache = [[NoticingsAppDelegate delegate].cacheManager cachePathForFilename:[self cacheFilename]];
     NSLog(@"Saving cached image data to %@", cache);
+    // store just the Ids of the photos in this view
+    NSMutableArray *photoIds = [NSMutableArray arrayWithCapacity:self.rawPhotos.count];
+    for (StreamPhoto *photo in self.rawPhotos) {
+        [photoIds addObject:photo.flickrId];
+    }
     NSMutableData *data = [NSMutableData new];
     NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data];
-    [archiver encodeObject:self.rawPhotos forKey:@"photos"];
-    [archiver encodeObject:[NSNumber numberWithDouble:self.lastRefresh] forKey:@"lastRefresh"];
+    [archiver encodeObject:photoIds forKey:@"photoIds"];
+    [archiver encodeObject:@(self.lastRefresh) forKey:@"lastRefresh"];
     [archiver finishEncoding];
     [data writeToFile:cache atomically:YES];
-    [archiver release];
-    [data release];
 }
 
 -(void)precache;
 {
     NSLog(@"pre-caching images for %@", self.class);
     
+    __weak PhotoStreamManager* _self = self;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
 
         // pre-cache images
-        CacheManager *cacheManager = [CacheManager sharedCacheManager];
         //PhotoLocationManager *locationManager = [PhotoLocationManager sharedPhotoLocationManager];
         
-        for (StreamPhoto *sp in self.filteredPhotos) {
-            if (![cacheManager cachedImageForURL:sp.avatarURL]) {
-                [cacheManager fetchImageForURL:sp.avatarURL andNotify:nil];
-            }
-            if (![cacheManager cachedImageForURL:sp.imageURL]) {
-                [cacheManager fetchImageForURL:sp.imageURL andNotify:nil];
-            }
+        for (StreamPhoto *sp in _self.filteredPhotos) {
+            [NSData dataWithContentsOfURL:sp.avatarURL];
+            [NSData dataWithContentsOfURL:sp.imageURL];
+//            if (sp.hasLocation) {
+//                [NSData dataWithContentsOfURL:sp.mapImageURL];
+//            }
             //if (![locationManager cachedLocationForPhoto:sp]) {
             //    [locationManager getLocationForPhoto:sp andTell:nil];
             //}
@@ -213,61 +249,9 @@
     return [NSArray arrayWithArray:self.rawPhotos];
 }
 
-#pragma mark Flickr delegate methods
-
-
-- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didCompleteWithResponse:(NSDictionary *)inResponseDictionary
-{
-    NSLog(@"completed flickr request");
-    
-    [self.rawPhotos removeAllObjects];
-    for (NSDictionary *photo in [inResponseDictionary valueForKeyPath:@"photos.photo"]) {
-        StreamPhoto *sp = [[StreamPhoto alloc] initWithDictionary:photo];
-        [self.rawPhotos addObject:sp];
-        [sp release];
-    }
-    [self saveCachedImageList];
-    
-    self.lastRefresh = [[NSDate date] timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970;
-    self.inProgress = NO;
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-    
-
-    NSLog(@"loaded %d photos", [self.rawPhotos count]);
-    if (self.delegate) {
-        [self.delegate performSelector:@selector(newPhotos)];
-    }
-}
-
-- (void)flickrAPIRequest:(OFFlickrAPIRequest *)inRequest didFailWithError:(NSError *)inError
-{
-    NSLog(@"failed flickr request! %@", inError);
-    self.inProgress = NO;
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-    
-	[[[[UIAlertView alloc] initWithTitle:@"Flickr API call failed"
-                                 message:@"There was a problem getting your contacts' photos from Flickr."
-                                delegate:nil
-                       cancelButtonTitle:@"OK"
-                       otherButtonTitles:nil]
-      autorelease] show];
- 
-    // call newPhotos call _anyway_, to convince the view controller that we're finished.
-    [self.delegate performSelector:@selector(newPhotos)];
-}
-
-
-
-
 - (void)dealloc
 {
     NSLog(@"deallocing %@", self.class);
-    [flickrRequest cancel];
-    flickrRequest.delegate = nil;
-    [flickrRequest release];
-    self.delegate = nil;
-    self.rawPhotos = nil;
-    [super dealloc];
 }
 
 
