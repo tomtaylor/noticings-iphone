@@ -53,6 +53,12 @@ BOOL gLogging = FALSE;
     self.uploadQueueManager = [[UploadQueueManager alloc] init];
     self.flickrCallManager = [[DeferredFlickrCallManager alloc] init];
 	self.photoLocationManager = [[PhotoLocationManager alloc] init];
+    self.metadataFetcher = [[MetadataFetcher alloc] init];
+    
+    if ([self isAuthenticated]) {
+        // kick this off in case there are unfetched things we can clean up here.
+        [self.metadataFetcher fetchPhotos];
+    }
     
 	self.queueTab = (self.tabBarController.tabBar.items)[0];
 	int count = self.uploadQueueManager.queue.operationCount;
@@ -148,7 +154,10 @@ BOOL gLogging = FALSE;
     if ([self isAuthenticated]) {
         // resume from background. Multitasking devices only.
         [[NoticingsAppDelegate delegate].contactsStreamManager maybeRefresh]; // the viewcontroller listens to this
-        
+
+        // kick this off in case there are unfetched things we can clean up here.
+        [self.metadataFetcher fetchPhotos];
+
         // if we're looking at a list of photos, reload it, in case the user defaults have changed.
         UINavigationController *nav = (UINavigationController*)(self.tabBarController.viewControllers)[0];
         StreamViewController *svc = (StreamViewController*)nav.visibleViewController;

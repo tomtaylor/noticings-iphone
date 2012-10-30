@@ -14,7 +14,7 @@
 #import "ContactsStreamManager.h"
 #import "CacheManager.h"
 #import "UploadQueueManager.h"
-
+#import "MetadataFetcher.h"
 
 @interface NoticingsAppDelegate : NSObject <UIApplicationDelegate, UITabBarControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CLLocationManagerDelegate> {
     //core data
@@ -46,6 +46,8 @@
 @property (nonatomic, strong) UploadQueueManager *uploadQueueManager;
 @property (nonatomic, strong) DeferredFlickrCallManager *flickrCallManager;
 @property (nonatomic, strong) PhotoLocationManager *photoLocationManager;
+
+@property (nonatomic, strong) MetadataFetcher *metadataFetcher;
 
 + (NoticingsAppDelegate*)delegate;
 

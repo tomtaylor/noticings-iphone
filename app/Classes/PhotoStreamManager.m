@@ -90,35 +90,7 @@
         }
         
         // now update dirty photos
-        for (StreamPhoto *photo in self.rawPhotos) {
-            if ([photo.needsFetch boolValue]) {
-                if (self.photoInfoFetcher == nil) {
-                    self.photoInfoFetcher = [[NSOperationQueue alloc] init];
-                    self.photoInfoFetcher.maxConcurrentOperationCount = 1;
-                }
-                [self.photoInfoFetcher addOperationWithBlock:^{
-                    if ([photo.needsFetch boolValue]) {
-                        DLog(@"photo %@ needs metadata fetch", photo);
-                        NSError *error = nil;
-                        NSDictionary *rsp = [[NoticingsAppDelegate delegate].flickrCallManager
-                                             callSynchronousFlickrMethod:@"flickr.photos.getInfo"
-                                             asPost:NO
-                                             withArgs:@{@"photo_id":photo.flickrId}
-                                             error:&error];
-                        if (!error && [rsp objectForKey:@"photo"]) {
-                            [photo updateFromPhotoInfo:[rsp objectForKey:@"photo"]];
-                            // would be nicer to do this at the end? do we care?
-                            [[NoticingsAppDelegate delegate] savePersistentObjects];
-                            DLog(@"fetched and saved %@", photo);
-                            [[NSNotificationCenter defaultCenter] postNotificationName:PHOTO_CHANGED_NOTIFICATION object:photo];
-
-                        } else {
-                            DLog(@"problem fetching %@: %@", photo, error);
-                        }
-                    }
-                }];
-            }
-        }
+        [[NoticingsAppDelegate delegate].metadataFetcher fetchPhotos];
     }];
     
 }
