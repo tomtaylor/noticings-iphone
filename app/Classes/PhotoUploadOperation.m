@@ -39,16 +39,17 @@
     // TODO - delete the uploaded photo, so we don't leave dangling images?
 }
 
--(void)status:(float)progress;
+-(void)status:(float)progress message:(NSString*)message;
 {
     self.upload.progress = @(progress);
     self.upload.inProgress = YES;
+    self.upload.uploadStatus = message;
 }
 
 -(void)main;
 {
     // start us off
-    [self status:0];
+    [self status:0 message:@"Fetching image"];
     
     NSData *uploaddata = [self.upload imageData];
     if (!uploaddata) {
@@ -57,7 +58,7 @@
     }
     
     if ([self isCancelled]) return [self backout];
-    [self status:0.05];
+    [self status:0.05 message:@"Preparing upload"];
     
     NSString *uploadedTitleString;
     if (self.upload.title == nil || [self.upload.title isEqualToString:@""]) {
@@ -118,7 +119,7 @@
     [myreq setValue:length forHTTPHeaderField:@"Content-Length"];
 
     if ([self isCancelled]) return [self backout];
-    [self status:0.05];
+    [self status:0.05 message:@"Connecting to Flickr"];
     
     // make long-running request, blocking this thread, but sending status updates
     self.requestLock = [[NSCondition alloc] init];
@@ -143,7 +144,7 @@
         DLog(@"no data from response");
         return [self fail:nil];
     }
-    [self status:0.85];
+    [self status:0.9 message:@"Finalizing upload"];
     
     // response here is XML. Fuck.
     NSString *stringBody = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
@@ -163,7 +164,7 @@
     // set timestamp
 
     if ([self isCancelled]) return [self backout];
-    [self status:0.9];
+    [self status:0.05 message:@"Setting timestamp"];
 
     if (self.upload.timestamp != self.upload.originalTimestamp) {
         NSDateFormatter *outputFormatter = [[NSDateFormatter alloc] init];
@@ -186,7 +187,7 @@
     // set location
 
     if ([self isCancelled]) return [self backout];
-    [self status:0.95];
+    [self status:0.05 message:@"Setting location"];
     
     // if the coordinate differs from what was set in the asset, then we update the geodata manually
     if (self.upload.coordinate.latitude != self.upload.originalCoordinate.latitude ||
@@ -226,7 +227,7 @@
     }
     
     if ([self isCancelled]) return [self backout];
-    [self status:1];
+    [self status:1 message:nil];
     [self.manager uploadSucceeded:self.upload];
 }
 
@@ -238,7 +239,7 @@
 {
     DLog(@"SENT %d bytes of %d", totalBytesWritten, totalBytesExpectedToWrite);
     // we get to go up to 0.80
-    [self status:(0.80 * totalBytesWritten) / totalBytesExpectedToWrite];
+    [self status:((float)totalBytesWritten) / totalBytesExpectedToWrite message:nil];
 
     if ([self isCancelled]) {
         [connection cancel];

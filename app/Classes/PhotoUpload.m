@@ -33,6 +33,7 @@ enum {
         self.inProgress = FALSE;
         self.paused = FALSE;
 		self.progress = @0.0f;
+        self.uploadStatus = nil;
 
         self.privacy = PhotoUploadPrivacyPublic;
         self.location = [self.asset valueForProperty:ALAssetPropertyLocation];

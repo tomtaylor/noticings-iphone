@@ -24,6 +24,7 @@ enum {
 @property (nonatomic, strong) NSNumber *progress;
 @property (nonatomic) BOOL inProgress;
 @property (nonatomic) BOOL paused;
+@property (nonatomic) NSString* uploadStatus;
 @property (nonatomic) NSInteger privacy;
 @property (nonatomic, strong) NSString *flickrId;
 @property (nonatomic, strong) CLLocation *location;

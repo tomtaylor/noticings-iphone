@@ -20,6 +20,7 @@
     DLog(@"showing %@", upload);
     if (self.photoUpload) {
         [self.photoUpload removeObserver:self forKeyPath:@"inProgress"];
+        [self.photoUpload removeObserver:self forKeyPath:@"uploadStatus"];
         [self.photoUpload removeObserver:self forKeyPath:@"progress"];
         [self.photoUpload removeObserver:self forKeyPath:@"paused"];
     }
@@ -54,6 +55,10 @@
                            forKeyPath:@"progress"
                               options:(NSKeyValueObservingOptionNew)
                               context:NULL];
+        [self.photoUpload addObserver:self
+                           forKeyPath:@"uploadStatus"
+                              options:(NSKeyValueObservingOptionNew)
+                              context:NULL];
         
     } else {
         self.uploadImageView.image = nil;
@@ -64,17 +69,24 @@
 }
 
 - (void)updateDetailText {
-    if (self.photoUpload.paused) {
-        self.progressView.hidden = YES;
+    if (self.photoUpload.uploadStatus) {
+        self.otherTextLabel.text = self.photoUpload.uploadStatus;
         self.otherTextLabel.hidden = NO;
-        self.otherTextLabel.text = @"Paused";
-
+        self.progressView.progress = [self.photoUpload.progress floatValue];
+        self.progressView.hidden = YES;
+        
+    } else if (self.photoUpload.paused) {
+            self.otherTextLabel.text = @"Upload paused";
+            self.otherTextLabel.hidden = NO;
+            self.progressView.progress = [self.photoUpload.progress floatValue];
+            self.progressView.hidden = YES;
+            
     } else if (self.photoUpload.inProgress) {
         self.otherTextLabel.text = @"invisible!";
         self.otherTextLabel.hidden = YES;
         self.progressView.progress = [self.photoUpload.progress floatValue];
         self.progressView.hidden = NO;
-
+        
     } else {
         self.progressView.hidden = YES;
         self.otherTextLabel.hidden = NO;
@@ -96,6 +108,7 @@
 
 
 - (void)dealloc {
+    // do this to keep the watch removal in a single place
     [self displayPhotoUpload:nil];
 }
 
