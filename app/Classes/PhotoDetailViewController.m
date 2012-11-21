@@ -120,20 +120,18 @@
     }
 	
 	if (self.photoUpload.timestamp == nil) {
-		UploadTimestampViewController *timestampViewController = [[UploadTimestampViewController alloc] init];
-		timestampViewController.photoUpload = self.photoUpload;
-		[self.navigationController pushViewController:timestampViewController animated:YES];
-	} else {
-        [[NoticingsAppDelegate delegate].uploadQueueManager addPhotoUploadToQueue:self.photoUpload];
-        [[AppDelegate tabBarController] setSelectedIndex:0];
-        [self.navigationController dismissModalViewControllerAnimated:YES];
-        
-        // pop the photos view back to the main list, and scroll that to the top so we see the upload progress
-        UINavigationController *firstNavController = [[AppDelegate tabBarController] viewControllers][0];
-        [firstNavController popToRootViewControllerAnimated:NO];
-        StreamViewController *streamView = (StreamViewController*)(firstNavController.viewControllers)[0];
-        [streamView.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
-	}
+        self.photoUpload.timestamp = [NSDate date];
+    }
+
+    [[NoticingsAppDelegate delegate].uploadQueueManager addPhotoUploadToQueue:self.photoUpload];
+    [[AppDelegate tabBarController] setSelectedIndex:0];
+    [self.navigationController dismissModalViewControllerAnimated:YES];
+
+    // pop the photos view back to the main list, and scroll that to the top so we see the upload progress
+    UINavigationController *firstNavController = [[AppDelegate tabBarController] viewControllers][0];
+    [firstNavController popToRootViewControllerAnimated:NO];
+    StreamViewController *streamView = (StreamViewController*)(firstNavController.viewControllers)[0];
+    [streamView.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
 }
 
 - (void)cancel {
