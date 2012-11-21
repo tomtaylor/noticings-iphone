@@ -54,7 +54,7 @@
 	CGImageRef resizedImage = CGBitmapContextCreateImage(bitmap);
 	CGContextRelease(bitmap);
     
-    UIImage *resized = [UIImage imageWithCGImage:resizedImage];
+    UIImage *resized = [UIImage imageWithCGImage:resizedImage scale:1 orientation:self.imageOrientation];
     CGImageRelease(resizedImage);
     
 	return resized;
