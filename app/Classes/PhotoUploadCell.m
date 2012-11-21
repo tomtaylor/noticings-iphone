@@ -27,11 +27,7 @@
     self.photoUpload = upload;
     
     if (self.photoUpload) {
-        if (self.photoUpload.asset) {
-            self.uploadImageView.image = [UIImage imageWithCGImage:self.photoUpload.asset.thumbnail];
-        } else {
-            self.uploadImageView.image = [UIImage imageNamed:@"Icon"];
-        }
+        self.uploadImageView.image = self.photoUpload.thumbnail;
         
         if (self.photoUpload.title == nil || [self.photoUpload.title isEqualToString:@""]) {
             self.mainTextLabel.text = @"No title";

@@ -51,9 +51,7 @@
     // start us off
     [self status:0 message:@"Fetching image"];
     
-    CGImageRef im = self.upload.asset.defaultRepresentation.fullResolutionImage;
-    // fuck yeah toll-free bridging
-    NSData *uploaddata = (__bridge NSData*)CGDataProviderCopyData(CGImageGetDataProvider(im));
+    NSData *uploaddata = UIImageJPEGRepresentation(self.upload.image, 0.7);
 
     if (!uploaddata) {
         DLog(@"no image data for upload");

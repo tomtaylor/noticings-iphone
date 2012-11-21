@@ -7,6 +7,7 @@
 //
 
 #import "PhotoUpload.h"
+#import "UIImage+Resize.h"
 
 @implementation PhotoUpload
 
@@ -21,36 +22,38 @@ enum {
     return [NSString stringWithFormat:@"<%@ \"%@\" progress %@>", self.class, self.title, self.paused ? @"PAUSED" : self.progress];
 }
 
-- (id)initWithAsset:(ALAsset *)asset
+// TODO - not really happy moving UIImage objects around here. These images might be really big!
+
+-(id)initWithImage:(UIImage *)image location:(CLLocation*)location timestamp:(NSDate*)timestamp;
 {
-	self = [super init];
-	if (self != nil) {
-		self.asset = asset;
+    self = [super init];
+    if (self != nil) {
         self.inProgress = FALSE;
         self.paused = FALSE;
 		self.progress = @0.0f;
         self.uploadStatus = nil;
-
         self.privacy = PhotoUploadPrivacyPublic;
-        self.location = [self.asset valueForProperty:ALAssetPropertyLocation];
-        self.originalTimestamp = [self.asset valueForProperty:ALAssetPropertyDate];
-        self.timestamp = [self.asset valueForProperty:ALAssetPropertyDate];
-        DLog(@"Created PhotoUpload for Asset with location: %@ and timestamp: %@", self.location, self.timestamp);
-        		
-		if (self.location) {
+
+        self.image = image;
+        self.thumbnail = [image resizedImageWithWidth:128 AndHeight:128]; // TODO - use correct numbers. Also retina-aware
+        self.timestamp = timestamp;
+        self.originalTimestamp = timestamp;
+
+        self.location = location;
+        if (self.location != nil) {
 			self.originalCoordinate = self.location.coordinate;
 		} else {
 			self.originalCoordinate = kCLLocationCoordinate2DInvalid;
 		}
         self.coordinate = self.originalCoordinate;
-	}
-	return self;
+    }
+    return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder
 {
     [coder encodeInt:4 forKey:@"version"];
-    [coder encodeObject:self.asset.defaultRepresentation.url forKey:@"assetUrl"];
+    [coder encodeObject:self.image forKey:@"image"];
     [coder encodeObject:self.title forKey:@"title"];
     [coder encodeObject:self.tags forKey:@"tags"];
     [coder encodeInt:self.privacy forKey:@"privacy"];
@@ -58,10 +61,8 @@ enum {
     [coder encodeObject:self.location forKey:@"location"];
     [coder encodeObject:self.timestamp forKey:@"timestamp"];
     [coder encodeObject:self.originalTimestamp forKey:@"originalTimestamp"];
-    
     [coder encodeDouble:self.coordinate.latitude forKey:@"coordinate.latitude"];
     [coder encodeDouble:self.coordinate.longitude forKey:@"coordinate.longitude"];
-    
     [coder encodeDouble:self.originalCoordinate.latitude forKey:@"originalCoordinate.latitude"];
     [coder encodeDouble:self.originalCoordinate.longitude forKey:@"originalCoordinate.longitude"];
 }
@@ -76,15 +77,8 @@ enum {
         }
         
         // create photo from asset url
-        NSURL *assetURL = [decoder decodeObjectForKey:@"assetUrl"];
-        if (assetURL) {
-            // this doesn't actually work, alas. We can't get an asset from an URL
-            // unless we still have the original assetmanager.
-            // TODO - the only way round this is to get the resized image and save it out
-            // to disk ourselves somewhere.
-            self.asset = [PhotoUpload assetForURL:assetURL];
-        }
-        
+        // TODO images probably too big for this
+        self.image = [decoder decodeObjectForKey:@"image"];
         self.title = [decoder decodeObjectForKey:@"title"];
         self.tags = [decoder decodeObjectForKey:@"tags"];
         self.privacy = [decoder decodeIntForKey:@"privacy"];
@@ -109,38 +103,6 @@ enum {
     }
     return self;
 }
-
-+ (ALAsset *)assetForURL:(NSURL *)url {
-    DLog(@"restoring asset from url %@", url);
-    __block ALAsset *result = nil;
-    __block NSError *assetError = nil;
-    dispatch_semaphore_t sema = dispatch_semaphore_create(0);
-    
-    ALAssetsLibrary *assetsLibrary = [[ALAssetsLibrary alloc] init];
-    
-    [assetsLibrary assetForURL:url resultBlock:^(ALAsset *asset) {
-        result = asset;
-        dispatch_semaphore_signal(sema);
-    } failureBlock:^(NSError *error) {
-        assetError = error;
-        dispatch_semaphore_signal(sema);
-    }];
-    
-    if ([NSThread isMainThread]) {
-        while (!result && !assetError) {
-            [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
-        }
-    }
-    else {
-        dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
-    }
-    
-    dispatch_release(sema);
-    
-    return result;
-}
-
-
 
 
 @end

@@ -10,6 +10,7 @@
 #import "PhotoUpload.h"
 #import "PhotoDetailViewController.h"
 #import <ImageIO/ImageIO.h>
+#import "UIImage+Resize.h"
 
 @interface CameraController (Private)
 
@@ -127,12 +128,16 @@
         [self imagePickerController:picker didFinishTakingPhotoWithInfo:info];
     } else {
         [self.baseViewController dismissModalViewControllerAnimated:NO];
+        // use ALAssetLibrary so we can get the GPS information from the photo
         NSURL *assetUrl = info[UIImagePickerControllerReferenceURL];
         DLog(@"Reading asset with URL: %@", assetUrl);
         [self.assetsLibrary assetForURL:assetUrl 
                        resultBlock:^(ALAsset *asset) {
                            DLog(@"Loaded Asset: %@", asset);
-                           PhotoUpload *photoUpload = [[PhotoUpload alloc] initWithAsset:asset];
+                           UIImage *image = [[UIImage alloc] initWithCGImage:asset.defaultRepresentation.fullResolutionImage];
+                           CLLocation* location = [asset valueForProperty:ALAssetPropertyLocation];
+                           NSDate* timestamp = [asset valueForProperty:ALAssetPropertyDate];
+                           PhotoUpload *photoUpload = [[PhotoUpload alloc] initWithImage:image location:location timestamp:timestamp];
                            PhotoDetailViewController *photoDetailViewController = [[PhotoDetailViewController alloc] initWithPhotoUpload:photoUpload];
                            
                            UINavigationController *detailNavigationController = [[UINavigationController alloc] initWithRootViewController:photoDetailViewController];
@@ -160,37 +165,29 @@
     NSDictionary *gpsMetadata = [self gpsDictionaryForCurrentLocation];
     
     if (gpsMetadata) {
+        // TODO why does this work? not mutable?
         [metadata setValue:gpsMetadata forKey:(NSString *)kCGImagePropertyGPSDictionary];
     }
     
-    UIImage *resizedImage = [self resizedImage:originalImage withWidth:1200.0f AndHeight:1200.0f];
+    // TODO - resizing should be option
+    UIImage *resizedImage = [originalImage resizedImageWithWidth:1200 AndHeight:1200];
+
+    // save the image to camera roll (TODO make optional) but I really don't care beyond this point
+    [self.assetsLibrary writeImageToSavedPhotosAlbum:resizedImage.CGImage
+                                            metadata:metadata
+                                     completionBlock:nil];
     
-    [self.assetsLibrary 
-     writeImageToSavedPhotosAlbum:resizedImage.CGImage
-     metadata:metadata 
-     completionBlock:^(NSURL *assetURL, NSError *error) {
-         if (error) {
-             DLog(@"Failed to write Asset: %@", error);
-         } else {
-             DLog(@"Asset written to URL: %@", assetURL);
-             [self.assetsLibrary
-              assetForURL:assetURL 
-              resultBlock:^(ALAsset *asset) {
-                  DLog(@"Asset read from URL: %@", assetURL);
-                  PhotoUpload *photoUpload = [[PhotoUpload alloc] initWithAsset:asset];
-                  PhotoDetailViewController *photoDetailViewController = [[PhotoDetailViewController alloc] initWithPhotoUpload:photoUpload];
-                  
-                  UINavigationController *detailNavigationController = [[UINavigationController alloc] initWithRootViewController:photoDetailViewController];
-                  
-                  [self.baseViewController dismissModalViewControllerAnimated:NO];
-                  [self.baseViewController presentModalViewController:detailNavigationController animated:NO];
-              }
-              failureBlock:^(NSError *error) {
-                  DLog(@"Failed to get Asset by URL: %@", error);
-              }
-              ];
-         }
-     }];
+    PhotoUpload *photoUpload = [[PhotoUpload alloc] initWithImage:resizedImage
+                                                         location:self.currentLocation
+                                                        timestamp:[NSDate date]
+                                ];
+    PhotoDetailViewController *photoDetailViewController = [[PhotoDetailViewController alloc] initWithPhotoUpload:photoUpload];
+    
+    UINavigationController *detailNavigationController = [[UINavigationController alloc] initWithRootViewController:photoDetailViewController];
+    
+    [self.baseViewController dismissModalViewControllerAnimated:NO];
+    [self.baseViewController presentModalViewController:detailNavigationController animated:NO];
+
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
@@ -218,56 +215,6 @@
     imagePickerController.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
     [self.baseViewController presentModalViewController:imagePickerController 
                                                animated:YES];
-}
-
-- (UIImage *)resizedImage:(UIImage *)sourceImage withWidth:(CGFloat)maxWidth AndHeight:(CGFloat)maxHeight {
-	CGFloat targetWidth;
-	CGFloat targetHeight;
-	
-    CGImageRef sourceRef = sourceImage.CGImage;
-	CGFloat width = CGImageGetWidth(sourceRef);
-	CGFloat height = CGImageGetHeight(sourceRef);
-	
-	if ((width == maxWidth && height <= maxHeight) || (width <= maxWidth && height == maxHeight)){
-		// the source image already has the exact target size (one dimension is equal and one is less)
-		return sourceImage;
-	} else { // picture must be resized
-             // The biggest ratio (ratioWidth, ratioHeight) will tell us which side should be the max side
-		CGFloat ratioWidth = width / maxWidth;
-		CGFloat ratioHeight = height / maxHeight;
-		if (ratioWidth > ratioHeight) {
-			targetWidth = maxWidth;
-			targetHeight = height / ratioWidth;
-		}
-		else {
-			targetHeight = maxHeight;
-			targetWidth = width / ratioHeight;
-		}
-	}
-	
-	CGBitmapInfo bitmapInfo = CGImageGetBitmapInfo(sourceRef);
-	CGColorSpaceRef colorSpaceInfo = CGImageGetColorSpace(sourceRef);
-	
-	if (bitmapInfo == kCGImageAlphaNone) {
-		bitmapInfo = kCGImageAlphaNoneSkipLast;
-	}
-	
-	size_t bitesPerComponent = CGImageGetBitsPerComponent(sourceRef);
-	// To know the "bitesPerRow", we multiply the number of bits of a component per pixel (a component = Green for instance), 4 (RGB + alpha) and the row length (targetWidth)
-	size_t bitesPerRow = bitesPerComponent * 4 * targetWidth;
-	
-	
-	CGContextRef bitmap;
-    bitmap = CGBitmapContextCreate(NULL, targetWidth, targetHeight, bitesPerComponent, bitesPerRow, colorSpaceInfo, bitmapInfo);
-
-	CGContextDrawImage(bitmap, CGRectMake(0, 0, targetWidth, targetHeight), sourceRef);
-	CGImageRef resizedImage = CGBitmapContextCreateImage(bitmap);
-	CGContextRelease(bitmap);
-    
-    UIImage *resized = [UIImage imageWithCGImage:resizedImage];
-    CGImageRelease(resizedImage);
-    
-	return resized;
 }
 
 - (BOOL)cameraIsAvailable
