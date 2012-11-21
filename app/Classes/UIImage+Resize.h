@@ -11,5 +11,6 @@
 @interface UIImage (Resize)
 
 - (UIImage *)resizedImageWithWidth:(CGFloat)maxWidth AndHeight:(CGFloat)maxHeight;
+- (UIImage *)resizedSquareImageWithSize:(CGFloat)thumbSize;
 
 @end
