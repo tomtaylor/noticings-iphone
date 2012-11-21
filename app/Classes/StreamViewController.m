@@ -167,7 +167,7 @@
     [self showLoading];
     // if we're near the top, show the loading indicator.
     if (self.tableView.contentOffset.y < 200) {
-        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
     }
 }
 

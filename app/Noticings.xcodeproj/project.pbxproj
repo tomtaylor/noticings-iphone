@@ -734,14 +734,10 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Noticings_Prefix.pch;
-				HEADER_SEARCH_PATHS = (
-					../vendor/objectiveflickr/LFWebAPIKit,
-					../vendor/objectiveflickr/Source,
-				);
+				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "Noticings-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
@@ -751,7 +747,7 @@
 					"\"$(SDKROOT)/usr/lib/system\"",
 				);
 				OTHER_CFLAGS = "-DDEBUG";
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = Noticings;
 				SDKROOT = iphoneos;
 			};
@@ -765,10 +761,7 @@
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Noticings_Prefix.pch;
-				HEADER_SEARCH_PATHS = (
-					../vendor/objectiveflickr/LFWebAPIKit,
-					../vendor/objectiveflickr/Source,
-				);
+				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "Noticings-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
@@ -778,7 +771,7 @@
 					"\"$(SDKROOT)/usr/lib/system\"",
 				);
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = Noticings;
 				SDKROOT = iphoneos;
 			};
@@ -836,10 +829,7 @@
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Noticings_Prefix.pch;
-				HEADER_SEARCH_PATHS = (
-					../vendor/objectiveflickr/LFWebAPIKit,
-					../vendor/objectiveflickr/Source,
-				);
+				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "Noticings-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
@@ -848,8 +838,7 @@
 					"\"$(SRCROOT)/GRMustache\"",
 					"\"$(SDKROOT)/usr/lib/system\"",
 				);
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = Noticings;
 				SDKROOT = iphoneos;
 			};
