@@ -133,8 +133,7 @@
                        resultBlock:^(ALAsset *asset) {
                            DLog(@"Loaded Asset: %@", asset);
                            PhotoUpload *photoUpload = [[PhotoUpload alloc] initWithAsset:asset];
-                           PhotoDetailViewController *photoDetailViewController = [[PhotoDetailViewController alloc] initWithStyle:UITableViewStyleGrouped];
-                           photoDetailViewController.photoUpload = photoUpload;
+                           PhotoDetailViewController *photoDetailViewController = [[PhotoDetailViewController alloc] initWithPhotoUpload:photoUpload];
                            
                            UINavigationController *detailNavigationController = [[UINavigationController alloc] initWithRootViewController:photoDetailViewController];
                            
@@ -179,8 +178,7 @@
               resultBlock:^(ALAsset *asset) {
                   DLog(@"Asset read from URL: %@", assetURL);
                   PhotoUpload *photoUpload = [[PhotoUpload alloc] initWithAsset:asset];
-                  PhotoDetailViewController *photoDetailViewController = [[PhotoDetailViewController alloc] initWithStyle:UITableViewStyleGrouped];
-                  photoDetailViewController.photoUpload = photoUpload;
+                  PhotoDetailViewController *photoDetailViewController = [[PhotoDetailViewController alloc] initWithPhotoUpload:photoUpload];
                   
                   UINavigationController *detailNavigationController = [[UINavigationController alloc] initWithRootViewController:photoDetailViewController];
                   

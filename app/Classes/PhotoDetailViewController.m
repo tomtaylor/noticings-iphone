@@ -10,61 +10,21 @@
 #import "EditableTextFieldCell.h"
 #import "PhotoMapViewController.h"
 #import "UploadTimestampViewController.h"
+#import <MapKit/MapKit.h>
+#import "StreamViewController.h"
+#import "NoticingsAppDelegate.h"
 
 @implementation PhotoDetailViewController
 
-- (id)initWithStyle:(UITableViewStyle)style {
-    if (self = [super initWithStyle:style]) {
-		self.photoTitleCell = [[EditableTextFieldCell alloc] initWithStyle:UITableViewCellStyleDefault
-															 reuseIdentifier:nil];
-		self.photoTitleCell.textField.delegate = self;
-		self.photoTitleCell.textField.tag = PhotoTitle;
-		self.photoTitleCell.textField.returnKeyType = UIReturnKeyNext;
-		
-		self.photoTagsCell = [[EditableTextFieldCell alloc] initWithStyle:UITableViewCellStyleDefault 
-														reuseIdentifier:nil];
-		self.photoTagsCell.textField.delegate = self;
-		self.photoTagsCell.textField.tag = PhotoTags;
-		self.photoTagsCell.textField.returnKeyType = UIReturnKeyNext;
-		
-		self.photoTagsCell.textField.text = [[NSUserDefaults standardUserDefaults] stringForKey:@"defaultTags"];
-		self.photoTagsCell.textField.autocapitalizationType = UITextAutocapitalizationTypeNone;
-		self.photoTagsCell.textField.autocorrectionType = UITextAutocorrectionTypeNo;
-        
-        self.privacyView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 94.25)];
-        
-        UILabel *privacyLabel = [[UILabel alloc] initWithFrame:CGRectMake(19.0, 4.25, 320.0, 46.0)];
-        privacyLabel.backgroundColor = [UIColor clearColor];
-        privacyLabel.textColor = [UIColor colorWithRed:0.265 green:0.294 blue:0.367 alpha:1.0];
-        
-        privacyLabel.shadowColor = [UIColor whiteColor];
-        privacyLabel.shadowOffset = CGSizeMake(0, 1);
-        privacyLabel.font = [UIFont boldSystemFontOfSize:17.0];
-        privacyLabel.text = @"Privacy";
-        [self.privacyView addSubview:privacyLabel];
-        
-        UISegmentedControl *privacyControl = [[UISegmentedControl alloc] initWithItems:@[@"Private", @"F & F", @"Public"]];
-        privacyControl.frame = CGRectMake(10, 50.25, 300, self.privacyView.frame.size.height-50.25);
-        [privacyControl addTarget:self action:@selector(privacyChanged:) forControlEvents:UIControlEventValueChanged];
-        [privacyControl setSelectedSegmentIndex:2]; // default to being public
-        [self.privacyView addSubview:privacyControl];
+-(id)initWithPhotoUpload:(PhotoUpload*)upload;
+{
+    self = [super initWithNibName:@"PhotoDetailViewController" bundle:nil];
+    if (self != nil) {
+        self.photoUpload = upload;
         
     }
     return self;
 }
-
-- (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    // If the user just pressed 'next' on the keyboard from the title cell, then jump to showing the tags cell. Otherwise, close the keyboard.
-	if ([textField isEqual:self.photoTitleCell.textField]) {
-		[self.photoTagsCell.textField becomeFirstResponder];
-	} else {
-        [textField resignFirstResponder];
-        return NO;
-	}
-	return YES;
-}
-
-
 
 
 - (void)viewDidLoad {
@@ -72,8 +32,8 @@
 	
 	self.title = @"Details";
 	
-	UIBarButtonItem *nextButton = [[UIBarButtonItem alloc] 
-								   initWithTitle:@"Next" 
+	UIBarButtonItem *nextButton = [[UIBarButtonItem alloc]
+								   initWithTitle:@"Upload"
 								   style:UIBarButtonItemStylePlain
 								   target:self
 								   action:@selector(next)];
@@ -86,7 +46,14 @@
                                      target:self 
                                      action:@selector(cancel)];
     [[self navigationItem] setLeftBarButtonItem:cancelButton];
+
+
+    UITapGestureRecognizer* tapRec = [[UITapGestureRecognizer alloc]
+                                      initWithTarget:self action:@selector(didTapMap:)];
+    [self.mapView addGestureRecognizer:tapRec];
+
 }
+
 
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -96,15 +63,38 @@
 	[dateFormatter setTimeStyle:NSDateFormatterShortStyle];
 	[dateFormatter setDateStyle:NSDateFormatterNoStyle];
 	NSString *defaultTitle = [dateFormatter stringFromDate:[self.photoUpload timestamp]];
-	self.photoTitleCell.textField.placeholder = defaultTitle;
+	self.photoTitle.placeholder = defaultTitle;
+
+    [self.mapView removeAnnotations:self.mapView.annotations];
+	CLLocationCoordinate2D coordinate = self.photoUpload.coordinate;
+    if (CLLocationCoordinate2DIsValid(coordinate)) {
+        self.mapView.region = MKCoordinateRegionMakeWithDistance(coordinate, 1500, 1500);
+        [self.mapView addAnnotation:self.photoUpload];
+        self.mapView.alpha = 1;
+    } else {
+        self.mapView.region = MKCoordinateRegionForMapRect(MKMapRectWorld);
+        self.mapView.alpha = 0.3;
+    }
 }
 
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    // don't focus keyboard, or it hides the privacy toggles.
-    //[self.photoTitleCell.textField performSelector:@selector(becomeFirstResponder) withObject:nil afterDelay:0.5];
+    
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    [textField resignFirstResponder];
+    return NO;
+//    // If the user just pressed 'next' on the keyboard from the title cell, then jump to showing the tags cell. Otherwise, close the keyboard.
+//	if ([textField isEqual:self.photoTitle]) {
+//		[self.photoTags becomeFirstResponder];
+//	} else {
+//        [textField resignFirstResponder];
+//        return NO;
+//	}
+//	return YES;
 }
 
 - (void)viewDidUnload {
@@ -112,86 +102,21 @@
 	// e.g. self.myOutlet = nil;
 }
 
-#pragma mark Table datasource
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 2;
+- (IBAction)didTapMap:(id)sender;
+{
+    DLog(@"tapped map");
+    PhotoMapViewController *mapViewController = [[PhotoMapViewController alloc] init];
+    mapViewController.photoUpload = self.photoUpload;
+    [self.navigationController pushViewController:mapViewController animated:YES];
 }
-
-
-// Customize the number of rows in the table view.
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    switch (section) {
-        case TitleSection:
-            return 2;
-        case PrivacySection:
-            return 0;
-        default:
-            return 0;
-    }
-}
-
-
-// Customize the appearance of table view cells.
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-	
-    switch (indexPath.section) {
-		case TitleSection:
-            switch (indexPath.row) {
-                case 0:
-                    return self.photoTitleCell;
-                case 1:
-                    return self.photoTagsCell;
-            }
-		default:
-			return nil;
-	}
-}
-
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-	
-	switch (section) {
-		case TitleSection: return @"Title & Tags";
-        case PrivacySection: return @"Privacy";
-	}
-	return nil;
-}
-
-- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
-	switch (section) {
-		case TitleSection:
-			return @"You can change the default tags in the Settings app.";
-		default:
-			return nil;
-	}
-}
-
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    switch (section) {
-        case PrivacySection:
-            return self.privacyView;
-        default:
-            return nil;
-    }
-}
-
-- (float)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    switch (section) {
-        case PrivacySection:
-            return self.privacyView.frame.size.height;
-        default:
-            return 46.0;
-    }
-}
-
-#pragma mark Table View Delegate
 
 - (void)next {
-	self.photoUpload.title = [self.photoTitleCell.textField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-	self.photoUpload.tags = self.photoTagsCell.textField.text;
+	self.photoUpload.title = [self.photoTitle.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+	self.photoUpload.tags = self.photoTags.text;
     
     if (self.photoUpload.title.length == 0) {
-        self.photoUpload.title = self.photoTitleCell.textField.placeholder;
+        self.photoUpload.title = self.photoTitle.placeholder;
     }
 	
 	if (self.photoUpload.timestamp == nil) {
@@ -199,9 +124,15 @@
 		timestampViewController.photoUpload = self.photoUpload;
 		[self.navigationController pushViewController:timestampViewController animated:YES];
 	} else {
-		PhotoMapViewController *mapViewController = [[PhotoMapViewController alloc] init];
-		mapViewController.photoUpload = self.photoUpload;
-		[self.navigationController pushViewController:mapViewController animated:YES];
+        [[NoticingsAppDelegate delegate].uploadQueueManager addPhotoUploadToQueue:self.photoUpload];
+        [[AppDelegate tabBarController] setSelectedIndex:0];
+        [self.navigationController dismissModalViewControllerAnimated:YES];
+        
+        // pop the photos view back to the main list, and scroll that to the top so we see the upload progress
+        UINavigationController *firstNavController = [[AppDelegate tabBarController] viewControllers][0];
+        [firstNavController popToRootViewControllerAnimated:NO];
+        StreamViewController *streamView = (StreamViewController*)(firstNavController.viewControllers)[0];
+        [streamView.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
 	}
 }
 
@@ -209,7 +140,7 @@
     [self dismissModalViewControllerAnimated:YES];
 }
 
-- (void)privacyChanged:(UISegmentedControl *)sender
+- (IBAction)privacyChanged:(UISegmentedControl *)sender
 {
     switch (sender.selectedSegmentIndex) {
         case 0:

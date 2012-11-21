@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <MapKit/MapKit.h>
 
 @class PhotoUpload;
 @class EditableTextFieldCell;
@@ -25,13 +26,15 @@ enum {
     PrivacySection
 };
 
-@interface PhotoDetailViewController : UITableViewController <UITextFieldDelegate, UITextViewDelegate>
+@interface PhotoDetailViewController : UIViewController <UITextFieldDelegate, UITextViewDelegate>
 
 @property (nonatomic, strong) PhotoUpload *photoUpload;
-@property (nonatomic, strong) EditableTextFieldCell *photoTitleCell;
-@property (nonatomic, strong) EditableTextFieldCell *photoTagsCell;
-@property (nonatomic, strong) UIView *privacyView;
+@property (nonatomic, strong) IBOutlet UITextField *photoTitle;
+@property (nonatomic, strong) IBOutlet UITextField *photoTags;
+@property (nonatomic, strong) IBOutlet UIView *privacyView;
+@property (nonatomic, strong) IBOutlet MKMapView *mapView;
 
-- (void)next;
+-(id)initWithPhotoUpload:(PhotoUpload*)upload;
+- (IBAction)privacyChanged:(UISegmentedControl *)sender;
 
 @end

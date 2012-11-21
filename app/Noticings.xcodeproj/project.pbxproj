@@ -95,6 +95,7 @@
 		E6D03F7B14524615005DDB6E /* visibility_green.png in Resources */ = {isa = PBXBuildFile; fileRef = E6D03F7814524615005DDB6E /* visibility_green.png */; };
 		E6D03F7C14524615005DDB6E /* visibility_red.png in Resources */ = {isa = PBXBuildFile; fileRef = E6D03F7914524615005DDB6E /* visibility_red.png */; };
 		E6D03F7D14524615005DDB6E /* visibility_yellow.png in Resources */ = {isa = PBXBuildFile; fileRef = E6D03F7A14524615005DDB6E /* visibility_yellow.png */; };
+		E6D82EFA165D6723007CFC22 /* PhotoDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E6D82EF9165D6723007CFC22 /* PhotoDetailViewController.xib */; };
 		E6DE3ACB142BC3ED00E9BE0B /* ImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E6DE3ACA142BC3ED00E9BE0B /* ImageViewController.m */; };
 		E6F5E52C143BD34C00E00E71 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E6F5E52A143BD34C00E00E71 /* Default@2x.png */; };
 		E6F5E52D143BD34C00E00E71 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = E6F5E52B143BD34C00E00E71 /* Default.png */; };
@@ -243,6 +244,7 @@
 		E6D03F7814524615005DDB6E /* visibility_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = visibility_green.png; sourceTree = "<group>"; };
 		E6D03F7914524615005DDB6E /* visibility_red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = visibility_red.png; sourceTree = "<group>"; };
 		E6D03F7A14524615005DDB6E /* visibility_yellow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = visibility_yellow.png; sourceTree = "<group>"; };
+		E6D82EF9165D6723007CFC22 /* PhotoDetailViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PhotoDetailViewController.xib; sourceTree = "<group>"; };
 		E6DE3AC9142BC3ED00E9BE0B /* ImageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageViewController.h; path = Classes/ImageViewController.h; sourceTree = "<group>"; };
 		E6DE3ACA142BC3ED00E9BE0B /* ImageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ImageViewController.m; path = Classes/ImageViewController.m; sourceTree = "<group>"; };
 		E6F5E52A143BD34C00E00E71 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
@@ -361,6 +363,7 @@
 				E67599D0143521BF003AE272 /* StreamPhotoViewCell.xib */,
 				E20EF688109A4A8F001C5F05 /* UploadTimestampViewController.xib */,
 				E6119A921450AEFA0078161F /* PhotoUploadCell.xib */,
+				E6D82EF9165D6723007CFC22 /* PhotoDetailViewController.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -667,6 +670,7 @@
 				E66820EB1639F87A00401648 /* 28-star.png in Resources */,
 				E60C79DC1639FA120072FF5C /* favorite.png in Resources */,
 				E60C79DD1639FA120072FF5C /* not_favorite.png in Resources */,
+				E6D82EFA165D6723007CFC22 /* PhotoDetailViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
