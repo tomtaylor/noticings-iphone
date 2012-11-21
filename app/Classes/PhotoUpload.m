@@ -35,7 +35,7 @@ enum {
         self.privacy = PhotoUploadPrivacyPublic;
 
         self.image = image;
-        self.thumbnail = [image resizedImageWithWidth:128 AndHeight:128]; // TODO - use correct numbers. Also retina-aware
+        self.thumbnail = [image resizedSquareImageWithSize:128];
         self.timestamp = timestamp;
         self.originalTimestamp = timestamp;
 
