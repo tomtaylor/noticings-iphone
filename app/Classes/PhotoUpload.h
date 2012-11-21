@@ -35,6 +35,5 @@ enum {
 
 
 - (id)initWithAsset:(ALAsset *)asset;
-- (NSData *)imageData;
 
 @end

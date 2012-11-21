@@ -8,10 +8,6 @@
 
 #import "PhotoUpload.h"
 
-@interface PhotoUpload (Private)
-+ (ALAsset *)assetForURL:(NSURL *)url;
-@end
-
 @implementation PhotoUpload
 
 enum {
@@ -112,25 +108,6 @@ enum {
         self.paused = YES;
     }
     return self;
-}
-
-- (NSData *)imageData
-{
-    ALAssetRepresentation *representation = [self.asset defaultRepresentation];
-    Byte *buffer = malloc([representation size]);  // will be freed automatically when associated NSData is deallocated
-    NSError *err = nil;
-    NSUInteger bytes = [representation getBytes:buffer
-                                     fromOffset:0LL 
-                                         length:[representation size] 
-                                          error:&err];
-    if (err || bytes == 0) {
-        DLog(@"Error getting image data: %@", err);
-        return nil;
-    }
-    
-    return [NSData dataWithBytesNoCopy:buffer 
-                                length:[representation size]          
-                          freeWhenDone:YES];  // YES means free malloc'ed buf that backs this when deallocated
 }
 
 + (ALAsset *)assetForURL:(NSURL *)url {
