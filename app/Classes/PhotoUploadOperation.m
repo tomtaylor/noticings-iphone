@@ -98,6 +98,8 @@
                                        tokenSecret:secret];
     
     NSMutableURLRequest *myreq = [req mutableCopy];
+    // bypass my protocol handler
+    [myreq setValue:@"upload" forHTTPHeaderField:NOCACHE_REQUEST_HEADER_TAG];
     myreq.timeoutInterval = 100;
     
     // I DO NOT WANT TO TALK ABOUT THIS.
