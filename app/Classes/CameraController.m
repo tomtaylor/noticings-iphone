@@ -134,7 +134,8 @@
         [self.assetsLibrary assetForURL:assetUrl 
                        resultBlock:^(ALAsset *asset) {
                            DLog(@"Loaded Asset: %@", asset);
-                           UIImage *image = [[UIImage alloc] initWithCGImage:asset.defaultRepresentation.fullResolutionImage];
+                           NSNumber* orientationValue = [asset valueForProperty:@"ALAssetPropertyOrientation"];
+                           UIImage *image = [[UIImage alloc] initWithCGImage:asset.defaultRepresentation.fullResolutionImage scale:1 orientation:orientationValue.intValue];
                            CLLocation* location = [asset valueForProperty:ALAssetPropertyLocation];
                            NSDate* timestamp = [asset valueForProperty:ALAssetPropertyDate];
                            PhotoUpload *photoUpload = [[PhotoUpload alloc] initWithImage:image location:location timestamp:timestamp];
