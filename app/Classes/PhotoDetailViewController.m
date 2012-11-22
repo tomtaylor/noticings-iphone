@@ -51,6 +51,12 @@
     UITapGestureRecognizer* tapRec = [[UITapGestureRecognizer alloc]
                                       initWithTarget:self action:@selector(didTapMap:)];
     [self.mapView addGestureRecognizer:tapRec];
+    
+    self.thumbnailView.image = self.photoUpload.thumbnail;
+
+    // TODO hilariously inefficient
+    int bytes = [self.photoUpload imageData].length;
+    self.detailText.text = [NSString stringWithFormat:@"%uk (%0.0f x %0.0f)", bytes / 1024, self.photoUpload.image.size.width, self.photoUpload.image.size.height];
 
 }
 
@@ -62,8 +68,8 @@
 	NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 	[dateFormatter setTimeStyle:NSDateFormatterShortStyle];
 	[dateFormatter setDateStyle:NSDateFormatterNoStyle];
-	NSString *defaultTitle = [dateFormatter stringFromDate:[self.photoUpload timestamp]];
-	self.photoTitle.placeholder = defaultTitle;
+    self.defaultTitle = [dateFormatter stringFromDate:[self.photoUpload timestamp]];
+	self.photoTitle.placeholder = [NSString stringWithFormat:@"Title (default %@)", self.defaultTitle];
 
     [self.mapView removeAnnotations:self.mapView.annotations];
 	CLLocationCoordinate2D coordinate = self.photoUpload.coordinate;
@@ -116,7 +122,7 @@
 	self.photoUpload.tags = self.photoTags.text;
     
     if (self.photoUpload.title.length == 0) {
-        self.photoUpload.title = self.photoTitle.placeholder;
+        self.photoUpload.title = self.defaultTitle;
     }
 	
 	if (self.photoUpload.timestamp == nil) {

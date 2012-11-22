@@ -33,6 +33,10 @@ enum {
 @property (nonatomic, strong) IBOutlet UITextField *photoTags;
 @property (nonatomic, strong) IBOutlet UIView *privacyView;
 @property (nonatomic, strong) IBOutlet MKMapView *mapView;
+@property (nonatomic, strong) IBOutlet UIImageView *thumbnailView;
+@property (nonatomic, strong) IBOutlet UILabel *detailText;
+
+@property (nonatomic, strong) NSString *defaultTitle;
 
 -(id)initWithPhotoUpload:(PhotoUpload*)upload;
 - (IBAction)privacyChanged:(UISegmentedControl *)sender;

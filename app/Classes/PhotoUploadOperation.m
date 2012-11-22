@@ -51,7 +51,7 @@
     // start us off
     [self status:0 message:@"Fetching image"];
     
-    NSData *uploaddata = UIImageJPEGRepresentation(self.upload.image, 0.7);
+    NSData *uploaddata = [self.upload imageData];
 
     if (!uploaddata) {
         DLog(@"no image data for upload");

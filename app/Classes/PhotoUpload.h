@@ -36,5 +36,6 @@ enum {
 @property (nonatomic, strong) NSDate *timestamp;
 
 - (id)initWithImage:(UIImage *)image location:(CLLocation*)location timestamp:(NSDate*)timestamp;
+-(NSData*)imageData;
 
 @end

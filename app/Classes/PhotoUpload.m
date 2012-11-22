@@ -50,6 +50,11 @@ enum {
     return self;
 }
 
+-(NSData*)imageData;
+{
+    return UIImageJPEGRepresentation(self.image, 0.7);
+}
+
 - (void)encodeWithCoder:(NSCoder *)coder
 {
     [coder encodeInt:4 forKey:@"version"];
@@ -103,6 +108,5 @@ enum {
     }
     return self;
 }
-
 
 @end
